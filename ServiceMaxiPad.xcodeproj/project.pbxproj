@@ -702,6 +702,9 @@
 		18E522B51A6916C000FD9295 /* Sync_Error_White@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18E522B41A6916C000FD9295 /* Sync_Error_White@2x.png */; };
 		18E522B81A69314400FD9295 /* SMLoggerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 18E522B71A69314400FD9295 /* SMLoggerHelper.m */; };
 		18E5719C1A1A32B500867F8E /* UIPlaceHolderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 18E5719B1A1A32B500867F8E /* UIPlaceHolderTextView.m */; };
+		18EFFC571B3D1C4100BE15A0 /* wizardComponentIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 18EFFC541B3D1C4100BE15A0 /* wizardComponentIcon.png */; };
+		18EFFC581B3D1C4200BE15A0 /* wizardComponentIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18EFFC551B3D1C4100BE15A0 /* wizardComponentIcon@2x.png */; };
+		18EFFC591B3D1C4200BE15A0 /* wizardComponentIcon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18EFFC561B3D1C4100BE15A0 /* wizardComponentIcon@3x.png */; };
 		18FB610F1B3982810011AF75 /* CustomWebServiceParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FB610E1B3982810011AF75 /* CustomWebServiceParser.m */; };
 		18FE08F519EE826C00CB8925 /* splashsigninbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FE08F419EE826C00CB8925 /* splashsigninbutton.png */; };
 		18FE08FB19EE827800CB8925 /* checkbox-active-checked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FE08F719EE827800CB8925 /* checkbox-active-checked@2x.png */; };
@@ -2367,6 +2370,9 @@
 		18E522B71A69314400FD9295 /* SMLoggerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMLoggerHelper.m; sourceTree = "<group>"; };
 		18E5719A1A1A32B500867F8E /* UIPlaceHolderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPlaceHolderTextView.h; sourceTree = "<group>"; };
 		18E5719B1A1A32B500867F8E /* UIPlaceHolderTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIPlaceHolderTextView.m; sourceTree = "<group>"; };
+		18EFFC541B3D1C4100BE15A0 /* wizardComponentIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wizardComponentIcon.png; sourceTree = "<group>"; };
+		18EFFC551B3D1C4100BE15A0 /* wizardComponentIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "wizardComponentIcon@2x.png"; sourceTree = "<group>"; };
+		18EFFC561B3D1C4100BE15A0 /* wizardComponentIcon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "wizardComponentIcon@3x.png"; sourceTree = "<group>"; };
 		18FB610D1B3982810011AF75 /* CustomWebServiceParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomWebServiceParser.h; sourceTree = "<group>"; };
 		18FB610E1B3982810011AF75 /* CustomWebServiceParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomWebServiceParser.m; sourceTree = "<group>"; };
 		18FE08F419EE826C00CB8925 /* splashsigninbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splashsigninbutton.png; sourceTree = "<group>"; };
@@ -5036,6 +5042,9 @@
 		184A98CF19E7D58F006DA6BE /* SFMPage */ = {
 			isa = PBXGroup;
 			children = (
+				18EFFC541B3D1C4100BE15A0 /* wizardComponentIcon.png */,
+				18EFFC551B3D1C4100BE15A0 /* wizardComponentIcon@2x.png */,
+				18EFFC561B3D1C4100BE15A0 /* wizardComponentIcon@3x.png */,
 				117656D41B3928A200BA0B63 /* selectEmpty@.png */,
 				117656D51B3928A200BA0B63 /* selectEmpty@2x.png */,
 				117656D61B3928A200BA0B63 /* selectFilled@.png */,
@@ -6416,6 +6425,7 @@
 				18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */,
 				18800CF51A08D14400930FF9 /* TextSizeDetailViewController.xib in Resources */,
 				184A9CB219E7D591006DA6BE /* ObjectHighlightBar.png in Resources */,
+				18EFFC581B3D1C4200BE15A0 /* wizardComponentIcon@2x.png in Resources */,
 				184A9E0F19E7D592006DA6BE /* map_chat@2x.png in Resources */,
 				8B2F4BF71A0C8D0100D2A346 /* u259.png in Resources */,
 				40CA1A0619FE4E9C0097F5A1 /* recapture.png in Resources */,
@@ -6432,6 +6442,7 @@
 				40A06F3A1B06041400218162 /* STasks@1x.png in Resources */,
 				18779DC519EBEF200086A9B7 /* info.png in Resources */,
 				184A9D9219E7D592006DA6BE /* FormCheckBoxUnFilled@2x.png in Resources */,
+				18EFFC591B3D1C4200BE15A0 /* wizardComponentIcon@3x.png in Resources */,
 				18A2173519E57C5A00F22EA6 /* Images.xcassets in Resources */,
 				184F1C3B1A1369DF00A2B985 /* BizRuleTableViewCell.xib in Resources */,
 				183AA1DA19E6D26400919345 /* SLAClockViewController.xib in Resources */,
@@ -6590,6 +6601,7 @@
 				42B1EECE19ECF96C00E3511D /* timing-line.png in Resources */,
 				9ECEEF9C19F12C3A00E6708D /* Email-new.png in Resources */,
 				C3E31B9C1A0AB50500B6F338 /* DocumentsErrorTableViewCell.xib in Resources */,
+				18EFFC571B3D1C4100BE15A0 /* wizardComponentIcon.png in Resources */,
 				184F1C451A137A5F00A2B985 /* arrow_down.png in Resources */,
 				C3EF97A11A036D7300476293 /* Attachment-File-Missing@2x.png in Resources */,
 				C3CD32961A0FF9D4002F7705 /* AttachmentWebView.xib in Resources */,
@@ -7549,7 +7561,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "a0157794-3523-4223-85b2-b6592c387d93";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -7580,7 +7592,7 @@
 				);
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "a0157794-3523-4223-85b2-b6592c387d93";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -9,13 +9,6 @@
 #import "CustomActionWebserviceModel.h"
 
 @implementation CustomActionWebserviceModel
-@synthesize processId;
-@synthesize className;
-@synthesize methodName;
-@synthesize objectName;
-@synthesize objectFieldId;
-@synthesize ObjectFieldName;
-
 
 - (id)init
 {
@@ -28,11 +21,5 @@
 }
 
 -(void)dealloc{
-    processId=nil;
-    className=nil;
-    methodName=nil;
-    objectName=nil;
-    objectFieldId=nil;
-    ObjectFieldName=nil;
 }
 @end

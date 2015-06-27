@@ -276,6 +276,7 @@
         case CategoryTypeGetPriceData:
             requestType = [self getNextRequestForGetPriceData:currentRequest
                                            andPreviousRequest:previousRequest];
+
             break;
         case CategoryTypeJobLog:
             requestType = [self getNextRequestForJobLog:currentRequest
@@ -437,7 +438,7 @@
               nextRequestType = RequestAdvancedDownLoadCriteria;
             break;
         case RequestAdvancedDownLoadCriteria:
-             nextRequestType = RequestGetPriceDataTypeZero ;
+            nextRequestType = RequestGetPriceDataTypeZero ;
             break;
         case RequestGetPriceDataTypeZero:
             nextRequestType = RequestGetPriceDataTypeOne;

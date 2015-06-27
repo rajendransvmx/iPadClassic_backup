@@ -18,3 +18,4 @@
 
 #define TECHNICIANID @"TechnicianId"
 #define kSFMSearchCacheId @"SFMSearchCacheId"
+#define kCustomWebServiceAction @"CustomWebServiceAction"

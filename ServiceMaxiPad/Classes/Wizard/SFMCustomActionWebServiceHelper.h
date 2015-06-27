@@ -9,15 +9,15 @@
 #import <Foundation/Foundation.h>
 #import "WizardComponentModel.h"
 #import "CustomActionWebserviceModel.h"
+#import "SFMPage.h"
 
 @interface SFMCustomActionWebServiceHelper : NSObject
 
-@property(nonatomic,strong)NSString *className;
-@property(nonatomic,strong)NSString *methodName;
-@property(nonatomic,strong)NSString *objectName;
-@property(nonatomic,strong)NSString *objectFieldId;
-@property(nonatomic,strong)NSString *objectFieldname;
--(void)addModelToTaskMaster;
-+(void)setcustomActionWebserviceModel:(CustomActionWebserviceModel *)WizardComponentModel;
-+(CustomActionWebserviceModel *)getCustomActionWebServiceHelper;
+@property(nonatomic, strong) WizardComponentModel *wizardCompModel;
+@property(nonatomic,strong) SFMPage *sfmPage;
+
+-(id)initWithSFMPage:(SFMPage *)sfmPageModel
+     wizardComponent:(WizardComponentModel*)wizardModel;
+-(void)initiateCustomWebServiceWithDelegate:(id)delegate;
+
 @end

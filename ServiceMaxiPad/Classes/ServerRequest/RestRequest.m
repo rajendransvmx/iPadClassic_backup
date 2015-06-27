@@ -20,7 +20,8 @@
 #import "PerformanceAnalyser.h"
 #import "NSData+DDData.h"
 #import "SFMCustomActionWebServiceHelper.h"
-
+#import "CacheManager.h"
+#import "CacheConstants.h"
 
 @implementation RestRequest
 @synthesize dataDictionary;
@@ -395,7 +396,7 @@
             break;
             
         case RequestTypeCustomActionWebService:
-            eventType = kOnDemandGetData;
+            eventType = kCustomWebServiceUrlLink;
             break;
             
         default:
@@ -536,7 +537,8 @@
             break;
             
         case RequestTypeCustomActionWebService:
-            url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
+            /* Adding class_name and method_name for webservice call */
+            url =   [self getUrlWithStringApppended:kCustomWebServiceUrlLink];
             break;
             /****************    ************** */
         default:
@@ -762,10 +764,9 @@
             /******************************************************/
             
         case RequestTypeCustomActionWebService:
-            //self.eventName = eventSync ;
             //class_name method_name from table or model
-            self.eventName = kPushNotification;
-            //self.eventName=[self getEventName];
+            //self.eventName = kPushNotification;
+            self.eventName=[self getCustomWebserviceEventName];
             break;
 
         default:
@@ -774,14 +775,15 @@
     }
     
 }
--(NSString *)getEventName{
-    CustomActionWebserviceModel *customActionWebserviceLayer=[SFMCustomActionWebServiceHelper getCustomActionWebServiceHelper];
+
+-(NSString *)getCustomWebserviceEventName
+{
+    CustomActionWebserviceModel *customActionWebserviceLayer = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
     if (customActionWebserviceLayer) {
-        return [NSString stringWithFormat:@"%@/%@",customActionWebserviceLayer.className,customActionWebserviceLayer.methodName];
+        return customActionWebserviceLayer.className;
     }
     return @"";
 }
-
 
 - (NSString *)getURLStringForDpPicklistWithObject:(NSString*)objectName
 {
@@ -810,10 +812,26 @@
 
 - (NSString*)getUrlWithStringApppended:(NSString*)stringToAppend
 {
+    NSString *kRestUrlString = kRestUrl;
+    switch (self.requestType)
+    {
+        case RequestTypeCustomActionWebService:
+        {
+            kRestUrlString=kRestUrlForWebservice;
+            CustomActionWebserviceModel *customActionWebserviceLayer = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
+            if (customActionWebserviceLayer) {
+                stringToAppend = [NSString stringWithFormat:@"%@/%@",customActionWebserviceLayer.className,customActionWebserviceLayer.methodName];
+            }
+        }
+        break;
+            
+        default:
+            break;
+    }
     CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
    // [customerOrgInfoInstance explainMe];
     
-   return  [[NSString alloc] initWithFormat:@"%@%@%@",[customerOrgInfoInstance instanceURL],kRestUrl,stringToAppend];
+   return  [[NSString alloc] initWithFormat:@"%@%@%@",[customerOrgInfoInstance instanceURL],kRestUrlString,stringToAppend];
 }
 
 

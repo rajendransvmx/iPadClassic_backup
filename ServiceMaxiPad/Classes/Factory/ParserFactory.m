@@ -348,10 +348,10 @@
         case RequestTypeChatterFeedCommnetInsert:
             parser = [[ChatterFeedsParser alloc] init];
             break;
-            
         case RequestTypeCustomActionWebService:
             parser = [[CustomWebServiceParser alloc] init];
             break;
+        
         default:
             SXLogWarning(@"Invalid parser type requested");
             break;

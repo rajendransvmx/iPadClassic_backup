@@ -8,13 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "WizardComponentModel.h"
+#import "SFMPage.h"
 
 @interface SFMCustomActionHelper : NSObject
 
-@property(nonatomic,strong)NSString *objectId;
-@property(nonatomic,strong)NSString *objectName;
-@property(nonatomic,strong)NSString *ObjectFieldname;
--(NSString *)loadURL:(WizardComponentModel *)model;
--(NSDictionary *)fetchWebServiceParams:(WizardComponentModel *)model withparams:(NSArray *)params;
--(id)init;
+@property(nonatomic, strong)SFMPage *sfmPageModel;
+@property(nonatomic, strong)WizardComponentModel *wizardCompModel;
+
+-(NSString *)loadURL;
+-(id)initWithSFMPage:(SFMPage *)sfmPageModel
+               wizardComponent:(WizardComponentModel*)wizardModel;
 @end

@@ -75,6 +75,12 @@ NSString *const kSVMXRequestValues  =  @"values";
 NSString *const kSVMXCallBack       =  @"CALL_BACK";
 NSString *const kName               =  @"Name";
 
+NSString *const kSVMXRequestMap     =  @"SVMXMap";
+NSString *const KSVMXRequestData    =  @"data";
+NSString *const KSVMXRequestParameters    =  @"Parameters";
+NSString *const KFieldName          =    @"Field Name";
+
+
 //Time logs
 NSString *const kSVMXContextKey     =  @"SVMX_LOG_CONTEXT";
 NSString *const kTimeLogKey         =  @"SVMX_TIME_LOG";
@@ -87,6 +93,7 @@ NSString *const kDownloadOnDemand   =  @"DATA ON DEMAND";
 NSString *const kJobLogCarrierContext   =  @"JOB LOG CARRIER";
 
 NSString *const  kRestUrl =  @"/services/apexrest/"ORG_NAME_SPACE@"/svmx/MobServiceIntf/";
+NSString *const  kRestUrlForWebservice =  @"/services/apexrest/";
 
 NSString *const  kRestUrlDPPicklist  =  @"/services/data/v25.0/sobjects/";
 
@@ -96,12 +103,14 @@ NSString *const  kDPRestURlDescribe  =  @"/describe/";
 
 NSString *const kMetaSyncUrlLink = @"MetaSyncRequest";
 NSString *const kDataSyncUrlLink = @"DataSyncRequest";
+NSString *const kCustomWebServiceUrlLink = @"Web Service";
 
 NSString *const kSync = @"SYNC";
 NSString *const kInitialSync = @"INITIAL_SYNC";
 NSString *const kSearchResult = @"SEARCH_RESULTS";
 NSString *const kOnDemandGetData = @"GET_DATA";
 NSString *const kOnDemandGetPriceInfo = @"GET_PRICE_INFO";
+
 
 NSString *const kClientInfo = @"clientInfo";
 NSString *const kEventName = @"eventName";

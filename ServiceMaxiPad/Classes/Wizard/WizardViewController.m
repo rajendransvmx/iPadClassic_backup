@@ -22,7 +22,6 @@
 
 #import "WizardViewController.h"
 #import "SFWizardModel.h"
-#import "WizardComponentModel.h"
 #import "SFProcessModel.h"
 #import "StyleGuideConstants.h"
 #import "StyleManager.h"
@@ -31,20 +30,20 @@
 #import "SFCustomActionURLService.h"
 #import "SNetworkReachabilityManager.h"
 #import "SFMCustomActionWebServiceHelper.h"
+#import "MBProgressHUD.h"
 
 @interface WizardViewController ()
 
 @property(assign)CGFloat cellHeight;
 
+@property (nonatomic, strong)MBProgressHUD *HUD;
+
 @end
 
 @implementation WizardViewController
-
 @synthesize wizardsArray;
 @synthesize viewProcessArray;
-@synthesize objectId;
-@synthesize ObjectName;
-@synthesize ObjectFieldname;
+
 
 #pragma mark - apllication lifecycle method
 
@@ -95,7 +94,6 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    
     //Remove all subview of cell contentview
     
     for (UIView *eachView in  cell.contentView.subviews) {
@@ -154,32 +152,40 @@
             if (wizardComponent.isEntryCriteriaMatching){
                 if ([wizardComponent.actionType isEqualToString:@"OTHERS"]) {
                     /* Before making request checking for internet connectivity */
-                    textLabel.textColor=[UIColor greenColor];
                     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
                         textLabel.enabled = YES;
                         cell.userInteractionEnabled = YES;
                         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+                        if ([wizardComponent.customActionType isEqualToString:@"Web-Service"])  {
+                            cell.accessoryView = [self setIcon:[UIColor colorWithHexString:kOrangeColor]];
+                        }else{
+                            cell.accessoryView = nil;
+                        }
                     }else{
                         if ([wizardComponent.customActionType isEqualToString:@"Web-Service"])  {
                             textLabel.enabled = NO;
                             cell.userInteractionEnabled = NO;
                             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+                            cell.accessoryView = [self setIcon:[UIColor colorWithHexString:kTextFieldFontColor]];
                         }else{
                             textLabel.enabled = YES;
                             cell.userInteractionEnabled = YES;
                             [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+                            cell.accessoryView = nil;
                         }
                     }
                 }else{
                     textLabel.enabled = YES;
                     cell.userInteractionEnabled = YES;
                     [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+                    cell.accessoryView = nil;
                 }
             }
             else{
                 textLabel.enabled = NO;
                 cell.userInteractionEnabled = NO;
                 [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+                cell.accessoryView = nil;
             }
             
             //if the cell is last row of the section remove seperator line
@@ -191,6 +197,25 @@
     }
     cell.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
     return cell;
+}
+
+-(UIImageView *)setIcon:(UIColor *)color
+{
+    UIImage *icon = [UIImage imageNamed:@"wizardComponentIcon"];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:icon];
+    [imageView setTintColor:[UIColor redColor]];
+    CGRect rect = CGRectMake(0, 0, icon.size.width, icon.size.height);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextClipToMask(context, rect, icon.CGImage);
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    UIImage *flippedImage = [UIImage imageWithCGImage:img.CGImage
+                                                scale:1.0 orientation: UIImageOrientationDownMirrored];
+    imageView.image = flippedImage;
+    return imageView;
 }
 
 
@@ -297,29 +322,12 @@
                 {
                     /* Before making request checking for internet connectivity */
                     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
-                        SFMCustomActionHelper *customActionHelper=[[SFMCustomActionHelper alloc] init];
-                        customActionHelper.objectName=wizard.objectName;
-                        customActionHelper.objectId=objectId;
-                        customActionHelper.ObjectFieldname=ObjectFieldname;
-                        if ([wizardComponent.customActionType isEqualToString:@"URL"]) {
-                            UIApplication *ourApplication = [UIApplication sharedApplication];
-                            
+                        if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"URL"]) {
                             /* load url with params */
-                            [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL:wizardComponent]]];
-                            
-                        }else if ([wizardComponent.customActionType isEqualToString:@"Web-Service"]) {
+                            [self.delegate makeCustomUrlCall:wizardComponent];
+                        }else if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"WEB-SERVICE"]) {
                             /* making webservice call */
-                            SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] init];
-                            webserviceHelper.objectName=wizard.objectName;
-                            webserviceHelper.objectFieldId=objectId;
-                            webserviceHelper.objectFieldname=ObjectFieldname;
-                            webserviceHelper.className=wizardComponent.className;
-                            webserviceHelper.methodName=wizardComponent.methodName;
-                            [webserviceHelper addModelToTaskMaster];
-                            
-                        }else{
-                            /*open new application from our application */
-                            //[a loadApp:wizardComponent withparams:paramList];
+                            [self.delegate makeWebserviceCall:wizardComponent];
                         }
                     }else{
                         
@@ -338,6 +346,7 @@
     if ([self.sideMenu hasShownSideBar]) {
         [self.sideMenu dismissAnimated:YES];
     }
+    
 }
 
 - (NSInteger)getNumberOfSections
@@ -383,10 +392,5 @@
                    });
 }
 
--(NSArray *)fetchParamsForWizardComponent:(WizardComponentModel *)wizardComponent{
-    SFCustomActionURLService *wizardComponentparamService = [[SFCustomActionURLService alloc]init];
-    NSArray *paramList= [wizardComponentparamService getCustomActionParams:wizardComponent.processId];
-    return paramList;
-}
 
 @end

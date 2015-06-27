@@ -24,7 +24,8 @@
 #import <UIKit/UIKit.h>
 #import "SMActionSideBarViewController.h"
 #import "SFProcessModel.h"
-
+#import "SFMPage.h"
+#import "WizardComponentModel.h"
 @protocol WizardDelegate
 
 @optional
@@ -32,6 +33,8 @@
 - (void)editProcessTapped:(NSString*)processId;
 -(void)updateDODRecordFromSalesforce;
 -(void)rescheduleEvent;
+-(void)makeCustomUrlCall:(WizardComponentModel *)model;
+-(void)makeWebserviceCall:(WizardComponentModel *)model;
 
 - (void)loadTroublShootingViewForProduct;
 
@@ -44,10 +47,6 @@
 @property(nonatomic,strong)NSArray *viewProcessArray;
 @property (nonatomic, strong) SMActionSideBarViewController *sideMenu;
 @property(nonatomic, assign)BOOL shouldShowTroubleShooting;
-@property(nonatomic, strong)NSString *objectId;
-@property(nonatomic, strong)NSString *ObjectName;
-@property(nonatomic,strong)NSString *ObjectFieldname;
-
 
 @property (assign) id <WizardDelegate> delegate;
 

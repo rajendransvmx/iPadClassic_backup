@@ -42,13 +42,18 @@
 #import "TaskModel.h"
 #import "TaskManager.h"
 #import "CacheManager.h"
+#import "CacheConstants.h"
 #import "WebserviceResponseStatus.h"
 #import "PushNotificationManager.h"
 #import "CalenderHelper.h"
+#import "MBProgressHUD.h"
+#import "SFMCustomActionHelper.h"
+#import "SFMCustomActionWebServiceHelper.h"
 
 @interface SFMPageViewController ()<SMActionSideBarViewControllerDelegate>
 @property (nonatomic, strong) SMActionSideBarViewController *mySideBar;
 @property (nonatomic, strong) WizardViewController *tempViewController;
+@property (nonatomic, strong)MBProgressHUD *HUD;
 @end
 
 @implementation SFMPageViewController
@@ -108,8 +113,6 @@
     }
     self.tempViewController.delegate = self;
     self.tempViewController.wizardsArray = allWizards;
-    self.tempViewController.objectId=self.sfmPageView.sfmPage.recordId;
-    self.tempViewController.ObjectFieldname = kLocalId;
     self.tempViewController.viewProcessArray = [processService fetchAllViewProcessForObjectName:self.sfmPageView.sfmPage.objectName];
     self.tempViewController.shouldShowTroubleShooting = self.sfmPageView.sfmPage.process.pageLayout.headerLayout.enableTroubleShooting;
 }
@@ -320,7 +323,6 @@
 }
 
 #pragma mark - private method
-
 /**
  * @name - (void)setTitleForTitleView
  *
@@ -501,6 +503,8 @@
 #pragma mark - Flow Delegate methods
 - (void)flowStatus:(id)status {
     
+    [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction];
+    [self removeActivityAndLoadingLabel];
     if([status isKindOfClass:[WebserviceResponseStatus class]])
     {
         WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
@@ -783,5 +787,62 @@
     [self setTitleAndImageForTitleView];
 }
 
+/* Load url from with parameters */
+-(void)makeCustomUrlCall:(WizardComponentModel *)model
+{
+    if ([[SyncManager sharedInstance] isDataSyncInProgress])
+    {
+        [self showDataSyncAlert];
+        return;
+    }
+    /* load url with params */
+    SFMCustomActionHelper *customActionHelper = [[SFMCustomActionHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
+    UIApplication *ourApplication = [UIApplication sharedApplication];
+    [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
+}
 
+/* Call webservice call from with parameters */
+-(void)makeWebserviceCall:(WizardComponentModel *)model
+{
+    if ([[SyncManager sharedInstance] isDataSyncInProgress])
+    {
+        [self showDataSyncAlert];
+        return;
+    }
+    SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
+    [self addActivityAndLoadingLabel];
+    [webserviceHelper initiateCustomWebServiceWithDelegate:self];
+}
+
+-(void)showDataSyncAlert
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Web Service Call"
+                                                    message:@"Sync is going on. Please Try after sync complete"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
+
+#pragma mark Activity Management
+
+- (void)addActivityAndLoadingLabel
+{
+    if (!self.HUD) {
+        self.HUD = [[MBProgressHUD alloc] initWithView:self.view];
+        [self.view addSubview:self.HUD];
+        // Set determinate mode
+        self.HUD.mode = MBProgressHUDModeIndeterminate;
+        self.HUD.labelText = [[TagManager sharedInstance]tagByName:kTagLoading];
+        [self.HUD show:YES];
+    }
+}
+
+- (void)removeActivityAndLoadingLabel
+{
+    if (self.HUD) {
+        [self.HUD hide:YES];
+        self.HUD = nil;
+    }
+}
 @end

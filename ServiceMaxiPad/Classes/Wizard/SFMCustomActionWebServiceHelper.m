@@ -11,63 +11,37 @@
 #import "TaskGenerator.h"
 #import "TaskManager.h"
 #import "WebserviceResponseStatus.h"
-
+#import "CacheManager.h"
+#import "CacheConstants.h"
 
 @implementation SFMCustomActionWebServiceHelper
-@synthesize className;
-@synthesize methodName;
-@synthesize objectName;
-@synthesize objectFieldId;
-@synthesize objectFieldname;
 
-static WizardComponentModel *wizardCom;
 static CustomActionWebserviceModel *customActionWebserviceModel;
-- (id)init
+
+-(id)initWithSFMPage:(SFMPage *)sfmPageModel
+     wizardComponent:(WizardComponentModel*)wizardModel
 {
     self = [super init];
-    if (self != nil)
+    if (self)
     {
-        //Initialization
-        
+        self.sfmPage = sfmPageModel;
+        self.wizardCompModel = wizardModel;
+        CustomActionWebserviceModel *customActionWebserviceModel = [[CustomActionWebserviceModel alloc] init];
+        customActionWebserviceModel.className = self.wizardCompModel.className;
+        customActionWebserviceModel.methodName = self.wizardCompModel.methodName;
+        customActionWebserviceModel.sfmPage = self.sfmPage;
+        [[CacheManager sharedInstance] pushToCache:customActionWebserviceModel byKey:kCustomWebServiceAction];
     }
     return self;
 }
 
--(void)addModelToTaskMaster{
-    customActionWebserviceModel = [[CustomActionWebserviceModel alloc] init];
-    customActionWebserviceModel.className=className;
-    customActionWebserviceModel.methodName=methodName;
-    customActionWebserviceModel.objectName=objectName;
-    customActionWebserviceModel.ObjectFieldName=objectFieldname;
-    customActionWebserviceModel.objectFieldId=objectFieldId;
-    
+-(void)initiateCustomWebServiceWithDelegate:(id)delegate
+{
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceCall
                                              requestParam:nil
-                                           callerDelegate:self];
+                                           callerDelegate:delegate];
     
     [[TaskManager sharedInstance] addTask:taskModel];
-}
-
-#pragma mark FLOW DELEGATE
-- (void)flowStatus:(id)status
-{
-    if([status isKindOfClass:[WebserviceResponseStatus class]])
-    {
-        WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
-        if (st.syncStatus == SyncStatusSuccess) {
-            
-        }
-        else if (st.syncStatus == SyncStatusFailed)
-        {
-            
-        }
-    }
-}
-+(void)setcustomActionWebserviceModel:(CustomActionWebserviceModel *)WizardComponentModel{
-    customActionWebserviceModel=WizardComponentModel;
-}
-+(CustomActionWebserviceModel *)getCustomActionWebServiceHelper{
-    return customActionWebserviceModel;
 }
 
 

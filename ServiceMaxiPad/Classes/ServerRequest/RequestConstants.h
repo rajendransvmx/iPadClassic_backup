@@ -191,7 +191,15 @@ extern NSString *const kSfmSearchContext;
 extern NSString *const kJobLogCarrierContext;
 extern NSString *const kDownloadOnDemand;
 
+//For custom Action
+extern NSString *const kSVMXRequestMap;
+
 extern NSString *const  kRestUrl;
+extern NSString *const  kRestUrlForWebservice;
+extern NSString *const  KSVMXRequestData;
+extern NSString *const  KSVMXRequestParameters;
+extern NSString *const  KFieldName;
+
 
 extern NSString *const  kRestUrlDPPicklist ;
 
@@ -200,14 +208,14 @@ extern NSString *const  kDPRestURlDescribe ;
 
 
 extern NSString *const kMetaSyncUrlLink;
-extern NSString *const kDataSyncUrlLink ;
+extern NSString *const kDataSyncUrlLink;
+extern NSString *const kCustomWebServiceUrlLink;
 
 extern NSString *const kSync;
 extern NSString *const kInitialSync;
 extern NSString *const kSearchResult;
 extern NSString *const kOnDemandGetData ;
 extern NSString *const kOnDemandGetPriceInfo;
-
 extern NSString *const kClientInfo;
 
 extern NSString *const kEventName;

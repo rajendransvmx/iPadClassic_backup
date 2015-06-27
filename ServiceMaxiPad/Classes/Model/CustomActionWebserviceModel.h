@@ -7,12 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SFMPage.h"
 
 @interface CustomActionWebserviceModel : NSObject
-@property(nonatomic, copy) NSString *processId;
 @property(nonatomic, copy) NSString *className;
 @property(nonatomic, copy) NSString *methodName;
-@property(nonatomic, copy) NSString *objectName;
-@property(nonatomic, copy) NSString *objectFieldId;
-@property(nonatomic, copy) NSString *ObjectFieldName;
+@property(nonatomic,strong) SFMPage *sfmPage;
 @end

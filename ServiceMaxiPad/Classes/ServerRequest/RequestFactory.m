@@ -95,7 +95,6 @@
             case RequestTypeCustomActionWebService:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
-                
             case RequestDependentPicklist:
             case RequestChatter:
             case RequestTechnicianDetails:

@@ -252,7 +252,6 @@
                 baseServiceLayer =[[CustomActionWebServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
             }
             break;
-                
             default:
                 return baseServiceLayer;
                 break;

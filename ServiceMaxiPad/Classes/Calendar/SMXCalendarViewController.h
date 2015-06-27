@@ -27,7 +27,7 @@
 - (void)arrayUpdatedWithAllEvents:(NSMutableArray *)arrayUpdated;
 @end
 
-@interface SMXCalendarViewController : UIViewController<WizardDelegate,SMXCurrentDayDelegate>
+@interface SMXCalendarViewController : UIViewController<WizardDelegate,SMXCurrentDayDelegate,FlowDelegate>
 
 @property (nonatomic, strong) id <SMXCalendarViewControllerProtocol> protocol;
 @property (nonatomic, strong) NSMutableArray *arrayWithEvents;

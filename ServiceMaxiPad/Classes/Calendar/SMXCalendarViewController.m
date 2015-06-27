@@ -59,12 +59,16 @@
 #import "SFWizardModel.h"
 #import "WizardComponentModel.h"
 #import "CacheManager.h"
+#import "CacheConstants.h"
 #import "TaskManager.h"
 #import "TaskGenerator.h"
 #import "MobileDeviceSettingService.h"
 #import "MobileDeviceSettingsModel.h"
 #import "DateUtil.h"
 #import "CalenderHelper.h"
+#import "SFMCustomActionWebServiceHelper.h"
+#import "SFMCustomActionHelper.h"
+#import "MBProgressHUD.h"
 
 #define kLongFormat @"yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 #define kLongFormatZulu @"yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
@@ -98,6 +102,7 @@
 @property (nonatomic,strong) SMXCurrentDayButton *currentWeekButton;
 @property (nonatomic, strong) NSTimeZone *cPreviousTimeZone;
 @property (nonatomic, assign) BOOL cDataFetchInProgress;
+@property (nonatomic, strong)MBProgressHUD *HUD;
 @end
 
 @implementation SMXCalendarViewController
@@ -667,8 +672,6 @@
         if (self.tempViewController == nil) {
             self.tempViewController = [[WizardViewController alloc]initWithNibName:@"WizardViewController" bundle:nil];
         }
-        self.tempViewController.objectId=recordId;
-        self.tempViewController.ObjectFieldname=kLocalId;
         self.tempViewController.delegate = self;
         self.tempViewController.wizardsArray = allWizards;
         self.tempViewController.viewProcessArray = [processService fetchAllViewProcessForObjectName:objectModel.objectName];
@@ -2241,6 +2244,108 @@
     // ...
     return self;
 }
+/* Load url from with parameters */
+-(void)makeCustomUrlCall:(WizardComponentModel *)model{
+    if ([[SyncManager sharedInstance] isDataSyncInProgress]) {
+        [self showDataSyncAlert];
+        return;
+    }
+    SFMPage *sfmPage = [self getSFMPageModel];
+    if ([StringUtil isStringEmpty:sfmPage.process.processInfo.processId]) {
+        [self showNoProcessAlert];
+        return;
+    }
+    /* load url with params */
+    SFMCustomActionHelper *customActionHelper=[[SFMCustomActionHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
+    UIApplication *ourApplication = [UIApplication sharedApplication];
+    [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
+}
 
+/* Call webservice call from with parameters */
+-(void)makeWebserviceCall:(WizardComponentModel *)model{
+    if ([[SyncManager sharedInstance] isDataSyncInProgress]) {
+        [self showDataSyncAlert];
+        return;
+    }
+    SFMPage *sfmPage = [self getSFMPageModel];
+    if ([StringUtil isStringEmpty:sfmPage.process.processInfo.processId]) {
+        [self showNoProcessAlert];
+        return;
+    }
+    SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
+    [self addActivityAndLoadingLabel];
+    [webserviceHelper initiateCustomWebServiceWithDelegate:self];
+}
+
+#pragma mark Activity Management
+
+- (void)addActivityAndLoadingLabel
+{
+    if (!self.HUD) {
+        self.HUD = [[MBProgressHUD alloc] initWithView:self.view];
+        [self.view addSubview:self.HUD];
+        // Set determinate mode
+        self.HUD.mode = MBProgressHUDModeIndeterminate;
+        self.HUD.labelText = [[TagManager sharedInstance]tagByName:kTagLoading];
+        [self.HUD show:YES];
+    }
+}
+
+- (void)removeActivityAndLoadingLabel
+{
+    if (self.HUD) {
+        [self.HUD hide:YES];
+        self.HUD = nil;
+    }
+}
+
+-(SFMPage*)getSFMPageModel
+{
+    //load edit page
+    SFObjectModel *objectModel =  [self getObjectNameForSelectedEvent:self.selectedEvent];
+    NSString *recordId  = nil;
+    if (objectModel == nil)
+    {
+        objectModel = [SFObjectModel new];
+        objectModel.objectName = self.selectedEvent.eventTableName;
+        recordId = self.selectedEvent.localID;
+    }
+    else
+    {
+        recordId = [SFMPageHelper getLocalIdForSFID:self.selectedEvent.whatId objectName:objectModel.objectName];
+        
+    }
+    SFMPageViewManager *viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:objectModel.objectName recordId:recordId];
+    SFMPage *sfmPage = viewPageManager.sfmPageView.sfmPage;
+    return sfmPage;
+}
+#pragma mark - Flow Delegate methods
+- (void)flowStatus:(id)status
+{
+    [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction];
+    [self removeActivityAndLoadingLabel];
+    
+}
+
+-(void)showNoProcessAlert
+{
+    //alert
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Web Service Call"
+                                                    message:@"No valid SFM process to execute Custom WS"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
+
+-(void)showDataSyncAlert
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Web Service Call"
+                                                    message:@"Sync is going on. Please Try after sync complete"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+}
 
 @end
