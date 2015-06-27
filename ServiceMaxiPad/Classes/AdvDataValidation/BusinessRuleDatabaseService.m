@@ -56,12 +56,12 @@
             for (ProcessBusinessRuleModel *process in bizRuleProcessArray) {
                 [ruleIds addObject:process.businessRule];
             }
-//            NSString *ruleIdString = [StringUtil getConcatenatedStringFromArray:ruleIds withSingleQuotesAndBraces:YES];
-//            DBCriteria *dbCriteria = [[DBCriteria alloc]initWithFieldName:kBizRuleSfId operatorType:SQLOperatorIn andFieldValue:ruleIdString];
-            DBCriteria * dbCriteria = [[DBCriteria alloc] initWithFieldName:kBizRuleSfId operatorType:SQLOperatorIn andFieldValues:ruleIds];
+
+            DBCriteria * dbCriteria1 = [[DBCriteria alloc] initWithFieldName:kBizRuleSfId operatorType:SQLOperatorIn andFieldValues:ruleIds];
+            DBCriteria * dbCriteria2 = [[DBCriteria alloc] initWithFieldName:kBusinessRuleRuleType operatorType:SQLOperatorNotEqual andFieldValue:kBizRuleTypeFieldUpdate];
 
             id<BusinessRuleDAO> bizRuleDao = [FactoryDAO serviceByServiceType:ServiceTypeBusinessRule];
-            bizRuleArray = [bizRuleDao fetchBusinessRuleInfoByFields:nil andCriteria:dbCriteria];
+            bizRuleArray = [bizRuleDao fetchBusinessRuleInfoByFields:nil andCriteriaArray:@[dbCriteria1, dbCriteria2]];
             return bizRuleArray;
         }
     }

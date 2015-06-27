@@ -11,8 +11,7 @@
 
 @protocol BusinessRuleDAO <CommonServiceDAO>
 
-- (NSArray * )fetchBusinessRuleInfoByFields:(NSArray *)fieldNames
-                                andCriteria:(DBCriteria *)criteria;
+- (NSArray *)fetchBusinessRuleInfoByFields:(NSArray *)fieldNames andCriteriaArray:(NSArray *)criteriaArray;
 - (NSArray *)fetchFieldUpdateRuleInfoByFields:(NSArray *)fieldNames andCriteriaArray:(NSArray *)criteriaArray;
 
 @end

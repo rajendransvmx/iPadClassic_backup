@@ -74,28 +74,36 @@
         
         if ([bizRuleProcessArray count] == 0) {
             SXLogWarning(@"No biz rule process available");
-
+            
             shouldExecuteBizRule = NO;
         }
         else{
             /*Get all the BusinessRule objects*/
             NSArray *bizRules = [dbService businessRulesForBizRuleProcesses:bizRuleProcessArray];
             
-            /*Get all the SFExpressionComponent objects*/
-            NSArray *expComponensArray = [dbService expressionComponentsForBizRules:bizRules];
+            if ([bizRules count] == 0) {
+                SXLogWarning(@"No biz rule available");
+                shouldExecuteBizRule = NO;
+            }
             
-            [self fillBusinessRuleProcesses:bizRuleProcessArray withBusinessRules:bizRules];
-            [self fillBusinessRule:bizRules withExpressionComponents:expComponensArray];
+            else {
+                
+                /*Get all the SFExpressionComponent objects*/
+                NSArray *expComponensArray = [dbService expressionComponentsForBizRules:bizRules];
+                
+                [self fillBusinessRuleProcesses:bizRuleProcessArray withBusinessRules:bizRules];
+                [self fillBusinessRule:bizRules withExpressionComponents:expComponensArray];
+                
+                NSString *htmlStr = [self getBizRuleHtmlStringForProcesses:bizRuleProcessArray];
+                
+                self.jsExecuter = [[JSExecuter alloc] initWithParentView:self.parentView
+                                                          andCodeSnippet:htmlStr
+                                                             andDelegate:self
+                                                                andFrame:CGRectZero];
+            }
             
-            NSString *htmlStr = [self getBizRuleHtmlStringForProcesses:bizRuleProcessArray];
-            
-            self.jsExecuter = [[JSExecuter alloc] initWithParentView:self.parentView
-                                                      andCodeSnippet:htmlStr
-                                                         andDelegate:self
-                                                            andFrame:CGRectZero];
-
         }
-
+        
     }
     return shouldExecuteBizRule;
 }

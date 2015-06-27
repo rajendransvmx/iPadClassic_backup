@@ -16,10 +16,9 @@
     return @"BusinessRule";
 }
 
-- (NSArray * )fetchBusinessRuleInfoByFields:(NSArray *)fieldNames
-                                andCriteria:(DBCriteria *)criteria
-{
-    DBRequestSelect * requestSelect = [[DBRequestSelect alloc]initWithTableName:kBusinessruleTable andFieldNames:nil whereCriteria:criteria];
+- (NSArray *)fetchBusinessRuleInfoByFields:(NSArray *)fieldNames andCriteriaArray:(NSArray *)criteriaArray {
+    
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kBusinessruleTable andFieldNames:fieldNames whereCriterias:criteriaArray andAdvanceExpression:nil];
     
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {
