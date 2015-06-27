@@ -19,6 +19,7 @@
 #import "CalendarMonthViewController.h"
 #import "WizardViewController.h"
 #import "SMXCurrentDayButton.h"
+#import "FlowNode.h"
 #import "SMXEvent.h"
 #import "SMXBlueButton.h"
 
