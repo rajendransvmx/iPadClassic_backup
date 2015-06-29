@@ -585,10 +585,10 @@ NSString *const kTagEventTimeError         =  @"IPAD006_TAG129";
 NSString *const kTagNoTechnicianAssociatedError = @"IPAD006_TAG130";
 
 //Service report sync status
-NSString *const KTagReportSyncStatusTitle = @"IPAD018-TAG206";
-NSString *const KTagReportViewButtonTitle = @"IPAD018-TAG207";
-NSString *const KTagReportSyncFailed = @"IPAD018-TAG208";
-NSString *const KTagOpDocReportTitle = @"IPAD018-TAG209";
+NSString *const KTagReportSyncStatusTitle = @"IPAD018_TAG206";
+NSString *const KTagReportViewButtonTitle = @"IPAD018_TAG207";
+NSString *const KTagReportSyncFailed = @"IPAD018_TAG208";
+NSString *const KTagOpDocReportTitle = @"IPAD018_TAG209";
 NSString *const KTagInProgess = @"IPAD018_TAG059";
 NSString *const KTagSuccess = @"IPAD018_TAG060";
 NSString *const KTagFailed = @"IPAD018_TAG061";
