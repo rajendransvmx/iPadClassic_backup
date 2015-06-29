@@ -26,6 +26,8 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
     {
         self.sfmPage = sfmPageModel;
         self.wizardCompModel = wizardModel;
+        
+        /* This model contents required information for making web-service Body, We are storing into [CacheManager sharedInstance], later removing after completion */
         CustomActionWebserviceModel *customActionWebserviceModel = [[CustomActionWebserviceModel alloc] init];
         customActionWebserviceModel.className = self.wizardCompModel.className;
         customActionWebserviceModel.methodName = self.wizardCompModel.methodName;
@@ -37,6 +39,7 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
 
 -(void)initiateCustomWebServiceWithDelegate:(id)delegate
 {
+    /* Adding category name for Webservice call, based on category we are making requestType */
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceCall
                                              requestParam:nil
                                            callerDelegate:delegate];

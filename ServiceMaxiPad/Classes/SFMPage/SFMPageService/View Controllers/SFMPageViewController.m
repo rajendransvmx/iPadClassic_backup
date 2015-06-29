@@ -816,10 +816,10 @@
 
 -(void)showDataSyncAlert
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Web Service Call"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
                                                     message:@"Sync is going on. Please Try after sync complete"
                                                    delegate:nil
-                                          cancelButtonTitle:@"OK"
+                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                           otherButtonTitles:nil];
     [alert show];
 }

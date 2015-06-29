@@ -2330,20 +2330,20 @@
 -(void)showNoProcessAlert
 {
     //alert
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Web Service Call"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
                                                     message:@"No valid SFM process to execute Custom WS"
                                                    delegate:nil
-                                          cancelButtonTitle:@"OK"
+                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                           otherButtonTitles:nil];
     [alert show];
 }
 
 -(void)showDataSyncAlert
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Web Service Call"
-                                                    message:@"Sync is going on. Please Try after sync complete"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
+                                                    message:@"Sync is going on. Please Try after sync completion"
                                                    delegate:nil
-                                          cancelButtonTitle:@"OK"
+                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                           otherButtonTitles:nil];
     [alert show];
 }

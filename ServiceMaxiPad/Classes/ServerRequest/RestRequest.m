@@ -820,7 +820,13 @@
             kRestUrlString=kRestUrlForWebservice;
             CustomActionWebserviceModel *customActionWebserviceLayer = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
             if (customActionWebserviceLayer) {
-                stringToAppend = [NSString stringWithFormat:@"%@/%@",customActionWebserviceLayer.className,customActionWebserviceLayer.methodName];
+                
+                /* Adding class-name and method-name in web service URL, Before adding into URL checking for method name */
+                if ((![customActionWebserviceLayer.methodName isEqualToString:@""])) {
+                    stringToAppend = [NSString stringWithFormat:@"%@/%@",customActionWebserviceLayer.className,customActionWebserviceLayer.methodName];
+                }else{
+                    stringToAppend = [NSString stringWithFormat:@"%@",customActionWebserviceLayer.className];
+                }
             }
         }
         break;
