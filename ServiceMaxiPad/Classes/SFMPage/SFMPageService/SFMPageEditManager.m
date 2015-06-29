@@ -2571,7 +2571,8 @@
                     SFMDetailLayout *detailLayout = [pageLayoutArray lastObject];
                     NSString *processComponentId = detailLayout.processComponentId;
                     NSArray *detailRecords = [detailRecordsDict objectForKey:processComponentId];
-                    NSArray *responseLines = [detailsDict objectForKey:detailId];
+                    NSDictionary *responseDetail = [detailsDict objectForKey:detailId];
+                    NSArray *responseLines = [responseDetail objectForKey:@"lines"];
                     
                     for (int i = 0; i < [responseLines count]; i++) {
                         NSDictionary *lineRecord = [responseLines objectAtIndex:i];

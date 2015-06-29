@@ -150,7 +150,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-   // [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view];
+   // [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onLoad"];
 }
 
 //- (void)viewDidAppear:(BOOL)animated
