@@ -32,6 +32,7 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
         customActionWebserviceModel.className = self.wizardCompModel.className;
         customActionWebserviceModel.methodName = self.wizardCompModel.methodName;
         customActionWebserviceModel.sfmPage = self.sfmPage;
+        customActionWebserviceModel.processId = self.wizardCompModel.processId;
         [[CacheManager sharedInstance] pushToCache:customActionWebserviceModel byKey:kCustomWebServiceAction];
     }
     return self;

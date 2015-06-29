@@ -10,5 +10,5 @@
 #import "Utility.h"
 
 @interface CustomActionWebServiceLayer : BaseServiceLayer
-@property (nonatomic,copy)NSArray *paramList;
+
 @end

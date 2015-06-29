@@ -12,5 +12,6 @@
 @interface CustomActionWebserviceModel : NSObject
 @property(nonatomic, copy) NSString *className;
 @property(nonatomic, copy) NSString *methodName;
-@property(nonatomic,strong) SFMPage *sfmPage;
+@property(nonatomic, strong) SFMPage *sfmPage;
+@property(nonatomic, strong) NSString *processId;
 @end

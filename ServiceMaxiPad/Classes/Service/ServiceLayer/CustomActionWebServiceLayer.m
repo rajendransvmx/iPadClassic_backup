@@ -20,7 +20,6 @@
 #import "StringUtil.h"
 
 @implementation CustomActionWebServiceLayer
-@synthesize paramList;
 
 - (instancetype) initWithCategoryType:(CategoryType)categoryType
                           requestType:(RequestType)requestType {
@@ -53,15 +52,15 @@
 {
     RequestParamModel *reqParModel = [[RequestParamModel alloc]init];
     NSMutableArray *requestArray =[[NSMutableArray alloc] init];
-    
-    /* Getting parameter value and Adding*/
-    
+
     if (self.categoryType == CategoryTypeCustomWebServiceCall) {
         /* taking value from pageLayout */
         NSDictionary *objectInfo=[self ObjectValue];
         if (objectInfo) {
             [requestArray addObject:objectInfo];
         }
+        
+        /* Taking chaeld value and adding into Request Body */
         NSDictionary *chieldLineInfo=[self objectChildLine];
         if (chieldLineInfo) {
             [requestArray addObject:chieldLineInfo];
@@ -205,26 +204,18 @@
 -(NSDictionary *)parameterValue
 {
     CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
-    NSMutableArray *paramArray = [[NSMutableArray alloc] initWithCapacity:0];
-    NSArray *parameterList = [self getParams:customActionWebserviceModel];
+    NSArray *parameterList = [self addParameters:customActionWebserviceModel];
     
     /* In before and after web-service call, we don't have parameter list. So in that case parameter body should not be there */
     if (parameterList && [parameterList count]>0) {
-        for(CustomActionURLModel *customModel in parameterList)
-        {
-            [paramArray addObject:[self getParameterNode:customModel]];
-        }
-        NSDictionary *dictinory = [self getSVMXMap:@"" date:@"" value:@"" key:KSVMXRequestParameters values:[[NSArray alloc] init] valueMap:paramArray];
+        NSDictionary *dictinory = [self getSVMXMap:@"" date:@"" value:@"" key:KSVMXRequestParameters values:[[NSArray alloc] init] valueMap:parameterList];
+        return [self getNode:dictinory];
+    }else{
+        /* No parameter info find for that */
+        NSDictionary *dictinory = [self getSVMXMap:@"" date:@"" value:@"" key:KSVMXRequestParameters values:[[NSArray alloc] init] valueMap:[[NSArray alloc] init]];
         return [self getNode:dictinory];
     }
     return nil;
-}
-
--(NSArray *)getParams:(CustomActionWebserviceModel *)customActionWebserviceModel
-{
-    NSDictionary *workOrderSummaryDict= customActionWebserviceModel.sfmPage.headerRecord;
-    [self addParameters:workOrderSummaryDict];
-    return paramList;
 }
 
 -(NSDictionary *)getParameterNode:(CustomActionURLModel *)customModel
@@ -238,32 +229,41 @@
     return [self getNode:dictinory];
 }
 
--(NSDictionary *)getNode:(NSDictionary *)dict
+/* taking column name and making key value pair for URL */
+-(NSArray *)addParameters:(CustomActionWebserviceModel *)customActionWebserviceModel//(NSDictionary *)dictinory wizardComponentProcessId:(NSString *)processId
 {
-    //TODO: Niraj conform dict Now dummy method returning same dict
-    //NSDictionary *wrapper = [NSDictionary dictionaryWithObjectsAndKeys:dict,kSVMXRequestMap,nil];
-    return dict;
+    NSDictionary *dictinory= customActionWebserviceModel.sfmPage.headerRecord;
+    NSMutableArray *paramArray = [[NSMutableArray alloc] initWithCapacity:0];
+    if (customActionWebserviceModel.processId && ![customActionWebserviceModel.processId isEqualToString:@""]) {
+        NSArray *paramList = [self fetchParamsForWizardComponent:customActionWebserviceModel.processId];
+        for(CustomActionURLModel *customModel in paramList)
+        {
+            //Making parameter from model with respect type
+            if ([customModel.ParameterType isEqualToString:KFieldName])
+            {
+                SFMRecordFieldData *recordFieldData = [dictinory objectForKey:customModel.ParameterValue];
+                if (recordFieldData)
+                {
+                    customModel.ParameterValue = recordFieldData.internalValue;
+                }
+                else
+                {
+                    customModel.ParameterValue = @"";
+                }
+            }
+            [paramArray addObject:[self getParameterNode:customModel]];
+        }
+        return paramArray;
+    }else{
+        return nil;
+    }
 }
 
-/* taking column name and making key value pair for URL */
--(void)addParameters:(NSDictionary *)dictinory
+-(NSArray *)fetchParamsForWizardComponent:(NSString *)wizardComponentProcessId
 {
-    for(CustomActionURLModel *customModel in paramList)
-    {
-        //Making parameter from model with respect type
-        if ([customModel.ParameterType isEqualToString:KFieldName])
-        {
-            SFMRecordFieldData *recordFieldData = [dictinory objectForKey:customModel.ParameterValue];
-            if (recordFieldData)
-            {
-                customModel.ParameterValue = recordFieldData.internalValue;
-            }
-            else
-            {
-                customModel.ParameterValue = @"";
-            }
-        }
-    }
+    SFCustomActionURLService *wizardComponentparamService = [[SFCustomActionURLService alloc]init];
+    NSArray *paramListValue= [wizardComponentparamService getCustomActionParams:wizardComponentProcessId];
+    return paramListValue;
 }
 
 -(NSDictionary *)getSVMXMap:(NSString *)sVMXMap date:(NSString *)data value:(NSString *)value key:(NSString *)key values:(NSArray *)values valueMap:(NSArray *)valueMapArray
@@ -311,11 +311,11 @@
     return SVMXMap;
 }
 
--(NSArray *)fetchParamsForWizardComponent:(NSString *)wizardComponentProcessId
+-(NSDictionary *)getNode:(NSDictionary *)dict
 {
-    SFCustomActionURLService *wizardComponentparamService = [[SFCustomActionURLService alloc]init];
-    NSArray *paramListValue= [wizardComponentparamService getCustomActionParams:wizardComponentProcessId];
-    return paramListValue;
+    //TODO: Niraj conform dict Now dummy method returning same dict
+    //NSDictionary *wrapper = [NSDictionary dictionaryWithObjectsAndKeys:dict,kSVMXRequestMap,nil];
+    return dict;
 }
 
 @end
