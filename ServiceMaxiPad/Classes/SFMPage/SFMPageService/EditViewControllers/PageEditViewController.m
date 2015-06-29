@@ -950,16 +950,19 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 - (void) executeBusinessRules
 {
-    if (nil == self.ruleManager) {
-        PageEditMasterViewController *detailViewController = [self.childViewControllers objectAtIndex:0];
+    if (![self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onSave"]) {
         
-        self.ruleManager = [[BusinessRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
-        self.ruleManager.parentView = detailViewController.view;
-        self.ruleManager.delegate = self;
-    }
-    BOOL shouldExecuteBizRule = [self.ruleManager executeBusinessRules];
-    if (!shouldExecuteBizRule) {
-        [self saveRecordData];
+        if (nil == self.ruleManager) {
+            PageEditMasterViewController *detailViewController = [self.childViewControllers objectAtIndex:0];
+            
+            self.ruleManager = [[BusinessRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
+            self.ruleManager.parentView = detailViewController.view;
+            self.ruleManager.delegate = self;
+        }
+        BOOL shouldExecuteBizRule = [self.ruleManager executeBusinessRules];
+        if (!shouldExecuteBizRule) {
+            [self saveRecordData];
+        }
     }
 }
 
@@ -1322,6 +1325,26 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     [self invalidateLinkedSfm];
     
 
+}
+
+-(void)refreshSFMPageWithFieldUpdateRuleResults:(NSString *)responseString forEvent:(NSString *)event {
+    [self.sfmEditPageManager updateSFMPageWithFieldUpdateResponse:responseString andSFMPage:self.sfmPage];
+    [self performSelectorOnMainThread:@selector(reloadDataToFirstSection) withObject:nil waitUntilDone:NO];
+
+    if ([event isEqualToString:@"onSave"]) {
+        
+        if (nil == self.ruleManager) {
+            PageEditMasterViewController *detailViewController = [self.childViewControllers objectAtIndex:0];
+            
+            self.ruleManager = [[BusinessRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
+            self.ruleManager.parentView = detailViewController.view;
+            self.ruleManager.delegate = self;
+        }
+        BOOL shouldExecuteBizRule = [self.ruleManager executeBusinessRules];
+        if (!shouldExecuteBizRule) {
+            [self saveRecordData];
+        }
+    }
 }
 
 

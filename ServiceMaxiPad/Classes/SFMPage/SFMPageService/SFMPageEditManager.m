@@ -50,6 +50,7 @@
 
 #import "SyncErrorConflictService.h"
 #import "FieldUpdateRuleManager.h"
+#import "Utility.h"
 
 @interface SFMPageEditManager ()<BusinessRuleManagerDelegate>
 
@@ -2542,11 +2543,56 @@
 
 #pragma mark - Field update rules
 
--(void)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView {
+-(BOOL)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView andDelegate:(id)aDelegate forEvent:(NSString *)event {
+    BOOL fieldUpdateRuleExists = NO;
+    return fieldUpdateRuleExists;
     self.ruleManager = [[FieldUpdateRuleManager alloc] initWithProcessId:self.processId sfmPage:sfmPage];
+    self.ruleManager.eventType = event;
     self.ruleManager.parentView = aView;
-    self.ruleManager.delegate = self;
-    [self.ruleManager executeFieldUpdateRules];
+    self.ruleManager.delegate = aDelegate;
+    fieldUpdateRuleExists = [self.ruleManager executeFieldUpdateRules];
+    return fieldUpdateRuleExists;
+}
+
+-(void)updateSFMPageWithFieldUpdateResponse:(NSString *)response andSFMPage:(SFMPage *)sfmPage {
+    NSDictionary *tempDict = (NSDictionary *)[Utility objectFromJsonString:response];
+    NSDictionary *responseDict = [tempDict objectForKey:@"response"];
+    NSArray *allKeys = [responseDict allKeys];
+    NSDictionary *headerRecord = sfmPage.headerRecord;
+    NSArray *detailLayouts = sfmPage.process.pageLayout.detailLayouts;
+    NSDictionary *detailRecordsDict = sfmPage.detailsRecord;
+    for (NSString *key in allKeys) {
+        if ([key isEqualToString:@"details"]) {
+            NSDictionary *detailsDict = [responseDict objectForKey:@"details"];
+            NSArray *detailIds = [detailsDict allKeys];
+            for (NSString *detailId in detailIds) {
+                NSArray *pageLayoutArray = [detailLayouts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"pageLayoutId = [c] %@", detailId]];
+                if ([pageLayoutArray count] == 1) {
+                    SFMDetailLayout *detailLayout = [pageLayoutArray lastObject];
+                    NSString *processComponentId = detailLayout.processComponentId;
+                    NSArray *detailRecords = [detailRecordsDict objectForKey:processComponentId];
+                    NSArray *responseLines = [detailsDict objectForKey:detailId];
+                    
+                    for (int i = 0; i < [responseLines count]; i++) {
+                        NSDictionary *lineRecord = [responseLines objectAtIndex:i];
+                        NSDictionary *sfmRecord = [detailRecords objectAtIndex:i];
+                        for (NSString *key in lineRecord) {
+                            SFMRecordFieldData *recordField = [sfmRecord objectForKey:key];
+                            recordField.internalValue = [lineRecord objectForKey:key];
+                            recordField.displayValue = [lineRecord objectForKey:key];
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            if (!([key isEqualToString:@"Id"] || [key isEqualToString:@"localId"])) {
+                SFMRecordFieldData *recordField = [headerRecord objectForKey:key];
+                recordField.internalValue = [responseDict objectForKey:key];
+                recordField.displayValue = [responseDict objectForKey:key];
+            }
+        }
+    }
 }
 
 

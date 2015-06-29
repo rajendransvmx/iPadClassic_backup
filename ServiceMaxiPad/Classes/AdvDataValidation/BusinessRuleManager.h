@@ -24,6 +24,8 @@
  */
 - (void)handleSaveOnWarningStatus:(BOOL)isConfirmed;
 
+-(void)refreshSFMPageWithFieldUpdateRuleResults:(NSString *)responseString forEvent:(NSString *)event;
+
 @end
 
 /**

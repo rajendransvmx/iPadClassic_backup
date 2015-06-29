@@ -13,6 +13,8 @@
     
 }
 
--(void)executeFieldUpdateRules;
+@property (nonatomic, strong) NSString *eventType;
+
+-(BOOL)executeFieldUpdateRules;
 
 @end

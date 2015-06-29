@@ -62,6 +62,7 @@
                     andObjectName:(NSString *)objectName
               andHeaderObjectName:(NSString *)headerObjectName;
 
--(void)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView;
+-(BOOL)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView andDelegate:(id)aDelegate forEvent:(NSString *)event;
+-(void)updateSFMPageWithFieldUpdateResponse:(NSString *)response andSFMPage:(SFMPage *)sfmPage;
 
 @end

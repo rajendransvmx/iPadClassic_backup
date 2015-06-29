@@ -26,7 +26,8 @@
     return self;
 }
 
--(void)executeFieldUpdateRules {
+-(BOOL)executeFieldUpdateRules {
+    BOOL fieldUpdateRuleExists = NO;
     if ([self isBizRuleInfoAvailable]) {
         
         BusinessRuleDatabaseService *dbService = [[BusinessRuleDatabaseService alloc] init];
@@ -35,6 +36,8 @@
         NSArray *fieldUpdateRules = [dbService fieldUpdateRulesForBizRuleProcesses:bizRuleProcessArray];
         
         if ([fieldUpdateRules count] > 0) {
+            
+            fieldUpdateRuleExists = YES;
             
             NSArray *expComponensArray = [dbService expressionComponentsForBizRules:fieldUpdateRules];
             
@@ -46,14 +49,16 @@
             self.jsExecuter = [[JSExecuter alloc] initWithParentView:self.parentView andCodeSnippet:htmlStr andDelegate:self andFrame:CGRectZero];
         }
     }
+    return fieldUpdateRuleExists;
 }
 
 - (void)eventOccured:(NSString *)eventName andParameter:(NSString *)jsonParameterString {
-    
-    NSLog(@"%@:%@", eventName, jsonParameterString);
+    NSLog(@"fieldupdateruleresult = %@:%@", eventName, jsonParameterString);
     
     if ([eventName isEqualToString:kfieldUpdateRuleResult]) {
-
+        if ([self.delegate respondsToSelector:@selector(refreshSFMPageWithFieldUpdateRuleResults:forEvent:)]) {
+            [self.delegate refreshSFMPageWithFieldUpdateRuleResults:jsonParameterString forEvent:self.eventType];
+        }
     }
 }
 
