@@ -315,7 +315,7 @@
         pageLayoutIds1 = [service fetchPageLayoutIds];
     }
     
-   NSMutableArray *pageLayoutIds = [NSMutableArray arrayWithArray:pageLayoutIds1];
+    NSMutableArray *pageLayoutIds = [NSMutableArray arrayWithArray:pageLayoutIds1];
     
     NSMutableArray *requestParamArray = [[NSMutableArray alloc]init];
     NSMutableArray *pageLayoutLimitArray = nil;
@@ -328,7 +328,7 @@
     }
     else
     {
-
+        
         pageLayoutLimitArray = [[NSMutableArray alloc] initWithArray:pageLayoutIds];
     }
     
@@ -336,7 +336,7 @@
     
     for (NSUInteger i = 0; i < kMaximumNoOfParallelPageLayoutCalls; i++)
     {
-         NSRange range;
+        NSRange range;
         RequestParamModel *requestParamModel = [[RequestParamModel alloc]init];
         NSArray *tempArray = nil;
         
@@ -360,7 +360,7 @@
         {
             NSString *contextValue =  [[ServerRequestManager sharedInstance]
                                        getTheContextvalueForCategoryType:self.categoryType];
-
+            
             finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
         }
         
