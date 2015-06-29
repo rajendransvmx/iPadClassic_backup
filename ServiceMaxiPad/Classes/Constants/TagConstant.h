@@ -442,9 +442,6 @@ extern NSString *const kTagMonthTwelveLabel;
 
 
 
-
-
-
 extern NSString *const kTagJanuary;
 extern NSString *const kTagFebruary;
 extern NSString *const kTagMarch;
@@ -849,5 +846,15 @@ extern NSString *const kTagFourteenDaysEventError;
 extern NSString *const kTagEventTimeError;
 extern NSString *const kTagNoTechnicianAssociatedError;
 extern NSString *const kTagDragAndDropNotAllowedMessage;
+
+//service report sync status
+extern NSString *const KTagReportSyncStatusTitle;
+extern NSString *const KTagReportViewButtonTitle;
+extern NSString *const KTagReportSyncFailed;
+extern NSString *const KTagOpDocReportTitle;
+extern NSString *const KTagInProgess;
+extern NSString *const KTagSuccess;
+extern NSString *const KTagFailed;
+extern NSString *const KTagConflicts;
 
 //@end

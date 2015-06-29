@@ -48,12 +48,20 @@
     __weak IBOutlet UILabel *configSyncTitleLabel;
     __weak IBOutlet UILabel *dataSyncTitleLabel;
     
+    //Below variables are required for work order service report sync status.
+    __weak IBOutlet UIButton *reportsButton;
+    __weak IBOutlet UILabel *reportSyncTitleLabel;
+    __weak IBOutlet UILabel *lastSyncReportTitle;
+    __weak IBOutlet UILabel *reportSyncLastSyncLabel;
+    __weak IBOutlet UILabel *reportSyncStatusTitleLabel;
+    __weak IBOutlet UILabel *reportSyncStatusLabel;
     
     
 }
 
 - (IBAction)syncConfigClicked:(id)sender;
 - (IBAction)syncDataClicked:(id)sender;
+- (IBAction)viewFilesButtonTapped:(id)sender;
 
 - (void)startScheduledConfigSync;
 

@@ -413,5 +413,15 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
     return rootPath;
 }
 
++ (BOOL)fileExitsAtPath:(NSString*)filePath {
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL isFileExits = NO;
+    if ([fileManager fileExistsAtPath:filePath])
+    {
+        isFileExits = YES;
+    }
+    return isFileExits;
+}
 
 @end

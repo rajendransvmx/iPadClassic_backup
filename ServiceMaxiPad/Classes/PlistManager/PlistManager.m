@@ -83,6 +83,8 @@ static NSString *const kLastConfigSyncGMTTime           = @"LastConfigSyncGMTTim
 static NSString *const kLastConfigSyncStatus            = @"LastConfigSyncStatus";
 static NSString *const kLastDataSyncGMTTime             = @"LastDataSyncGMTTime";
 static NSString *const kLastDataSyncStatus              = @"LastDataSyncStatus";
+static NSString *const KLastReportSyncGMTTime           = @"LastReportSyncGMTTime";
+static NSString *const KLastReportSyncStatus            = @"LastReportSyncStatus";
 
 static NSString *const kLastDataSyncStartTime           = @"LastDataSyncStartGMTTime";
 
@@ -1140,6 +1142,20 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
     }
 }
 
++ (NSString*)getLastReportSyncGMTTime {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:KLastReportSyncGMTTime];
+}
++ (void)storeLastReportSyncGMTTime:(NSString*)lastReportSyncTime {
+    [[NSUserDefaults standardUserDefaults] setObject:lastReportSyncTime forKey:KLastReportSyncGMTTime];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
++ (NSString*)getLastReportSyncStatus {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:KLastReportSyncStatus];
+}
++ (void)storeLastReportSyncStatus:(NSString*)lastReportSyncStatus {
+    [[NSUserDefaults standardUserDefaults] setObject:lastReportSyncStatus forKey:KLastReportSyncStatus];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 #pragma mark -End
 

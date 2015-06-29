@@ -27,5 +27,6 @@
 -(void)initiateGeneratePDFProcess;
 -(NSString *)getQueryForCheckingOPDOCFileUploadStatus;
 -(void)clearOpDocHTMLAndSignatureFilesOnReset;
+-(NSMutableArray*)getLocalOpDocHtmlFilesAndSignatureFiles;
 
 @end

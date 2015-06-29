@@ -726,6 +726,7 @@ static SyncManager *_instance;
     [[NSNotificationCenter defaultCenter] postNotificationName:kSyncTimeUpdateNotification object:nil];
 }
 
+
 #pragma mark - Data Sync Functions
 - (BOOL)initiateDataSync {
     
@@ -808,14 +809,19 @@ static SyncManager *_instance;
 - (void)OpdocStatus:(BOOL)status forCategory:(CategoryType)category {
     
     [self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
-    [self postSyncTimeUpdateNotificationAfterSyncCompletion];
     if (!status)
     {
+        NSString *status = [[TagManager sharedInstance] tagByName:KTagFailed];
+        [self updatePlistWithLastReportsSyncTimeAndStatus:status];
         SXLogDebug(@"OutPutDocument failed : %lu",(long)category );
     }
     else {
+        NSString *status = [[TagManager sharedInstance] tagByName:KTagSuccess];
+        [self updatePlistWithLastReportsSyncTimeAndStatus:status];
         SXLogDebug(@"OPDoc Success for category %lu",(long)category);
     }
+    [self postSyncTimeUpdateNotificationAfterSyncCompletion];
+
 }
 
 - (void)currentDataSyncFailedWithError:(NSError *)error {
@@ -906,6 +912,15 @@ static SyncManager *_instance;
         [PlistManager storeLastDataSyncGMTTime:someString];
         [PlistManager storeLastDataSyncStatus:status];
         
+    }
+}
+
+- (void)updatePlistWithLastReportsSyncTimeAndStatus:(NSString*)status {
+    
+    if (status) {
+        NSString *dateString = [DateUtil getDatabaseStringForDate:[NSDate date]];
+        [PlistManager storeLastReportSyncGMTTime:dateString];
+        [PlistManager storeLastReportSyncStatus:status];
     }
 }
 
@@ -1133,6 +1148,8 @@ static SyncManager *_instance;
     else
     {
         [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
+        NSString *status = [[TagManager sharedInstance] tagByName:KTagFailed];
+        [self updatePlistWithLastReportsSyncTimeAndStatus:status];
         [self postSyncTimeUpdateNotificationAfterSyncCompletion];
     }
 }

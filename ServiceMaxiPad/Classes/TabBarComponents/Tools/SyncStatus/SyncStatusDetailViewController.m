@@ -25,6 +25,8 @@
 #import "PlistManager.h"
 #import "AutoLockManager.h"
 #import "LocationPingManager.h"
+#import "OpDocHelper.h"
+#import "OpDocFilesTableViewController.h"
 
 #define kConfigSyncAlertTag     10
 const NSInteger alertViewTagForConfigSync   = 888889;
@@ -37,10 +39,15 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 @property(nonatomic, strong) SMCheckBoxBindedAlertView *alertViewWithCheckBox;
 @property(nonatomic, strong) SMRegularAlertView *regularAlertView;
 @property(nonatomic, strong) SMProgressAlertView *configSyncProgressAlertView;
+@property(nonatomic, strong) NSMutableArray *localOpDocFiles;
+@property(nonatomic, strong) UIPopoverController *popOver;
 
 @end
 
 @implementation SyncStatusDetailViewController
+
+@synthesize localOpDocFiles;
+@synthesize popOver;
 
 #pragma mark - ViewController Life cycle methods
 
@@ -82,8 +89,19 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     syncConfigBtn.layer.borderColor = [UIColor orangeColor].CGColor;
     syncConfigBtn.layer.borderWidth = 0.8;
     
+    //Service Report labels and button.
+    reportSyncStatusTitleLabel.text = [[TagManager sharedInstance] tagByName:KTagReportSyncStatusTitle];
+    lastSyncReportTitle.text = [[TagManager sharedInstance]tagByName:kTag_lastsync];
+    reportSyncStatusTitleLabel.text = [[TagManager sharedInstance] tagByName:kTag_status];
+    [reportsButton setTitle:[[TagManager sharedInstance]tagByName:KTagReportViewButtonTitle] forState:UIControlStateNormal];
+    reportsButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    reportsButton.layer.borderColor = [UIColor orangeColor].CGColor;
+    reportsButton.layer.borderWidth = 0.8;
+    
+    
     [self updateDataSyncRelatedUI];
     [self updateConfigSyncRelatedUI];
+    [self updateReportSyncRelatedUI];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAppEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
 
@@ -121,6 +139,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
                                                    selector:@selector(startScheduledConfigSync)
                                                        name:kScheduledConfigSyncNotification
                                                      object:[SyncManager sharedInstance]];
+    
 }
 #pragma mark - Button Actions
 
@@ -191,13 +210,25 @@ const NSInteger alertViewTagForConfigSync   = 888889;
         }
     }
 }
+- (IBAction)viewFilesButtonTapped:(id)sender {
+    
+    if (self.localOpDocFiles.count >0) {
+        
+        OpDocFilesTableViewController *filesViewController = [[OpDocFilesTableViewController alloc] initWithNibName:@"OpDocFilesTableViewController" bundle:nil];
+        filesViewController.opDocFiles = self.localOpDocFiles;
+        UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:filesViewController];
+        self.popOver = [[UIPopoverController alloc] initWithContentViewController:navigationController];
+        [self.popOver presentPopoverFromRect:reportsButton.frame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
+}
 
 #pragma mark - Data Sync Status/Last Sync Time Update
 - (void)receivedDataSyncStatusNotification:(NSNotification *)notification
 {
     [self updateDataSyncRelatedUI];
+    [self updateReportSyncRelatedUI];
+    
 }
-
 
 #pragma mark - Config Sync Status/Last Sync Time Update
 - (void)receivedConfigSyncStatusNotification:(NSNotification *)notification
@@ -505,16 +536,24 @@ const NSInteger alertViewTagForConfigSync   = 888889;
         if([status isEqualToString:kConflict])
         {
             [[AutoLockManager sharedManager] enableAutoLockSettingFor:manualDataSyncAL];
+            dataSyncLastSyncLabel.text = [[TagManager sharedInstance] tagByName:KTagConflicts];
+        } else {
+            dataSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagInProgess];
+
         }
         
-        dataSyncStatusLabel.text = status;
         [dataSyncStatusLabel setTextColor:[UIColor colorWithHexString:@"#FF6633"]];
     }
     else
     {
         [[AutoLockManager sharedManager] enableAutoLockSettingFor:manualDataSyncAL];
 
-        dataSyncStatusLabel.text = status;
+        if ([status isEqualToString:kSuccess]) {
+            dataSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagSuccess];
+        } else {
+            dataSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagFailed];
+        }
+        
         [dataSyncStatusLabel setTextColor:[UIColor colorWithRed:67.0f/255
                                                           green:67.0f/255
                                                            blue:67.0f/255
@@ -531,6 +570,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     {
         dataSyncLastSyncLabel.text = [DateUtil getUserReadableDateForSyncStatus:[DateUtil getDateFromDatabaseString:dateString]]; //[DateUtil getLiteralSupportedDateStringForDate:[DateUtil getDateFromDatabaseString:dateString]];
     }
+    
 }
 
 - (void)updateConfigSyncRelatedUI
@@ -544,7 +584,12 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     
     if (![StringUtil isStringEmpty:status])
     {
-        configSyncStatusLabel.text = status;
+     
+        if ([status isEqualToString:kSuccess]) {
+            configSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagSuccess];
+        } else {
+            configSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagSuccess];
+        }
     }
     
     /*
@@ -558,6 +603,48 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     
     configSyncNextSyncLabel.text = [[SyncManager sharedInstance] nextScheduledConfigSyncTime];
     
+}
+
+- (void)updateReportSyncRelatedUI {
+    
+    self.localOpDocFiles = [[OpDocHelper sharedManager] getLocalOpDocHtmlFilesAndSignatureFiles];
+    NSString *status = [PlistManager getLastReportSyncStatus];
+    NSString *lastSyncDate = [PlistManager getLastReportSyncGMTTime];
+    
+    AppManager *appManager = [AppManager sharedInstance];
+    
+    BOOL enabledReportsButton = NO;
+    
+    [reportSyncStatusLabel setTextColor:[UIColor blackColor]];
+    if (appManager.applicationStatus == ApplicationStatusInitialSyncCompleted && self.localOpDocFiles.count == 0 && status == nil) {
+        reportSyncStatusLabel.text = @"--";
+    } else if (self.localOpDocFiles.count > 0 || [status isEqualToString:kFailed]) {
+        NSString *statusString = [NSString stringWithFormat:@"%lu %@",(unsigned long)self.localOpDocFiles.count,[[TagManager sharedInstance] tagByName:KTagReportSyncFailed]];
+        reportSyncStatusLabel.text = statusString;
+        [reportSyncStatusLabel setTextColor:[UIColor colorWithHexString:@"#FF6633"]];
+        enabledReportsButton = YES;
+    } else {
+        reportSyncStatusLabel.text = status;
+    }
+    
+    if (enabledReportsButton) {
+        reportsButton.layer.borderColor = [UIColor orangeColor].CGColor;
+        reportsButton.layer.borderWidth = 0.8;
+        [reportsButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+        reportsButton.enabled = YES;
+    } else {
+        reportsButton.layer.borderColor = [UIColor grayColor].CGColor;
+        reportsButton.layer.borderWidth = 0.8;
+        [reportsButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        reportsButton.enabled = NO;
+    }
+    
+    if (![StringUtil isStringEmpty:lastSyncDate])
+    {
+        reportSyncLastSyncLabel.text = [DateUtil getUserReadableDateForSyncStatus:[DateUtil getDateFromDatabaseString:lastSyncDate]];
+    } else {
+        reportSyncLastSyncLabel.text = @"--";
+    }
 }
 #pragma mark - End
 
@@ -616,6 +703,8 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 {
     [self updateConfigSyncRelatedUI];
     [self updateDataSyncRelatedUI];
+    [self updateReportSyncRelatedUI];
+    
 }
 
 -(void)updatedOnConfigSyncFinished {
@@ -643,5 +732,13 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     }
 }
 
+
+#pragma mark - Rotation method
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    if ([self.popOver isPopoverVisible] && self.popOver != nil) {
+        [self.popOver dismissPopoverAnimated:YES];
+    }
+}
 
 @end

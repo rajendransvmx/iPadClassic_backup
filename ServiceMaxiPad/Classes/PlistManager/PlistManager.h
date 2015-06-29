@@ -136,6 +136,11 @@ extern  NSString *const kPreferenceOrganizationCustom;
 + (NSString *)getLastScheduledDataSyncGMTTime;
 + (void)storeLastScheduledDataSyncGMTTime:(NSString *)lastConfigSyncTime;
 
++ (NSString*)getLastReportSyncGMTTime;
++ (void)storeLastReportSyncGMTTime:(NSString*)lastReportSyncTime;
++ (NSString*)getLastReportSyncStatus;
++ (void)storeLastReportSyncStatus:(NSString*)lastReportSyncStatus;
+
 
 //Push Log related.
 + (NSString *)getLastPushLogGMTTime;

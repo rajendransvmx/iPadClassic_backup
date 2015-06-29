@@ -28,6 +28,7 @@
 + (BOOL)copyFileFromPath:(NSString *)sourcePath toPath:(NSString *)targetPath;
 + (BOOL)moveFileAtPath:(NSString *)sourcePath toPath:(NSString *)targetPath;
 + (BOOL)excludeItemForBackupAtURL:(NSURL *)urlToExcludeForBackup;
++ (BOOL)fileExitsAtPath:(NSString*)filePath;
 
 + (NSString *)getChatterRelatedFilePath:(NSString *)name;
 

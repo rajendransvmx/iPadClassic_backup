@@ -584,6 +584,16 @@ NSString *const kTagFourteenDaysEventError = @"IPAD006_TAG128";
 NSString *const kTagEventTimeError         =  @"IPAD006_TAG129";
 NSString *const kTagNoTechnicianAssociatedError = @"IPAD006_TAG130";
 
+//Service report sync status
+NSString *const KTagReportSyncStatusTitle = @"IPAD018-TAG206";
+NSString *const KTagReportViewButtonTitle = @"IPAD018-TAG207";
+NSString *const KTagReportSyncFailed = @"IPAD018-TAG208";
+NSString *const KTagOpDocReportTitle = @"IPAD018-TAG209";
+NSString *const KTagInProgess = @"IPAD018_TAG059";
+NSString *const KTagSuccess = @"IPAD018_TAG060";
+NSString *const KTagFailed = @"IPAD018_TAG061";
+NSString *const KTagConflicts = @"IPAD018_TAG171";
+
 #define SERVICE_REPORT_EXPENSE_SECTION_TITLE    SUMMARY_REPORT_EXPENSES_TITLE //@"IPAD004_TAG009"
 
 #define SERVICE_REPORT_EXPENSES_LINE_PRICE  SUMMARY_REPORT_LINE_PRICE //@"IPAD004_TAG014"

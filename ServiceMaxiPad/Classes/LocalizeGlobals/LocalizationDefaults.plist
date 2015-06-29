@@ -1250,5 +1250,13 @@
 	<string>Please do not switch to another application or press the home button during this progress.</string>
 	<key>IPAD022_TAG004</key>
 	<string>Completed</string>
+	<key>IPAD018-TAG206</key>
+	<string>Service Report Sync Status</string>
+	<key>IPAD018-TAG207</key>
+	<string>View Files</string>
+	<key>IPAD018-TAG209</key>
+	<string>Smart Documents</string>
+	<key>IPAD018-TAG208</key>
+	<string>file(s) are waiting for upload</string>
 </dict>
 </plist>
