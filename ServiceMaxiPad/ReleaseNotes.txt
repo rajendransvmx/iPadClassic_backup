@@ -3,12 +3,12 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.026
+Version = 15.20.027
 ===========================================
 -------------
 Fixed Defects
 -------------
-018250 - Heap Error while Initial sync and Sync Configuration
+None
 
 -------------
 Known Issues
@@ -30,8 +30,11 @@ Additional Notes
 ---------------------
 Changes Made :
 
-1. Implemented batch request for SFM page layout and Object definition web service calls
-2. Object names sorted for requesting definition/description call
-3. In case of definition request fails, same request will resend with 30% original object names. 
+1. Fixed call back issue related to Get price request
+2. Removed field names from Datasync request calls
+3. Removed field empty (id)array for objects in TX_FETCH
+4. Fixed call back issue on SFM page layout request.
+ 
+
 
 
