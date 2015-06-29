@@ -173,15 +173,15 @@
             /*Fields are valuemaps. Create an array to hold this value*/
             NSMutableArray *fieldValueMapArray = [[NSMutableArray alloc] init];
             NSMutableDictionary *fieldDict = [[NSMutableDictionary alloc] init];
-            [fieldDict setObject:kFields forKey:kSVMXRequestKey];
+           // [fieldDict setObject:kFields forKey:kSVMXRequestKey];
             
             
             
-            NSArray *fieldsArray =  [self.incrSyncHelper getFieldsForObject:objectName];
-            NSString *fieldsStr = [SMXiPad_Utility getConcatenatedStringFromArray:fieldsArray withSingleQuotesAndBraces:NO];
+          //  NSArray *fieldsArray =  [self.incrSyncHelper getFieldsForObject:objectName];
+           // NSString *fieldsStr = [SMXiPad_Utility getConcatenatedStringFromArray:fieldsArray withSingleQuotesAndBraces:NO];
             //HS NSLog
             //NSLog(@"fields Request str is %@",fieldsStr);
-            [fieldDict setObject:fieldsStr forKey:kSVMXRequestValue];
+            //[fieldDict setObject:fieldsStr forKey:kSVMXRequestValue];
             NSMutableArray *recordValueMap = [[NSMutableArray alloc] init];
             NSArray *recordsArray = [mainDict objectForKey:objectName];
             
@@ -260,8 +260,8 @@
             /*Fields are valuemaps. Create an array to hold this value*/
             NSMutableArray *fieldValueMapArray = [[NSMutableArray alloc] init];
             NSMutableDictionary *fieldDict = [[NSMutableDictionary alloc] init];
-            [fieldDict setObject:kFields forKey:kSVMXRequestKey];
-            [fieldDict setObject:@"" forKey:kSVMXRequestValue];
+           // [fieldDict setObject:kFields forKey:kSVMXRequestKey];
+           //[fieldDict setObject:@"" forKey:kSVMXRequestValue];
             NSMutableArray *recordValueMap = [[NSMutableArray alloc] init];
             NSArray *recordsArray = [mainDict objectForKey:objectName];
             for (int index = 0; index<[recordsArray count]; index++) {
