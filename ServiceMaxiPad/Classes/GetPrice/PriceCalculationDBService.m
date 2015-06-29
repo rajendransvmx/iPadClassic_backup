@@ -596,7 +596,7 @@
 - (NSArray *)getProductRecords:(NSArray *)productIdentifiers {
    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:productIdentifiers];
     NSString *tableName = @"Product2";
-    NSArray *fields = [[NSArray alloc] initWithObjects:@"Id",[StringUtil appendOrgNameSpaceToString:@"__Product_Line__c"],@"Family",nil];
+    NSArray *fields = [[NSArray alloc] initWithObjects:@"Id", [StringUtil appendOrgNameSpaceToString:@"__Product_Line__c"], @"Family", [StringUtil appendOrgNameSpaceToString:@"__Product_Type__c"], nil];
    
     NSArray *transactionModels =  [self getObjectsObjectName:tableName withDBCriterias:@[criteria1] withExpression:nil andFields:fields];
     NSMutableArray *dataArray = [[NSMutableArray alloc] init];

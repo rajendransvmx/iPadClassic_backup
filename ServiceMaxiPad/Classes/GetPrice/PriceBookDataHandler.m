@@ -557,8 +557,8 @@
         finalDict = nil;
         
         [columnNames removeObjectForKey:@"Id"];
-        [columnNames setObject:idOfServiceOffering forKey:[NSString stringWithFormat:@"%@__Included_Service__c",orgNameSpace]];
-        dataArray =  [self.dbService getRecordWhereColumnNamesAndValues:columnNames andTableName:[NSString stringWithFormat:@"%@__Custom_Coverage__c",orgNameSpace]];
+        [columnNames setObject:idOfServiceOffering forKey:[StringUtil appendOrgNameSpaceToString:@"__Included_Service__c"]];
+        dataArray =  [self.dbService getRecordWhereColumnNamesAndValues:columnNames andTableName:[StringUtil appendOrgNameSpaceToString:@"__Custom_Coverage__c"]];
         finalDict = [[NSDictionary alloc] initWithObjectsAndKeys:idServiceCovered,@"value",@"CONTRACT_CUSTOMCOVERAGE",@"key",dataArray,@"data", nil];
         
         if ([dataArray count] > 0) {
