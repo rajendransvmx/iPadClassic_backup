@@ -208,12 +208,16 @@
     NSMutableArray *paramArray = [[NSMutableArray alloc] initWithCapacity:0];
     NSArray *parameterList = [self getParams:customActionWebserviceModel];
     
-    for(CustomActionURLModel *customModel in parameterList)
-    {
-        [paramArray addObject:[self getParameterNode:customModel]];
+    /* In before and after web-service call, we don't have parameter list. So in that case parameter body should not be there */
+    if (parameterList && [parameterList count]>0) {
+        for(CustomActionURLModel *customModel in parameterList)
+        {
+            [paramArray addObject:[self getParameterNode:customModel]];
+        }
+        NSDictionary *dictinory = [self getSVMXMap:@"" date:@"" value:@"" key:KSVMXRequestParameters values:[[NSArray alloc] init] valueMap:paramArray];
+        return [self getNode:dictinory];
     }
-    NSDictionary *dictinory = [self getSVMXMap:@"" date:@"" value:@"" key:KSVMXRequestParameters values:[[NSArray alloc] init] valueMap:paramArray];
-    return [self getNode:dictinory];
+    return nil;
 }
 
 -(NSArray *)getParams:(CustomActionWebserviceModel *)customActionWebserviceModel
