@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @protocol UniversalDAO <NSObject>
--(BOOL)createTable:(NSString *)createQuery;
+- (BOOL)createTable:(NSString *)createQuery;
 - (BOOL)alterTable:(NSString*)alterQuery;
+- (BOOL)isColumn:(NSString *)columnName existInTable:(NSString*)tableName;
+
 @end

@@ -37,5 +37,21 @@
     }
     return retValue;
 }
+- (BOOL)isColumn:(NSString *)columnName existInTable:(NSString*)tableName
+{
+    __block BOOL retValue = YES;
+    
+    NSString *query = [NSString stringWithFormat:@"SELECT %@ FROM %@", columnName, tableName];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            retValue = [db executeStatements:query];
+        }];
+    }
+    return retValue;
+}
+
 
 @end
