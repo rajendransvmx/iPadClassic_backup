@@ -9,6 +9,7 @@
 /* This class will hold request objects and acts as a asynchronous queue */
 
 #import <Foundation/Foundation.h>
+#import "SyncConstants.h"
 
 @interface SVMXOperationQueue : NSObject {
     
@@ -26,6 +27,6 @@
 
 - (void)addOperationToQue:(NSOperation *)operation;
 
-- (void)cancelAllOperations;
+- (void)cancelAllOperationsForCategoryType:(CategoryType)categoryType;
 
 @end

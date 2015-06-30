@@ -659,7 +659,7 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 
 -(void)cancelRequestsFromOperationQueue
 {
-    [[SVMXOperationQueue sharedSVMXOperationQueObject] cancelAllOperations];
+    [[SVMXOperationQueue sharedSVMXOperationQueObject] cancelAllOperationsForCategoryType:self.nodecategoryType];
 }
 
 #pragma mark - END

@@ -69,10 +69,26 @@ static SVMXOperationQueue *sharedInstanceSVMXOperationQue = nil;
 }
 
 
-- (void)cancelAllOperations {
-     @synchronized([self class]) {
-         [self.mainOpQueue cancelAllOperations];
-       
-     }
+- (void)cancelAllOperationsForCategoryType:(CategoryType)categoryType
+{
+     @synchronized([self class])
+    {
+        if (categoryType == CategoryTypeLocationPing)
+        {
+            [self.locationOpQueue cancelAllOperations];
+        }
+        else if (categoryType == CategoryTypeJobLog)
+        {
+            [self.logsOpQueue cancelAllOperations];
+        }
+        else if (categoryType == CategoryTypeGetPriceData)
+        {
+            [self.getPriceOpQueue cancelAllOperations];
+        }
+        else
+        {
+            [self.mainOpQueue cancelAllOperations];
+        }
+    }
 }
 @end
