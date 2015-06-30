@@ -1368,9 +1368,14 @@
 
 + (void)alterSVMXEventTable
 {
-    id<UniversalDAO> universalDao = [FactoryDAO serviceByServiceType:ServiceTypeUniversal];
-    NSString *schema =[NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN 'objectSfId' VARCHAR",kServicemaxEventObject];
-    [universalDao alterTable:schema];
+    id<UniversalDAO> universalDao =  [FactoryDAO serviceByServiceType:ServiceTypeUniversal];
+    BOOL columnExist = [universalDao isColumn:@"objectSfId" existInTable:kServicemaxEventObject];
+    
+    if(!columnExist)
+    {
+        NSString *schema =[NSString stringWithFormat:@"ALTER TABLE %@ ADD COLUMN 'objectSfId' VARCHAR",kServicemaxEventObject];
+        [universalDao alterTable:schema];
+    }
 }
 
 + (NSArray *)getAllWhatIdsFormSVMXEvent
