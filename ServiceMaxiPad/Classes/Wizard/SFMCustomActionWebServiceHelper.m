@@ -13,6 +13,8 @@
 #import "WebserviceResponseStatus.h"
 #import "CacheManager.h"
 #import "CacheConstants.h"
+#import "SFMPageEditManager.h"
+#import "StringUtil.h"
 
 @implementation SFMCustomActionWebServiceHelper
 
@@ -48,5 +50,76 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
     [[TaskManager sharedInstance] addTask:taskModel];
 }
 
+-(id)initWithSFMPageRequestData:(NSString *)requestData requestType:(int)requestType
+{
+    
+    // requestType: 1-After Insert, 2-Before Update, 3-After Update
+    SFMPage *lSFMPage =  [self getTheSFMPage:requestData];
+    NSString *theClassNameMethodName = nil;
+    if (lSFMPage) {
+        theClassNameMethodName = [self theURL:lSFMPage.process.pageLayout.headerLayout.pageLevelEvents andRequestType:requestType];
+
+    }
+    if (!theClassNameMethodName || !theClassNameMethodName.length ) {
+        return nil;
+    }
+    
+    self = [super init];
+    if (self)
+    {
+        self.sfmPage = lSFMPage;
+
+        CustomActionWebserviceModel *customActionWebserviceModel = [[CustomActionWebserviceModel alloc] init];
+        customActionWebserviceModel.className = theClassNameMethodName;
+        customActionWebserviceModel.methodName = @"";
+        customActionWebserviceModel.processId = nil;
+        customActionWebserviceModel.sfmPage = self.sfmPage;
+        [[CacheManager sharedInstance] pushToCache:customActionWebserviceModel byKey:kCustomWebServiceAction];
+    }
+    return self;
+}
+
+-(SFMPage *)getTheSFMPage:(NSString *)requestParameters
+{
+    NSArray *requestArray = [requestParameters componentsSeparatedByString:@","];
+    
+    if(requestArray.count==3)
+    {
+        SFMPageEditManager *manager = [[SFMPageEditManager alloc] initWithObjectName:[requestArray objectAtIndex:0] recordId:[requestArray objectAtIndex:1] processSFId:[requestArray objectAtIndex:2]];
+    
+        SFMPage *page = [manager theSFMPagewithObjectName:[requestArray objectAtIndex:0] andRecordID:[requestArray objectAtIndex:1]  andProcessID:[requestArray objectAtIndex:2]];
+        return page;
+    }
+    
+    return nil;
+}
+
+-(NSString *)theURL:(NSArray *)thePageLevelEvent andRequestType:(int)requestType
+{
+    
+    NSString *theURL = nil;
+    for (NSDictionary *tempDict in thePageLevelEvent) {
+        NSString *eventCallType = [tempDict objectForKey:kPageEventCallType];
+        NSString *eventType = [tempDict objectForKey:kPageEventType];
+        
+        if ([eventCallType isEqualToString:@"WEBSERVICE"]) {
+
+            if ([StringUtil containsString:kAfterSaveInsertKey inString:eventType] && requestType==1) {
+                theURL = [tempDict objectForKey:kPageTargetCall];
+            }
+            else if ([StringUtil containsString:kBeforeSaveProcessKey inString:eventType] && requestType==2) {
+                theURL = [tempDict objectForKey:kPageTargetCall];
+
+            }
+            else if ([StringUtil containsString:kAfterSaveProcessKey inString:eventType] && requestType==3) {
+                theURL = [tempDict objectForKey:kPageTargetCall];
+
+            }
+
+        }
+    }
+    
+    return theURL;
+}
 
 @end
