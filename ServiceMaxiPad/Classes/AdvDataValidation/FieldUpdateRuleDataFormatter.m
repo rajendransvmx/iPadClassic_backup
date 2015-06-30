@@ -191,7 +191,9 @@
                     
                 }
             }
-            [mainFieldDict setValue:headerFieldDict forKey:bizrule.sourceObjectName];
+            if (![StringUtil isStringEmpty:bizrule.sourceObjectName]) {
+                [mainFieldDict setValue:headerFieldDict forKey:bizrule.sourceObjectName];
+            }
         }
     }
 }
@@ -204,13 +206,22 @@
     @autoreleasepool {
         
         NSMutableDictionary *headerRecords = self.sfmPage.headerRecord;
-        NSArray *allKeys = [headerRecords allKeys];
-        
-        for (NSString *key in allKeys) {
-            SFMRecordFieldData *recordField = [headerRecords objectForKey:key];
-            NSString *value = recordField.internalValue;
-            value = (value == nil)?@"":value;
-            [mainDataDict setValue:value forKey:key];
+        NSArray *headerSections = self.sfmPage.process.pageLayout.headerLayout.sections;
+        NSArray *headerFields = nil;
+        if ([headerSections count] == 1) {
+            SFMHeaderSection *headerSection = [headerSections lastObject];
+            headerFields = headerSection.sectionFields;
+            for (SFMPageField *pageField in headerFields) {
+                SFMRecordFieldData *recordField = [headerRecords objectForKey:pageField.fieldName];
+                NSString *value = recordField.internalValue;
+                if ([StringUtil isStringEmpty:value]) {
+                    value = @"";
+                    if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {
+                        value = @"0";
+                    }
+                }
+                [mainDataDict setValue:value forKey:pageField.fieldName];
+            }
         }
     }
 }
@@ -238,8 +249,11 @@
                     NSString *fieldName = pageField.fieldName;
                     SFMRecordFieldData *fieldData = [record objectForKey:fieldName];
                     NSString *value = fieldData.internalValue;
-                    if (value == nil) {
+                    if ([StringUtil isStringEmpty:value]) {
                         value = @"";
+                        if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {
+                            value = @"0";
+                        }
                     }
                     [fieldsDict setValue:value forKey:fieldName];
                 }

@@ -2584,7 +2584,6 @@
 
 -(BOOL)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView andDelegate:(id)aDelegate forEvent:(NSString *)event {
     BOOL fieldUpdateRuleExists = NO;
-    return fieldUpdateRuleExists;
     self.ruleManager = [[FieldUpdateRuleManager alloc] initWithProcessId:self.processId sfmPage:sfmPage];
     self.ruleManager.eventType = event;
     self.ruleManager.parentView = aView;
