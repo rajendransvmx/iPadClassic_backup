@@ -2246,19 +2246,24 @@
 }
 /* Load url from with parameters */
 -(void)makeCustomUrlCall:(WizardComponentModel *)model{
-    if ([[SyncManager sharedInstance] isDataSyncInProgress]) {
+    if ([[SyncManager sharedInstance] isDataSyncInProgress])
+    {
         [self showDataSyncAlert];
         return;
     }
     SFMPage *sfmPage = [self getSFMPageModel];
-    if (!sfmPage) {
-        [self showNoProcessAlert];
-        return;
+    if (sfmPage)
+    {
+        /* load url with params */
+        SFMCustomActionHelper *customActionHelper=[[SFMCustomActionHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
+        UIApplication *ourApplication = [UIApplication sharedApplication];
+        [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
     }
-    /* load url with params */
-    SFMCustomActionHelper *customActionHelper=[[SFMCustomActionHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
-    UIApplication *ourApplication = [UIApplication sharedApplication];
-    [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
+    else
+    {
+        [self showNoProcessAlert];
+    }
+    
 }
 
 /* Call webservice call from with parameters */
@@ -2268,13 +2273,16 @@
         return;
     }
     SFMPage *sfmPage = [self getSFMPageModel];
-    if (!sfmPage) {
-        [self showNoProcessAlert];
-        return;
+    if (sfmPage)
+    {
+        SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
+        [self addActivityAndLoadingLabel];
+        [webserviceHelper initiateCustomWebServiceWithDelegate:self];
     }
-    SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
-    [self addActivityAndLoadingLabel];
-    [webserviceHelper initiateCustomWebServiceWithDelegate:self];
+    else
+    {
+        [self showNoProcessAlert];
+    }
 }
 
 #pragma mark Activity Management
