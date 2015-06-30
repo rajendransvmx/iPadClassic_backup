@@ -425,3 +425,9 @@ NSString * const kIsMultiDayEvent = @"isMultiDay";
 NSString * const kSplitDayEvents = @"SplitDayEvents";
 NSString * const kTimeZone = @"TimeZone";
 NSString * const kCompleteWhatId = @"completeWhatID";
+
+// PageEventProcessManager Constants
+NSString * const kBeforeSaveProcessKey = @"Before Save/Update";
+NSString * const kAfterSaveProcessKey = @"After Save/Update";
+NSString * const kAfterSaveInsertKey = @"After Save/Insert";
+NSString * const kWebserviceProcessKey = @"WEBSERVICE";

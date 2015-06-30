@@ -415,3 +415,9 @@ extern NSString * const kIsMultiDayEvent;
 extern NSString * const kSplitDayEvents;
 extern NSString * const kTimeZone;
 extern NSString * const kCompleteWhatId;
+
+// PageEventProcessManager Constants
+extern NSString * const kBeforeSaveProcessKey;
+extern NSString * const kAfterSaveProcessKey;
+extern NSString * const kAfterSaveInsertKey;
+extern NSString * const kWebserviceProcessKey;

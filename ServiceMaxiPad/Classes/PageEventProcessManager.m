@@ -13,9 +13,14 @@
 #import "Utility.h"
 #import "PriceBookTargetHandler.h"
 #import "PriceBookDataHandler.h"
-
-NSString * const kBeforeSaveProcessKey = @"Before Save";
-NSString * const kAfterSaveProcessKey = @"After Save";
+#import "SFMRecordFieldData.h"
+#import "TransactionObjectDAO.h"
+#import "FactoryDAO.h"
+#import "SFMPageEditHelper.h"
+#import "SFMPageEditManager.h"
+#import "ModifiedRecordModel.h"
+#import "DatabaseConstant.h"
+#import "StringUtil.h"
 
 @interface PageEventProcessManager ()<JSExecuterDelegate>
 
@@ -26,6 +31,12 @@ NSString * const kAfterSaveProcessKey = @"After Save";
 @property (nonatomic, strong) JSExecuter *jsExecuter;
 @property (nonatomic, strong) NSString *jsonRepresantation;
 @property (nonatomic, strong) PriceBookTargetHandler *targetHandler;
+
+@property (nonatomic, assign) BOOL isWebservice;
+@property (nonatomic, assign) BOOL isBeforeSaveUpdate;
+@property (nonatomic, assign) BOOL isAfterSaveUpdate;
+@property (nonatomic, assign) BOOL isAfterSaveInsert;
+
 
 @end
 
@@ -39,24 +50,76 @@ NSString * const kAfterSaveProcessKey = @"After Save";
     return self;
 }
 
+-(BOOL)isWebserviceEnabled;
+{
+    return self.isWebservice;
+}
+
+-(BOOL)isAfterSaveInsertEnabled
+{
+    return  self.isAfterSaveInsert = YES;
+}
+
+-(BOOL)isBeforeSaveEnabled
+{
+    return self.isBeforeSaveUpdate;
+}
+
+-(BOOL)isAfterSaveUpdateEnabled
+{
+    return  self.isAfterSaveUpdate = YES;
+}
 
 -(BOOL)pageEventProcessExists {
     BOOL pageEventExists = NO;
-    return pageEventExists;
+    
+//    SFMPage *page = [self getTheSFMPage];
     NSArray *pageLevelEvents = self.sfmPage.process.pageLayout.headerLayout.pageLevelEvents;
     NSArray *filteredArray = [pageLevelEvents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) OR (%K CONTAINS[c] %@)", kPageEventType, kBeforeSaveProcessKey, kPageEventType, kAfterSaveProcessKey]];
     
+    if (self.sfmPage.customWebserviceOptionsArray) {
+        self.sfmPage.customWebserviceOptionsArray = nil;
+    }
+    self.sfmPage.customWebserviceOptionsArray = [[NSMutableArray alloc] init];
+
+    self.isWebservice = NO;
+
     for (NSDictionary *tempDict in filteredArray) {
         NSString *eventCallType = [tempDict objectForKey:kPageEventCallType];
+        NSString *eventType = [tempDict objectForKey:kPageEventType];
+
         if ([eventCallType isEqualToString:@"JAVASCRIPT"]) {
-            NSString *eventType = [tempDict objectForKey:kPageEventType];
-            if ([eventType containsString:kBeforeSaveProcessKey]) {
+
+            if ([StringUtil containsString:kBeforeSaveProcessKey inString:eventType]) {
                 self.beforeSaveProcessDict = tempDict;
                 pageEventExists = YES;
             }
-            if ([eventType containsString:kAfterSaveProcessKey]) {
+//            if ([eventType containsString:kAfterSaveProcessKey]) {
+                if ([StringUtil containsString:kAfterSaveProcessKey inString:eventType]) {
+
                 self.afterSaveProcessDict = tempDict;
                 pageEventExists = YES;
+            }
+        }
+        else if ([eventCallType isEqualToString:kWebserviceProcessKey]) {
+            self.isWebservice = YES;
+
+//            if ([eventType containsString:kBeforeSaveProcessKey]) {
+                if ([StringUtil containsString:kBeforeSaveProcessKey inString:eventType]) {
+
+                [self.sfmPage.customWebserviceOptionsArray addObject:kModificationTypeBeforeUpdate];
+            }
+//            if ([eventType containsString:kAfterSaveProcessKey]) {
+                if ([StringUtil containsString:kAfterSaveProcessKey inString:eventType]) {
+
+                [self.sfmPage.customWebserviceOptionsArray addObject:kModificationTypeAfterUpdate];
+
+            }
+//            if ([eventType containsString:kAfterSaveInsertKey]) {
+                if ([StringUtil containsString:kAfterSaveInsertKey inString:eventType]) {
+
+                [self.sfmPage.customWebserviceOptionsArray addObject:kModificationTypeAfterInsert];
+
             }
         }
     }
@@ -218,4 +281,157 @@ NSString * const kAfterSaveProcessKey = @"After Save";
 
 
 
+#pragma Webservice Delegate
+
+/*
+-(void)returnCallFromBeforeSaveCall:(NSDictionary *)result
+{
+    [self.targetHandler updateTargetSfpage:self.sfmPage fromPriceResults:result];
+    [self.managerDelegate customCallResponseFromServerFinished:self.sfmPage forCustomCall:beforeSaveUpdate];
+}
+
+-(void)returnCallFromAfterInsertCall:(NSDictionary *)result
+{
+    [self.targetHandler updateTargetSfpage:self.sfmPage fromPriceResults:result];
+    [self.managerDelegate customCallResponseFromServerFinished:self.sfmPage forCustomCall:afterSaveInsert];
+}
+
+-(void)returnCallFromAfterSaveUpdateCall:(NSDictionary *)result
+{
+    [self.targetHandler updateTargetSfpage:self.sfmPage fromPriceResults:result];
+    [self.managerDelegate customCallResponseFromServerFinished:self.sfmPage forCustomCall:afterSaveUpdate];
+}
+*/
+
+/*
+-(void)headerRecord
+{
+    NSDictionary *headerDict = self.sfmPage.headerRecord;
+    NSString *headerSfid = [self.sfmPage getHeaderSalesForceId];
+    BOOL recordUpdatedSuccessFully = NO;
+    if (headerSfid.length < 5)
+    {
+        
+        id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+        // Check if record exist
+        BOOL isRecordExist =  [transObjectService isRecordExistsForObject:self.sfmPage.objectName forRecordLocalId:self.sfmPage.recordId];
+        if (isRecordExist) {
+            
+            //IT is update
+            //TODO:
+        }
+        else{
+            //It is Insert
+        //TODO:
+        }
+        
+    }
+    else {
+        //It is Update
+        //TODO:
+    }
+
+    NSMutableDictionary *eachRecord = [NSMutableDictionary new];
+    for (NSString *fieldName in self.sfmPage.headerRecord) {  //For Insert
+        SFMRecordFieldData *fieldValue = [self.sfmPage.headerRecord objectForKey:fieldName];
+        if ([fieldName isEqualToString:kId]) {
+            continue;
+        }
+        if (fieldValue.internalValue != nil) {
+            [eachRecord setObject:fieldValue.internalValue forKey:fieldName];
+        }
+    }
+    
+    for (NSString *fieldName in self.sfmPage.headerRecord) {  //For Update
+        SFMRecordFieldData *fieldValue = [self.sfmPage.headerRecord objectForKey:fieldName];
+        if (fieldValue.internalValue != nil) {
+            [eachRecord setObject:fieldValue.internalValue forKey:fieldName];
+        }
+        
+    }
+
+    
+}
+
+-(void)childItem
+{
+
+    NSMutableArray *lChildLinesRecordArray = [NSMutableArray alloc];
+    
+    NSDictionary * processComponents = self.sfmPage.process.component;
+    NSArray * allDetailProcessComponents = [processComponents allKeys];
+
+    for(NSString * processCompId in allDetailProcessComponents)
+    {
+        NSMutableArray * detailRecordsArray = [self.sfmPage.detailsRecord objectForKey:processCompId];
+        
+        
+        NSMutableArray * newlyCreatedRecordIds = [self.sfmPage.newlyCreatedRecordIds objectForKey:processCompId];
+
+        for (NSMutableDictionary * eachDetailDict in detailRecordsArray)
+        {
+        NSMutableDictionary *lDetailsRecordDictionary = [[NSMutableDictionary alloc] init];
+
+        SFMRecordFieldData * localIdField = [eachDetailDict objectForKey:kLocalId];
+
+        if([newlyCreatedRecordIds containsObject:localIdField.internalValue])
+        {
+            //Insert record into object table
+
+        }
+        else{
+            //Update record into object table
+            
+        }
+            SFProcessComponentModel * processComponent = [processComponents objectForKey:processCompId];
+
+            NSDictionary *fieldTyDictionary =  [SFMPageEditHelper getObjectFieldInfoByType: processComponent.objectName];
+            for (NSString *eachFieldName in fieldTyDictionary)
+            {
+                NSString *fieldType = [fieldTyDictionary objectForKey:eachFieldName];
+                if ([fieldType isEqualToString:kSfDTBoolean]) {
+                    [lDetailsRecordDictionary setObject:kFalse forKey:eachFieldName];
+                }
+            }
+            
+            for (NSString *fieldName in eachDetailDict)
+            {
+                SFMRecordFieldData *fieldValue = [eachDetailDict objectForKey:fieldName];
+                if (fieldValue.internalValue != nil) {
+                    [lDetailsRecordDictionary setObject:fieldValue.internalValue forKey:fieldName];
+                }
+            }
+            [lChildLinesRecordArray addObject:lDetailsRecordDictionary];
+        }
+    }
+}
+*/
+
+-(SFMPage *)getTheSFMPage
+{
+    SFMPageEditManager *manager = [[SFMPageEditManager alloc] initWithObjectName:self.sfmPage.objectName recordId:self.sfmPage.recordId processSFId:self.sfmPage.process.processInfo.sfID];
+    
+   SFMPage *page = [manager theSFMPagewithObjectName:self.sfmPage.objectName andRecordID:self.sfmPage.recordId  andProcessID:self.sfmPage.process.processInfo.sfID];
+    
+    return page;
+}
+
+ 
+
+-(void)deleteTheRecordsFromModifiedTable
+{
+    //From OneCallDataSyncHelper.
+  
+    /*
+     
+    DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorLessThanEqualTo andFieldValue: [[NSString alloc] initWithFormat:@"%ld",(long)lastIndex]];
+    DBCriteria *aCriteria2 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:modificationType];
+    DBCriteria *aCriteria3 = [[DBCriteria alloc] initWithFieldName:searchField operatorType:SQLOperatorIn andFieldValues:recordIds];
+    
+    DBRequestDelete *deleteRequest = [[DBRequestDelete alloc] initWithTableName:kModifiedRecords whereCriteria:@[aCriteria1,aCriteria2,aCriteria3] andAdvanceExpression:@"(1 and 2 and 3)"];
+    
+    
+    [self.commonServices executeStatement:[deleteRequest query]];
+*/
+}
 @end

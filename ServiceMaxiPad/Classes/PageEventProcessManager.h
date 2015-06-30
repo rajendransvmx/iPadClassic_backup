@@ -25,5 +25,12 @@
 -(id)initWithSFMPage:(SFMPage *)aSfmPage;
 -(BOOL)pageEventProcessExists;
 -(BOOL)startPageEventProcessWithParentView:(UIView *)aView;
+-(BOOL)isWebserviceEnabled;
+-(BOOL)isBeforeSaveEnabled;
+-(BOOL)isAfterSaveInsertEnabled;
+-(BOOL)isAfterSaveUpdateEnabled;
+-(void)initiateAfterSaveInsertCall;
+-(void)initiateBeforeSaveUpdateCall;
+-(void)initiateAfterSaveUpdateCall;
 
 @end
