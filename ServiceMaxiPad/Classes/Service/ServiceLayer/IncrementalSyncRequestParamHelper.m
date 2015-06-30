@@ -16,6 +16,7 @@
 #import "RequestConstants.h"
 #import "PlistManager.h"
 #import "ModifiedRecordModel.h"
+#import "CacheManager.h"
 
 @interface IncrementalSyncRequestParamHelper ()
 
@@ -129,6 +130,19 @@
                         [valueMap  insertObject:updateTimeDict atIndex:0];
                     }
                     else{
+                        
+//                        key = "After_Insert_Web_Service";
+//                        value = "true";
+
+                        NSString *lCustomCallInsert = [[CacheManager sharedInstance]getCachedObjectByKey:kAfterSaveInsertCustomCallValueMap];
+                        if ([lCustomCallInsert isEqualToString:@"AfterInsert"] && counter==2)
+                            {
+//                            NSDictionary *lAfterInsertCustomCallDict = @{kAfterSaveInsertCustomCallValueMap:@"true"};
+                            NSDictionary *updateTimeDict = [[NSDictionary alloc] initWithObjectsAndKeys:kAfterSaveInsertCustomCallValueMap,kSVMXRequestKey,@"true",kSVMXRequestValue,nil];
+
+                            [valueMap insertObject:updateTimeDict atIndex:0];
+                        }
+
                         [valueMap insertObject:lastSyncTimeDict atIndex:0];
                     }
                     
