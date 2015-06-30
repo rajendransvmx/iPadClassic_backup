@@ -210,14 +210,16 @@ forLocalNotification:(UILocalNotification *)notification
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-    NSDictionary *queryStringDictionary = [PushNotificationUtility getDictionaryFromSharedURL:url];
- 
-    BOOL isValidUser = [PushNotificationUtility validateOrg:queryStringDictionary];
-    if (isValidUser)
+    if ([[url scheme] isEqualToString:@"svmxmobilepulsesum15://"])
     {
-        [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
+        NSDictionary *queryStringDictionary = [PushNotificationUtility getDictionaryFromSharedURL:url];
+     
+        BOOL isValidUser = [PushNotificationUtility validateOrg:queryStringDictionary];
+        if (isValidUser)
+        {
+            [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
+        }
     }
-    
     return YES; 
 }
 
