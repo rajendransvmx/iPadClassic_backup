@@ -90,7 +90,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     syncConfigBtn.layer.borderWidth = 0.8;
     
     //Service Report labels and button.
-    reportSyncStatusTitleLabel.text = [[TagManager sharedInstance] tagByName:KTagReportSyncStatusTitle];
+    reportSyncTitleLabel.text = [[TagManager sharedInstance] tagByName:KTagReportSyncStatusTitle];
     lastSyncReportTitle.text = [[TagManager sharedInstance]tagByName:kTag_lastsync];
     reportSyncStatusTitleLabel.text = [[TagManager sharedInstance] tagByName:kTag_status];
     [reportsButton setTitle:[[TagManager sharedInstance]tagByName:KTagReportViewButtonTitle] forState:UIControlStateNormal];
