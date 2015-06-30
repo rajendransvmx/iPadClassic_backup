@@ -2617,8 +2617,15 @@
                         NSDictionary *sfmRecord = [detailRecords objectAtIndex:i];
                         for (NSString *key in lineRecord) {
                             SFMRecordFieldData *recordField = [sfmRecord objectForKey:key];
-                            recordField.internalValue = [lineRecord objectForKey:key];
-                            recordField.displayValue = [lineRecord objectForKey:key];
+                            id internalValue = [lineRecord objectForKey:key];
+                            id displayValue = [lineRecord objectForKey:key];
+                            if (![internalValue isKindOfClass:[NSString class]])
+                            {
+                                internalValue = [NSString stringWithFormat:@"%@",internalValue];
+                                displayValue = [NSString stringWithFormat:@"%@",displayValue];
+                            }
+                            recordField.internalValue = internalValue;
+                            recordField.displayValue = displayValue;
                         }
                     }
                 }
@@ -2627,8 +2634,18 @@
         else {
             if (!([key isEqualToString:@"Id"] || [key isEqualToString:@"localId"])) {
                 SFMRecordFieldData *recordField = [headerRecord objectForKey:key];
-                recordField.internalValue = [responseDict objectForKey:key];
-                recordField.displayValue = [responseDict objectForKey:key];
+                
+                id internalValue = [responseDict objectForKey:key];
+                id displayValue = [responseDict objectForKey:key];
+                if (![internalValue isKindOfClass:[NSString class]])
+                {
+                    internalValue = [NSString stringWithFormat:@"%@",internalValue];
+                    displayValue = [NSString stringWithFormat:@"%@",displayValue];
+
+                }
+                recordField.internalValue = internalValue;
+                recordField.displayValue = displayValue;
+                
             }
         }
     }

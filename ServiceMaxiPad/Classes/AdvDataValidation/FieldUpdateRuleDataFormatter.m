@@ -188,7 +188,6 @@
                 [headerFieldDict setValue:[expComp.fieldType lowercaseString]  forKey:expComp.componentLHS];
                 if ([expComp.parameterType isEqualToString:kExpComponentFieldValue]) {
                     [headerFieldDict setValue:[expComp.fieldType lowercaseString]  forKey:expComp.componentRHS];
-                    
                 }
             }
             if (![StringUtil isStringEmpty:bizrule.sourceObjectName]) {
