@@ -36,19 +36,32 @@
             NSArray *valueMap = [response objectForKey:kSVMXSVMXMap];
             NSMutableArray *objectrecords = [[NSMutableArray alloc] initWithCapacity:0];
             NSString *objectName = nil;
-            for (NSDictionary *recordDict in valueMap)
+            if ([valueMap isKindOfClass:[NSArray class]])
             {
-                objectName = [recordDict objectForKey:kSVMXKey];
-                id str = [recordDict objectForKey:kSVMXValue];
-                NSMutableArray *dataArray = [Utility objectFromJsonString:str];
-                for (NSDictionary *dict in dataArray)
+                for (NSDictionary *recordDict in valueMap)
                 {
-                    TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
-                    [model setFieldValueDictionaryForFields:dict];
-                    [objectrecords addObject:model];
+                    objectName = [recordDict objectForKey:kSVMXKey];
+                    id str = [recordDict objectForKey:kSVMXValue];
+                    NSMutableArray *dataArray = [Utility objectFromJsonString:str];
+                    if ([dataArray isKindOfClass:[NSArray class]])
+                    {
+                        for (NSDictionary *dict in dataArray)
+                        {
+                            TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
+                            [model setFieldValueDictionaryForFields:dict];
+                            [objectrecords addObject:model];
+                        }
+                    }
+                    else{
+                        //Here its structure problem, Its not a array
+                    }
                 }
+                [self.helper insertObjects:objectrecords withObjectName:objectName];
             }
-           [self.helper insertObjects:objectrecords withObjectName:objectName];
+            else
+            {
+                //Here its structure problem, Its not a array
+            }
         }
     }
     return nil;

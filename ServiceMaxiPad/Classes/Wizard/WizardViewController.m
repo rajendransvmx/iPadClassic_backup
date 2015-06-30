@@ -326,8 +326,9 @@
                             /* load url with params */
                             [self.delegate makeCustomUrlCall:wizardComponent];
                         }else if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"WEB-SERVICE"]) {
-                            /* making webservice call */
-                            [self.delegate makeWebserviceCall:wizardComponent];
+                            /* checking network reachablity and making webservice call */
+                            if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
+                                [self.delegate makeWebserviceCall:wizardComponent];
                         }
                     }else{
                         

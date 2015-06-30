@@ -69,6 +69,7 @@
 #import "SFMCustomActionWebServiceHelper.h"
 #import "SFMCustomActionHelper.h"
 #import "MBProgressHUD.h"
+#import "WebserviceResponseStatus.h"
 
 #define kLongFormat @"yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 #define kLongFormatZulu @"yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
@@ -2324,9 +2325,60 @@
 {
     [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction];
     [self removeActivityAndLoadingLabel];
-    
+    if([status isKindOfClass:[WebserviceResponseStatus class]])
+    {
+        WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
+        switch (st.category)
+        {
+            case CategoryTypeCustomWebServiceCall:
+                if  (st.syncStatus == SyncStatusSuccess
+                     || st.syncStatus == SyncStatusInProgress) {
+                    
+                }
+                else if (st.syncStatus == SyncStatusFailed) {
+                    
+                }
+                else if (st.syncStatus == SyncStatusNetworkError
+                         || st.syncStatus == SyncStatusRefreshTokenFailedWithError) {
+                    [self requestFialedWithError:st.syncError shouldShow:YES];
+                }
+                
+                else if (st.syncStatus == SyncStatusInCancelled) {
+                    
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
 }
 
+- (void)requestFialedWithError:(NSError *)error shouldShow:(BOOL)shouldShow
+{
+    if (shouldShow) {
+        [self performSelectorOnMainThread:@selector(showAlert:) withObject:error waitUntilDone:NO];
+    }
+    else {
+        if ([error actionCategory] == SMErrorActionCategoryAuthenticationReopenSession) {
+            [self performSelectorOnMainThread:@selector(showAlert:) withObject:error waitUntilDone:NO];
+        } else if ([[error errorEndUserMessage] custContainsString:@"request timed out"]) {
+            [self performSelectorOnMainThread:@selector(showAlert:) withObject:error waitUntilDone:NO];
+        }
+    }
+}
+
+- (void)showAlert:(NSError *)error
+{
+    if (error ) {
+        [[AlertMessageHandler sharedInstance] showCustomMessage:[error errorEndUserMessage]
+                                                   withDelegate:nil
+                                                            tag:0
+                                                          title:[[TagManager sharedInstance] tagByName:kTagSyncErrorMessage]
+                                              cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+                                           andOtherButtonTitles:nil];
+    }
+}
 -(void)showNoProcessAlert
 {
     //alert
