@@ -163,4 +163,7 @@
 - (NSArray*)getChatterProductImageParameterForCount:(NSInteger)count;
 
 - (NSArray*)getChatterUserImageParameterForCount:(NSInteger)count;
+
+/* ======== Mobile Usage ========= */
+- (NSArray*)getMobileUsageDocumentRequestParameterForCount:(NSInteger)count;
 @end

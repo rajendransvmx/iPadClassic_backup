@@ -266,7 +266,10 @@
             requestType = [self getNextRequestForTroubleShootingDataDownload:currentRequest
                                                           andPreviousRequest:previousRequest];
             break;
-            
+        case CategoryTypeMobileUsageFileDownload:
+            requestType = [self getNextRequestForMobileUsageDataDownload:currentRequest
+                                                      andPreviousRequest:previousRequest];
+            break;
         case CategoryTypeTechnicianDetails:
             requestType = [self getNextRequestForTechnicianDetails:currentRequest andPreviousRequest:previousRequest];
             break;
@@ -701,7 +704,19 @@
     }
     return nextRequestType;
 }
-
+- (RequestType)getNextRequestForMobileUsageDataDownload:(SVMXServerRequest *)currentRequest
+                                     andPreviousRequest:(SVMXServerRequest *)previousRequest {
+    
+    RequestType nextRequestType = 0;
+    
+    if (currentRequest == nil) {
+        nextRequestType = RequestTypeMobileUsageDataDownload;
+    }
+    if (currentRequest.requestType == RequestTypeMobileUsageDataDownload) {
+        nextRequestType = RequestTypeNone;
+    }
+    return nextRequestType;
+}
 - (RequestType)getNextRequestForTechnicianDetails:(SVMXServerRequest *)currentRequest
                              andPreviousRequest:(SVMXServerRequest *)previousRequest {
     

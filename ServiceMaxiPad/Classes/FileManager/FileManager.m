@@ -341,6 +341,25 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
     
     return rootPath;
 }
+/* ========== Mobile Usage ========== */
+
++ (NSString *)getMobileUsageSubDirectoryPath
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString * rootPath = [self getRootPath];
+    rootPath = [rootPath stringByAppendingPathComponent:@"MobileUsage"];
+    if(![fm fileExistsAtPath:rootPath])
+    {
+        [fm createDirectoryAtPath:rootPath
+      withIntermediateDirectories:YES
+                       attributes:nil error:NULL];
+        
+        NSURL *itmURL = [NSURL fileURLWithPath:rootPath];
+        [self excludeItemForBackupAtURL:itmURL];
+    }
+    
+    return rootPath;
+}
 
 + (NSString *)getProductManualSubDirectoryPath
 {

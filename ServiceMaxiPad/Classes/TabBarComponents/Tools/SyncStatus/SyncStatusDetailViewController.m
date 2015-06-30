@@ -27,6 +27,7 @@
 #import "LocationPingManager.h"
 #import "OpDocHelper.h"
 #import "OpDocFilesTableViewController.h"
+#import "MobileUsageManager.h"
 
 #define kConfigSyncAlertTag     10
 const NSInteger alertViewTagForConfigSync   = 888889;
@@ -141,6 +142,15 @@ const NSInteger alertViewTagForConfigSync   = 888889;
                                                      object:[SyncManager sharedInstance]];
     
 }
+#pragma mark - Mobile usage datasync process
+
+-(void) initiateMobileUsageDataSyncProcess{
+    
+    [[MobileUsageManager sharedInstance] startMobileUsageDataSyncProcess];
+}
+
+#pragma mark End-
+
 #pragma mark - Button Actions
 
 - (IBAction)syncConfigClicked:(id)sender
@@ -227,6 +237,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 {
     [self updateDataSyncRelatedUI];
     [self updateReportSyncRelatedUI];
+    [self initiateMobileUsageDataSyncProcess];
     
 }
 

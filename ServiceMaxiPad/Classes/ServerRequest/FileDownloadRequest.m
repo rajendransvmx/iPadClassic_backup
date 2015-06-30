@@ -130,6 +130,8 @@
             case RequestTroubleShootDocInfoFetch:
             case RequestProductManualDownload:
             case RequestTypeChatterProductImageDownload:
+                /* ======= MObile Usage ======== */
+            case RequestTypeMobileUsageDataDownload:
                 subUrl = [[NSString alloc] initWithFormat:@"%@%@/%@/%@",kFileDownloadUrlFromObject, fileModel.objectName, fileModel.sfId,kFileDownloadUrlBody];
                 break;
             default:

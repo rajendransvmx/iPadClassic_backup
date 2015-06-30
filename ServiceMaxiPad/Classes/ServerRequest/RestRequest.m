@@ -495,6 +495,10 @@
         case RequestTroubleshooting:
         case RequestRecordType:
         case RequestTroubleShootDocInfoFetch:
+            /* ======== Mobile Usage ======= */
+            
+        case RequestTypeMobileUsageDataDownload:
+            
         case RequestProductManualDownload:
         case RequestProductManual:
         case RequestTypeAccountHistory:
@@ -870,6 +874,7 @@
         || self.requestType == RequestRecordType
         || self.requestType == RequestTroubleshooting
         || self.requestType == RequestTroubleShootDocInfoFetch
+        || self.requestType == RequestTypeMobileUsageDataDownload
         || self.requestType == RequestTechnicianDetails
         || self.requestType == RequestTechnicianAddress
         || self.requestType == RequestTypeSFMAttachmentsDownload
@@ -1077,6 +1082,7 @@
         || self.requestType == RequestRecordType
         || self.requestType == RequestTroubleshooting
         || self.requestType == RequestTroubleShootDocInfoFetch
+        || self.requestType == RequestTypeMobileUsageDataDownload
         || self.requestType == RequestTechnicianAddress
         || self.requestType == RequestTechnicianDetails
         || self.requestType == RequestProductManualDownload

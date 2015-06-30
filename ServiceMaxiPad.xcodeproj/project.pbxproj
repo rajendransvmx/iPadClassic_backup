@@ -1004,6 +1004,11 @@
 		C3EF97A71A036D7300476293 /* Attachment-TrashCan@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C3EF979C1A036D7300476293 /* Attachment-TrashCan@2x.png */; };
 		C3EF97A81A036D7300476293 /* Attachment-Unknown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C3EF979D1A036D7300476293 /* Attachment-Unknown@2x.png */; };
 		C3EF97A91A036D7300476293 /* Attachment-Word@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C3EF979E1A036D7300476293 /* Attachment-Word@2x.png */; };
+		C80984F01B42586600396BB6 /* MobileUsageDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = C80984E71B42586600396BB6 /* MobileUsageDataModel.m */; };
+		C80984F11B42586600396BB6 /* MobileUsageDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C80984E91B42586600396BB6 /* MobileUsageDataLoader.m */; };
+		C80984F21B42586600396BB6 /* MobileUsageServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = C80984EB1B42586600396BB6 /* MobileUsageServiceLayer.m */; };
+		C80984F31B42586600396BB6 /* MobileUsageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C80984ED1B42586600396BB6 /* MobileUsageManager.m */; };
+		C80984F41B42586600396BB6 /* MobileUsageHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C80984EF1B42586600396BB6 /* MobileUsageHelper.m */; };
 		C8DB64F31B2ED88000886A02 /* EditMenuLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = C8DB64F21B2ED88000886A02 /* EditMenuLabel.m */; };
 		D713615F19ED1D51008BCACE /* TextFieldHelperDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D713615E19ED1D51008BCACE /* TextFieldHelperDelegate.m */; };
 		D74A3D0A1A0381E000357474 /* PriceBookDataHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D74A3D031A0381E000357474 /* PriceBookDataHandler.m */; };
@@ -2847,6 +2852,16 @@
 		C3EF979C1A036D7300476293 /* Attachment-TrashCan@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Attachment-TrashCan@2x.png"; sourceTree = "<group>"; };
 		C3EF979D1A036D7300476293 /* Attachment-Unknown@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Attachment-Unknown@2x.png"; sourceTree = "<group>"; };
 		C3EF979E1A036D7300476293 /* Attachment-Word@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Attachment-Word@2x.png"; sourceTree = "<group>"; };
+		C80984E61B42586600396BB6 /* MobileUsageDataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileUsageDataModel.h; sourceTree = "<group>"; };
+		C80984E71B42586600396BB6 /* MobileUsageDataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileUsageDataModel.m; sourceTree = "<group>"; };
+		C80984E81B42586600396BB6 /* MobileUsageDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileUsageDataLoader.h; sourceTree = "<group>"; };
+		C80984E91B42586600396BB6 /* MobileUsageDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileUsageDataLoader.m; sourceTree = "<group>"; };
+		C80984EA1B42586600396BB6 /* MobileUsageServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileUsageServiceLayer.h; sourceTree = "<group>"; };
+		C80984EB1B42586600396BB6 /* MobileUsageServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileUsageServiceLayer.m; sourceTree = "<group>"; };
+		C80984EC1B42586600396BB6 /* MobileUsageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileUsageManager.h; sourceTree = "<group>"; };
+		C80984ED1B42586600396BB6 /* MobileUsageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileUsageManager.m; sourceTree = "<group>"; };
+		C80984EE1B42586600396BB6 /* MobileUsageHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileUsageHelper.h; sourceTree = "<group>"; };
+		C80984EF1B42586600396BB6 /* MobileUsageHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileUsageHelper.m; sourceTree = "<group>"; };
 		C8DB64F11B2ED88000886A02 /* EditMenuLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditMenuLabel.h; sourceTree = "<group>"; };
 		C8DB64F21B2ED88000886A02 /* EditMenuLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditMenuLabel.m; sourceTree = "<group>"; };
 		D713615D19ED1D51008BCACE /* TextFieldHelperDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldHelperDelegate.h; sourceTree = "<group>"; };
@@ -5409,6 +5424,7 @@
 		18A2177C19E57E7E00F22EA6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				C80984E51B42585500396BB6 /* MobileUsage */,
 				180E3AAE1B3AE41A0055036D /* FieldUpdateRuleManager */,
 				184ED1401B287229004C4D85 /* BeforeSave */,
 				A61A1B8D1B202B1200B1C9C8 /* AutoLockManager */,
@@ -6306,6 +6322,23 @@
 			path = "Retina Images/Attachments";
 			sourceTree = "<group>";
 		};
+		C80984E51B42585500396BB6 /* MobileUsage */ = {
+			isa = PBXGroup;
+			children = (
+				C80984E61B42586600396BB6 /* MobileUsageDataModel.h */,
+				C80984E71B42586600396BB6 /* MobileUsageDataModel.m */,
+				C80984E81B42586600396BB6 /* MobileUsageDataLoader.h */,
+				C80984E91B42586600396BB6 /* MobileUsageDataLoader.m */,
+				C80984EA1B42586600396BB6 /* MobileUsageServiceLayer.h */,
+				C80984EB1B42586600396BB6 /* MobileUsageServiceLayer.m */,
+				C80984EC1B42586600396BB6 /* MobileUsageManager.h */,
+				C80984ED1B42586600396BB6 /* MobileUsageManager.m */,
+				C80984EE1B42586600396BB6 /* MobileUsageHelper.h */,
+				C80984EF1B42586600396BB6 /* MobileUsageHelper.m */,
+			);
+			path = MobileUsage;
+			sourceTree = "<group>";
+		};
 		D74A3D011A036FFD00357474 /* GetPrice */ = {
 			isa = PBXGroup;
 			children = (
@@ -6721,6 +6754,7 @@
 				183AA02919E6BDB300919345 /* ADCResponseParser.m in Sources */,
 				183A9E9819E6A11800919345 /* ZksDescribeLayoutRequest.m in Sources */,
 				183A9E3A19E69DB000919345 /* SFDataTrailerModel.m in Sources */,
+				C80984F31B42586600396BB6 /* MobileUsageManager.m in Sources */,
 				183A9B1319E69B5200919345 /* TaskGenerator.m in Sources */,
 				18E0BE8519F12F94007DBC69 /* UserGPSLogModel.m in Sources */,
 				18186E1119EC0023009F3421 /* JobLogServiceLayer.m in Sources */,
@@ -6929,6 +6963,7 @@
 				183A9E9619E6A11800919345 /* SVMXServerRequest.m in Sources */,
 				183A9FDD19E6B18500919345 /* SFPicklistService.m in Sources */,
 				C3E9F8721A068547002E8A6F /* TechnicianServiceLayer.m in Sources */,
+				C80984F21B42586600396BB6 /* MobileUsageServiceLayer.m in Sources */,
 				183A9E3119E69DB000919345 /* RequestParamModel.m in Sources */,
 				18619BD01AA72CCD00C77276 /* PushNotificationQueue.m in Sources */,
 				183A9A1519E68D9400919345 /* ViewControllerFactory.m in Sources */,
@@ -6963,6 +6998,7 @@
 				184CE34419F52BEE0060A4B5 /* ValueMappingModel.m in Sources */,
 				183AA04519E6C7E000919345 /* SyncProgressFactory.m in Sources */,
 				184A8E6E19E7A0BE006DA6BE /* SMXWeekCalendarView.m in Sources */,
+				C80984F41B42586600396BB6 /* MobileUsageHelper.m in Sources */,
 				5B5CDDE419F660940099B239 /* SFMReadOnlyCheckBoxCell.m in Sources */,
 				183A9F0419E6A15600919345 /* ZKDescribeLayoutRow.m in Sources */,
 				183A9AE119E6967F00919345 /* CalendarHomeViewController.m in Sources */,
@@ -7130,6 +7166,7 @@
 				183AA21019E6D3C200919345 /* CheckBox.m in Sources */,
 				184A8E7D19E7A0BE006DA6BE /* TKCalendarDayViewController.m in Sources */,
 				9EFE6DFE1A0F33EF0067F9CC /* LinkedProcessViewController.m in Sources */,
+				C80984F11B42586600396BB6 /* MobileUsageDataLoader.m in Sources */,
 				184A8E6619E7A0BE006DA6BE /* SMXDayCollectionViewFlowLayout.m in Sources */,
 				183AA21419E6D3C200919345 /* SFMCellFactory.m in Sources */,
 				43C5F4861A138FD60046FF43 /* DODParser.m in Sources */,
@@ -7247,6 +7284,7 @@
 				9EB4F7941A44332C00E2A8BD /* ChatterViewController.m in Sources */,
 				18A217BD19E585D700F22EA6 /* SMLogger.m in Sources */,
 				D752645A19EB95C4006AAC4C /* StandAloneCreateHomeController.m in Sources */,
+				C80984F01B42586600396BB6 /* MobileUsageDataModel.m in Sources */,
 				183AA1C719E6D26400919345 /* SFMPageFieldCollectionViewCell.m in Sources */,
 				184A8E8319E7A0BE006DA6BE /* TKEmptyView.m in Sources */,
 				5B1CE61E1A8B31E800461135 /* SMXReschedulePopup.m in Sources */,

@@ -31,6 +31,7 @@
 #import "APNSServiceLayer.h"
 #import "GetPriceDataServiceLayer.h"
 #import "CustomActionWebServiceLayer.h"
+#import "MobileUsageServiceLayer.h"
 
 @implementation ServiceFactory
 
@@ -162,6 +163,16 @@
                 baseServiceLayer = [[TroubleShootingServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
                 
             }
+                break;
+                
+                /* ======== Mobile Usage ========= */
+                
+            case CategoryTypeMobileUsageFileDownload: {
+                
+                baseServiceLayer = [[MobileUsageServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
+                
+            }
+                
             break;
                 
             case CategoryTypeTechnicianDetails: {

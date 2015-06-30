@@ -128,6 +128,10 @@
             case RequestProductManualDownload:
             case RequestTypeChatterProductImageDownload:
             case RequestTypeChatterUserImage:
+                
+                /* ======== Mobile Usage ======= */
+                
+            case RequestTypeMobileUsageDataDownload:
                 requestClass = [self getFileDownloadRequestByType:requestType];
                 break;
                 

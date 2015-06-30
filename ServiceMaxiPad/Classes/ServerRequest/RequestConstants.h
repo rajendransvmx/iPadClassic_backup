@@ -124,6 +124,9 @@ typedef NS_ENUM(NSUInteger, RequestType)
     
     /******* custom action type ********/
     RequestTypeCustomActionWebService,
+    
+    /* ====== Mobile Usage ====== */
+    RequestTypeMobileUsageDataDownload,
 };
 
 extern NSString *const kContentType;

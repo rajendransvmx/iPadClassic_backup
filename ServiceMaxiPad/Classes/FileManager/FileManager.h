@@ -20,6 +20,9 @@
 + (NSString *)getChatterSubDirectoryPath;
 + (NSString*)getPerformanceLogDirectoryPath;
 
+/* ======= Mobile Usage ============= */
++ (NSString *)getMobileUsageSubDirectoryPath;
+
 
 + (BOOL)createApplicationDirectory;
 + (BOOL)createFileAtPath:(NSString *)filePath;

@@ -277,6 +277,66 @@
     return requestParamArray;
 }
 
+/* ========== Mobile Usage ======== */
+
+- (NSArray*)getMobileUsageDocumentRequestParameterForCount:(NSInteger)count
+{
+    
+    NSString *docId = [[CacheManager sharedInstance] getCachedObjectByKey:@"docId"];
+    
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeTroubleshooting];
+    
+    NSMutableArray *listOfResourceToBeDownloaded;
+    
+    if ([daoService conformsToProtocol:@protocol(TroubleshootingDAO)]) {
+        
+        listOfResourceToBeDownloaded    =  [[NSMutableArray alloc] initWithArray:[daoService getDocumentDetails:docId]];
+    }
+    
+    NSMutableArray *listOfRemainingFileModel = [[NSMutableArray alloc]init];
+    
+    NSString *rootDirectory = [FileManager getMobileUsageSubDirectoryPath];
+    NSMutableArray *requestParamArray = [[NSMutableArray alloc]init];
+    for (int i = 0 ; i < count; i++) { //TO DO :Need to change the logic like pagelayout
+        
+        RequestParamModel *requestParamModel = [[RequestParamModel alloc]init];
+        
+        for (int i = 0; i < [listOfResourceToBeDownloaded count]; i++) {
+            
+            TroubleshootDataModel *resourceModel = [listOfResourceToBeDownloaded objectAtIndex:i];
+            
+            [self deleteTroubleshootingDataForTheModel:resourceModel];
+            
+            FileModel *model = [[FileModel alloc]init];
+            model.sfId = resourceModel.Id;
+            model.fileName =  [NSString stringWithFormat:@"%@.%@",resourceModel.Id,resourceModel.Type];
+            model.objectName = kDocumentObject;
+            model.rootDirectory = rootDirectory;
+            
+            if (model.sfId != nil)
+            {
+                if (i != 0)
+                {
+                    [listOfRemainingFileModel addObject:model];
+                } else
+                {
+                    requestParamModel.values = @[model];
+                }
+            }
+        }
+        
+        NSMutableDictionary *infoDictionary = [[NSMutableDictionary alloc]init];
+        
+        [infoDictionary setObject:listOfRemainingFileModel forKey:@"remainigFiles"];
+        
+        requestParamModel.requestInformation = infoDictionary;
+        
+        [requestParamArray addObject:requestParamModel];
+        
+    }
+    
+    return requestParamArray;
+}
 - (NSArray*)getProductManualRequestParameterForCount:(NSInteger)count
 {
     NSString *docId = [[CacheManager sharedInstance] getCachedObjectByKey:@"pMId"];
