@@ -2351,7 +2351,7 @@
                     
                 }
                 else if (st.syncStatus == SyncStatusFailed) {
-                    
+                    [self requestFialedWithError:st.syncError shouldShow:YES];
                 }
                 else if (st.syncStatus == SyncStatusNetworkError
                          || st.syncStatus == SyncStatusRefreshTokenFailedWithError) {
@@ -2366,7 +2366,6 @@
                 break;
         }
     }
-
 }
 
 - (void)requestFialedWithError:(NSError *)error shouldShow:(BOOL)shouldShow
