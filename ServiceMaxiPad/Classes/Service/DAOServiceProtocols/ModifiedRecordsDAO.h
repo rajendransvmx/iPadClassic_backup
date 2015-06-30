@@ -25,4 +25,9 @@
 - (NSString *)fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:(NSString*)recordId andSfId:(NSString*)sfId;
 - (BOOL)doesRecordExistForId:(NSString *)recordId andOperationType:(NSString *)operationType;
 
+- (NSArray *)getTheOperationValue;
+
+
+-(BOOL)deleteUpdatedRecordsForModifiedRecordModel:(ModifiedRecordModel *)model; // CustomCall. TO delete the record which is updated.
+
 @end

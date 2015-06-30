@@ -42,6 +42,7 @@
 
 @property(nonatomic,strong)  NSMutableDictionary *sourceTargetRecordMap;
 
+@property (nonatomic, strong) NSMutableArray *customWebserviceOptionsArray;
 - (id)initWithObjectName:(NSString *)newObjectName andRecordId:(NSString *)newRecordId;
 - (id)initWithSourceObjectName:(NSString *)srcObjectName andSourceRecordId:(NSString *)srcRecordId;
 

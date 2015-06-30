@@ -142,6 +142,24 @@
     return status;
 }
 
+-(BOOL)deleteUpdatedRecordsForModifiedRecordModel:(ModifiedRecordModel *)model
+{
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"recordLocalId"
+                                                      operatorType:SQLOperatorEqual
+                                                     andFieldValue:model.recordLocalId];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"operation"
+                                                      operatorType:SQLOperatorEqual
+                                                     andFieldValue:model.operation];
+    DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:@"requestData"
+                                                      operatorType:SQLOperatorEqual
+                                                     andFieldValue:model.requestData];
+    
+    BOOL status = [self deleteRecordsFromObject:kModifiedRecords
+                                  whereCriteria:@[criteriaOne,criteriaTwo,criteriaThree]
+                           andAdvanceExpression:nil];
+    return status;
+}
+
 - (NSArray *) getSyncRecordsOfType:(NSString *)opertationType andObjectName:(NSString *)objectName
 {
    
@@ -198,6 +216,7 @@
     return flag;
 }
 
+
 // if modified record has operation type 'Update' but no sfid, fetch sfid using localid and continue sync..
 -(void)updateModifiedRecord:(ModifiedRecordModel *)model {
     NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"sfId", nil];
@@ -247,6 +266,37 @@
     }
     
     return flag;
+}
+
+- (NSArray *)getTheOperationValue
+{
+
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"AFTERINSERT"];
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"BEFOREUPDATE"];
+    DBCriteria *criteria3 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"AFTERUPDATE"];
+
+    DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:@[@"operation", @"requestData", @"recordLocalId"] whereCriterias:@[criteria1, criteria2, criteria3] andAdvanceExpression:@"(1 OR 2 OR 3)"];
+    
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectQuery query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
+
+                [resultSet kvcMagic:model];
+                [records addObject:model];
+            }
+            [resultSet close];
+        }];
+    }
+    return records;
 }
 
 @end

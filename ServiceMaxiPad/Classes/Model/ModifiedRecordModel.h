@@ -62,6 +62,10 @@
 #define kModificationTypeUpdate   @"UPDATE"
 #define kModificationTypeInsert   @"INSERT"
 #define kModificationTypeDelete   @"DELETE"
+#define kModificationTypeAfterInsert @"AFTERINSERT"
+#define kModificationTypeBeforeUpdate @"BEFOREUPDATE"
+#define kModificationTypeAfterUpdate @"AFTERUPDATE"
+
 
 #define kRecordTypeMaster         @"MASTER"
 #define kRecordTypeDetail         @"DETAIL"
