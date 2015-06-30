@@ -1860,8 +1860,9 @@ static SyncManager *_instance;
 
 -(BOOL)customAPICallwithModifiedRecordModelRequestData:(NSString *)requestData andRequestType:(int)requestType
 {
+    
 
-    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && [self continueDataSyncIfConflictsResolved])
+    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && [self continueDataSyncIfConflictsResolved] && [self doesTheRecordStillExist])
     {
         SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPageRequestData:requestData requestType:requestType];
 
@@ -1886,7 +1887,7 @@ static SyncManager *_instance;
     [[CacheManager sharedInstance] clearCacheByKey:kAfterSaveInsertCustomCallValueMap]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
 
     [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
-    BOOL status;
+    BOOL status = NO;
     if(self.isAfterInsert)
     {
         /* call custom Api */
@@ -1964,5 +1965,14 @@ static SyncManager *_instance;
     
     NSArray *operationArray = [modifiedRecordService getTheOperationValue];
     return operationArray;
+}
+
+-(BOOL)doesTheRecordStillExist
+{
+
+    id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+        
+    BOOL status = [modifiedRecordService doesRecordExistForId:self.cCustomCallRecordModel.recordLocalId andOperationType:self.cCustomCallRecordModel.operation];
+    return status;
 }
 @end

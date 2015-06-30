@@ -111,7 +111,7 @@
     {
         SFMRecordFieldData *recordFieldData = [recordDictionary objectForKey:key];
     
-        if (recordFieldData)
+        if (recordFieldData && recordFieldData.internalValue)
             [dict setObject:recordFieldData.internalValue forKey:key];
         else
             [dict setObject:@"" forKey:key];

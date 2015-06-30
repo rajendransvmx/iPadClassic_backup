@@ -75,7 +75,7 @@
     
 //    SFMPage *page = [self getTheSFMPage];
     NSArray *pageLevelEvents = self.sfmPage.process.pageLayout.headerLayout.pageLevelEvents;
-    NSArray *filteredArray = [pageLevelEvents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) OR (%K CONTAINS[c] %@)", kPageEventType, kBeforeSaveProcessKey, kPageEventType, kAfterSaveProcessKey]];
+    NSArray *filteredArray = [pageLevelEvents filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) OR (%K CONTAINS[c] %@) OR (%K CONTAINS[c] %@)", kPageEventType, kBeforeSaveProcessKey, kPageEventType, kAfterSaveProcessKey, kPageEventType, kAfterSaveInsertKey]];
     
     if (self.sfmPage.customWebserviceOptionsArray) {
         self.sfmPage.customWebserviceOptionsArray = nil;
