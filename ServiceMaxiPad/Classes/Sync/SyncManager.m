@@ -42,6 +42,7 @@
 #import "SMDataPurgeManager.h"
 #import "GetPriceManager.h"
 #import "SFMPageHelper.h"
+#import "CacheConstants.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -89,6 +90,11 @@ static SyncManager *_instance;
 @property (nonatomic, strong) NSTimer  *dataSyncTimer;
 @property (nonatomic, strong) NSTimer  *configSyncTimer;
 @property (nonatomic, strong) NSMutableArray  *syncQueue;
+@property (nonatomic, strong) ModifiedRecordModel *cCustomCallRecordModel;
+@property (nonatomic, strong) NSMutableArray *notSyncedDataArrayForCustomeCall;
+@property (nonatomic) BOOL isBeforeUpdate;
+@property (nonatomic) BOOL isAfterInsert;
+@property (nonatomic) BOOL isAfterUpdate;
 
 @property(nonatomic, assign) BOOL isDataSyncRunning;
 
@@ -458,7 +464,8 @@ static SyncManager *_instance;
 
 - (void)performDataSync
 {
-    [self initiateDataSync];
+    [self initiateCustomDataSync];
+   // [self initiateDataSync];
 }
 
 - (void)performEventSync
@@ -566,8 +573,10 @@ static SyncManager *_instance;
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"Data Sync Finished");
+        [self PerformSYncBasedOnFlags];
+
         
-        [self currentDataSyncfinished];
+        //[self currentDataSyncfinished];
     }
     else  if (   (responseStatus.syncStatus == SyncStatusFailed)
               || (responseStatus.syncStatus == SyncStatusRefreshTokenFailedWithError)
@@ -584,7 +593,6 @@ static SyncManager *_instance;
             [self currentDataSyncFailedWithError:responseStatus.syncError];
         }
     }
-   
     SXLogDebug(@"Data Sync - %d", responseStatus.syncStatus);
 }
 
@@ -651,8 +659,9 @@ static SyncManager *_instance;
                 {
                     [self profileValidationFailedWithError:wsResponseStatus.syncError];
                 }
-                break;
             }
+                break;
+
     
                 
             case CategoryTypeConfigSync:
@@ -663,6 +672,11 @@ static SyncManager *_instance;
                 [self recievedConfigSyncResponse:wsResponseStatus];
             }
                 break;
+            case CategoryTypeCustomWebServiceCall:
+            {
+                [self makeNextCallForCustomDataSyncWithResponse:wsResponseStatus];
+                break;
+            }
                 
             default:
                 break;
@@ -1761,4 +1775,194 @@ static SyncManager *_instance;
     });
 }
 
+
+
+#pragma mark Custom data sync.
+
+/* It will check whether modified record has after update,after insert, befor update operations are there or not and based on that the sync will happen */
+
+- (void)initiateCustomDataSync
+{
+    self.isAfterInsert = NO;
+    self.isBeforeUpdate = NO;
+    self.isAfterUpdate = NO;
+    
+    NSArray *operationArray = [self theModifiedRecords];
+    
+    if(operationArray.count)
+    {
+    NSArray *afterInsertFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERINSERT"]];
+    NSArray *beforeFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"BEFOREUPDATE"]];
+    NSArray *afterUpdateFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERUPDATE"]];
+
+       NSArray *newOperationArray = [afterInsertFilteredArray arrayByAddingObjectsFromArray:beforeFilteredArray];
+        newOperationArray = [newOperationArray arrayByAddingObjectsFromArray:afterUpdateFilteredArray];
+
+        for(ModifiedRecordModel *model in newOperationArray)
+        {
+            self.cCustomCallRecordModel = model;
+            if([model.operation isEqualToString:@"AFTERINSERT"])
+            {
+                [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap];
+                self.isBeforeUpdate = NO;
+                self.isAfterInsert = YES;
+                self.isAfterUpdate = NO;
+                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
+                [self checkNetworkReachabilityAndInitiateDataSync];
+                break;
+            }
+            else if ([model.operation isEqualToString:@"BEFOREUPDATE"])
+            {
+                self.isBeforeUpdate = YES;
+                self.isAfterInsert = NO;
+                self.isAfterUpdate = NO;
+                if (self.notSyncedDataArrayForCustomeCall) {
+                    for (NSString *recordLocalID in self.notSyncedDataArrayForCustomeCall) {
+                        if ([recordLocalID isEqualToString:model.recordLocalId]) {
+                            self.isBeforeUpdate = NO;
+                            continue;
+                        }
+                    }
+                   
+                }
+
+                [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
+                break;
+            }
+            else
+            {
+                
+                //AFTER UPDATE
+                self.isBeforeUpdate = NO;
+                self.isAfterInsert = NO;
+                self.isAfterUpdate = YES;
+                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
+                
+                [self checkNetworkReachabilityAndInitiateDataSync];
+                break;
+
+            }
+        }
+    }
+    else
+    {
+        [self checkNetworkReachabilityAndInitiateDataSync];
+    }
+}
+
+-(void)checkNetworkReachabilityAndInitiateDataSync
+{
+    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]) {
+        [self initiateDataSync];
+
+    }
+}
+
+-(BOOL)customAPICallwithModifiedRecordModelRequestData:(NSString *)requestData andRequestType:(int)requestType
+{
+
+    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && [self continueDataSyncIfConflictsResolved])
+    {
+        SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPageRequestData:requestData requestType:requestType];
+
+        if (webserviceHelper) {
+            
+            if ([[webserviceHelper.sfmPage getHeaderSalesForceId] length]<6) {
+                if (self.notSyncedDataArrayForCustomeCall) {
+                    [self.notSyncedDataArrayForCustomeCall addObject:self.cCustomCallRecordModel.recordLocalId];
+                    [self initiateCustomDataSync];
+                    return NO; // do not proceed with custom call if the header record has no sfid. it means the record is not synced yet.
+                }
+            }
+            [webserviceHelper initiateCustomWebServiceWithDelegate:self];
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (void)PerformSYncBasedOnFlags
+{
+    [[CacheManager sharedInstance] clearCacheByKey:kAfterSaveInsertCustomCallValueMap]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
+
+    [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
+    BOOL status;
+    if(self.isAfterInsert)
+    {
+        /* call custom Api */
+       status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:1];
+    }
+    else if(self.isBeforeUpdate)
+    {
+        [self performDataSync];
+        return;
+
+    }
+    else if(self.isAfterUpdate)
+    {
+        /*call Custom APi */
+      status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:3];
+    }
+
+    if (!status) {
+        [self currentDataSyncfinished];
+
+    }
+}
+
+- (void)customCallResponse
+{
+    [[CacheManager sharedInstance] clearCacheByKey:kAfterSaveInsertCustomCallValueMap];
+}
+
+- (void)makeNextCallForCustomDataSyncWithResponse:(WebserviceResponseStatus *)responseStatus
+{
+    self.initialSyncStatus = responseStatus.syncStatus;
+    
+    if (responseStatus.syncStatus == SyncStatusSuccess)
+    {
+        SXLogDebug(@"Initial Sync Finished");
+        //Delete the Record which was synced.
+        id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+        
+        BOOL status = [modifiedRecordService deleteUpdatedRecordsForModifiedRecordModel:self.cCustomCallRecordModel];
+        
+        if (status) {
+            self.cCustomCallRecordModel = nil;
+        }
+        
+        if(self.isAfterUpdate)
+        {
+            if ([[self theModifiedRecords] count]) {
+                [self initiateCustomDataSync];
+
+            }
+            else{
+                self.isAfterUpdate = NO;
+                [self currentDataSyncfinished];
+            }
+
+
+        }
+        else
+        {
+            [self initiateCustomDataSync];
+
+        }
+        
+    }
+    else  if ( (responseStatus.syncStatus == SyncStatusFailed) ||  (responseStatus.syncStatus == SyncStatusNetworkError))
+    {
+        SXLogDebug(@"Initial Sync failed");
+        [self currentDataSyncFailedWithError:responseStatus.syncError];
+    }
+}
+
+-(NSArray *)theModifiedRecords
+{
+    id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    
+    NSArray *operationArray = [modifiedRecordService getTheOperationValue];
+    return operationArray;
+}
 @end

@@ -11,6 +11,8 @@
 #import "FlowDelegate.h"
 #import "SyncScheduler.h"
 #import "OpDocHelper.h"
+#import "SFMCustomActionWebServiceHelper.h"
+#import "TagConstant.h"
 
 extern NSString *kInitialSyncStatusNotification;
 extern NSString *kConfigSyncStatusNotification;
