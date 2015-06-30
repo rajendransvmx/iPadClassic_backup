@@ -59,6 +59,11 @@ typedef NS_ENUM(NSUInteger, CategoryType) {
     
     /***CustomAction--Call webView*****/
     CategoryTypeCustomWebServiceCall,
+    
+    /*  ===== Mobile Usage ===== */
+    CategoryTypeMobileUsage,
+    CategoryTypeMobileUsageFileDownload,
+    
 };
 
 typedef NS_ENUM(NSUInteger, SyncType) {
