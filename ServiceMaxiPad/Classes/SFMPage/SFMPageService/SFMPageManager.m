@@ -1008,4 +1008,85 @@ PageManagerErrorType;
     return date;
 }
 
+
+- (SFMPage *)theSFMPagewithObjectName:(NSString *)theObjectName andRecordID:(NSString *)lRecordID andProcessID:(NSString *)lProcessId
+{
+    SFMPage *sfmPage = [[SFMPage alloc] initWithObjectName:theObjectName andRecordId:lRecordID];
+    
+    NSString *objectLabel = [SFMPageHelper getObjectLabelForObjectName:theObjectName];
+
+    
+    if ([objectLabel length] > 0) {
+        sfmPage.objectLabel = objectLabel;
+    }
+    
+    /*Fill SFMProcess object info*/
+    
+        SFMProcess *process = [[SFMProcess alloc] init];
+        process.processInfo = [SFMPageHelper getProcessInfoForSFID:lProcessId];
+        process.component = [SFMPageHelper getProcessComponentForProcess:process.processInfo.sfID];
+        process.pageLayout = [self pageLayoutInfoForProcess:process];
+        [self fillUpPrecisionInfoForPage:process];
+        
+        sfmPage.process = process;
+
+    
+    /*Data filling*/
+    NSMutableDictionary *headerDict = [self getHeaderRecordForSFMPage:sfmPage];
+    sfmPage.nameFieldValue = self.nameFieldValue;
+    
+    if ([headerDict count] > 0) {
+        sfmPage.headerRecord = headerDict;
+    }
+    
+    NSString *headerId = [self getHeaderSfId:sfmPage];
+    NSMutableDictionary *details = [self getDetailRecordsForCustom:sfmPage andHeaderId:headerId];
+    
+    if ([details count] > 0) {
+        sfmPage.detailsRecord = details;
+    }
+    
+    //fill page
+    return sfmPage;
+}
+
+- (NSMutableDictionary *)getDetailRecordsForCustom:(SFMPage *)sfmPage andHeaderId:(NSString *)headerSfId
+{
+    NSMutableDictionary *detailRecord = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    NSMutableDictionary *processComp = sfmPage.process.component;
+    NSArray *details = sfmPage.process.pageLayout.detailLayouts;
+    
+    for (SFMDetailLayout *detailLayout in details) {
+        
+        NSString * processComponentId = detailLayout.processComponentId;
+        SFProcessComponentModel *componemtModel = [processComp objectForKey:processComponentId];
+        
+            NSArray *sectionFields = detailLayout.detailSectionFields;
+            SFMDetailFieldData * record = [[SFMDetailFieldData alloc] init];
+            record.fieldsArray = sectionFields;
+            record.parentLocalId = sfmPage.recordId;
+            record.parentSfID = headerSfId;
+            record.parentColumnName = componemtModel.parentColumnName;
+            record.objectName = componemtModel.objectName;
+            record.sortingData = componemtModel.sortingOrder;
+            
+            if (![StringUtil isStringEmpty:componemtModel.expressionId]) {
+                SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:componemtModel.expressionId
+                                                                                             objectName:componemtModel.objectName];
+                record.criteriaObjects = [NSMutableArray arrayWithArray:[expressionParser expressionCriteriaObjects]];
+                record.expression = [expressionParser advanceExpression];
+            
+            NSMutableArray * detailArray = [self getDetailData:record];
+            
+            if ([detailArray count] > 0) {
+                [detailRecord setObject:detailArray forKey:componemtModel.sfId];
+            }
+        }
+    }
+    [self resetPicklistAndRecordTypeData];
+    
+    return detailRecord;
+}
+
 @end

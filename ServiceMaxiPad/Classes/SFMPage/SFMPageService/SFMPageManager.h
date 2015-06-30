@@ -48,4 +48,8 @@
 - (NSString *)getUserReadableDate:(NSString *)dateTime;
 - (NSString *)getDateForValueMapping:(NSString *)datetime;
 - (NSString *)getUserReadableDateForValueMapping:(NSString *)datetime;
+
+- (SFMPage *)theSFMPagewithObjectName:(NSString *)theObjectName andRecordID:(NSString *)lRecordID andProcessID:(NSString *)lProcessId;
+- (NSMutableDictionary *)getDetailRecordsForCustom:(SFMPage *)sfmPage andHeaderId:(NSString *)headerSfId;
+
 @end
