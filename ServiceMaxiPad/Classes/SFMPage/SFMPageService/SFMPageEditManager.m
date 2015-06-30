@@ -796,6 +796,7 @@
         
        // NSLog(@"database path: %@",[[DatabaseManager sharedInstance]primaryDatabasePath]);
         
+        [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:page];
         [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:page.headerRecord];
         
        // NSString *abc = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:page.recordId];
@@ -804,6 +805,44 @@
     return canUpdate;
 }
 
+-(void)theModifiedRecordsUpdateForCustomWebservice:(ModifiedRecordModel *) syncRecord andSFMPage:(SFMPage *)sfmpage
+{
+    if (sfmpage.customWebserviceOptionsArray.count) {
+        NSString *requestData = [NSString stringWithFormat:@"%@,%@,%@", self.sfmPage.objectName, self.sfmPage.recordId, self.sfmPage.process.processInfo.sfID];
+        syncRecord.requestData = requestData;
+        id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+
+        if ([syncRecord.operation isEqualToString:kModificationTypeInsert]) {
+            
+            if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeAfterInsert]) {
+                syncRecord.operation = kModificationTypeAfterInsert;
+                
+                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterInsert] ) {
+                    [modifiedRecordService saveRecordModel:syncRecord];
+
+                }
+            }
+        }
+        else{
+            
+            if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeAfterUpdate]) {
+                    syncRecord.operation = kModificationTypeAfterUpdate;
+                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterUpdate] ) {
+                    [modifiedRecordService saveRecordModel:syncRecord];
+                    
+                }
+            }
+            if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeBeforeUpdate]) {
+                syncRecord.operation = kModificationTypeBeforeUpdate;
+                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeBeforeUpdate] ) {
+                    [modifiedRecordService saveRecordModel:syncRecord];
+                    
+                }
+            }
+
+        }
+    }
+}
 - (BOOL)saveDetailRecords:(SFMPage *)sfmPage {
     
     BOOL isDetailChanged = NO;
@@ -936,6 +975,7 @@
 //                    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
 //                    [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:syncRecord.recordLocalId];
 //            }
+            [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:sfmPage];
             [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:eachDetailDict];
         }
         //delete record
@@ -1729,7 +1769,6 @@
                 }
             }
         }
-        
     }
 }
 
