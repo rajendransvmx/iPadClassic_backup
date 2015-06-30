@@ -450,7 +450,6 @@
         pageManager = [[SFMPageViewManager alloc] initWithObjectName:[model objectAPIName] recordId:[[model getFieldValueDictionary] objectForKey:@"localId"]];
     }
     
-
     NSError *error = nil;
     BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId error:&error];
     if (isValidProcess) {
@@ -2252,7 +2251,7 @@
         return;
     }
     SFMPage *sfmPage = [self getSFMPageModel];
-    if ([StringUtil isStringEmpty:sfmPage.process.processInfo.processId]) {
+    if (!sfmPage) {
         [self showNoProcessAlert];
         return;
     }
@@ -2269,7 +2268,7 @@
         return;
     }
     SFMPage *sfmPage = [self getSFMPageModel];
-    if ([StringUtil isStringEmpty:sfmPage.process.processInfo.processId]) {
+    if (!sfmPage) {
         [self showNoProcessAlert];
         return;
     }
@@ -2318,7 +2317,15 @@
     }
     SFMPageViewManager *viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:objectModel.objectName recordId:recordId];
     SFMPage *sfmPage = viewPageManager.sfmPageView.sfmPage;
-    return sfmPage;
+    NSError *error = nil;
+    BOOL isValidProcess = [viewPageManager isValidProcess:viewPageManager.processId error:&error];
+    if (isValidProcess) {
+        return sfmPage;
+    }
+    else
+    {
+        return nil;
+    }
 }
 #pragma mark - Flow Delegate methods
 - (void)flowStatus:(id)status
