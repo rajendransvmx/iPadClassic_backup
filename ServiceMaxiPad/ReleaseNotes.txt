@@ -3,12 +3,12 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.027
+Version = 15.20.028
 ===========================================
 -------------
 Fixed Defects
 -------------
-None
+Data Sync Loop Issue has been fixed.
 
 -------------
 Known Issues
