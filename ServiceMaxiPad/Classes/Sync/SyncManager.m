@@ -1566,7 +1566,7 @@ static SyncManager *_instance;
     
     if (shouldEnable) {
         [self scheduleSync];
-        [[LocationPingManager sharedInstance] startLocationPing];
+        //[[LocationPingManager sharedInstance] startLocationPing];
         [[SMDataPurgeManager sharedInstance] updateDataPurgeTimer];
     }
     else{

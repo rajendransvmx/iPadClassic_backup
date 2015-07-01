@@ -3,18 +3,21 @@
 ServiceMax iPad  Sum 15 Build - Sum15Build
 
 *******************************************
-Version = 15.49.009
+Version = 15.49.010
 ===========================================
+
 
 Merged Spr 15 SP branch SVN 5057:5132@Spring15SP to HEAD(15.40.015) to Sum 15’
 
 -------------
 Fixed Defects
 -------------
-018690
 
 ------------
 Known Issues
+—————————
+location Ping will not work as we have commented that to proceed with Initial Sync and Config Sync.
+Will be available in next build.
 
 ---------------------
 Fixed - Known Issues 
@@ -24,6 +27,14 @@ None
 ---------------------
 Features Implemented
 ---------------------
+GE Formulas
+Before Save and After Save
+Get Price Custom Coverage
+Sync Time Logs
+Inter App Communication
+Service Report Sync Status
+Custom Web service
+
 
 ---------------------
 Additional Notes
@@ -34,6 +45,8 @@ Additional Notes
 3. Data Sync  - Removed sending field names in Data Sync
 4. TXFetch    - Removed Object Name which doesn’t have ids associated during TXFetch.
 PageLayout - CallBack issue resolved which was causing Page Layout to be missing. 
+
+5. Namespace will set to SVMXC in next build once Initial Sync issue get resolved 
 
 
 
