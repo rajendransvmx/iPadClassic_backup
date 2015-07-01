@@ -78,7 +78,8 @@ NSString *const kName               =  @"Name";
 NSString *const kSVMXRequestMap     =  @"SVMXMap";
 NSString *const KSVMXRequestData    =  @"data";
 NSString *const KSVMXRequestParameters    =  @"Parameters";
-NSString *const KFieldName          =    @"Field Name";
+NSString *const KFieldName          =    @"FIELD NAME";
+NSString *const kSVMXRequestValueUpper   =  @"VALUE";
 
 
 //Time logs

@@ -2257,7 +2257,10 @@
         /* load url with params */
         SFMCustomActionHelper *customActionHelper=[[SFMCustomActionHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
         UIApplication *ourApplication = [UIApplication sharedApplication];
-        [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
+        BOOL isOpen = [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
+        if (!isOpen) {
+            [self showWrongURLAlert];
+        }
     }
     else
     {
@@ -2408,6 +2411,15 @@
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
                                                     message:@"Sync is going on. Please Try after sync completion"
+                                                   delegate:nil
+                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+                                          otherButtonTitles:nil];
+    [alert show];
+}
+-(void)showWrongURLAlert
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
+                                                    message:@"Invalid URL"
                                                    delegate:nil
                                           cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                           otherButtonTitles:nil];

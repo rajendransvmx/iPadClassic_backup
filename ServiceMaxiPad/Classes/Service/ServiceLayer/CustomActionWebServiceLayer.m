@@ -239,7 +239,7 @@
         for(CustomActionURLModel *customModel in paramList)
         {
             //Making parameter from model with respect type
-            if ([customModel.ParameterType isEqualToString:KFieldName])
+            if ([[customModel.ParameterType uppercaseString] isEqualToString:KFieldName])
             {
                 SFMRecordFieldData *recordFieldData = [dictinory objectForKey:customModel.ParameterValue];
                 if (recordFieldData)

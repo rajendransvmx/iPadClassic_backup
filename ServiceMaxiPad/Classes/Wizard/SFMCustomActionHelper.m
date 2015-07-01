@@ -57,7 +57,7 @@
     for(CustomActionURLModel *customModel in array) {
     
         //Making parameter from model with respect type
-        if ([customModel.ParameterType isEqualToString:KFieldName])
+        if ([[customModel.ParameterType uppercaseString] isEqualToString:KFieldName])
         {
             NSString *value = @"";
             SFMRecordFieldData *recordFieldData = nil;
@@ -75,13 +75,11 @@
             }
             param = [param stringByAppendingFormat:@"&%@=%@",customModel.ParameterName,value];
             
-        } else if ([customModel.ParameterType isEqualToString:kSVMXRequestValue])
+        }
+        else if ([[customModel.ParameterType uppercaseString] isEqualToString:kSVMXRequestValueUpper])
         {
             param = [param stringByAppendingFormat:@"&%@=%@",customModel.ParameterName,customModel.ParameterValue];
         
-        }else
-        {
-            
         }
     }
     return param;

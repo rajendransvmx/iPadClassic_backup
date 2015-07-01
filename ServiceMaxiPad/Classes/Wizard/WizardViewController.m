@@ -150,19 +150,19 @@
             textLabel.text = wizardComponent.actionName;
             
             if (wizardComponent.isEntryCriteriaMatching){
-                if ([wizardComponent.actionType isEqualToString:@"OTHERS"]) {
+                if ([[wizardComponent.actionType uppercaseString] isEqualToString:@"OTHERS"]) {
                     /* Before making request checking for internet connectivity */
                     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
                         textLabel.enabled = YES;
                         cell.userInteractionEnabled = YES;
                         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-                        if ([wizardComponent.customActionType isEqualToString:@"Web-Service"])  {
+                        if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"WEB-SERVICE"])  {
                             cell.accessoryView = [self setIcon:[UIColor colorWithHexString:kOrangeColor]];
                         }else{
                             cell.accessoryView = nil;
                         }
                     }else{
-                        if ([wizardComponent.customActionType isEqualToString:@"Web-Service"])  {
+                        if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"WEB-SERVICE"])  {
                             textLabel.enabled = NO;
                             cell.userInteractionEnabled = NO;
                             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
@@ -318,7 +318,7 @@
                 {
                     //Reschedule event
                     [self.delegate rescheduleEvent];
-                }else if([wizardComponent.actionType isEqualToString:@"OTHERS"])//Here we are checking for custome URL
+                }else if([[wizardComponent.actionType uppercaseString] isEqualToString:@"OTHERS"])//Here we are checking for custome URL
                 {
                     /* Before making request checking for internet connectivity */
                     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
@@ -329,6 +329,8 @@
                             /* checking network reachablity and making webservice call */
                             if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
                                 [self.delegate makeWebserviceCall:wizardComponent];
+                            else
+                                [self showWrongURLAlert];
                         }
                     }else{
                         
@@ -393,5 +395,13 @@
                    });
 }
 
-
+-(void)showWrongURLAlert
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
+                                                    message:@"Network problem"
+                                                   delegate:nil
+                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+                                          otherButtonTitles:nil];
+    [alert show];
+}
 @end

@@ -199,6 +199,7 @@ extern NSString *const  kRestUrlForWebservice;
 extern NSString *const  KSVMXRequestData;
 extern NSString *const  KSVMXRequestParameters;
 extern NSString *const  KFieldName;
+extern NSString *const  kSVMXRequestValueUpper;
 
 
 extern NSString *const  kRestUrlDPPicklist ;
