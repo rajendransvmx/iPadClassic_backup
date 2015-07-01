@@ -321,19 +321,15 @@
                 }else if([[wizardComponent.actionType uppercaseString] isEqualToString:@"OTHERS"])//Here we are checking for custome URL
                 {
                     /* Before making request checking for internet connectivity */
-                    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]){
-                        if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"URL"]) {
-                            /* load url with params */
-                            [self.delegate makeCustomUrlCall:wizardComponent];
-                        }else if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"WEB-SERVICE"]) {
-                            /* checking network reachablity and making webservice call */
-                            if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
-                                [self.delegate makeWebserviceCall:wizardComponent];
-                            else
-                                [self showWrongURLAlert];
-                        }
-                    }else{
-                        
+                    if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"URL"]) {
+                        /* load url with params */
+                        [self.delegate makeCustomUrlCall:wizardComponent];
+                    }else if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"WEB-SERVICE"]) {
+                        /* checking network reachablity and making webservice call */
+                        if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
+                            [self.delegate makeWebserviceCall:wizardComponent];
+                        else
+                            [self showWrongURLAlert];
                     }
                 }
                 else
