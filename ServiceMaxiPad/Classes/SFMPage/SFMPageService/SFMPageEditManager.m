@@ -808,7 +808,7 @@
 -(void)theModifiedRecordsUpdateForCustomWebservice:(ModifiedRecordModel *) syncRecord andSFMPage:(SFMPage *)sfmpage
 {
     if (sfmpage.customWebserviceOptionsArray.count) {
-        NSString *requestData = [NSString stringWithFormat:@"%@,%@,%@", self.sfmPage.objectName, self.sfmPage.recordId, self.sfmPage.process.processInfo.sfID];
+        NSString *requestData = [NSString stringWithFormat:@"%@,%@,%@", sfmpage.objectName, sfmpage.recordId, sfmpage.process.processInfo.sfID];
         syncRecord.requestData = requestData;
         id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
 
@@ -829,7 +829,6 @@
                     syncRecord.operation = kModificationTypeAfterUpdate;
                 if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterUpdate] ) {
                     [modifiedRecordService saveRecordModel:syncRecord];
-                    
                 }
             }
             if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeBeforeUpdate]) {

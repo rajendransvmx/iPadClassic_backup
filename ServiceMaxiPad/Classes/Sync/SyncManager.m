@@ -943,7 +943,7 @@ static SyncManager *_instance;
 
 - (void)currentConfigSyncFinished
 {
-     [PlistManager storeLastScheduledConfigSyncGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
+    [PlistManager storeLastScheduledConfigSyncGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
     [SMDataPurgeHelper saveConfigSyncTimeSinceSyncCompleted];
     [[SMDataPurgeManager sharedInstance] initiateAllDataPurgeProcess];
     [self enableAllParallelSync:YES];
@@ -1891,6 +1891,11 @@ static SyncManager *_instance;
     if(self.isAfterInsert)
     {
         /* call custom Api */
+        
+
+            [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+            self.isDataSyncRunning = NO;
+        
        status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:1];
     }
     else if(self.isBeforeUpdate)
@@ -1948,9 +1953,7 @@ static SyncManager *_instance;
         else
         {
             [self initiateCustomDataSync];
-
         }
-        
     }
     else  if ( (responseStatus.syncStatus == SyncStatusFailed) ||  (responseStatus.syncStatus == SyncStatusNetworkError))
     {
