@@ -34,12 +34,13 @@
             self.helper = [[TXFetchHelper alloc] initWithCheckForDuplicateRecords:YES];
             NSDictionary *response = [NSDictionary dictionaryWithDictionary:responseData];
             NSArray *valueMap = [response objectForKey:kSVMXSVMXMap];
-            NSMutableArray *objectrecords = [[NSMutableArray alloc] initWithCapacity:0];
-            NSString *objectName = nil;
             if ([valueMap isKindOfClass:[NSArray class]])
             {
+                
                 for (NSDictionary *recordDict in valueMap)
                 {
+                    NSMutableArray *objectrecords = [[NSMutableArray alloc] initWithCapacity:0];
+                    NSString *objectName = nil;
                     objectName = [recordDict objectForKey:kSVMXKey];
                     id str = [recordDict objectForKey:kSVMXValue];
                     NSMutableArray *dataArray = [Utility objectFromJsonString:str];
@@ -55,8 +56,8 @@
                     else{
                         //Here its structure problem, Its not a array
                     }
+                    [self.helper insertObjects:objectrecords withObjectName:objectName];
                 }
-                [self.helper insertObjects:objectrecords withObjectName:objectName];
             }
             else
             {
