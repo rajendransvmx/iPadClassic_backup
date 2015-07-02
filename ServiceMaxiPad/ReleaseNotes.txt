@@ -3,12 +3,14 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.028
+Version = 15.20.029
 ===========================================
 -------------
 Fixed Defects
 -------------
-Data Sync Loop Issue has been fixed.
+Initial Sync Step-6 hanging issue
+TimeOut Issue
+Fixed call back issue related to Get price request
 
 -------------
 Known Issues
@@ -34,6 +36,8 @@ Changes Made :
 2. Removed field names from Datasync request calls
 3. Removed field empty (id)array for objects in TX_FETCH
 4. Fixed call back issue on SFM page layout request.
+5. TimeOut Issue
+6. Data Sync Loop Issue Fixed.
  
 
 
