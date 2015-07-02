@@ -1566,7 +1566,7 @@ static SyncManager *_instance;
     
     if (shouldEnable) {
         [self scheduleSync];
-        //[[LocationPingManager sharedInstance] startLocationPing];
+        [[LocationPingManager sharedInstance] startLocationPing];
         [[SMDataPurgeManager sharedInstance] updateDataPurgeTimer];
     }
     else{
@@ -1927,7 +1927,7 @@ static SyncManager *_instance;
     
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
-        SXLogDebug(@"Initial Sync Finished");
+        SXLogDebug(@"custom call Finished");
         //Delete the Record which was synced.
         id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
         

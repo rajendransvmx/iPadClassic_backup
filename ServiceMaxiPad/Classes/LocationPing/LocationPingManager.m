@@ -185,10 +185,12 @@
 #pragma mark - Plist storage method
 - (void)storeLatestLocationManagerStatusIntoNSUserDefaults:(NSDictionary *)locationDict
 {
-    @synchronized([self class]) {
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+            [PlistManager storeTechnicianLastLocationStatus:locationDict];
         
-        [PlistManager storeTechnicianLastLocationStatus:locationDict];
-    }
+    });
 }
 
 - (UserGPSLogModel *)populateModelFromLastestLocationManagerStatus
