@@ -18,6 +18,7 @@
 #import "SFMRecordFieldData.h"
 #import "FactoryDAO.h"
 #import "StringUtil.h"
+#import "SFMDetailLayout.h"
 
 @implementation CustomActionWebServiceLayer
 
@@ -122,12 +123,15 @@
 -(NSDictionary *)objectChildLine
 {
     CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
-    NSString *childName = [self getChildObjectName:customActionWebserviceModel];
-    NSArray *childList = [self gettingChieldValueFromPage:customActionWebserviceModel.sfmPage.detailsRecord];
-    if (childList) {
-        return [self getNode:[self getSVMXMap:@"" date:@"" value:childName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:childList]];
-    }else{
-        return [self getNode:[self getSVMXMap:@"" date:@"" value:childName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:@[]]];
+    if (customActionWebserviceModel.sfmPage)
+    {
+        self.childName =[self getChildObjectName:customActionWebserviceModel.sfmPage];
+        NSArray *childList = [self gettingChieldValueFromPage:customActionWebserviceModel.sfmPage.detailsRecord];
+        if (childList) {
+            return [self getNode:[self getSVMXMap:@"" date:@"" value:self.childName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:childList]];
+        }else{
+            return [self getNode:[self getSVMXMap:@"" date:@"" value:self.childName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:@[]]];
+        }
     }
     return nil;
 }
@@ -175,21 +179,14 @@
     return @"";
 }
 
--(NSString *)getChildObjectName:(CustomActionWebserviceModel *)customActionWebserviceModel
+-(NSString *)getChildObjectName:(SFMPage *)sfmPageModel
 {
-    if (customActionWebserviceModel)
-    {
-        if (customActionWebserviceModel.sfmPage)
-        {
-            NSDictionary *recordDictionary = customActionWebserviceModel.sfmPage.process.component;
-            NSArray *recordKey = [recordDictionary allKeys];
-            
-            if (recordKey && ![recordKey isKindOfClass:[NSNull class]] && [recordKey count])
-            {
-                SFProcessComponentModel *model = [recordDictionary objectForKey:[recordKey objectAtIndex:0]];
-                if (![StringUtil isStringEmpty:model.objectName]) {
-                    return model.objectName;
-                }
+    NSArray *recordArray = sfmPageModel.process.pageLayout.detailLayouts;
+    if (recordArray && ![recordArray isKindOfClass:[NSNull class]] && [recordArray count]>0) {
+        SFMDetailLayout *detailLayout = [recordArray objectAtIndex:0];
+        if (detailLayout) {
+            if (detailLayout.objectName) {
+                return detailLayout.objectName;
             }
         }
     }
