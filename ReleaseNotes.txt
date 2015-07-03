@@ -3,13 +3,12 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.018
+Version = 15.40.019
 ===========================================
 -------------
 Fixed Defects
 -------------
-Fixed call back issue related to Get price request.
-Initial Sync Step-6 hanging issue.
+018572 - Output document fail in Spring 15 SP App for iPad 4.
 
 -------------
 Known Issues
