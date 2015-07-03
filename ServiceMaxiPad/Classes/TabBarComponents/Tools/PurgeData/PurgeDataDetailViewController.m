@@ -323,6 +323,9 @@
     [self disableProgressBarCancelButton];
     [[SMDataPurgeManager sharedInstance] stopDataPurge];
     [self removeProgresBar];
+    
+    [[AutoLockManager sharedManager] enableAutoLockSettingFor:purgeDataAL];
+
 }
 
 -(void)disableProgressBarCancelButton
