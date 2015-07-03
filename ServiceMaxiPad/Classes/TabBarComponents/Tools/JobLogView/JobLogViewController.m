@@ -103,13 +103,13 @@
            
         }
 
-        
+        [[AutoLockManager sharedManager] disableAutoLockSettingFor:pushLogsAL];
+
         TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeJobLog
                                                  requestParam:nil
                                                callerDelegate:self];
         [[TaskManager sharedInstance] addTask:taskModel];
         
-        [[AutoLockManager sharedManager] disableAutoLockSettingFor:pushLogsAL];
 
     }
     else
