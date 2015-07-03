@@ -415,6 +415,7 @@
 		183AA38019E6DC4800919345 /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA37F19E6DC4800919345 /* Utility.m */; };
 		183AA38319E6DC9300919345 /* DynamicTableCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA38219E6DC9300919345 /* DynamicTableCreator.m */; };
 		183AA38719E6DDF800919345 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA38619E6DDF800919345 /* Base64.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		183B9F131B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 183B9F121B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.m */; };
 		1847E4771A403CA400B3A846 /* DataPurgeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1847E4761A403CA400B3A846 /* DataPurgeModel.m */; };
 		1847E47A1A403CB900B3A846 /* DataPurgeService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1847E4791A403CB900B3A846 /* DataPurgeService.m */; };
 		184A8E5519E7A0BE006DA6BE /* CalendarMonthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 184A8D7719E7A0BE006DA6BE /* CalendarMonthViewController.m */; };
@@ -1875,6 +1876,8 @@
 		183AA38219E6DC9300919345 /* DynamicTableCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicTableCreator.m; sourceTree = "<group>"; };
 		183AA38519E6DDF800919345 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		183AA38619E6DDF800919345 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		183B9F111B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMPageUrlFieldCollectionViewCell.h; sourceTree = "<group>"; };
+		183B9F121B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMPageUrlFieldCollectionViewCell.m; sourceTree = "<group>"; };
 		1847E4751A403CA400B3A846 /* DataPurgeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPurgeModel.h; sourceTree = "<group>"; };
 		1847E4761A403CA400B3A846 /* DataPurgeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataPurgeModel.m; sourceTree = "<group>"; };
 		1847E4781A403CB900B3A846 /* DataPurgeService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPurgeService.h; sourceTree = "<group>"; };
@@ -4288,6 +4291,8 @@
 				183AA19219E6D26400919345 /* SFMPageShowAllViewController.xib */,
 				183AA19319E6D26400919345 /* SFMPageViewController.h */,
 				183AA19419E6D26400919345 /* SFMPageViewController.m */,
+				183B9F111B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.h */,
+				183B9F121B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.m */,
 				9EF90F801A24B3D400FFFA75 /* PageHistory */,
 				183AA19519E6D26400919345 /* SLAClock */,
 			);
@@ -6789,6 +6794,7 @@
 				183A9FC919E6B18500919345 /* ExpressionParserService.m in Sources */,
 				18800CE71A08D14400930FF9 /* PurgeDataDetailViewController.m in Sources */,
 				184A8E7519E7A0BE006DA6BE /* SMXWeekCollectionViewFlowLayout.m in Sources */,
+				183B9F131B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.m in Sources */,
 				184A8E9919E7A0BE006DA6BE /* UIBarButtonItem+TKCategory.m in Sources */,
 				18A2178F19E5850300F22EA6 /* CustomerOrgInfo.m in Sources */,
 				57BA2CEE1A11061B0081389B /* ProductManualParser.m in Sources */,
