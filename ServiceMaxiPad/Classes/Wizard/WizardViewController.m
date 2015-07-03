@@ -31,6 +31,7 @@
 #import "SNetworkReachabilityManager.h"
 #import "SFMCustomActionWebServiceHelper.h"
 #import "MBProgressHUD.h"
+#import "AlertMessageHandler.h"
 
 @interface WizardViewController ()
 
@@ -393,11 +394,6 @@
 
 -(void)showWrongURLAlert
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
-                                                    message:@"Network problem"
-                                                   delegate:nil
-                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-                                          otherButtonTitles:nil];
-    [alert show];
+    [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeInternetNotReachable];
 }
 @end
