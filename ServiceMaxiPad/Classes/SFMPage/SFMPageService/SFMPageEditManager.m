@@ -51,6 +51,7 @@
 #import "SyncErrorConflictService.h"
 #import "FieldUpdateRuleManager.h"
 #import "Utility.h"
+#import "SFMDetailLayout.h"
 
 @interface SFMPageEditManager ()<BusinessRuleManagerDelegate>
 
@@ -2615,6 +2616,9 @@
                         NSDictionary *lineRecord = [responseLines objectAtIndex:i];
                         NSDictionary *sfmRecord = [detailRecords objectAtIndex:i];
                         for (NSString *key in lineRecord) {
+                           //key is SFMPageField
+                           
+                            
                             SFMRecordFieldData *recordField = [sfmRecord objectForKey:key];
                             id internalValue = [lineRecord objectForKey:key];
                             id displayValue = [lineRecord objectForKey:key];

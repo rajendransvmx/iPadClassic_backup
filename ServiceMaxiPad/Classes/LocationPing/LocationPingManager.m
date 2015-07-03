@@ -186,6 +186,7 @@
 - (void)storeLatestLocationManagerStatusIntoNSUserDefaults:(NSDictionary *)locationDict
 {
 
+    //Sudguru Fix:018708 ,previoulsy was in @synchronized block, changed to mainQueue
     dispatch_async(dispatch_get_main_queue(), ^{
 
             [PlistManager storeTechnicianLastLocationStatus:locationDict];

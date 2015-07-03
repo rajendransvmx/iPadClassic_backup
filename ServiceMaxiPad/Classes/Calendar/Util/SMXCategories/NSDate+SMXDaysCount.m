@@ -120,7 +120,7 @@
 + (NSString *)stringTimeWithAMPMOfDate:(NSDate *)date {
     
     NSDateFormatter *dateFormater = [NSDateFormatter new];
-    [dateFormater setDateFormat:@"hh:mm a"];
+    [dateFormater setDateFormat:@"hh:mm:ss a"];//HS 3Jul15 Fix:018737
     
     NSString *lTime = [dateFormater stringFromDate:date];
     
@@ -145,7 +145,8 @@
     NSString *lTime = [NSDate stringTimeWithAMPMOfDate:time];
     
     //    return [NSString stringWithFormat:@"%@, %i/%i/%i", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:comp.weekday]], comp.day, comp.month, comp.year];
-    return [NSString stringWithFormat:@"%@ %@ %li, %li - %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year, lTime];
+    
+    return [NSString stringWithFormat:@"%@ %@ %li, %li  %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year, lTime]; ////HS 3Jul Fix:018737 ,removed "hyphen"
 }
 
 //Niraj: Defect number 017148
@@ -154,7 +155,7 @@
     NSDateComponents *comp = [NSDate componentsOfDate:date];
     NSString *lTime = [NSDate stringTimeWithAMPMOfDate:date];
     //return [NSString stringWithFormat:@"%@, %li %@ %li - %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], (long)comp.day,[arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.year,lTime];
-    return [NSString stringWithFormat:@"%@ %@ %li, %li - %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year, lTime];
+    return [NSString stringWithFormat:@"%@ %@ %li, %li  %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year, lTime]; //HS 3Jul Fix:018737 removed "hyphen"
 }
 //Niraj: Defect number 017148
 

@@ -271,9 +271,8 @@
     return transactionObectModel;
 }
 
-- (NSDictionary*)getDisplayDetailsFor:(NSIndexPath*)indexPath
+- (NSMutableArray*)getDisplayDetailsFor:(NSIndexPath*)indexPath
 {
-    NSMutableDictionary *dataDict = [NSMutableDictionary dictionary];
     
     SFMSearchObjectModel *srchObj = [self.searchProcess.searchObjects objectAtIndex:indexPath.section];
     NSArray *list = [self.dataList objectForKey:srchObj.objectId];
@@ -281,48 +280,30 @@
     NSUInteger index = (NSUInteger)indexPath.row;
     TransactionObjectModel *objectData = [list objectAtIndex:index];
     
-    
-    SFMSearchFieldModel *field1 = nil;
-    SFMSearchFieldModel *field2  = nil;
-    SFMSearchFieldModel *field3 = nil;
-    
     id <SFObjectFieldDAO> objectFieldService = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
-    
-    if ([srchObj.displayFields count] > 0) {
-        field1 =  [srchObj.displayFields objectAtIndex:0];
-    }
-    
-    if ([srchObj.displayFields count] > 1) {
-        field2 =  [srchObj.displayFields objectAtIndex:1];
-    }
-    if ([srchObj.displayFields count] > 2) {
-        field3 =  [srchObj.displayFields objectAtIndex:2];
-    }
-    
-    SFMRecordFieldData *fldValue1 = (SFMRecordFieldData *)[objectData valueForField:[field1 getDisplayField]];
-    SFMRecordFieldData *fldValue2 = (SFMRecordFieldData *)[objectData valueForField:[field2 getDisplayField]];
-    SFMRecordFieldData *fldValue3 = (SFMRecordFieldData *)[objectData valueForField:[field3 getDisplayField]];
-    
-    NSString *titleString = [self getDisplayStringForValue:fldValue1.displayValue withType:field1.displayType];
-    [dataDict setObject:titleString forKey:@"tittle"];
-    
-    NSString *descriptionString = [self getDisplayStringForValue:fldValue2.displayValue withType:field2.displayType];
-    
-    NSString *keyOne = [objectFieldService getFieldLabelFromFieldName:[field2 getDisplayField] andObjectName:field2.objectName];
-    
-    if (keyOne != nil) {
-        [dataDict setObject:descriptionString forKey:keyOne];
-    }
-    
-    NSString *thirdDisplayField = [self getDisplayStringForValue:fldValue3.displayValue withType:field3.displayType];
+    NSMutableArray *dataArray = [NSMutableArray array]; //Objects are not respecting order if added in Dictionary so adding in Array and then adding in Dict. Defect fix-018053
 
-    NSString *keyTwo = [objectFieldService getFieldLabelFromFieldName:[field3 getDisplayField] andObjectName:field3.objectName];
-    
-    if (keyTwo != nil) {
-        [dataDict setObject:thirdDisplayField forKey:keyTwo];
+    for (int index = 0; index< [srchObj.displayFields count] ;index ++)
+    {
+        SFMSearchFieldModel *fieldModel = [srchObj.displayFields objectAtIndex:index];
+        SFMRecordFieldData *fldValue = (SFMRecordFieldData *)[objectData valueForField:[fieldModel getDisplayField]];
+        
+        NSString *label = [objectFieldService getFieldLabelFromFieldName:[fieldModel getDisplayField] andObjectName:fieldModel.objectName];
+        NSString *value = [self getDisplayStringForValue:fldValue.displayValue withType:fieldModel.displayType];
+        
+        
+        if ((label !=nil) && (value != nil))
+        {
+            NSMutableDictionary *fieldValueDict = [NSMutableDictionary dictionaryWithCapacity:1];
+
+            [fieldValueDict setObject:value forKey:label];
+            [dataArray addObject:fieldValueDict];
+
+        }
+        
     }
     
-    return dataDict;
+     return dataArray;
 }
 
 
@@ -562,49 +543,71 @@
     cell.accessoryImgView.contentMode = UIViewContentModeCenter;
     cell.accessoryImgView.image = normalImage;
     //HS 12 June ends here
+    
+    //HS 2 jul fix:018053
+    NSArray *displayData = [self getDisplayDetailsFor:indexPath];//May be can take direct array.
+    NSString *title = @"";
+    NSString *value = @"";
+    NSArray *keyArray = nil;
+    NSString *key = nil;
 
-    
-    
-    
-    NSDictionary *displayData = [self getDisplayDetailsFor:indexPath];
-    
-    NSArray *allKeys = [displayData allKeys];
-    
-    if ([StringUtil isStringEmpty:[displayData objectForKey:@"tittle"]]) {
-        cell.titleLabel.text = @"--";
-    } else {
-        cell.titleLabel.text = [displayData objectForKey:@"tittle"];
+    for (int index = 0; index < [displayData count]; index ++)
+    {
+        if (index == 0)
+        {
+            keyArray = [[displayData objectAtIndex:index]allKeys];
+            if ([keyArray count]>0)
+            {
+                key = [keyArray objectAtIndex:0];
+                if ([StringUtil isStringEmpty:[[displayData objectAtIndex:index]objectForKey:key]])
+                {
+                    cell.titleLabel.text = @"--";
+                }
+                else
+                    cell.titleLabel.text = [[displayData objectAtIndex:index]objectForKey:key];
+            }
+          
+        }
+        else
+        {
+            NSArray *keyArray = [[displayData objectAtIndex:index] allKeys];
+            if ([keyArray count]>0)
+            {
+                key = [keyArray objectAtIndex:0];
+                if ([StringUtil isStringEmpty:key])
+                {
+                    title = @"";
+                    
+                }
+                else
+                {
+                    title = key;
+                    if ([StringUtil isStringEmpty:[[displayData objectAtIndex:index]objectForKey:key]])
+                    {
+                        value = @"--";
+                    }
+                    else
+                    {
+                        value = [[displayData objectAtIndex:index]objectForKey:key];
+                    }
+
+                    
+                }
+            }
+          
+            if (index == 1)
+            {
+                cell.fieldLabelOne.text = title ;
+                cell.fieldValueOne.text = value;
+            }
+            else if(index ==2)
+            {
+                cell.fieldLabelTwo.text = title;
+                cell.fieldValueTwo.text = value;
+            }
+            
+        }
     }
-    
-    if ([allKeys count] > 0) {
-        if ([StringUtil isStringEmpty:[allKeys objectAtIndex:0]]) {
-            cell.fieldLabelOne.text = @"";
-        } else {
-            cell.fieldLabelOne.text = [allKeys objectAtIndex:0];
-        }
-        
-        if ([StringUtil isStringEmpty:[displayData objectForKey:[allKeys objectAtIndex:0]]]) {
-            cell.fieldValueOne.text = @"--";
-        } else {
-            cell.fieldValueOne.text = [displayData objectForKey:[allKeys objectAtIndex:0]];
-        }
-    }
-    
-    if ([allKeys count] > 1) {
-        
-        if ([StringUtil isStringEmpty:[allKeys objectAtIndex:1]]) {
-            cell.fieldLabelTwo.text = @"";
-        } else {
-            cell.fieldLabelTwo.text = [allKeys objectAtIndex:1];
-        }
-        
-        if ([StringUtil isStringEmpty:[displayData objectForKey:[allKeys objectAtIndex:1]]]) {
-            cell.fieldValueTwo.text = @"--";
-        } else {
-            cell.fieldValueTwo.text = [displayData objectForKey:[allKeys objectAtIndex:1]];
-        }
-    }
-    
     if (![self isCellExpandedForSection:indexPath.section]) {
         cell.hidden = YES;
     }

@@ -84,6 +84,13 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     [self registerForPopOverDismissNotification];
 }
 
+//HS 3 Jul2015 Fix for defect - 018329
+-(void)viewDidDisappear:(BOOL)animated
+{
+    self.tableView.editing=false;
+}
+//Fix ends here
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -429,7 +436,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 {
     UIButton *removeButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 50)];
     [removeButton addTarget:self action:@selector(removeChildLine:) forControlEvents:UIControlEventTouchUpInside];
-    [removeButton setTitle:@"Remove" forState:UIControlStateNormal];
+    [removeButton setTitle:[[TagManager sharedInstance]tagByName:kTagConflictRemove] forState:UIControlStateNormal];
     [removeButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
     [removeButton.titleLabel setFont:[UIFont fontWithName:kHelveticaNeueLight size:kFontSize16]];
     
@@ -536,7 +543,8 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return @"Remove";
+    return [[TagManager sharedInstance]tagByName:kTagConflictRemove];
+
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {

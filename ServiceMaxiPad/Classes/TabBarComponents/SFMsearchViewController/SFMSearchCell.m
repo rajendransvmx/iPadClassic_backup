@@ -88,7 +88,7 @@
 {
     CGFloat width = self.frame.size.width / 2;
     
-    self.titleLabel.frame = CGRectMake(10, 10,width, 20);
+    self.titleLabel.frame = CGRectMake(20, 10,width*2-52, 20);
     self.titleLabel.font = [UIFont systemFontOfSize:18];
     self.fieldLabelOne.frame = CGRectMake(20, 30,width-20, 20);
     width = self.fieldLabelOne.frame.size.width;
