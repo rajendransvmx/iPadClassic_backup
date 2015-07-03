@@ -294,6 +294,7 @@ extern NSString *const kSVMXLocation;
 extern NSString *const kSVMXEventName;
 extern NSString *const kSVMXTechnicianId;
 extern NSString *const kSVMXIsAlldayEvent;
+extern NSString *const kSfDTUrl;
 
 extern NSString *const kGENERAL_ALL_DAY;
 

@@ -42,6 +42,7 @@ NSString *const kSfDTString     = @"string";
 NSString *const kSfDTReference  = @"reference";
 NSString *const kSfDTPicklist   = @"picklist";
 NSString *const kSfDTEmail      = @"email";
+NSString *const kSfDTUrl        = @"URL";
 
 
 NSString *const kSfDTRecordTypeId   = @"RecordTypeId";
