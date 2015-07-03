@@ -1,23 +1,23 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax iPad  Sum 15 Build - Sum15Build
+ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.010
+Version = 15.49.011
 ===========================================
 
 
-Merged Spr 15 SP branch SVN 5057:5132@Spring15SP to HEAD(15.40.015) to Sum 15’
 
 -------------
 Fixed Defects
 -------------
+1. Initial Sync Step 6 Hanging issue resolved.
+
 
 ------------
 Known Issues
 —————————
-location Ping will not work as we have commented that to proceed with Initial Sync and Config Sync.
-Will be available in next build.
+IDs are coming in LookUp fields and also DateTime is not coming in correct format in Edit screen.
 
 ---------------------
 Fixed - Known Issues 
@@ -39,14 +39,10 @@ Custom Web service
 ---------------------
 Additional Notes
 ---------------------
-1. Namespace set to SVMXDEV
+1. Namespace set to SVMXC
 
-2. Get Price  - Resolved the loop issue
-3. Data Sync  - Removed sending field names in Data Sync
-4. TXFetch    - Removed Object Name which doesn’t have ids associated during TXFetch.
-PageLayout - CallBack issue resolved which was causing Page Layout to be missing. 
+ 
 
-5. Namespace will set to SVMXC in next build once Initial Sync issue get resolved 
 
 
 

@@ -212,7 +212,7 @@
             headerFields = headerSection.sectionFields;
             for (SFMPageField *pageField in headerFields) {
                 SFMRecordFieldData *recordField = [headerRecords objectForKey:pageField.fieldName];
-                NSString *value = recordField.internalValue;
+                NSString *value = recordField.displayValue;
                 if ([StringUtil isStringEmpty:value]) {
                     value = @"";
                     if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {
@@ -247,7 +247,7 @@
                 for (SFMPageField *pageField in detailSections) {
                     NSString *fieldName = pageField.fieldName;
                     SFMRecordFieldData *fieldData = [record objectForKey:fieldName];
-                    NSString *value = fieldData.internalValue;
+                    NSString *value = fieldData.displayValue;
                     if ([StringUtil isStringEmpty:value]) {
                         value = @"";
                         if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {
