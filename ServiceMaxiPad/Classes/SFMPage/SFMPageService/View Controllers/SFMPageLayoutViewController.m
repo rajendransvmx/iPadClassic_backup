@@ -28,11 +28,13 @@
 #import "ContactInfo.h"
 
 #import "PushNotificationHeaders.h"
+#import "SFMPageUrlFieldCollectionViewCell.h"
 
 
 
 NSString *const kHeaderViewIdentifier = @"HeaderIdentifier";
 NSString *const kCellIdentifier = @"CellIdentifier";
+NSString *const kUrlCellIdentifier = @"UrlCellIdentifier";
 NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
 
 @interface SFMPageLayoutViewController ()
@@ -69,6 +71,8 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     [self.pageCollectionView registerClass:[SFMPageFieldCollectionHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kHeaderViewIdentifier];
     
     [self.pageCollectionView registerClass:[SFMPageReferenceFieldCollectionViewCell class] forCellWithReuseIdentifier:kReferenceCellIdentifier];
+    
+    [self.pageCollectionView registerClass:[SFMPageUrlFieldCollectionViewCell class] forCellWithReuseIdentifier:kUrlCellIdentifier];
 
     
     UICollectionViewFlowLayout *flowLayout = (UICollectionViewFlowLayout *)[self.pageCollectionView collectionViewLayout];
@@ -162,7 +166,12 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
             [self addMailAndMeaasageForContactField:(SFMPageReferenceFieldCollectionViewCell *)cell
                                          fieldValue:recordData.displayValue];
         }
-
+    }else if([[pageField.dataType uppercaseString] isEqualToString:kSfDTUrl]) {
+        //If field type is url, we have to open url in web browser
+        cell = (SFMPageUrlFieldCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:kUrlCellIdentifier forIndexPath:indexPath];
+        if (nil == cell) {
+            cell = [[SFMPageUrlFieldCollectionViewCell alloc] init];
+        }
     }
     else
     {
@@ -183,7 +192,6 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     cell.fieldValue.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize16];
     cell.fieldValue.backgroundColor = [UIColor clearColor];//HS 12 Jan
     cell.fieldValue.text = recordData.displayValue;
-
     if ([StringUtil isStringEmpty:recordData.displayValue ]) {
         cell.fieldValue.text = @"--";
     }
@@ -206,7 +214,19 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
             [cell.moreButton addTarget:self action:@selector(moreButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
         }
     }
-    else{
+    else if([[pageField.dataType uppercaseString] isEqualToString:kSfDTUrl])
+    {
+        CGSize textSize =  [StringUtil getSizeOfText:recordData.displayValue withFont:cell.fieldValue.font];
+        if (textSize.width > cell.fieldValue.frame.size.width || [recordData.displayValue custContainsString:@"\n"]) {
+            cell.isShowMoreButton = YES;
+            [cell resetLayout];
+        }
+        [cell.moreButton addTarget:self action:@selector(moreButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        cell.fieldValue.textColor =[UIColor blueColor];
+        [((SFMPageUrlFieldCollectionViewCell*) cell).hyperLinkButton addTarget:self action:@selector(hyperLinkclicked:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    else
+    {
         CGSize textSize =  [StringUtil getSizeOfText:recordData.displayValue withFont:cell.fieldValue.font];
         
         if (textSize.width > cell.fieldValue.frame.size.width || [recordData.displayValue custContainsString:@"\n"]) {
@@ -288,6 +308,20 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     [self.popOver presentPopoverFromRect:tempButton.frame inView:tempButton.superview permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     morePopoverController.fieldNameLabel.text = cell.fieldName.text;
     morePopoverController.fieldValueTextView.text = cell.fieldValue.text;
+}
+- (void)hyperLinkclicked:(id)sender
+{
+    UIButton *tempButton = (UIButton*)sender;
+    UIView * cellContentView = [tempButton superview];
+    SFMPageUrlFieldCollectionViewCell *cell = (SFMPageUrlFieldCollectionViewCell*) [cellContentView superview];
+    UIApplication *ourApplication = [UIApplication sharedApplication];
+    NSString *string =  cell.fieldValue.text;
+    if ([string rangeOfString:@"https://"].location == NSNotFound) {
+        string = [NSString stringWithFormat:@"https://%@",string];
+        [ourApplication openURL:[NSURL URLWithString:string]];
+    } else {
+        [ourApplication openURL:[NSURL URLWithString:cell.fieldValue.text]];
+    }
 }
 
 -(SFMRecordFieldData *)getValueForField:(NSString *)fieldApiName
