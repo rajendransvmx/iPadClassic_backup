@@ -8,6 +8,11 @@
 
 #import "AutoLockManager.h"
 
+@interface AutoLockManager()
+@property(nonatomic, strong) NSTimer *enableAutoLockTimer;
+
+
+@end
 @implementation AutoLockManager
 
 #pragma mark Singleton Methods
@@ -47,19 +52,31 @@
             break;
     }
     
-    [self enableAutoLockSetting];
+    [self enableAutoLockAfterDelay];
 }
 
--(void)enableAutoLockSetting
+-(void)enableAutoLockAfterDelay
 {
     NSLog(@" in enableAutoLockSetting initialSync: %d, configSync:%d, resetApp:%d, manualDataSync:%d, dataPurge:%d, pushLogs:%d", initialSync, configSync, resetApp, manualDataSync, dataPurge, pushLogs);
     if (!initialSync && !configSync && !resetApp && !manualDataSync && !dataPurge && !pushLogs)
     {
-        NSLog(@"idleTimerDisabled = NO");
-        [UIApplication sharedApplication].idleTimerDisabled = NO;
+        if (_enableAutoLockTimer) {
+            [_enableAutoLockTimer invalidate];
+            _enableAutoLockTimer = nil;
+        }
+        _enableAutoLockTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(autoLockEnable) userInfo:nil repeats:NO];
     }
 }
 
+-(void)autoLockEnable
+{
+    
+    NSLog(@"Auto-lock ENABLED");
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
+    
+    [_enableAutoLockTimer invalidate];
+    _enableAutoLockTimer = nil;
+}
 -(void)disableAutoLockSettingFor:(AutoLock) autoLock
 {
     switch (autoLock) {
@@ -91,8 +108,14 @@
 
 -(void)disableAutoLockSetting
 {
-    NSLog(@"idleTimerDisabled = YES");
+    NSLog(@"Auto-lock DISABLED");
 
+    if (_enableAutoLockTimer) {
+        [_enableAutoLockTimer invalidate];
+
+        _enableAutoLockTimer = nil;
+    }
+    
     [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
