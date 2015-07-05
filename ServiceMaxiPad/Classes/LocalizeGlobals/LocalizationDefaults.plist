@@ -1257,6 +1257,6 @@
 	<key>IPAD018_TAG209</key>
 	<string>Smart Documents</string>
 	<key>IPAD018_TAG208</key>
-	<string>file(s) are waiting for upload</string>
+	<string>service reports(s) are in queue for sync</string>
 </dict>
 </plist>

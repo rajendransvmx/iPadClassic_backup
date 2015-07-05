@@ -678,21 +678,21 @@
                     if ([FileManager fileExitsAtPath:filePath]) {
                         [fileNames addObject:opDocHTMLFile.Name];
                     }
-                    
-                    NSArray *opDocSignatureList = [self getSignatureListForHtmlModel:opDocHTMLFile];
-                    for (int j= 0; j < opDocSignatureList.count; j++) {
-                        id OPDocSignatureObject = [opDocSignatureList objectAtIndex:j];
-                        NSString *lSignatureFilePath = nil;
-                        if ([OPDocSignatureObject isKindOfClass:[OPDocSignature class]]) {
-                            OPDocSignature *lOPDocSignatureFile = (OPDocSignature *)OPDocSignatureObject;
-                            if ([lOPDocSignatureFile.Name length] > 0) {
-                                 lSignatureFilePath =  [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:lOPDocSignatureFile.Name];
-                                if ([FileManager fileExitsAtPath:lSignatureFilePath]) {
-                                    [fileNames addObject:lOPDocSignatureFile.Name];
-                                }
-                            }
-                        }
-                    } // End of signature files.
+//                    
+//                    NSArray *opDocSignatureList = [self getSignatureListForHtmlModel:opDocHTMLFile];
+//                    for (int j= 0; j < opDocSignatureList.count; j++) {
+//                        id OPDocSignatureObject = [opDocSignatureList objectAtIndex:j];
+//                        NSString *lSignatureFilePath = nil;
+//                        if ([OPDocSignatureObject isKindOfClass:[OPDocSignature class]]) {
+//                            OPDocSignature *lOPDocSignatureFile = (OPDocSignature *)OPDocSignatureObject;
+//                            if ([lOPDocSignatureFile.Name length] > 0) {
+//                                 lSignatureFilePath =  [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:lOPDocSignatureFile.Name];
+//                                if ([FileManager fileExitsAtPath:lSignatureFilePath]) {
+//                                    [fileNames addObject:lOPDocSignatureFile.Name];
+//                                }
+//                            }
+//                        }
+//                    } // End of signature files.
                 }
             }
         } // End of OpDocHtml files.

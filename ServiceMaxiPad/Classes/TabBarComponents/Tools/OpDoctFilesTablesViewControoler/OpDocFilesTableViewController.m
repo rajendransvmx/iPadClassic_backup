@@ -72,7 +72,7 @@
     }
     numberLabel.text = [NSString stringWithFormat:@"%ld",(long)indexPath.row + 1];
     nameLabel.text = [self.opDocFiles objectAtIndex:indexPath.row];
-    nameLabel.lineBreakMode = NSLineBreakByTruncatingMiddle;
+    nameLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     
     return cell;
 }
