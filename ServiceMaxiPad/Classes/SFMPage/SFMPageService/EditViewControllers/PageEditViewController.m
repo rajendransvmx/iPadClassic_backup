@@ -60,6 +60,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 @property(nonatomic, strong) NSIndexPath *requiredFieldIndexPath;
 @property(nonatomic, assign) BOOL isHeader;
 @property(nonatomic, strong)PageEventProcessManager *pageEventProManager;
+@property(nonatomic, strong) UIAlertView *alertViewBiz;
 
 @property (nonatomic) SaveFlow saveflow;
 @end
@@ -749,7 +750,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     NSArray *alldDtailLayouts =   self.sfmPage.process.pageLayout.detailLayouts;
     
-    int section = -1;
+    NSInteger section = -1;
     
     for (SFMDetailLayout *detailLayout in alldDtailLayouts) {
         
@@ -764,7 +765,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             for (SFMPageField *pageField in allFields) {
                 
                 if (pageField.isRequired) {
-                    int row = -1;
+                    NSInteger row = -1;
                     for (NSDictionary *recordDictionary in allRecords) {
                        
                         row++;
@@ -794,7 +795,15 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 #pragma mark - show alert
 -(void)showAlert
 {
-    [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeRequiredFieldWarning andDelegate:self];
+    if (![self.alertViewBiz isVisible])
+    {
+        self.alertViewBiz = [[UIAlertView alloc] initWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning]
+                                                       message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning]
+                                                      delegate:self
+                                             cancelButtonTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning]
+                                             otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:AlertMessageTypeRequiredFieldWarning], nil];
+        [self.alertViewBiz performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+    }
 }
 
 

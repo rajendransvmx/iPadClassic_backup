@@ -71,7 +71,7 @@
  * @return Description of the return value
  *
  */
-- (NSString *)titleByType:(AlertMessageType)type
++ (NSString *)titleByType:(AlertMessageType)type
 {
     NSString * title = nil;
     switch (type)
@@ -173,7 +173,7 @@
  *
  */
 
-- (NSString *)messageByType:(AlertMessageType)type
++ (NSString *)messageByType:(AlertMessageType)type
 {
     NSString * message = nil;
     switch (type)
@@ -323,7 +323,7 @@
  *
  */
 
-- (NSString *)cancelButtonTitleByType:(AlertMessageType)type
++ (NSString *)cancelButtonTitleByType:(AlertMessageType)type
 {
     NSString * cancelButtonTitle = nil;
     switch (type)
@@ -410,7 +410,7 @@
  *
  */
 
-- (NSString *)otherButtonTitleByType:(AlertMessageType)type
++ (NSString *)otherButtonTitleByType:(AlertMessageType)type
 {
    
     NSString * otherButtonTitle = nil;
@@ -487,11 +487,11 @@
 - (void)showAlertMessageWithType:(AlertMessageType)type andDelegate:(id)alertDelegate
 {
     
-  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[self titleByType:type]
-                               message:[self messageByType:type]
+  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[AlertMessageHandler titleByType:type]
+                               message:[AlertMessageHandler messageByType:type]
                               delegate:alertDelegate
-                     cancelButtonTitle:[self cancelButtonTitleByType:type]
-                     otherButtonTitles:[self otherButtonTitleByType:type], nil];
+                     cancelButtonTitle:[AlertMessageHandler cancelButtonTitleByType:type]
+                     otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:type], nil];
   [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
 }
 
@@ -520,14 +520,14 @@
     if(message == nil)
         
     {
-        alertMessage = [self messageByType:type];
+        alertMessage = [AlertMessageHandler messageByType:type];
     }
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[self titleByType:type]
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[AlertMessageHandler titleByType:type]
                                                         message:alertMessage
                                                        delegate:alertDelegate
-                                              cancelButtonTitle:[self cancelButtonTitleByType:type]
-                                              otherButtonTitles:[self otherButtonTitleByType:type], nil];
+                                              cancelButtonTitle:[AlertMessageHandler cancelButtonTitleByType:type]
+                                              otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:type], nil];
     [alertView performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
 }
 

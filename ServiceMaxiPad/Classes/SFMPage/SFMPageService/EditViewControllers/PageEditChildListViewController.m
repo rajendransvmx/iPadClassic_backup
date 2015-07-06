@@ -368,7 +368,12 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         PageEditChildLayoutViewController *childViewController = [self childLayoutViewControllerForIndexPath:indexPath];
         [self.expandedSectionsDict setObject:childViewController forKey:section];
         [self addChildViewController:childViewController];
-        [self.tableView insertRowsAtIndexPaths:indexPathArray withRowAnimation:UITableViewRowAnimationFade];
+        if ([self.tableView numberOfSections])
+        {
+            [self.tableView  beginUpdates];
+            [self.tableView insertRowsAtIndexPaths:indexPathArray withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView  endUpdates];
+        }
         imageName = @"sfm_down_arrow";
         
         cell.accessoryView = [self accessoryViewForCell:indexPath];
@@ -378,9 +383,14 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         
         [self.expandedSectionsDict removeObjectForKey:section];
         NSArray *indexPathArray = [[NSArray alloc] initWithObjects:[NSIndexPath indexPathForRow:1 inSection:indexPath.section], nil];
-
-        [self.tableView deleteRowsAtIndexPaths:indexPathArray withRowAnimation:UITableViewRowAnimationFade];
-
+        @try {
+            [self.tableView  beginUpdates];
+            [self.tableView deleteRowsAtIndexPaths:indexPathArray withRowAnimation:UITableViewRowAnimationFade];
+            [self.tableView  endUpdates];
+        }
+        @catch (NSException *exception) {
+            
+        }
         imageName = @"sfm_right_arrow";
         cell.accessoryView = nil;
         cell.accessoryView.tag = -1;
