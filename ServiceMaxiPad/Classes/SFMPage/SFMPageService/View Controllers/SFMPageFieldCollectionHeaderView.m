@@ -15,7 +15,9 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        _titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+        _titleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectZero];
+        _titleLabel.userInteractionEnabled = YES;
+        [_titleLabel isLongPressGestureRecognizerEnabled:YES];
         [self addSubview:_titleLabel];
         
     }

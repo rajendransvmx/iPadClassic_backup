@@ -11,11 +11,8 @@
 
 @interface SFMPageFieldCollectionViewCell : UICollectionViewCell
 
-@property(nonatomic, strong) UILabel *fieldName;
-
-/* Updated _fieldValue UIlabel to fix defect 014039 */
+@property(nonatomic, strong) EditMenuLabel *fieldName;
 @property(nonatomic, strong) EditMenuLabel *fieldValue;
-
 @property(nonatomic, strong) UIButton *moreButton;
 @property(nonatomic, strong) UIImageView *fadeOutImageView;
 @property(nonatomic, strong) NSString *fieldApiName;

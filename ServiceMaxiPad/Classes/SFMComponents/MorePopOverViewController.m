@@ -75,11 +75,12 @@
 
 - (void)createSubViews
 {
-    self.fieldNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(5,5,290, 40)];
+    self.fieldNameLabel = [[EditMenuLabel alloc]initWithFrame:CGRectMake(5,5,290, 40)];
     self.fieldNameLabel.textAlignment = NSTextAlignmentCenter;
     self.fieldNameLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
     self.fieldNameLabel.textColor = [UIColor blackColor];
     self.fieldNameLabel.backgroundColor = [UIColor clearColor];
+    [self.fieldNameLabel isLongPressGestureRecognizerEnabled:YES];
     [self.view addSubview:self.fieldNameLabel];
     
     UIView * lineView = [[UIView alloc]initWithFrame:CGRectMake(0, _fieldNameLabel.frame.size.height + 5, 290, 1)];
@@ -88,7 +89,7 @@
     
     self.fieldValueTextView = [[UITextView alloc]initWithFrame:CGRectMake(5,lineView.frame.origin.y + 2,290,95)];
     self.fieldValueTextView.editable = FALSE;
-    self.fieldValueTextView.selectable = NO;
+    self.fieldValueTextView.selectable = YES;
     self.fieldValueTextView.textAlignment = NSTextAlignmentLeft;
     self.fieldValueTextView.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize16];
     self.fieldValueTextView.backgroundColor = [UIColor clearColor];

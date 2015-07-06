@@ -21,10 +21,11 @@
  **/
 
 #import <UIKit/UIKit.h>
+#import "EditMenuLabel.h"
 
 @interface MorePopOverViewController : UIViewController
 
-@property(nonatomic, strong) UILabel *fieldNameLabel;
+@property(nonatomic, strong) EditMenuLabel *fieldNameLabel;
 @property(nonatomic, strong) UITextView *fieldValueTextView;
 
 @end

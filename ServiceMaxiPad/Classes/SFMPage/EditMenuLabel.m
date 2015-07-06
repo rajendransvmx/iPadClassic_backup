@@ -18,8 +18,23 @@
     // Drawing code
 }
 */
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        
+        [self isLongPressGestureRecognizerEnabled:YES];
+        self.userInteractionEnabled = YES;
+        
+    }
+    return self;
+}
 
-
+-(void)awakeFromNib {
+    
+    [self isLongPressGestureRecognizerEnabled:YES];
+    
+}
 - (BOOL)canBecomeFirstResponder
 {
     return YES;
@@ -34,17 +49,28 @@
 
 - (BOOL)becomeFirstResponder
 {
-    self.backgroundColor = [UIColor copyTextHighlightingColorForHexString:@"#ccddee"];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resignFirstResponder) name:UIMenuControllerDidHideMenuNotification object:nil];
+    
+    NSAttributedString * attributedText =
+    [[NSAttributedString alloc]initWithString:self.text
+                                   attributes:@{NSBackgroundColorAttributeName : [UIColor copyTextHighlightingColorForHexString:@"#ccddee"]}];
+    self.opaque = NO;
+    self.attributedText = attributedText;
     return [super becomeFirstResponder];
+    
 }
 
 
 - (BOOL)resignFirstResponder
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIMenuControllerDidHideMenuNotification object:nil];
-    self.backgroundColor = [UIColor clearColor];
-    self.alpha = 1.0;
+    
+    NSAttributedString * attributedText =
+    [[NSAttributedString alloc]initWithString:self.text
+                                   attributes:@{NSBackgroundColorAttributeName : [UIColor clearColor]}];
+    self.opaque = NO;
+    self.attributedText = attributedText;
     return [super resignFirstResponder];
 }
 
@@ -54,5 +80,38 @@
 {
     [[UIPasteboard generalPasteboard] setString:self.text];
 }
+
+#pragma mark - Custom methods..
+
+-(void) isLongPressGestureRecognizerEnabled:(BOOL)status
+{
+    if (status){
+      UIGestureRecognizer *gestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showEditMenuViewForLongPressGesture:)];
+        [self addGestureRecognizer:gestureRecognizer];
+        self.userInteractionEnabled = YES;
+        
+    }
+}
+
+#pragma mark - END
+
+#pragma mark - UIGestureRecognizer
+
+- (void)showEditMenuViewForLongPressGesture:(UIGestureRecognizer *)recognizer
+{
+   
+    if([recognizer isKindOfClass:[UILongPressGestureRecognizer class]])
+    {
+        CGPoint location = [recognizer locationInView:[recognizer view]];
+        [recognizer.view becomeFirstResponder];
+        UIMenuController *menuController = [UIMenuController sharedMenuController];
+        [menuController setTargetRect:CGRectMake(location.x, location.y, 0.0f, 0.0f) inView:recognizer.view];
+        [menuController setMenuVisible:YES animated:YES];
+    }
+   
+    
+}
+
+#pragma mark - END
 
 @end

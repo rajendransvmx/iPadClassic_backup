@@ -34,6 +34,7 @@
 #import "SFPicklistModel.h"
 #import "SMXProductListModel.h"
 #import "MorePopOverViewController.h"
+#import "EditMenuLabel.h"
 
 #define FONT_HELVETICANUE @"HelveticaNeue"
 
@@ -60,34 +61,34 @@
 @interface SMXEventDetailView ()
 @property (nonatomic, strong) SMXEvent *event;
 
-@property (nonatomic, strong) UILabel *labelCustomerName;
-@property (nonatomic, strong) UILabel *appointmentLabel;
-@property (nonatomic, strong) UILabel *labelDate;
-@property (nonatomic, strong) UILabel *labelHours;
+@property (nonatomic, strong) EditMenuLabel *labelCustomerName;
+@property (nonatomic, strong) EditMenuLabel *appointmentLabel;
+@property (nonatomic, strong) EditMenuLabel *labelDate;
+@property (nonatomic, strong) EditMenuLabel *labelHours;
 
 @property (nonatomic, strong) UIScrollView *cBGScrollView;
 
 
-@property (nonatomic, strong) UILabel *contactTitleLabel;
-@property (nonatomic, strong) UILabel *contactNameLabel;
-@property (nonatomic, strong) UILabel *phoneTitleLabel;
-@property (nonatomic, strong) UILabel *phoneNumberLabel;
-@property (nonatomic, strong) UILabel *priorityTitleLabel;
-@property (nonatomic, strong) UILabel *priorityLevelLabel;
-@property (nonatomic, strong) UILabel *billingTypeTitleLabel;
-@property (nonatomic, strong) UILabel *billingTypeLabel;
-@property (nonatomic, strong) UILabel *serviceLocationTitleLabel;
-@property (nonatomic, strong) UILabel *serviceLocationTextView;
-@property (nonatomic, strong) UILabel *orderStatusTitleLabel;
-@property (nonatomic, strong) UILabel *orderStatusLabel;
-@property (nonatomic, strong) UILabel *purposeOfVisitTitleLabel;
-@property (nonatomic, strong) UILabel *purposeOfVisitLabel;
+@property (nonatomic, strong) EditMenuLabel *contactTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *contactNameLabel;
+@property (nonatomic, strong) EditMenuLabel *phoneTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *phoneNumberLabel;
+@property (nonatomic, strong) EditMenuLabel *priorityTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *priorityLevelLabel;
+@property (nonatomic, strong) EditMenuLabel *billingTypeTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *billingTypeLabel;
+@property (nonatomic, strong) EditMenuLabel *serviceLocationTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *serviceLocationTextView;
+@property (nonatomic, strong) EditMenuLabel *orderStatusTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *orderStatusLabel;
+@property (nonatomic, strong) EditMenuLabel *purposeOfVisitTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *purposeOfVisitLabel;
 
-@property (nonatomic, strong) UILabel *problemDescriptionTitleLabel;
-@property (nonatomic, strong) UILabel *problemDescriptionLabel;
+@property (nonatomic, strong) EditMenuLabel *problemDescriptionTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *problemDescriptionLabel;
 
-@property (nonatomic, strong) UILabel *productsAtThisLocationTitleLabel;
-@property (nonatomic, strong) UILabel *productsAtThisLocationLabel;
+@property (nonatomic, strong) EditMenuLabel *productsAtThisLocationTitleLabel;
+@property (nonatomic, strong) EditMenuLabel *productsAtThisLocationLabel;
 @property (nonatomic, strong) CLLocationManager *cLocationManager;
 @property (nonatomic, strong) CLLocation *cCurrentLocation;
 @property (nonatomic, strong) NSString *cServiceLocationAddress;
@@ -436,7 +437,7 @@
     
     CGFloat gap = 15;
     
-    labelCustomerName = [[UILabel alloc] initWithFrame:CGRectMake(gap , 0, sizeView.width-3*gap - 150, BUTTON_HEIGHT)];
+    labelCustomerName = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap , 0, sizeView.width-3*gap - 150, BUTTON_HEIGHT)];
     labelCustomerName.backgroundColor = [UIColor clearColor];
     
     NSString *eventSubject = nil;
@@ -465,7 +466,7 @@
     
     CGFloat gap = 15;
     
-    appointmentLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap, labelCustomerName.frame.origin.y+labelCustomerName.frame.size.height + 5, 150, labelCustomerName.frame.size.height - 20 )];
+    appointmentLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap, labelCustomerName.frame.origin.y+labelCustomerName.frame.size.height + 5, 150, labelCustomerName.frame.size.height - 20 )];
     appointmentLabel.backgroundColor = [UIColor clearColor];
     appointmentLabel.text = [[TagManager sharedInstance]tagByName:kTag_appointment];
     [appointmentLabel setTextColor:LABEL_TITLE_COLOR];
@@ -475,7 +476,7 @@
     [self addSubview:appointmentLabel];
 
     
-    labelDate = [[UILabel alloc] initWithFrame:CGRectMake(gap, appointmentLabel.frame.origin.y+appointmentLabel.frame.size.height -10, 500., labelCustomerName.frame.size.height - 10 )];
+    labelDate = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap, appointmentLabel.frame.origin.y+appointmentLabel.frame.size.height -10, 500., labelCustomerName.frame.size.height - 10 )];
     labelDate.backgroundColor = [UIColor clearColor];
 
 //    NSString *beginDate = [NSDate stringDayOfDate:event.dateTimeBegin WithTime:event.dateTimeBegin];
@@ -530,7 +531,7 @@
 {
     CGFloat gap = 15;
 
-    contactTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap, 15, 150, appointmentLabel.frame.size.height)];
+    contactTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap, 15, 150, appointmentLabel.frame.size.height)];
     contactTitleLabel.backgroundColor = [UIColor clearColor];
     contactTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_contact];
     [contactTitleLabel setTextColor:LABEL_TITLE_COLOR];
@@ -551,7 +552,7 @@
         contactNameLabel = nil;
     }
     
-    contactNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap , contactTitleLabel.frame.origin.y+contactTitleLabel.frame.size.height, SMXLableWidth-50, contactTitleLabel.frame.size.height)];
+    contactNameLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap , contactTitleLabel.frame.origin.y+contactTitleLabel.frame.size.height, SMXLableWidth-50, contactTitleLabel.frame.size.height)];
     contactNameLabel.backgroundColor = [UIColor clearColor];//HS 12 Jan
     
     [contactNameLabel setText:(cContactModel.contactName.length > 0 ? cContactModel.contactName : @"--")];
@@ -685,7 +686,7 @@
 {
     CGFloat gap = 15;
     
-    phoneTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
+    phoneTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap
                                                                 , contactNameLabel.frame.origin.y+contactNameLabel.frame.size.height + 15, contactNameLabel.frame.size.width, contactNameLabel.frame.size.height)];
     phoneTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_phone];
     [phoneTitleLabel setTextColor:LABEL_TITLE_COLOR];
@@ -696,7 +697,7 @@
     
 
     
-    phoneNumberLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
+    phoneNumberLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap
                                                                  , phoneTitleLabel.frame.origin.y+phoneTitleLabel.frame.size.height, SMXLableWidth, phoneTitleLabel.frame.size.height)];
     [phoneNumberLabel setText:([cContactModel.phoneString length]>0 ? cContactModel.phoneString : @"--")];
     [phoneNumberLabel setTextColor:LABEL_VALUE_COLOR];
@@ -713,7 +714,7 @@
 {
     CGFloat gap = 15;
     
-    priorityTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
+    priorityTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap
                                                                    , phoneNumberLabel.frame.origin.y+phoneNumberLabel.frame.size.height + 15, phoneNumberLabel.frame.size.width, phoneNumberLabel.frame.size.height)];
     priorityTitleLabel.backgroundColor = [UIColor clearColor];
     priorityTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_priority];
@@ -723,7 +724,7 @@
 
     [cBGScrollView addSubview:priorityTitleLabel];
     
-    priorityLevelLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
+    priorityLevelLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap
                                                                    , priorityTitleLabel.frame.origin.y+priorityTitleLabel.frame.size.height, SMXLableWidth, priorityTitleLabel.frame.size.height)];
     NSDictionary *lDict = [self.pickListData objectForKey:kWorkOrderPriority];
 
@@ -743,7 +744,7 @@
 {
     CGFloat gap = 15;
     
-    billingTypeTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
+    billingTypeTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap
                                                                       , priorityLevelLabel.frame.origin.y+priorityLevelLabel.frame.size.height + 15, priorityLevelLabel.frame.size.width, priorityLevelLabel.frame.size.height)];
     billingTypeTitleLabel.backgroundColor = [UIColor clearColor];
     billingTypeTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_billing_type];
@@ -755,7 +756,7 @@
     
     
     
-    billingTypeLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
+    billingTypeLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap
                                                                  , billingTypeTitleLabel.frame.origin.y+billingTypeTitleLabel.frame.size.height, SMXLableWidth, billingTypeTitleLabel.frame.size.height)];
     
     NSDictionary *lDict = [self.pickListData objectForKey:kWorkOrderBillingType];
@@ -775,7 +776,7 @@
 -(void)addLabelServiceLocation
 {
     
-    serviceLocationTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(buttonChat.frame.origin.x + buttonChat.frame.size.width +30
+    serviceLocationTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(buttonChat.frame.origin.x + buttonChat.frame.size.width +30
                                                                           , contactTitleLabel.frame.origin.y, 200, billingTypeLabel.frame.size.height)];
     serviceLocationTitleLabel.backgroundColor = [UIColor clearColor];
     serviceLocationTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_service_location];
@@ -786,7 +787,7 @@
     
     
     
-    serviceLocationTextView = [[UILabel alloc] initWithFrame:CGRectMake(serviceLocationTitleLabel.frame.origin.x
+    serviceLocationTextView = [[EditMenuLabel alloc] initWithFrame:CGRectMake(serviceLocationTitleLabel.frame.origin.x
                                                                            , serviceLocationTitleLabel.frame.origin.y+serviceLocationTitleLabel.frame.size.height, serviceLocationTitleLabel.frame.size.width, serviceLocationTitleLabel.frame.size.height*4)];
     serviceLocationTextView.numberOfLines = 0;
     serviceLocationTextView.text = cServiceLocationAddress;
@@ -864,7 +865,7 @@
 -(void)addLabelOrderStatus
 {
     
-    orderStatusTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(serviceLocationTitleLabel.frame.origin.x
+    orderStatusTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(serviceLocationTitleLabel.frame.origin.x
                                                                       , serviceLocationTextView.frame.origin.y+serviceLocationTextView.frame.size.height + 15, serviceLocationTitleLabel.frame.size.width, serviceLocationTitleLabel.frame.size.height)];
     orderStatusTitleLabel.backgroundColor = [UIColor clearColor];
     orderStatusTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_orderstatus];
@@ -875,7 +876,7 @@
     
     
     
-    orderStatusLabel = [[UILabel alloc] initWithFrame:CGRectMake(orderStatusTitleLabel.frame.origin.x
+    orderStatusLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(orderStatusTitleLabel.frame.origin.x
                                                                  , orderStatusTitleLabel.frame.origin.y+orderStatusTitleLabel.frame.size.height, SMXLableWidth, orderStatusTitleLabel.frame.size.height)];
     
     NSDictionary *lDict = [self.pickListData objectForKey:kWorkOrderOrderStatus];
@@ -896,7 +897,7 @@
 -(void)addLabelPurposeOfVisit
 {
     
-    purposeOfVisitTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(orderStatusLabel.frame.origin.x
+    purposeOfVisitTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(orderStatusLabel.frame.origin.x
                                                                       , orderStatusLabel.frame.origin.y+orderStatusLabel.frame.size.height + 15, orderStatusLabel.frame.size.width, orderStatusLabel.frame.size.height)];
     purposeOfVisitTitleLabel.backgroundColor = [UIColor clearColor];
     purposeOfVisitTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_purposeofvisit];
@@ -907,7 +908,7 @@
     
     
     
-    purposeOfVisitLabel = [[UILabel alloc] initWithFrame:CGRectMake(purposeOfVisitTitleLabel.frame.origin.x
+    purposeOfVisitLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(purposeOfVisitTitleLabel.frame.origin.x
                                                                  , purposeOfVisitTitleLabel.frame.origin.y+purposeOfVisitTitleLabel.frame.size.height, SMXLableWidth, purposeOfVisitTitleLabel.frame.size.height)];
     
     NSDictionary *lDict = [self.pickListData objectForKey:kWorkOrderPurposeOfVisit];
@@ -931,7 +932,7 @@
     
     float y =   ( purposeOfVisitLabel.frame.origin.y > billingTypeLabel.frame.origin.y ? purposeOfVisitLabel.frame.origin.y + purposeOfVisitLabel.frame.size.height : billingTypeLabel.frame.origin.y + billingTypeLabel.frame.size.height );
     
-    problemDescriptionTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(gap
+    problemDescriptionTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(gap
                                                                          , y + 15, self.frame.size.width - 30, purposeOfVisitLabel.frame.size.height)];
     problemDescriptionTitleLabel.backgroundColor = [UIColor clearColor];
     problemDescriptionTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_problemdescription];
@@ -941,7 +942,7 @@
     [cBGScrollView addSubview:problemDescriptionTitleLabel];
     
        
-    problemDescriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(problemDescriptionTitleLabel.frame.origin.x
+    problemDescriptionLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(problemDescriptionTitleLabel.frame.origin.x
                                                                     , problemDescriptionTitleLabel.frame.origin.y+problemDescriptionTitleLabel.frame.size.height, self.frame.size.width - 30, problemDescriptionTitleLabel.frame.size.height)];
     problemDescriptionLabel.backgroundColor = [UIColor clearColor];
     
@@ -963,7 +964,7 @@
 -(void)addProductsAtLocation
 {
     
-    productsAtThisLocationTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(problemDescriptionLabel.frame.origin.x
+    productsAtThisLocationTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(problemDescriptionLabel.frame.origin.x
                                                                              , problemDescriptionLabel.frame.origin.y+problemDescriptionLabel.frame.size.height + 15, self.frame.size.width - 30, problemDescriptionTitleLabel.frame.size.height)];
     productsAtThisLocationTitleLabel.backgroundColor = [UIColor clearColor];
     productsAtThisLocationTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_products_at_thislocation];
@@ -992,7 +993,7 @@
 //    NSString *lProductsAtLocation = @"UX9600 Laser Milling Machine\nRhino-Grip Can Opener and Food Processor\nT-850 Series 1 Terminator";
     
     /* we are giving fram for parts order*/
-    productsAtThisLocationLabel = [[UILabel alloc] initWithFrame:CGRectMake(productsAtThisLocationTitleLabel.frame.origin.x
+    productsAtThisLocationLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(productsAtThisLocationTitleLabel.frame.origin.x
                                                                         , productsAtThisLocationTitleLabel.frame.origin.y+productsAtThisLocationTitleLabel.frame.size.height,self.frame.size.width - 10, productsAtThisLocationTitleLabel.frame.size.height)];
     productsAtThisLocationLabel.backgroundColor = [UIColor clearColor];
     [productsAtThisLocationLabel setText:lProductsAtLocation];
@@ -1075,7 +1076,7 @@
     lNon_WOBGView.autoresizingMask = UIViewAutoresizingFlexibleWidth; // In Portrait mode the view was becoming small. This resolves the issue.
     [self addSubview:lNon_WOBGView];
     
-    UILabel *lEventLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 100, 30)];
+    EditMenuLabel *lEventLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(10, 0, 100, 30)];
     
     lEventLabel.text = kCalDetailEvent;
     lEventLabel.font = [UIFont fontWithName:FONT_HELVETICANUE_MEDIUM size:20.0];
@@ -1083,14 +1084,14 @@
 
     [lNon_WOBGView addSubview:lEventLabel];
     
-    UILabel *lEventNameTitleLabel= [[UILabel alloc] initWithFrame:CGRectMake(lEventLabel.frame.origin.x, lEventLabel.frame.origin.y + lEventLabel.frame.size.height + 10, 150, 15)];
+    EditMenuLabel *lEventNameTitleLabel= [[EditMenuLabel alloc] initWithFrame:CGRectMake(lEventLabel.frame.origin.x, lEventLabel.frame.origin.y + lEventLabel.frame.size.height + 10, 150, 15)];
     lEventNameTitleLabel.text = [[TagManager sharedInstance]tagByName:kTag_eventName];
     lEventNameTitleLabel.font = [UIFont fontWithName:FONT_HELVETICANUE size:14.0];
     lEventNameTitleLabel.textColor = LABEL_TITLE_COLOR;
     
     [lNon_WOBGView addSubview:lEventNameTitleLabel];
     
-    UILabel *lEventNameValueLabel= [[UILabel alloc] initWithFrame:CGRectMake(lEventLabel.frame.origin.x, lEventNameTitleLabel.frame.origin.y + lEventNameTitleLabel.frame.size.height, lNon_WOBGView.frame.size.width - 65, 20)];
+    EditMenuLabel *lEventNameValueLabel= [[EditMenuLabel alloc] initWithFrame:CGRectMake(lEventLabel.frame.origin.x, lEventNameTitleLabel.frame.origin.y + lEventNameTitleLabel.frame.size.height, lNon_WOBGView.frame.size.width - 65, 20)];
     lEventNameValueLabel.text = event.stringCustomerName;
 
     lEventNameValueLabel.font = [UIFont fontWithName:FONT_HELVETICANUE size:16.0];
@@ -1101,14 +1102,14 @@
     }
 
     
-    UILabel *lEventDescriptionTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(lEventNameValueLabel.frame.origin.x, lEventNameValueLabel.frame.origin.y + lEventNameValueLabel.frame.size.height + 10, 150, 15)];
+    EditMenuLabel *lEventDescriptionTitleLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(lEventNameValueLabel.frame.origin.x, lEventNameValueLabel.frame.origin.y + lEventNameValueLabel.frame.size.height + 10, 150, 15)];
     lEventDescriptionTitleLabel.text = kTextDescription;
     lEventDescriptionTitleLabel.font = [UIFont fontWithName:FONT_HELVETICANUE size:14.0];
     lEventDescriptionTitleLabel.textColor = LABEL_TITLE_COLOR;
     
     [lNon_WOBGView addSubview:lEventDescriptionTitleLabel];
     
-    UILabel *lEventDescriptionValueLabel = [[UILabel alloc] initWithFrame:CGRectMake(lEventDescriptionTitleLabel.frame.origin.x, lEventDescriptionTitleLabel.frame.origin.y + lEventDescriptionTitleLabel.frame.size.height, lNon_WOBGView.frame.size.width - 2*lEventDescriptionTitleLabel.frame.origin.x, 20)];
+    EditMenuLabel *lEventDescriptionValueLabel = [[EditMenuLabel alloc] initWithFrame:CGRectMake(lEventDescriptionTitleLabel.frame.origin.x, lEventDescriptionTitleLabel.frame.origin.y + lEventDescriptionTitleLabel.frame.size.height, lNon_WOBGView.frame.size.width - 2*lEventDescriptionTitleLabel.frame.origin.x, 20)];
     lEventDescriptionValueLabel.numberOfLines = 0;
     lEventDescriptionValueLabel.lineBreakMode = NSLineBreakByWordWrapping;
 

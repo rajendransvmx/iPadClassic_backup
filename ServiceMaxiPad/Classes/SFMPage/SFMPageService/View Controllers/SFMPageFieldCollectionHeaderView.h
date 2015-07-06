@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "EditMenuLabel.h"
 @interface SFMPageFieldCollectionHeaderView : UICollectionReusableView
 
-@property(nonatomic, strong) UILabel *titleLabel;
+@property(nonatomic, strong) EditMenuLabel *titleLabel;
 
 @end
