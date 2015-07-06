@@ -207,19 +207,21 @@
         NSMutableDictionary *headerRecords = self.sfmPage.headerRecord;
         NSArray *headerSections = self.sfmPage.process.pageLayout.headerLayout.sections;
         NSArray *headerFields = nil;
-        if ([headerSections count] == 1) {
-            SFMHeaderSection *headerSection = [headerSections lastObject];
-            headerFields = headerSection.sectionFields;
-            for (SFMPageField *pageField in headerFields) {
-                SFMRecordFieldData *recordField = [headerRecords objectForKey:pageField.fieldName];
-                NSString *value = recordField.displayValue;//HS Fix for 018781,previously was internalValue
-                if ([StringUtil isStringEmpty:value]) {
+            if ([headerSections count] > 0) {
+                for (SFMHeaderSection *headerSection in headerSections)
+                {
+                   headerFields = headerSection.sectionFields;
+                   for (SFMPageField *pageField in headerFields) {
+                   SFMRecordFieldData *recordField = [headerRecords objectForKey:pageField.fieldName];
+                   NSString *value = recordField.displayValue;//HS Fix for 018781,previously was internalValue
+                   if ([StringUtil isStringEmpty:value]) {
                     value = @"";
                     if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {
                         value = @"0";
                     }
                 }
                 [mainDataDict setValue:value forKey:pageField.fieldName];
+              }
             }
         }
     }
