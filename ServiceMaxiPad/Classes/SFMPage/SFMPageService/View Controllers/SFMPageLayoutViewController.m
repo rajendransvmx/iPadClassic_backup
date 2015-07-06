@@ -315,15 +315,31 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     UIView * cellContentView = [tempButton superview];
     SFMPageUrlFieldCollectionViewCell *cell = (SFMPageUrlFieldCollectionViewCell*) [cellContentView superview];
     UIApplication *ourApplication = [UIApplication sharedApplication];
-    NSString *string =  cell.fieldValue.text;
-    if ([string rangeOfString:@"https://"].location == NSNotFound) {
-        string = [NSString stringWithFormat:@"https://%@",string];
-        [ourApplication openURL:[NSURL URLWithString:string]];
-    } else {
-        [ourApplication openURL:[NSURL URLWithString:cell.fieldValue.text]];
+    NSString *string = [self removeSpaceFromUrl:cell.fieldValue.text];
+    NSURL *ourURL = [NSURL URLWithString:string];
+    if ([ourApplication canOpenURL:ourURL])
+    {
+        [ourApplication openURL:ourURL];
+    }
+    else
+    {
+        if ([string rangeOfString:@"http"].location == NSNotFound)
+        {
+            string = [NSString stringWithFormat:@"https://%@",string];
+            [ourApplication openURL:[NSURL URLWithString:string]];
+        }
+        else
+        {
+            [ourApplication openURL:[NSURL URLWithString:cell.fieldValue.text]];
+        }
     }
 }
-
+-(NSString *)removeSpaceFromUrl:(NSString *)url{
+    if (url) {
+        return [url stringByReplacingOccurrencesOfString:@" " withString:@""];
+    }
+    return @"";
+}
 -(SFMRecordFieldData *)getValueForField:(NSString *)fieldApiName
 {
     return nil;
