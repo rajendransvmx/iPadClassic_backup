@@ -8,11 +8,11 @@
 
 #import "AutoLockManager.h"
 
-@interface AutoLockManager()
-@property(nonatomic, strong) NSTimer *enableAutoLockTimer;
-
+@interface AutoLockManager ()
 
 @end
+
+
 @implementation AutoLockManager
 
 #pragma mark Singleton Methods
@@ -60,11 +60,9 @@
     NSLog(@" in enableAutoLockSetting initialSync: %d, configSync:%d, resetApp:%d, manualDataSync:%d, dataPurge:%d, pushLogs:%d", initialSync, configSync, resetApp, manualDataSync, dataPurge, pushLogs);
     if (!initialSync && !configSync && !resetApp && !manualDataSync && !dataPurge && !pushLogs)
     {
-        if (_enableAutoLockTimer) {
-            [_enableAutoLockTimer invalidate];
-            _enableAutoLockTimer = nil;
-        }
-        _enableAutoLockTimer = [NSTimer scheduledTimerWithTimeInterval:10 target:self selector:@selector(autoLockEnable) userInfo:nil repeats:NO];
+        [self killTimer];
+        [self performSelector:@selector(autoLockEnable) withObject:nil afterDelay:10.0f];
+        //self.enableAutoLockTimer = [NSTimer scheduledTimerWithTimeInterval:10.0f target:self selector:@selector(autoLockEnable) userInfo:nil repeats:NO];
     }
 }
 
@@ -74,9 +72,8 @@
     NSLog(@"Auto-lock ENABLED");
     [UIApplication sharedApplication].idleTimerDisabled = NO;
     
-    [_enableAutoLockTimer invalidate];
-    _enableAutoLockTimer = nil;
 }
+
 -(void)disableAutoLockSettingFor:(AutoLock) autoLock
 {
     switch (autoLock) {
@@ -104,22 +101,24 @@
     }
     
     [self disableAutoLockSetting];
+    
 }
 
 -(void)disableAutoLockSetting
 {
     NSLog(@"Auto-lock DISABLED");
-
-    if (_enableAutoLockTimer) {
-        [_enableAutoLockTimer invalidate];
-
-        _enableAutoLockTimer = nil;
-    }
-    
+    [self killTimer];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
 }
 
-- (void)dealloc {
+-(void)killTimer
+{
+    // cancel the above call (and any others on self)
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(autoLockEnable) object:nil];
+}
+
+- (void)dealloc
+{
     // Should never be called.
 }
 
