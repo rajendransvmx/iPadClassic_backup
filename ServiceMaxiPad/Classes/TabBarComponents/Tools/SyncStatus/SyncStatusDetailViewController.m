@@ -619,7 +619,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     if (appManager.applicationStatus == ApplicationStatusInitialSyncCompleted && self.localOpDocFiles.count == 0 && status == nil) {
         reportSyncStatusLabel.text = @"--";
     } else if (self.localOpDocFiles.count > 0 || [status isEqualToString:kFailed]) {
-        NSString *statusString = [NSString stringWithFormat:@"%lu %@",(unsigned long)self.localOpDocFiles.count,KTagReportSyncFailed];
+        NSString *statusString = [NSString stringWithFormat:@"%lu %@",(unsigned long)self.localOpDocFiles.count,[[TagManager sharedInstance]tagByName:KTagReportSyncFailed]];
         reportSyncStatusLabel.text = statusString;
         [reportSyncStatusLabel setTextColor:[UIColor colorWithHexString:@"#FF6633"]];
         enabledReportsButton = YES;
