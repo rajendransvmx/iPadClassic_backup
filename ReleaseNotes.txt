@@ -3,7 +3,7 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.012
+Version = 15.49.013
 ===========================================
 
 
@@ -11,20 +11,15 @@ Version = 15.49.012
 -------------
 Fixed Defects
 -------------
-018708-Config Sync is not getting past after Step 3
-018053 -Change in Field display sequence is not respected in SFM search
-018055 -Field to displayed is not respected in SFM search
-018737 -"Hypen" getting added between Date and Time for a DateTime Field (on View and Edit process)
-018781-Date time fields are appended with a 'T' before the time and '+' after that, on Edit mode after Saving the record
-018329 -App crash on tap on cancel with out dismissing remove option
-
-018259 -Device gets locked just after completion of Config Sync/ResetApp/DataPurge..
-007369 - Enhancement : allow for hyperlinks on iPad that are click-able to browser (instead of cut and past)
+018835 - App is crashing on trying to save a record with required fields not filled in
+018971 - SVMX Formulas not working ON Save
+018970 - SVMX Formulas not working ON Load
 
 ------------
 Known Issues
 —————————
-
+Date Field needs to be handle from client side for Formula Configuration.
+As for now we are not sending expected date format to JS Engine,It will be rectified in next build soon.
 
 ---------------------
 Fixed - Known Issues 
@@ -47,7 +42,8 @@ Custom Web service
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
-2. Fixed Issue -IDs are coming in LookUp fields and also DateTime is not coming in correct format in Edit screen.
+2. While saving the data back to data model we are saving display value which needs to change to internal value based on data type of field(date).
+3. Changed Assets for Sum15 except few which are aready asked from Doug.
 
  
 
