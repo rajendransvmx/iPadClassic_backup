@@ -8,6 +8,7 @@
 
 #import "FileManager.h"
 #import "UnzipUtility.h"
+#import "StringUtil.h"
 
 static NSString *const kRootDirectoryName = ORG_NAME_SPACE;
 static NSString *const kCoreLibraryDirectoryName = @"CoreLib";
@@ -259,6 +260,9 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
     
     if(array.count)
     {
+        
+        NSString *currentAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+        
         pathToCheck = [pathToCheck stringByAppendingPathComponent:array[0]];
         if(![[NSFileManager defaultManager] fileExistsAtPath:pathToCheck]) // If core library already exists then DONOT unzip
         {
@@ -267,7 +271,23 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
         else
         {
             NSLog(@"Core library exists!");
+            
+            // 018572
+            NSString *prevAppVersion = [[NSUserDefaults standardUserDefaults] stringForKey:@"kServiceMaxAppVersion"];
+            
+            if ([StringUtil isStringEmpty:prevAppVersion] || ![prevAppVersion isEqualToString:currentAppVersion]) {
+                NSLog(@"Core lib needs upgrade");
+                [UnzipUtility unzipAndReplaceBundledStaticResourceAtPath:[FileManager getCoreLibSubDirectoryPath]];
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"kCoreLibUpgraded"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            else {
+                NSLog(@"Core lib upgraded already - not requried again");
+            }
         }
+        
+        [[NSUserDefaults standardUserDefaults] setObject:currentAppVersion forKey:@"kServiceMaxAppVersion"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
     else
     {
