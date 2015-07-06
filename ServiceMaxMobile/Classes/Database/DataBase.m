@@ -25,6 +25,9 @@
 static NSString * const kDBBeginTransaction = @"BEGIN TRANSACTION";
 static NSString * const kDBEndTransaction = @"END TRANSACTION";
 
+//krishna deleting OPdoc related documents in DB for config sync - 11766
+static NSString * const kOPDocKeyword = @"SFM_OUTPUT_DOCUMENT";
+
 // Attachment name constant
 static NSString * const kAttachementNameTempSFM = @"tempsfm";
 static NSString * const kAttachementNameSFM = @"sfm";
@@ -14038,6 +14041,13 @@ static NSString *const TECHNICIAN_CURRENT_LOCATION_ID = @"usr_tech_loc_filters_i
             
             NSString * queryStatement = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ (%@) SELECT %@ FROM tempsfm.%@ Where value != ''", table, queryFields, queryFields, table];
             [self createTable:queryStatement];
+        }
+        if ([table isEqualToString:@"Document"]) {
+            //To eliminate OPDoc related documents overriding as part of config sync while copying from temp DB. 11766
+            NSString *queryOPDoc = [NSString stringWithFormat:@"INSERT INTO %@ SELECT NULL,AuthorId,Body,BodyLength,ContentType,CreatedById,Description,DeveloperName,FolderId,Id,                               IsBodySearchable,IsDeleted,IsInternalUseOnly,IsPublic,Keywords,LastModifiedById,                                    LastModifiedDate,Name,NamespacePrefix,SystemModstamp,Type FROM tempsfm.%@ Where Keywords != '%@'",table,table,kOPDocKeyword];
+            
+            int success = [self createTable:queryOPDoc];
+            
         }
         else {
             NSString * temp_query = [NSString stringWithFormat:@"INSERT OR REPLACE INTO %@ SELECT * FROM tempsfm.%@", table, table];
