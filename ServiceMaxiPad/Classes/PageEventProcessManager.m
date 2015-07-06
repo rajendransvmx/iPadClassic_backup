@@ -165,6 +165,10 @@
         priceBook.priceBookInformation = nil;
         
         NSString *codeSnippet = [self getCodeSnippet];
+        if (codeSnippet==nil) {
+            return NO;
+        }
+        
         [self createJsExecuter:codeSnippet];
         
         return YES;
@@ -188,7 +192,9 @@
     
     @autoreleasepool {
         NSString *codeSnipppet = [self getCodeSnippetFromDb];
-        
+        if (codeSnipppet==nil) {
+            return nil;
+        }
         codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
         codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&amp;" withString:@"&"];
         codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"\n" withString:@"  "];
