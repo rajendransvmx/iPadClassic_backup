@@ -2257,7 +2257,7 @@
         /* load url with params */
         SFMCustomActionHelper *customActionHelper=[[SFMCustomActionHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
         UIApplication *ourApplication = [UIApplication sharedApplication];
-        NSString *string = [customActionHelper loadURL];//[self removeSpaceFromUrl:[customActionHelper loadURL]];
+        NSString *string = [customActionHelper loadURL];
         NSURL *ourURL = [NSURL URLWithString:string];
         if ([ourApplication canOpenURL:ourURL])
         {
@@ -2434,7 +2434,7 @@
 -(void)showDataSyncAlert
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
-                                                    message:@"Sync is going on. Please Try after sync completion"
+                                                    message:@"Sync is In Progress. Try after sync completion."
                                                    delegate:nil
                                           cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                           otherButtonTitles:nil];

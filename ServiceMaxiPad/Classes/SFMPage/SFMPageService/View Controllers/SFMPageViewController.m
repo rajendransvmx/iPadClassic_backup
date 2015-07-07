@@ -887,7 +887,7 @@
 -(void)showDataSyncAlert
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
-                                                    message:@"Sync is going on. Please Try after sync complete"
+                                                    message:@"Sync is In Progress. Try after sync completion."
                                                    delegate:nil
                                           cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                           otherButtonTitles:nil];
