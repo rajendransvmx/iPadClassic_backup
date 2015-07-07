@@ -3,47 +3,26 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.102
+Version = 15.49.103
 ===========================================
-
 
 -------------
 Fixed Defects
 -------------
-018451
-018616
-019017
-
+018957 : OPdoc generation is going in to loop in Sum 15
+019014 : '--' is displyed on clearing url value and it is launchable
+018952 : SFM custom Actions- connectivity indication is not refreshing
 ------------
-Known Issues
-———————————-
-Date Field needs to be handle from client side for Formula Configuration.
-As for now we are not sending expected date format to JS Engine,It will be rectified in next build soon.
+
 
 ---------------------
 Fixed - Known Issues 
 --------------------- 
 None
 
----------------------
-Features Implemented
----------------------
-GE Formulas
-Before Save and After Save
-Get Price Custom Coverage
-Sync Time Logs
-Inter App Communication
-Service Report Sync Status
-Custom Web service
-
-
----------------------
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
-2. While saving the data back to data model we are saving display value which needs to change to internal value based on data type of field(date).
-3. Changed Assets for Sum15 except few which are already asked from Doug.
-4. BizRule module has been updated in Static Resources.
 
  
 
