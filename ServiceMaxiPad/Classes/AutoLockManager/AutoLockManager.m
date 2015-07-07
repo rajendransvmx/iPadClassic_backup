@@ -10,6 +10,13 @@
 
 @interface AutoLockManager ()
 
+@property(nonatomic, assign) BOOL initialSync;
+@property(nonatomic, assign) BOOL configSync;
+@property(nonatomic, assign) BOOL resetApp;
+@property(nonatomic, assign) BOOL manualDataSync;
+@property(nonatomic, assign) BOOL dataPurge;
+@property(nonatomic, assign) BOOL pushLogs;
+
 @end
 
 
@@ -30,22 +37,22 @@
     
     switch (autoLock) {
         case initialSyncAL:
-            initialSync = NO;
+            self.initialSync = NO;
             break;
         case configSyncAL:
-            configSync = NO;
+            self.configSync = NO;
             break;
         case resetAppAL:
-            resetApp = NO;
+            self.resetApp = NO;
             break;
         case manualDataSyncAL:
-            manualDataSync = NO;
+            self.manualDataSync = NO;
             break;
         case purgeDataAL:
-            dataPurge = NO;
+            self.dataPurge = NO;
             break;
         case pushLogsAL:
-            pushLogs = NO;
+            self.pushLogs = NO;
             break;
             
         default:
@@ -57,13 +64,17 @@
 
 -(void)enableAutoLockAfterDelay
 {
-    NSLog(@" in enableAutoLockSetting initialSync: %d, configSync:%d, resetApp:%d, manualDataSync:%d, dataPurge:%d, pushLogs:%d", initialSync, configSync, resetApp, manualDataSync, dataPurge, pushLogs);
-    if (!initialSync && !configSync && !resetApp && !manualDataSync && !dataPurge && !pushLogs)
-    {
-        [self killTimer];
-        [self performSelector:@selector(autoLockEnable) withObject:nil afterDelay:10.0f];
-        //self.enableAutoLockTimer = [NSTimer scheduledTimerWithTimeInterval:10.0f target:self selector:@selector(autoLockEnable) userInfo:nil repeats:NO];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        NSLog(@" in enableAutoLockSetting initialSync: %d, configSync:%d, resetApp:%d, manualDataSync:%d, dataPurge:%d, pushLogs:%d", self.initialSync, self.configSync, self.resetApp, self.manualDataSync, self.dataPurge, self.pushLogs);
+        if (!self.initialSync && !self.configSync && !self.resetApp && !self.manualDataSync && !self.dataPurge && !self.pushLogs)
+        {
+            [self killTimer];
+            [self performSelector:@selector(autoLockEnable) withObject:nil afterDelay:10.0f];
+            //self.enableAutoLockTimer = [NSTimer scheduledTimerWithTimeInterval:10.0f target:self selector:@selector(autoLockEnable) userInfo:nil repeats:NO];
+        }
+        
+    });
 }
 
 -(void)autoLockEnable
@@ -78,22 +89,22 @@
 {
     switch (autoLock) {
         case initialSyncAL:
-            initialSync = YES;
+            self.initialSync = YES;
             break;
         case configSyncAL:
-            configSync = YES;
+            self.configSync = YES;
             break;
         case resetAppAL:
-            resetApp = YES;
+            self.resetApp = YES;
             break;
         case manualDataSyncAL:
-            manualDataSync = YES;
+            self.manualDataSync = YES;
             break;
         case purgeDataAL:
-            dataPurge = YES;
+            self.dataPurge = YES;
             break;
         case pushLogsAL:
-            pushLogs = YES;
+            self.pushLogs = YES;
             break;
             
         default:

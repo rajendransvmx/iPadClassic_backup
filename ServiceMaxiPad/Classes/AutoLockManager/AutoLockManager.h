@@ -19,17 +19,9 @@ typedef enum{
 } AutoLock;
 
 @interface AutoLockManager : NSObject
-{
-    BOOL initialSync;
-    BOOL configSync;
-    BOOL resetApp;
-    BOOL manualDataSync;
-    BOOL dataPurge;
-    BOOL pushLogs;
-    
-}
+
 + (id)sharedManager;
--(void)enableAutoLockSettingFor:(AutoLock) autoLock;
--(void)disableAutoLockSettingFor:(AutoLock) autoLock;
+- (void)enableAutoLockSettingFor:(AutoLock) autoLock;
+- (void)disableAutoLockSettingFor:(AutoLock) autoLock;
 
 @end
