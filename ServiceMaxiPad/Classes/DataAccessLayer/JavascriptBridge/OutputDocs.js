@@ -131,7 +131,7 @@ function GetMediaResourceJSONArray(media_res_array,media_res_json_array,index, t
                       /* Once you get the Id for each media_res values, convert them into one JSON string representation */
                       var json_str = {Id:media_res_id,DeveloperName:media_name};
                       
-                      media_res_json_array[i] = json_str;
+                      media_res_json_array.push(json_str);
                       
                       if(media_res_array.length > (i+1))
                       {
