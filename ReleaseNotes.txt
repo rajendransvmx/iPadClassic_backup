@@ -3,7 +3,7 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.013
+Version = 15.49.100
 ===========================================
 
 
@@ -11,9 +11,7 @@ Version = 15.49.013
 -------------
 Fixed Defects
 -------------
-018835 - App is crashing on trying to save a record with required fields not filled in
-018971 - SVMX Formulas not working ON Save
-018970 - SVMX Formulas not working ON Load
+018958 - Save action on Standard process is freezing the app
 
 ------------
 Known Issues
@@ -43,7 +41,7 @@ Additional Notes
 ---------------------
 1. Namespace set to SVMXC
 2. While saving the data back to data model we are saving display value which needs to change to internal value based on data type of field(date).
-3. Changed Assets for Sum15 except few which are aready asked from Doug.
+3. Changed Assets for Sum15 except few which are already asked from Doug.
 
  
 
