@@ -325,7 +325,7 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     {
         if ([string rangeOfString:@"http"].location == NSNotFound)
         {
-            string = [NSString stringWithFormat:@"https://%@",string];
+            string = [NSString stringWithFormat:@"http://%@",string];
             [ourApplication openURL:[NSURL URLWithString:string]];
         }
         else
