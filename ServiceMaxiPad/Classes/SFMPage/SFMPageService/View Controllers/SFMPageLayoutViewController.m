@@ -222,7 +222,16 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
             [cell resetLayout];
         }
         [cell.moreButton addTarget:self action:@selector(moreButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
-        cell.fieldValue.textColor =[UIColor blueColor];
+        if (recordData.internalValue != nil && [StringUtil isStringNotNULL:recordData.internalValue] && [recordData.internalValue length]>0)
+        {
+            ((SFMPageUrlFieldCollectionViewCell*) cell).hyperLinkButton.enabled = YES;
+            cell.fieldValue.textColor =[UIColor blueColor];
+        }
+        else
+        {
+            ((SFMPageUrlFieldCollectionViewCell*) cell).hyperLinkButton.enabled = NO;
+            cell.fieldValue.textColor =[UIColor blackColor];
+        }
         [((SFMPageUrlFieldCollectionViewCell*) cell).hyperLinkButton addTarget:self action:@selector(hyperLinkclicked:) forControlEvents:UIControlEventTouchUpInside];
     }
     else
