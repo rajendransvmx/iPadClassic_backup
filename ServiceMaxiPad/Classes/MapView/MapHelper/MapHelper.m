@@ -178,14 +178,10 @@
 
 
 + (NSMutableArray*)getWorkOrdersForWhatIds:(NSMutableDictionary*)whatEventStartDateValueMap {
-    
-//    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorStartsWith andFieldValue:[[whatEventStartDateValueMap allKeys] lastObject]];
-    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:[whatEventStartDateValueMap allKeys]];
 
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:[whatEventStartDateValueMap allKeys]];
     DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorIn andFieldValues:[whatEventStartDateValueMap allKeys]];
-    
-    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kId, klocalId,kWorkOrderContactId,kWorkOrderName,kWorkOrderCompanyId,kWorkOrderScheduledDateTime,kWorkOrderSTREET,kWorkOrderCITY, kWorkOrderSTATE, kWorkOrderCOUNTRY, kWorkOrderZIP, kWorkOrderPurposeOfVisit, kWorkOrderProblemDescription, kWorkOrderPriority, kWorkOrderLatitude, kWorkOrderLongitude, nil];
-    
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kId, klocalId,kWorkOrderContactId,kWorkOrderName,kWorkOrderCompanyId,kWorkOrderSTREET,kWorkOrderCITY, kWorkOrderSTATE, kWorkOrderCOUNTRY, kWorkOrderZIP, kWorkOrderPurposeOfVisit, kWorkOrderProblemDescription, kWorkOrderPriority, kWorkOrderBillingType, kWorkOrderOrderStatus, kWorkOrderCompanyId, kWorkOrderSite, nil];
     NSArray *workOrderArray = [self fetchDataForObject:kWorkOrderTableName fields:fieldsArray expression:@"(1 OR 2)" criteria:[NSArray arrayWithObjects:criteriaOne, criteriaTwo, nil]];
 
     NSMutableArray *workOrderSummaryArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -208,19 +204,6 @@
     NSString *startDateString = [self convertDateToStringGMT:startDate];
     NSString *endDateString = [self convertDateToStringGMT:endDate];
     NSString *ownerId = [self ownerId];
-    
-    /*
-    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
-    
-    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorGreaterThanEqualTo andFieldValue:startDateString];
-    
-    DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    
-    DBCriteria *criteriaFour = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorGreaterThanEqualTo andFieldValue:startDateString];
-    
-    DBCriteria *criteriaFive = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    
-     */
     
     DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
     
@@ -250,31 +233,12 @@
     NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kActivityDate,kActivityDateTime,kDurationInMinutes,kEndDateTime, kStartDateTime, kSubject, kIsAlldayEvent, kWhatId, kId, klocalId, nil];
     NSTimeZone *gmt = [[NSTimeZone alloc] initWithName:@"GMT"];
     NSDate *startDate = [NSDate date:selectedDate withTimeZone:gmt];
-//    NSDate *endDate = [NSDate date:[selectedDate dateByAddingDays:1] withTimeZone:gmt];
-
     NSString *startDateString = [self removeTimeFromDate:startDate];
-//    NSString *endDateString = [self removeTimeFromDate:endDate];
     NSString *ownerId = [self ownerId];
     
-    
-     DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
-     
-     DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorLessThanEqualTo andFieldValue:startDateString];
-     
-//     DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    
-     DBCriteria *criteriaFour = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorGreaterThanEqualTo andFieldValue:startDateString];
-     
-//     DBCriteria *criteriaFive = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    
-     
-    
-//    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
-//    
-//    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-//    
-//    DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorGreaterThan  andFieldValue:startDateString];
-    
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorLessThanEqualTo andFieldValue:startDateString];
+    DBCriteria *criteriaFour = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorGreaterThanEqualTo andFieldValue:startDateString];
     DBCriteria *allDayCriteriaOne = [[DBCriteria alloc] initWithFieldName:kIsAlldayEvent operatorType:SQLOperatorEqual  andFieldValue:@"true"];
     DBCriteria *allDayCriteriaTwo = [[DBCriteria alloc] initWithFieldName:kIsAlldayEvent operatorType:SQLOperatorEqual  andFieldValue:@"1"];
     
@@ -302,21 +266,7 @@
     NSDate *endDate = [NSDate date:[selectedDate dateByAddingDays:1] withTimeZone:gmt];
     NSString *startDateString = [self convertDateToStringGMT:startDate];
     NSString *endDateString = [self convertDateToStringGMT:endDate];
-//    NSString *ownerId = [self ownerId];
     NSString *technicianID = [PlistManager getTechnicianId];
-
-    /*
-    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kSVMXWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
-    
-    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kSVMXStartDateTime operatorType:SQLOperatorGreaterThanEqualTo andFieldValue:startDateString];
-    
-    DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kSVMXStartDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    
-    DBCriteria *criteriaFour = [[DBCriteria alloc] initWithFieldName:kSVMXEndDateTime operatorType:SQLOperatorGreaterThanEqualTo andFieldValue:startDateString];
-    
-    DBCriteria *criteriaFive = [[DBCriteria alloc] initWithFieldName:kSVMXEndDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    */
-    
 //TODO: working on this.
     
     DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kObjectSfId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
@@ -330,7 +280,7 @@
     if (![StringUtil isStringEmpty:technicianID]) {
         
         DBCriteria *criteriaSix = [[DBCriteria alloc] initWithFieldName:kSVMXTechnicianId operatorType:SQLOperatorEqual andFieldValue:technicianID];
-//        eventArray = [self fetchDataForObject:kSVMXTableName fields:fieldsArray expression:@"(1 AND (2 AND 3) OR (4 AND 5) AND 6 OR (7 AND 8))" criteria:[NSArray arrayWithObjects:criteriaOne, criteriaTwo, criteriaThree, criteriaFour, criteriaFive, criteriaSix, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, nil]];
+        
         eventArray = [self fetchDataForObject:kSVMXTableName fields:fieldsArray expression:@"(1 AND (2 AND 3) AND  4)" criteria:[NSArray arrayWithObjects:criteriaOne, criteriaTwo, criteriaThree, criteriaSix, nil]];
 
     }
@@ -358,19 +308,7 @@
     
     DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kSVMXStartDateTime operatorType:SQLOperatorLessThanEqualTo andFieldValue:startDateString];
     
-    //     DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    
     DBCriteria *criteriaFour = [[DBCriteria alloc] initWithFieldName:kSVMXEndDateTime operatorType:SQLOperatorGreaterThanEqualTo andFieldValue:endDateString];
-    
-    //     DBCriteria *criteriaFive = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    
-    
-    
-    //    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kWhatId operatorType:SQLOperatorLike andFieldValue:[self prefixForWorkOrder]];
-    //
-    //    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
-    //
-    //    DBCriteria *criteriaThree = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorGreaterThan  andFieldValue:startDateString];
     
     DBCriteria *allDayCriteriaOne = [[DBCriteria alloc] initWithFieldName:kSVMXIsAlldayEvent operatorType:SQLOperatorEqual  andFieldValue:@"true"];
     DBCriteria *allDayCriteriaTwo = [[DBCriteria alloc] initWithFieldName:kSVMXIsAlldayEvent operatorType:SQLOperatorEqual  andFieldValue:@"1"];
@@ -530,31 +468,12 @@
 }
 
 
-+(NSString *)removeTimeFromDate:(NSDate *)date {
-    
-
-    
-//    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-//    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
-//    comp.hour = 00;
-//    comp.minute = 00;
-//    comp.second = 00;
-//    return [cal dateFromComponents:comp];
-    
-//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//    
-//    NSTimeZone *gmt = [NSTimeZone timeZoneForSecondsFromGMT:0];
-//    dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-//    [dateFormatter setTimeZone:gmt];
-//    
-//    dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss";
-    
-    //Change the activitydatetime, starttime, endtime to "yyyy-MM-dd'T'HH:mm:ss.SSSSZZZZ" to be saved in the DB.
-    NSString *lTheDateString ; //= [[dateFormatter stringFromDate:[cal dateFromComponents:comp]] stringByAppendingString:@".000+0000"];
-    
++(NSString *)removeTimeFromDate:(NSDate *)date
+{
+    NSString *lTheDateString = nil;
     lTheDateString =     [DateUtil stringFromDate:date inFormat:kDateFormatTypeOnlyDate];
     lTheDateString = [lTheDateString stringByAppendingString:@"T00:00:00.000+0000"];
-    return lTheDateString; //[DateUtil stringFromDate:date inFormat:kDateFormatTypeOnlyDate];
+    return lTheDateString;
     
 }
 
