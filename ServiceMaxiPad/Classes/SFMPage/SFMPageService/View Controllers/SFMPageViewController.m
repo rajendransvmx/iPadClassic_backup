@@ -49,6 +49,7 @@
 #import "MBProgressHUD.h"
 #import "SFMCustomActionHelper.h"
 #import "SFMCustomActionWebServiceHelper.h"
+#import "SNetworkReachabilityManager.h"
 
 @interface SFMPageViewController ()<SMActionSideBarViewControllerDelegate>
 @property (nonatomic, strong) SMActionSideBarViewController *mySideBar;
@@ -87,7 +88,10 @@
     
 	[self updateWizardData];
     [self setUpActionSideBar];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadWizardComponentActionAccordingToNetworkChangeNotification:)
+                                                 name:kNetworkConnectionChanged
+                                               object:nil];
     //[self processNotification];
 }
 
@@ -919,5 +923,17 @@
         [self.HUD hide:YES];
         self.HUD = nil;
     }
+}
+
+-(void)reloadWizardComponentActionAccordingToNetworkChangeNotification:(NSNotification *)notification{
+    if (self.tempViewController != nil) {
+        [self.tempViewController reloadTableView];
+    }
+}
+
+-(void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:kNetworkConnectionChanged
+                                                  object:nil];
 }
 @end
