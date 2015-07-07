@@ -78,7 +78,17 @@
 	if (self != nil)
     {
         self.requestType  = requestType;
-        self.requestIdentifier =  [AppManager generateUniqueId];
+        
+        NSString *requestIdentifierOfLastFailedRequest = [[NSUserDefaults standardUserDefaults] objectForKey:@"requestIdentifier"];
+
+        if (requestIdentifierOfLastFailedRequest && requestIdentifierOfLastFailedRequest.length && requestType == RequestOneCallDataSync)
+        {
+            self.requestIdentifier = requestIdentifierOfLastFailedRequest; // BUG #018451
+        }
+        else
+        {
+            self.requestIdentifier =  [AppManager generateUniqueId];
+        }
         
         CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
         
@@ -1118,12 +1128,28 @@
 - (void)didReceiveResponseSuccessfully:(id)responseObject
 {
     @autoreleasepool {
+        
+        if (self.requestType == RequestOneCallDataSync)
+        {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"requestIdentifier"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
         [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
     }
 }
 
 - (void)didRequestFailedWithError:(id)error andResponse:(id)someResponseObj
 {
+
+//    [self.requestIdentifier
+    
+    if (self.requestType == RequestOneCallDataSync && self.requestIdentifier && self.requestIdentifier.length)
+    {
+        
+        [[NSUserDefaults standardUserDefaults] setObject:self.requestIdentifier forKey:@"requestIdentifier"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
     [self.serverRequestdelegate didRequestFailedWithError:error Response:someResponseObj andRequestObject:self];
 }
 
