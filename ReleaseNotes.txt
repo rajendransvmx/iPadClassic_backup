@@ -3,15 +3,15 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.100
+Version = 15.49.101
 ===========================================
-
 
 
 -------------
 Fixed Defects
 -------------
-018958 - Save action on Standard process is freezing the app
+18685
+07369
 
 ------------
 Known Issues
@@ -42,6 +42,7 @@ Additional Notes
 1. Namespace set to SVMXC
 2. While saving the data back to data model we are saving display value which needs to change to internal value based on data type of field(date).
 3. Changed Assets for Sum15 except few which are already asked from Doug.
+4. BizRule module has been updated in Static Resources.
 
  
 
