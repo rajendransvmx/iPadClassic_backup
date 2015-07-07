@@ -213,7 +213,16 @@
                    headerFields = headerSection.sectionFields;
                    for (SFMPageField *pageField in headerFields) {
                    SFMRecordFieldData *recordField = [headerRecords objectForKey:pageField.fieldName];
-                   NSString *value = recordField.displayValue;//HS Fix for 018781,previously was internalValue
+                       NSString *value = nil;
+                       if ([pageField.dataType isEqualToString:kSfDTDateTime] || [pageField.dataType isEqualToString:kSfDTDate])
+                       {
+                           value = recordField.internalValue;//Only for Date Time and Date fields
+                       }
+                       else
+                       {
+                           value = recordField.displayValue;//HS Fix for 018781,previously was internalValue
+
+                       }
                    if ([StringUtil isStringEmpty:value]) {
                     value = @"";
                     if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {

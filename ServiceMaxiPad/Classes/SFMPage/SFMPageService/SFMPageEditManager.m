@@ -2598,6 +2598,7 @@
     NSArray *allKeys = [responseDict allKeys];
     NSDictionary *headerRecord = sfmPage.headerRecord;
     NSArray *detailLayouts = sfmPage.process.pageLayout.detailLayouts;
+    SFMHeaderLayout *headerLayouts = sfmPage.process.pageLayout.headerLayout;
     NSDictionary *detailRecordsDict = sfmPage.detailsRecord;
     for (NSString *key in allKeys) {
         if ([key isEqualToString:@"details"]) {
@@ -2617,18 +2618,53 @@
                         NSDictionary *sfmRecord = [detailRecords objectAtIndex:i];
                         for (NSString *key in lineRecord) {
                            //key is SFMPageField
-                           
-                            
-                            SFMRecordFieldData *recordField = [sfmRecord objectForKey:key];
-                            id internalValue = [lineRecord objectForKey:key];
-                            id displayValue = [lineRecord objectForKey:key];
-                            if (![internalValue isKindOfClass:[NSString class]])
+                           //HS
+                            for (SFMPageField *pageField in [detailLayout detailSectionFields])
                             {
-                                internalValue = [NSString stringWithFormat:@"%@",internalValue];
-                                displayValue = [NSString stringWithFormat:@"%@",displayValue];
+                                if ([pageField.fieldName isEqualToString:key])
+                                {
+                                    SFMRecordFieldData *recordField = [sfmRecord objectForKey:key];
+                                    id internalValue = [lineRecord objectForKey:key];
+                                    id displayValue = [lineRecord objectForKey:key];
+                                    if (![internalValue isKindOfClass:[NSString class]])
+                                    {
+                                        internalValue = [NSString stringWithFormat:@"%@",internalValue];
+                                        displayValue = [NSString stringWithFormat:@"%@",displayValue];
+                                        
+                                        if ([pageField.dataType isEqualToString:kSfDTReference])
+                                        {
+                                            recordField.displayValue = displayValue;
+
+                                        }
+                                        else if([pageField.dataType isEqualToString:kSfDTDateTime])
+                                        {
+                                            
+                                            displayValue = [self getUserReadableDateTime:internalValue];
+
+                                            recordField.internalValue = internalValue;
+                                            recordField.displayValue = displayValue;
+                                        }
+                                        else if ([pageField.dataType isEqualToString:kSfDTDate])
+                                        {
+                                            displayValue = [self getUserReadableDate:internalValue];
+                                            
+                                            recordField.internalValue = internalValue;
+                                            recordField.displayValue = displayValue;
+                                        }
+                                        else
+                                        {
+                                            recordField.internalValue = internalValue;
+                                            recordField.displayValue = displayValue;
+                                            
+                                        }
+                                       
+                                    }
+                                    //recordField.internalValue = internalValue;
+                                    //recordField.displayValue = displayValue;
+                                }
                             }
-                            recordField.internalValue = internalValue;
-                            recordField.displayValue = displayValue;
+                            
+                         
                         }
                     }
                 }
@@ -2636,19 +2672,49 @@
         }
         else {
             if (!([key isEqualToString:@"Id"] || [key isEqualToString:@"localId"])) {
-                SFMRecordFieldData *recordField = [headerRecord objectForKey:key];
                 
-                id internalValue = [responseDict objectForKey:key];
-                id displayValue = [responseDict objectForKey:key];
-                if (![internalValue isKindOfClass:[NSString class]])
+                for (SFMHeaderSection *headerSection in headerLayouts.sections)
                 {
-                    internalValue = [NSString stringWithFormat:@"%@",internalValue];
-                    displayValue = [NSString stringWithFormat:@"%@",displayValue];
+                    for (SFMPageField *sfmPageField in headerSection.sectionFields)
+                    {
+                        if ([sfmPageField.fieldName isEqualToString:key])
+                        {
+                            SFMRecordFieldData *recordField = [headerRecord objectForKey:key];
+                            
+                            id internalValue = [responseDict objectForKey:key];
+                            id displayValue = [responseDict objectForKey:key];
+                            
+                            if (![internalValue isKindOfClass:[NSString class]])
+                            {
+                                internalValue = [NSString stringWithFormat:@"%@",internalValue];
+                                displayValue = [NSString stringWithFormat:@"%@",displayValue];
+                                if ([sfmPageField.dataType isEqualToString:kSfDTDate])
+                                {
+                                    displayValue = [self getUserReadableDate:internalValue];
+                                    
+                                    recordField.internalValue = internalValue;
+                                    recordField.displayValue = displayValue;
 
-                }
-                recordField.internalValue = internalValue;
-                recordField.displayValue = displayValue;
+                                }
+                                else if([sfmPageField.dataType isEqualToString:kSfDTDateTime])
+                                {
+                                    displayValue = [self getUserReadableDateTime:internalValue];
+                                    
+                                    recordField.internalValue = internalValue;
+                                    recordField.displayValue = displayValue;
+                                }
+                                else
+                                {
+                                    recordField.displayValue = displayValue;
+                                }
+                                
+                                
+                            }
                 
+                        }
+                    }
+                }
+              
             }
         }
     }

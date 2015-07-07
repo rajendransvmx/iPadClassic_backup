@@ -3,19 +3,20 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.101
+Version = 15.49.102
 ===========================================
 
 
 -------------
 Fixed Defects
 -------------
-18685
-07369
+018451
+018616
+019017
 
 ------------
 Known Issues
-—————————
+———————————-
 Date Field needs to be handle from client side for Formula Configuration.
 As for now we are not sending expected date format to JS Engine,It will be rectified in next build soon.
 
