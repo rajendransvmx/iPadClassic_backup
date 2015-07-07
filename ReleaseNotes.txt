@@ -9,11 +9,13 @@ Version = 15.49.104
 -------------
 Fixed Defects
 -------------
-018957 : OPdoc generation is going in to loop in Sum 15
-019014 : '--' is displyed on clearing url value and it is launchable
-018952 : SFM custom Actions- connectivity indication is not refreshing
+018957 :
+OPdoc generation is going in to loop in Sum 15
+019014 :
+'--' is displyed on clearing url value and it is launchable
+018952 :
+SFM custom Actions- connectivity indication is not refreshing
 ------------
-
 
 ---------------------
 Fixed - Known Issues 
