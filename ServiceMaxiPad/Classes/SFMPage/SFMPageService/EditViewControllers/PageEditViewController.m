@@ -1298,7 +1298,11 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     self.pageEventProManager.managerDelegate = self;
     if([self.pageEventProManager pageEventProcessExists]) {
         pageEventProcessExists = YES;
-        [self.pageEventProManager startPageEventProcessWithParentView:self.view];
+        BOOL status = [self.pageEventProManager startPageEventProcessWithParentView:self.view];
+        
+        if (!status) {
+            pageEventProcessExists = NO;
+        }
     }
     return pageEventProcessExists;
 }
