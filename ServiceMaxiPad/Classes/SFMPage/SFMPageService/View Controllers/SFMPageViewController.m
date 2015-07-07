@@ -843,10 +843,28 @@
     /* load url with params */
     SFMCustomActionHelper *customActionHelper = [[SFMCustomActionHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
     UIApplication *ourApplication = [UIApplication sharedApplication];
-    BOOL isOpen = [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
-    if (!isOpen) {
-        [self showWrongURLAlert];
+    NSString *string = [customActionHelper loadURL];//[self removeSpaceFromUrl:[customActionHelper loadURL]];
+    NSURL *ourURL = [NSURL URLWithString:string];
+    if ([ourApplication canOpenURL:ourURL])
+    {
+        [ourApplication openURL:ourURL];
     }
+    else
+    {
+        if ([string rangeOfString:@"http"].location == NSNotFound)
+        {
+            string = [NSString stringWithFormat:@"http://%@",string];
+            [ourApplication openURL:[NSURL URLWithString:string]];
+        }
+        else
+        {
+            [ourApplication openURL:ourURL];
+        }
+    }
+//    BOOL isOpen = [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
+//    if (!isOpen) {
+//        [self showWrongURLAlert];
+//    }
 }
 
 /* Call webservice call from with parameters */
