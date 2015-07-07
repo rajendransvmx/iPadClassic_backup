@@ -366,8 +366,11 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     NSString *imageName = nil;
     if (shoudExpand) {
         PageEditChildLayoutViewController *childViewController = [self childLayoutViewControllerForIndexPath:indexPath];
-        [self.expandedSectionsDict setObject:childViewController forKey:section];
-        [self addChildViewController:childViewController];
+        if (childViewController != nil)
+        {
+           [self.expandedSectionsDict setObject:childViewController forKey:section];
+           [self addChildViewController:childViewController];
+        }
         if ([self.tableView numberOfSections])
         {
             [self.tableView  beginUpdates];
