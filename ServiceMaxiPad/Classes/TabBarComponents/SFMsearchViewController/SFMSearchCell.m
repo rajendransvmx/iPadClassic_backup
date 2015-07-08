@@ -106,4 +106,12 @@
    
 }
 
+-(void)cleanUP
+{
+    _fieldLabelOne.text = @"";
+    _fieldValueOne.text = @"";
+    _fieldLabelTwo.text = @"";
+    _fieldValueTwo.text = @"";
+}
+
 @end

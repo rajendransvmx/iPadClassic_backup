@@ -18,5 +18,6 @@
 @property(nonatomic,strong)UILabel *fieldValueTwo;
 @property(nonatomic,strong)UIImageView *accessoryImgView;
 
+-(void)cleanUP;
 
 @end

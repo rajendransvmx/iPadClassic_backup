@@ -542,6 +542,8 @@
     cell.accessoryImgView.backgroundColor = [UIColor clearColor];
     cell.accessoryImgView.contentMode = UIViewContentModeCenter;
     cell.accessoryImgView.image = normalImage;
+    [cell cleanUP];
+    
     //HS 12 June ends here
     
     //HS 2 jul fix:018053
@@ -570,7 +572,7 @@
         }
         else
         {
-            NSArray *keyArray = [[displayData objectAtIndex:index] allKeys];
+            keyArray = [[displayData objectAtIndex:index] allKeys];
             if ([keyArray count]>0)
             {
                 key = [keyArray objectAtIndex:0];
@@ -590,14 +592,13 @@
                     {
                         value = [[displayData objectAtIndex:index]objectForKey:key];
                     }
-
                     
                 }
             }
           
             if (index == 1)
             {
-                cell.fieldLabelOne.text = title ;
+                cell.fieldLabelOne.text = title;
                 cell.fieldValueOne.text = value;
             }
             else if(index ==2)
