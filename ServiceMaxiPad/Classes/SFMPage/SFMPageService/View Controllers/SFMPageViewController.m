@@ -260,6 +260,14 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+  //  fix for defect 018448 - chinna;
+    [self refreshPageData];
+
+    if (self.tempViewController)
+    {
+        [self.tempViewController reloadTableView];
+    }
+
 
     
   
@@ -282,13 +290,8 @@
         self.navigationItem.rightBarButtonItems = @[rightNavButton];
     }
 
-    [self refreshPageData];
-    //HS 5 Jan Fix for issue No - 013206
-    if (self.tempViewController)
-    {
-        [self.tempViewController reloadTableView];
-    }
-    //HS 5 Jan ends here
+
+       //HS 5 Jan ends here
     
     [self addNotificationObserver];
     [self processNotification];
