@@ -631,6 +631,12 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
             cell.accessoryView.tag = indexPath.section;
             MultiPageFieldView  *multiPageFieldView = (MultiPageFieldView *)[cell.contentView viewWithTag:MULTI_PAGEFIELD_TAG];
             [multiPageFieldView removeFromSuperview];
+            
+            UILabel *titleLabel = (UILabel*)[cell.contentView viewWithTag:TITLE_LABEL_TAG];
+            
+            NSString *theTitle = [self displayValueForIndexPath:indexPath];
+            titleLabel.text = theTitle;
+                
         }
         else
         {
@@ -654,13 +660,19 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
                 multiPageFieldView.fieldValueTwo.text = [self displayValueForPageField:secondPageField indexPath:indexPath];
             }
             
+            NSString *theTitle = [self displayValueForIndexPath:indexPath];
             UILabel *titleLabel = (UILabel*)[cell.contentView viewWithTag:TITLE_LABEL_TAG];
-            if (titleLabel == nil) {
+            if (titleLabel == nil)
+            {
                 titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(50,10,cell.frame.size.width, 20)];
                 titleLabel.backgroundColor = [UIColor clearColor];
                 titleLabel.tag = TITLE_LABEL_TAG;
                 [cell.contentView addSubview:titleLabel];
-                titleLabel.text = [self displayValueForIndexPath:indexPath];
+                titleLabel.text = theTitle;
+            }
+            else
+            {
+                titleLabel.text = theTitle;
             }
             //titleLabel.center = imageView.center;
             
