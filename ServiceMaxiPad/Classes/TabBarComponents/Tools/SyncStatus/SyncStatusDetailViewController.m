@@ -410,7 +410,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     else
     {
         SXLogWarning(@"Validation profile Failed");
-       
+        [[AutoLockManager sharedManager] enableAutoLockSettingFor:configSyncAL];
         [self updateConfigSyncRelatedUI];
     }
  }
