@@ -70,6 +70,8 @@
 #import "SFMCustomActionHelper.h"
 #import "MBProgressHUD.h"
 #import "WebserviceResponseStatus.h"
+#import "SNetworkReachabilityManager.h"
+
 
 #define kLongFormat @"yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 #define kLongFormatZulu @"yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
@@ -338,6 +340,10 @@
     [self addObserver:self selector:@selector(checkForTimeZoneChange:) withName:CHECK_FOR_TIMEZONE_CHANGE AndObject:nil];
     [self addObserver:self selector:@selector(reloadCalendar:) withName:@"RefreshView_IOS" AndObject:nil];
     [self addObserver:self selector:@selector(refreshOnDayChange) withName:UIApplicationSignificantTimeChangeNotification AndObject:nil];//this is for if day change then we have to refresh calendar screen
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadWizardComponentActionAccordingToNetworkChangeNotification:)
+                                                 name:kNetworkConnectionChanged
+                                               object:nil];
 }
 
 -(void)refreshOnDayChange{
@@ -2226,6 +2232,9 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kConfigSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter]removeObserver:self name:kUpdateEventNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:kNetworkConnectionChanged
+                                                  object:nil];
 }
 #pragma mark - End
 
@@ -2449,5 +2458,11 @@
                                           otherButtonTitles:nil];
     [alert show];
 }
+-(void)reloadWizardComponentActionAccordingToNetworkChangeNotification:(NSNotification *)notification{
+    if (self.tempViewController != nil) {
+        [self.tempViewController reloadTableView];
+    }
+}
+
 
 @end
