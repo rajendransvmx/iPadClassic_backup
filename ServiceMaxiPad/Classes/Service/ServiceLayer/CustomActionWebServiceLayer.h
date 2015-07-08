@@ -10,5 +10,4 @@
 #import "Utility.h"
 
 @interface CustomActionWebServiceLayer : BaseServiceLayer
-@property (nonatomic,strong)NSString *childName;
 @end
