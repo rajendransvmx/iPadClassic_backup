@@ -40,7 +40,6 @@
 @property(nonatomic, copy) NSString *actionName;
 @property(nonatomic, copy) NSString *customActionType;
 @property(nonatomic, copy) NSString *customUrl;
-@property(nonatomic, copy) NSString *ProcessId_c;
 
 @property(nonatomic,assign) BOOL isEntryCriteriaMatching; 
 

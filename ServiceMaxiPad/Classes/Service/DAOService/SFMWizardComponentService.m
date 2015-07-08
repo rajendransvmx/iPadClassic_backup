@@ -65,7 +65,7 @@
         DBCriteria * criteriaOne = [[DBCriteria alloc] initWithFieldName:@"wizardId"
                                                             operatorType:SQLOperatorEqual
                                                            andFieldValue:wizard.wizardId];
-        NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"actionDescription",@"expressionId",@"processId",@"actionType",@"actionName",@"className",@"methodName",@"customActionType",@"actionName",@"customUrl",@"ProcessId_c",nil];
+        NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"actionDescription",@"expressionId",@"processId",@"actionType",@"actionName",@"className",@"methodName",@"customActionType",@"actionName",@"customUrl",nil];
         
         NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaOne, nil];
         
@@ -115,7 +115,7 @@
     
     if([modelArray count] >0)
     {
-        [self updateRecords:modelArray withFields:@[@"className",@"methodName",@"customActionType",@"actionName",@"actionDescription",@"customUrl",@"ProcessId_c"] withCriteria:@[criteria1]];
+        [self updateRecords:modelArray withFields:@[@"className",@"methodName",@"customActionType",@"actionName",@"actionDescription",@"customUrl"] withCriteria:@[criteria1]];
        // [self updateRecords:modelArray withFields:@[@"className",@"methodName",@"customActionType",@"customUrl"] withCriteria:@[criteria1]];
     }
 }

@@ -160,7 +160,7 @@ NSString *const kTableSFSearchObjectsSchema = @"CREATE TABLE IF NOT EXISTS SFM_S
 
 NSString *const kTableSFSignatureDataSchema = @"CREATE TABLE IF NOT EXISTS SFSignatureData ('record_Id' VARCHAR, 'object_api_name' VARCHAR, 'signature_data' TEXT, 'sig_Id' TEXT, 'WorkOrderNumber' VARCHAR, 'sign_type' VARCHAR, 'operation_type' VARCHAR, 'signature_type_id' TEXT, 'signature_name' TEXT)";
 
-NSString *const kTableSFWizardComponentSchema = @"CREATE TABLE IF NOT EXISTS SFWizardComponent ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'wizardId' VARCHAR, 'wizardComponentId' VARCHAR, 'actionDescription' VARCHAR, 'expressionId' VARCHAR, 'processId' VARCHAR, 'actionType' VARCHAR, 'performSync' VARCHAR, 'className' VARCHAR, 'methodName' VARCHAR, 'wizardStepId' VARCHAR, 'sequence' DOUBLE, 'actionName' VARCHAR,'customActionType' VARCHAR ,'customUrl' VARCHAR, 'ProcessId_c' VARCHAR)";
+NSString *const kTableSFWizardComponentSchema = @"CREATE TABLE IF NOT EXISTS SFWizardComponent ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'wizardId' VARCHAR, 'wizardComponentId' VARCHAR, 'actionDescription' VARCHAR, 'expressionId' VARCHAR, 'processId' VARCHAR, 'actionType' VARCHAR, 'performSync' VARCHAR, 'className' VARCHAR, 'methodName' VARCHAR, 'wizardStepId' VARCHAR, 'sequence' DOUBLE, 'actionName' VARCHAR,'customActionType' VARCHAR ,'customUrl' VARCHAR)";
 
 NSString *const kTableSFWizardSchema = @"CREATE TABLE IF NOT EXISTS SFWizard ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'objectName' VARCHAR, 'wizardId' VARCHAR, 'expressionId' VARCHAR, 'wizardDescription' VARCHAR, 'wizardName' VARCHAR,'wizardLayoutColumn' INTEGER,'wizardLayoutRow' INTEGER)";
 

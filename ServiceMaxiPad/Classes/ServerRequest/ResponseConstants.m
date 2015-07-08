@@ -120,7 +120,6 @@ NSString *const kWizardCompClassName   = ORG_NAME_SPACE@"__Service_Class_Name__c
 NSString *const kWizardCompMethodName  = ORG_NAME_SPACE@"__Service_Method_Name__c";
 NSString *const kWizardCompCustomActionType = ORG_NAME_SPACE@"__Custom_Action_Type__c";
 NSString *const kWizardCompCustomActionUrl =ORG_NAME_SPACE@"__Target_URL__c";
-NSString *const kWizardCompCustomProcessId_c=ORG_NAME_SPACE@"__ProcessID__c";
 
 /* custom Action Url */
 NSString *const kCustomActionProcessId       = @"Id";

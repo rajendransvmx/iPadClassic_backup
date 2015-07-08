@@ -114,7 +114,6 @@ extern NSString *const kWizardCompClassName;
 extern NSString *const kWizardCompMethodName;
 extern NSString *const kWizardCompCustomActionType;
 extern NSString *const kWizardCompCustomActionUrl;
-extern NSString *const kWizardCompCustomProcessId_c;
 
 /* custom Action Url */
 extern NSString *const kCustomActionProcessId;

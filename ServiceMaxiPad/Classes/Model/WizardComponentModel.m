@@ -40,7 +40,6 @@
 @synthesize actionName;
 @synthesize customActionType;
 @synthesize customUrl;
-@synthesize ProcessId_c;
 
 
 - (id)init
@@ -68,7 +67,6 @@
     actionName = nil;
     customActionType=nil;
     customUrl = nil;
-    ProcessId_c = nil;
 }
 
 + (NSDictionary *)getMappingDictionary
@@ -85,7 +83,7 @@
 }
 + (NSDictionary *) getMappingDictionaryForWizardLayoutUrl {
     
-    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kWizardCompDescription,@"actionDescription",kWizardCompCustomActionType,@"customActionType",kWizardCompName,@"actionName",kWizardCompId,@"processId",kWizardCompCustomActionUrl,@"customUrl",kWizardCompCustomProcessId_c,@"ProcessId_c",nil];
+    NSDictionary *mapDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kWizardCompDescription,@"actionDescription",kWizardCompCustomActionType,@"customActionType",kWizardCompName,@"actionName",kWizardCompId,@"processId",kWizardCompCustomActionUrl,@"customUrl",nil];
     
     return mapDictionary;
 }
