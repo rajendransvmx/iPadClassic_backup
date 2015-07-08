@@ -19,9 +19,9 @@
 #import "FactoryDAO.h"
 #import "StringUtil.h"
 #import "SFMDetailLayout.h"
+#import "StringUtil.h"
 
 @implementation CustomActionWebServiceLayer
-
 - (instancetype) initWithCategoryType:(CategoryType)categoryType
                           requestType:(RequestType)requestType {
     
@@ -62,9 +62,11 @@
         }
         
         /* Taking chaeld value and adding into Request Body */
-        NSDictionary *chieldLineInfo=[self objectChildLine];
-        if (chieldLineInfo) {
-            [requestArray addObject:chieldLineInfo];
+        NSArray *chieldLineInfo=[self objectChildLine];
+        if (chieldLineInfo !=nil && ![chieldLineInfo isKindOfClass:[NSNull class]] && [chieldLineInfo count]>0){
+            for (NSDictionary *dict in chieldLineInfo) {
+                [requestArray addObject:dict];
+            }
         }
         /* making parameter dictinory for custom Info */
         NSDictionary *parametersInfo=[self parameterValue];
@@ -84,8 +86,10 @@
     if (dict) {
         return [self getNode:[self getSVMXMap:@"" date:@"" value:customActionWebserviceModel.sfmPage.objectName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:@[dict]]];
     }else{
-        return [self getNode:[self getSVMXMap:@"" date:@"" value:customActionWebserviceModel.sfmPage.objectName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:@[]]];
+        /* This change for object detail. If objec detail is not there, then we are not sending balnk body */
+        //return [self getNode:[self getSVMXMap:@"" date:@"" value:customActionWebserviceModel.sfmPage.objectName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:@[]]];
     }
+    return nil;
 }
 
 -(NSDictionary *)makeHeaderdictinory:(CustomActionWebserviceModel *)customActionWebserviceModel
@@ -120,39 +124,59 @@
     return [self convertDictionaryToString:dict];
 }
 
--(NSDictionary *)objectChildLine
+-(NSArray *)objectChildLine
 {
     CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
+    NSMutableArray *childArray = [[NSMutableArray alloc] initWithCapacity:0];
     if (customActionWebserviceModel.sfmPage)
     {
-        self.childName =[self getChildObjectName:customActionWebserviceModel.sfmPage];
-        NSArray *childList = [self gettingChieldValueFromPage:customActionWebserviceModel.sfmPage.detailsRecord];
-        if (childList) {
-            return [self getNode:[self getSVMXMap:@"" date:@"" value:self.childName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:childList]];
+        NSMutableDictionary *detailObjectName = [self getProcessComponentIdFromSfPage:customActionWebserviceModel.sfmPage];
+        NSDictionary *childwithObject = [self gettingChieldValueFromPage:customActionWebserviceModel.sfmPage.detailsRecord detailObjectName:detailObjectName];
+        NSArray *childListName = [childwithObject allKeys];
+        /* Before sending data, checking for child line item. If child line is not there, then not sending any information */
+        if (childListName !=nil && ![childListName isKindOfClass:[NSNull class]] && [childListName count]>0) {
+            for (NSString *objectName in childListName) {
+                [childArray addObject:[self makeChildDictionary:[childwithObject objectForKey:objectName] objectName:objectName]];
+            }
         }else{
-            return [self getNode:[self getSVMXMap:@"" date:@"" value:self.childName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:@[]]];
+            /* This change for child line item. If chield line is not there, then we are not sending balnk body */
+           // return [self getNode:[self getSVMXMap:@"" date:@"" value:self.childName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:@[]]];
         }
     }
-    return nil;
+    return childArray;
+}
+-(NSDictionary *)makeChildDictionary:(NSArray *)childList objectName:(NSString *)objectName{
+    return [self getNode:[self getSVMXMap:@"" date:@"" value:objectName key:@"Object_Name" values:[[NSArray alloc] init] valueMap:childList]];
 }
 
--(NSArray *)gettingChieldValueFromPage:(NSDictionary *)recordDictionary
+-(NSMutableDictionary *)getProcessComponentIdFromSfPage:(SFMPage *)sfmPage
 {
-    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:0];
-    
+    NSMutableDictionary *detailObjectName = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSArray *recordArray = sfmPage.process.pageLayout.detailLayouts;
+    for (SFMDetailLayout *detailLayout in recordArray)
+    {
+        if ([StringUtil isStringNotNULL:detailLayout.objectName] && [StringUtil isStringNotNULL:detailLayout.processComponentId]) {
+            [detailObjectName setObject:detailLayout.objectName forKey:detailLayout.processComponentId];
+        }
+    }
+    return detailObjectName;
+}
+-(NSMutableDictionary *)gettingChieldValueFromPage:(NSDictionary *)recordDictionary detailObjectName:(NSMutableDictionary *)detailObjectName
+{
+    NSMutableDictionary *childLineObject = [[NSMutableDictionary alloc] initWithCapacity:0];
     if (recordDictionary)
     {
         for (NSString *key_Id in [recordDictionary allKeys])
         {
             NSMutableDictionary *recordFieldDataValues = [[NSMutableDictionary alloc] initWithCapacity:0];
             NSArray *itemArray = [recordDictionary objectForKey:key_Id];
-            
+            NSMutableArray *lineArray = [childLineObject objectForKey:[detailObjectName objectForKey:key_Id]];
             for (NSDictionary *childDict in itemArray)
             {
                 NSString *objectSFId = [self getSfId:childDict];
                 for (NSString *key in [childDict allKeys])
                 {
-                    SFMRecordFieldData *recordFieldDataChild = [recordDictionary objectForKey:key];
+                    SFMRecordFieldData *recordFieldDataChild = [childDict objectForKey:key];
                     if (recordFieldDataChild)
                     {
                         [recordFieldDataValues setObject:recordFieldDataChild.internalValue forKey:key];
@@ -162,11 +186,23 @@
                     }
                 }
                 NSDictionary *dictinory=[self getSVMXMap:@"" date:@"" value:[self convertDictionaryToString:recordFieldDataValues] key:objectSFId values:[[NSArray alloc] init] valueMap:[[NSArray alloc] init] lstInternal_Request:[[NSArray alloc] init] lstInternal_Response:[[NSArray alloc] init] record:@""];
-                [array addObject:[self getNode:dictinory]];
+                if (lineArray !=nil && ![lineArray isKindOfClass:[NSNull class]] && [lineArray count]>0)
+                {
+                    [lineArray addObject:[self getNode:dictinory]];
+                }
+                else
+                {
+                    lineArray = [[NSMutableArray alloc] initWithCapacity:0];
+                    [lineArray addObject:[self getNode:dictinory]];
+                }
+                NSString *objectName = [detailObjectName objectForKey:key_Id];
+                if ([StringUtil isStringNotNULL:objectName]) {
+                    [childLineObject setObject:lineArray forKey:objectName];
+                }
             }
         }
     }
-    return array;
+    return childLineObject;
 }
 
 - (NSString *)getSfId:(NSDictionary *)fieldDict
@@ -179,19 +215,6 @@
     return @"";
 }
 
--(NSString *)getChildObjectName:(SFMPage *)sfmPageModel
-{
-    NSArray *recordArray = sfmPageModel.process.pageLayout.detailLayouts;
-    if (recordArray && ![recordArray isKindOfClass:[NSNull class]] && [recordArray count]>0) {
-        SFMDetailLayout *detailLayout = [recordArray objectAtIndex:0];
-        if (detailLayout) {
-            if (detailLayout.objectName) {
-                return detailLayout.objectName;
-            }
-        }
-    }
-    return @"";
-}
 
 - (NSString*) convertDictionaryToString:(NSMutableDictionary*) dict
 {
