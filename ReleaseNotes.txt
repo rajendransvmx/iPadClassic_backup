@@ -3,19 +3,13 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.104
+Version = 15.49.105
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-018957 :
-OPdoc generation is going in to loop in Sum 15
-019014 :
-'--' is displyed on clearing url value and it is launchable
-018952 :
-SFM custom Actions- connectivity indication is not refreshing
-------------
+19033
 
 ---------------------
 Fixed - Known Issues 
@@ -25,6 +19,7 @@ None
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
+2. Splash screen has been updated.
 
  
 
