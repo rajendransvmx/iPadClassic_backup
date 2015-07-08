@@ -78,6 +78,23 @@ SFMPageMasterSectionType;
     [self openTabBasedOnSetting];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self refreshShowAllPage];
+}
+
+/* 018537 - View layout on invoking record and one displayed post deletion of line is not consistent */
+-(void)refreshShowAllPage
+{
+    SFMPageMasterSectionView *pageHeaderSectionView = (SFMPageMasterSectionView *)[self.tableView headerViewForSection:self.selectedSection];
+    if(!pageHeaderSectionView.rightButton.enabled)
+    {
+        [self tappedOnButton:pageHeaderSectionView.rightButton withIndex:self.selectedSection];
+        [self.tableView reloadData];
+    }
+}
+
 - (void)openTabBasedOnSetting {
     if (self.selectedSection == -1) {
         

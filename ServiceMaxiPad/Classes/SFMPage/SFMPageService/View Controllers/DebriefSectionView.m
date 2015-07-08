@@ -172,11 +172,8 @@
     if (!self.sectionRecords) {
         
         NSMutableString *attrSignedIntoString = [[NSMutableString alloc] initWithString:@"No"];
-        
         [attrSignedIntoString appendFormat:@" %@ ",lineItem];
-        
         [attrSignedIntoString appendFormat:@" %@ ",@"Entered"];
-        
         self.noDataLabel.text = attrSignedIntoString;
     }
 }
