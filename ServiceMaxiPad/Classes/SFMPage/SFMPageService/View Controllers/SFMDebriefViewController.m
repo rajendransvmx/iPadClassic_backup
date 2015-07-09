@@ -416,7 +416,7 @@
 -(NSArray *)getFieldInforFor:(NSInteger)section
 {
     
-    NSString  * title = @"?";
+    NSString  * title = @"--";
     NSMutableDictionary * detailDict =  self.sfmPageView.sfmPage.detailsRecord;
     
     SFMPageLayout *pageLayout = self.sfmPageView.sfmPage.process.pageLayout;
@@ -446,7 +446,7 @@
             SFMPageField * field   = [detailFields objectAtIndex:count];
             SFMRecordFieldData * fieldData = [recordDict objectForKey:field.fieldName];
             title = fieldData.displayValue;
-            title = (![StringUtil isStringEmpty:title])?title:@"?";
+            title = (![StringUtil isStringEmpty:title])?title:@"--";
             
             SFMRecordFieldData * sectionField = [[SFMRecordFieldData alloc] init];
             sectionField.name = field.label;
