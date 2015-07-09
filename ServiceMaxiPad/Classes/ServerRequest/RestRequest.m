@@ -84,12 +84,16 @@
         if (requestIdentifierOfLastFailedRequest && requestIdentifierOfLastFailedRequest.length && requestType == RequestOneCallDataSync)
         {
             self.requestIdentifier = requestIdentifierOfLastFailedRequest; // BUG #018451
+            NSLog(@"self.requestIdentifier re-used.: %@", self.requestIdentifier);
+
         }
         else
         {
             self.requestIdentifier =  [AppManager generateUniqueId];
         }
         
+        NSLog(@"self.requestIdentifier being used: %@", self.requestIdentifier);
+
         CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
         
         self.groupId     = [customerOrgInfoInstance userOrgId];
@@ -1145,7 +1149,7 @@
     
     if (self.requestType == RequestOneCallDataSync && self.requestIdentifier && self.requestIdentifier.length)
     {
-        
+        NSLog(@"self.requestIdentifier remembered on error.: %@", self.requestIdentifier);
         [[NSUserDefaults standardUserDefaults] setObject:self.requestIdentifier forKey:@"requestIdentifier"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
