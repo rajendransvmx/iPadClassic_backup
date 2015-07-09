@@ -7,8 +7,9 @@
 
 #import <UIKit/UIKit.h>
 #import "BadgeLabel.h"
+#import "NoDynamicTypeTableViewCell.h"
 
-@interface BadgeTableViewCell : UITableViewCell
+@interface BadgeTableViewCell : NoDynamicTypeTableViewCell
 
 @property (strong, nonatomic) BadgeLabel *badge;
 @property (nonatomic) NSInteger badgeNumber;

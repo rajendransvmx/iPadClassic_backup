@@ -17,6 +17,7 @@
 
 #import "StandAloneCreateDetailController.h"
 #import "CalenderHelper.h"
+#import "NoDynamicTypeTableViewCell.h"
 
 @interface StandAloneCreateMasterController ()
 @property(nonatomic,strong)NSMutableArray *standAloneObjects;
@@ -197,11 +198,11 @@
     
     static NSString *cellIdentifier = @"Cell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    NoDynamicTypeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
     if (cell == nil)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell = [[NoDynamicTypeTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
         cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
         cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize16];

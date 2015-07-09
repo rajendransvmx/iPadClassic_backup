@@ -21,6 +21,7 @@
 #import "PlistManager.h"
 #import "SyncProgressDetailModel.h"
 #import "NSNotificationCenter+UniqueNotif.h"
+#import "NoDynamicTypeTableViewCell.h"
 
 
 static NSString *reusableIdentifier = @"TaskCell";
@@ -95,11 +96,11 @@ static NSString *reusableIdentifier = @"TaskCell";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *identifier = @"SFMTaskTableViewCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    NoDynamicTypeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
 	
 	if (!cell)
     {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
+        cell = [[NoDynamicTypeTableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier];
     }
     else
     {
@@ -113,6 +114,8 @@ static NSString *reusableIdentifier = @"TaskCell";
     cell.textLabel.text = model.taskDescription;
     cell.textLabel.numberOfLines = 3;
     cell.textLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize14];
+    cell.detailTextLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize16];
     
     NSString *literalSupportedText = @"- - - -";
     if (model.date) {

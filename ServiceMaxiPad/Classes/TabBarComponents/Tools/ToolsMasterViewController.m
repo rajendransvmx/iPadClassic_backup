@@ -42,6 +42,8 @@
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"leftPanelBG.png"]];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.scrollEnabled = NO;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSelectedRow) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
+   
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -212,6 +214,14 @@
     }
 }
 
+-(void) updateSelectedRow{
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [self.tableView selectRowAtIndexPath:self.selectedIndexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+        
+    });
+}
 -(void)setUpMasterData {
     NSArray *syncItems = @[[[TagManager sharedInstance]tagByName:kTag_StatusAndManualSync], [[TagManager sharedInstance]tagByName:kTag_ResolveConflicts],
                            [[TagManager sharedInstance]tagByName:kTagPurgeData],
