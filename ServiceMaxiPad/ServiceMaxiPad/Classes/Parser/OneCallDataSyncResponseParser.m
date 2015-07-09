@@ -258,6 +258,7 @@ typedef enum {
         
         NSMutableDictionary * objectMapIds = [[NSMutableDictionary alloc] init];
         NSMutableDictionary * deleteObjectMapIds = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary * deleteConflictObjMapIds = [[NSMutableDictionary alloc] init];
         
         for(NSDictionary * eachValueMap in valueMap)
         {
@@ -308,7 +309,7 @@ typedef enum {
                     
                     NSArray * tempvalueMapArray = [eachDict objectForKey:kSVMXRequestSVMXMap];
 
-                    [self prepareDeleteStringFor:objectName deleteObjectMapIds:deleteObjectMapIds valuemapArray:tempvalueMapArray operationType:operationType];
+                    [self prepareDeleteStringFor:objectName deleteObjectMapIds:deleteConflictObjMapIds valuemapArray:tempvalueMapArray operationType:operationType];
                 }
 
             }
@@ -333,10 +334,13 @@ typedef enum {
         {
             [self.oneCallSyncHelper  deleteSyncRecordsFromSyncModificationTableWithIndex:deleteObjectMapIds
                                                                     withModificationType:operationType];
-            
-            [self.oneCallSyncHelper deleteConflictRecordsFromSuccessiveSyncEntry:deleteObjectMapIds
+        }
+        
+        if ([deleteConflictObjMapIds count] > 0) {
+            [self.oneCallSyncHelper  deleteSyncRecordsFromSyncModificationTableWithIndex:deleteConflictObjMapIds
+                                                                    withModificationType:operationType];
+            [self.oneCallSyncHelper deleteConflictRecordsFromSuccessiveSyncEntry:deleteConflictObjMapIds
                                                             withModificationType:operationType];
-            
         }
         
         /* Insert conflict records into syncConflict table*/
