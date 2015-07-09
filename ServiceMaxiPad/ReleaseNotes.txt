@@ -3,14 +3,15 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.029
+Version = 15.20.030
 ===========================================
 -------------
 Fixed Defects
 -------------
-Initial Sync Step-6 hanging issue
-TimeOut Issue
-Fixed call back issue related to Get price request
+Successive sync fixes: (Defects - 018694, 018076, 018955)
+
+1. Fixed issue - was deleting entry from successive sync records while deleting from ModifiedRecords table after data sync.
+2. Triggering successive sync after OP Doc target object update implemented.
 
 -------------
 Known Issues
@@ -30,15 +31,3 @@ None
 ---------------------
 Additional Notes
 ---------------------
-Changes Made :
-
-1. Fixed call back issue related to Get price request
-2. Removed field names from Datasync request calls
-3. Removed field empty (id)array for objects in TX_FETCH
-4. Fixed call back issue on SFM page layout request.
-5. TimeOut Issue
-6. Data Sync Loop Issue Fixed.
- 
-
-
-
