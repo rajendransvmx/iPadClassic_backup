@@ -17,6 +17,7 @@
 {
     UIButton *btn =  [UIButton buttonWithType:UIButtonTypeCustom];
     btn.frame = inFrame;
+    btn.contentMode = UIViewContentModeScaleAspectFit;
     btn.autoresizingMask =  UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
     if (inBGImage != nil)
     {

@@ -302,35 +302,35 @@ typedef enum {
     theFrame = btn1.frame;
     theFrame.origin.x = theFrame.origin.x + theFrame.size.width + spaceMargin+5  ;
     //theFrame.origin.x = theFrame.origin.x + 150 ;
-    theFrame.origin.y = 0;
-    theFrame.size.width = 110;
-    theFrame.size.height = 50;
+    theFrame.origin.y = 0.0f;
+    theFrame.size.width = 110.0f;
+    theFrame.size.height = 55.0f;
     
 
     if (!self.btn2) {
         self.btn2 = [UIBuilder getTabBarButton:theFrame withImage:@"Calendar" withSelectedImage:@"Calendar" withTitle:[[TagManager sharedInstance]tagByName:kTagHomeCalendar]];
-        btn2.imageEdgeInsets = UIEdgeInsetsMake(6, 100/2-25/2, 22, 0);
+        btn2.imageEdgeInsets = UIEdgeInsetsMake(5, 100/2-25/2, 22, 0);
         btn2.titleEdgeInsets = UIEdgeInsetsMake(25, -25, 0, 0);
         [btn2 setTag:TabBarItemIDCalendar];
         [btn2 setSelected:YES];
         btn2.backgroundColor = [UIColor clearColor];
-        [btn2 setImage:[UIImage imageNamed:@"NavBarCal.png"] forState:UIControlStateNormal];
-        [btn2 setImage:[UIImage imageNamed:@"SCalendar.png"] forState:UIControlStateSelected];
+        [btn2 setImage:[UIImage imageNamed:@"NavBarCal"] forState:UIControlStateNormal];
+        [btn2 setImage:[UIImage imageNamed:@"SCalendar"] forState:UIControlStateSelected];
     }
     
-    theFrame.origin.x = theFrame.origin.x + theFrame.size.width + spaceMargin +5 ;
+    theFrame.origin.x = theFrame.origin.x + theFrame.size.width + spaceMargin + 5;
     
     if (!self.btn3) {
         self.btn3 = [UIBuilder getTabBarButton:theFrame withImage:@"Explore" withSelectedImage:@"Explore" withTitle:[[TagManager sharedInstance]tagByName:kTagExplore]];
         
-        btn3.imageEdgeInsets = UIEdgeInsetsMake(6, 100/2-25/2, 22, 0);
+        btn3.imageEdgeInsets = UIEdgeInsetsMake(5, 100/2-25/2, 22, 0);
         btn3.titleEdgeInsets = UIEdgeInsetsMake(25, -25, 0, 0);
         
         [btn3 setTag:TabBarItemIDExplore];
         btn3.backgroundColor = [UIColor clearColor];
         
-        [btn3 setImage:[UIImage imageNamed:@"NavBarExplore.png"] forState:UIControlStateNormal];
-        [btn3 setImage:[UIImage imageNamed:@"SExplore.png"] forState:UIControlStateSelected];
+        [btn3 setImage:[UIImage imageNamed:@"NavBarExplore"] forState:UIControlStateNormal];
+        [btn3 setImage:[UIImage imageNamed:@"SExplore"] forState:UIControlStateSelected];
 
     }
 
@@ -339,27 +339,27 @@ typedef enum {
         self.btn4 = [UIBuilder getTabBarButton:theFrame withImage:@"Task" withSelectedImage:@"Task" withTitle:[[TagManager sharedInstance]tagByName:kTagHomeTask]];
         
         
-        btn4.imageEdgeInsets = UIEdgeInsetsMake(6, 100/2-25/2, 22, 0);
+        btn4.imageEdgeInsets = UIEdgeInsetsMake(5, 100/2-25/2, 22, 0);
         btn4.titleEdgeInsets = UIEdgeInsetsMake(25, -25, 0, 0);
         
         [btn4 setTag:TabBarItemIDTask];
         btn4.backgroundColor = [UIColor clearColor];
         
-        [btn4 setImage:[UIImage imageNamed:@"NavBarTasks.png"] forState:UIControlStateNormal];
-        [btn4 setImage:[UIImage imageNamed:@"STasks.png"] forState:UIControlStateSelected];
+        [btn4 setImage:[UIImage imageNamed:@"NavBarTasks"] forState:UIControlStateNormal];
+        [btn4 setImage:[UIImage imageNamed:@"STasks"] forState:UIControlStateSelected];
 
     }
     
     theFrame.origin.x = theFrame.origin.x + theFrame.size.width + spaceMargin +5 ;
     if (!self.btn5) {
         self.btn5 = [UIBuilder getTabBarButton:theFrame withImage:@"NewItem" withSelectedImage:@"NewItem" withTitle:[[TagManager sharedInstance]tagByName:kTagNewItem]];
-        btn5.imageEdgeInsets = UIEdgeInsetsMake(6, 100/2-25/2, 22, 0);
+        btn5.imageEdgeInsets = UIEdgeInsetsMake(5, 100/2-25/2, 22, 0);
         btn5.titleEdgeInsets = UIEdgeInsetsMake(25, -25, 0, 0);
         
         [btn5 setTag:TabBarItemIDNewItem];
         btn5.backgroundColor = [UIColor clearColor];
-        [btn5 setImage:[UIImage imageNamed:@"SNewItem.png"] forState:UIControlStateSelected];
-        [btn5 setImage:[UIImage imageNamed:@"NavBarNew.png"] forState:UIControlStateNormal];
+        [btn5 setImage:[UIImage imageNamed:@"SNewItem"] forState:UIControlStateSelected];
+        [btn5 setImage:[UIImage imageNamed:@"NavBarNew"] forState:UIControlStateNormal];
 
 
         
@@ -370,12 +370,12 @@ typedef enum {
     theFrame.origin.x = theFrame.origin.x + theFrame.size.width + spaceMargin +5 ;
     if (!self.btn6) {
         self.btn6 = [UIBuilder getTabBarButton:theFrame withImage:@"Recents" withSelectedImage:@"Recents" withTitle:[[TagManager sharedInstance]tagByName:kTagRecentlyCreated]];
-        btn6.imageEdgeInsets = UIEdgeInsetsMake(6, 100/2-25/2, 22, 0);
+        btn6.imageEdgeInsets = UIEdgeInsetsMake(5, 100/2-25/2, 22, 0);
         btn6.titleEdgeInsets = UIEdgeInsetsMake(25, -25, 0, 0);
         [btn6 setTag:TabBarItemIDRecents];
         btn6.backgroundColor = [UIColor clearColor];
-        [btn6 setImage:[UIImage imageNamed:@"SRecents.png"] forState:UIControlStateSelected];
-        [btn6 setImage:[UIImage imageNamed:@"NavBarRecents.png"] forState:UIControlStateNormal];
+        [btn6 setImage:[UIImage imageNamed:@"SRecents"] forState:UIControlStateSelected];
+        [btn6 setImage:[UIImage imageNamed:@"NavBarRecents"] forState:UIControlStateNormal];
 
 
     }
@@ -383,12 +383,12 @@ typedef enum {
     theFrame.origin.x = theFrame.origin.x + theFrame.size.width + spaceMargin +5 ;
     if (!self.btn7) {
         self.btn7 = [UIBuilder getTabBarButton:theFrame withImage:@"Tools" withSelectedImage:@"Tools" withTitle:[[TagManager sharedInstance]tagByName:kTagTools]  withBadge:YES];
-        btn7.imageEdgeInsets = UIEdgeInsetsMake(6, 100/2-25/2, 22, 0);
+        btn7.imageEdgeInsets = UIEdgeInsetsMake(5, 100/2-25/2, 22, 0);
         btn7.titleEdgeInsets = UIEdgeInsetsMake(25, -25, 0, 0);
         [btn7 setTag:TabBarItemIDTools];
         btn7.backgroundColor = [UIColor clearColor];
-        [btn7 setImage:[UIImage imageNamed:@"STools.png"] forState:UIControlStateSelected];
-        [btn7 setImage:[UIImage imageNamed:@"NavBarTools.png"] forState:UIControlStateNormal];
+        [btn7 setImage:[UIImage imageNamed:@"STools"] forState:UIControlStateSelected];
+        [btn7 setImage:[UIImage imageNamed:@"NavBarTools"] forState:UIControlStateNormal];
         
         [self updateBadge];
     }
