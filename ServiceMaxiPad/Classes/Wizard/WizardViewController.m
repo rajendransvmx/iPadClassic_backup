@@ -118,7 +118,7 @@
     [cell.contentView addSubview:seperatorLine];
     
     NSInteger tempSection = indexPath.section;
-    
+    cell.accessoryView = nil;
     if (self.shouldShowTroubleShooting && indexPath.section == 0) {
         textLabel.text = [[TagManager sharedInstance]tagByName:kTagSfmTroubleShooting];
     }
@@ -175,7 +175,9 @@
                             cell.accessoryView = nil;
                         }
                     }
-                }else{
+                }
+                else
+                {
                     textLabel.enabled = YES;
                     cell.userInteractionEnabled = YES;
                     [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
@@ -190,8 +192,8 @@
             }
             
             //if the cell is last row of the section remove seperator line
-            if (indexPath.row == [wizard.wizardComponents count] - 1) {
-                
+            if (indexPath.row == [wizard.wizardComponents count] - 1)
+            {
                 [seperatorLine removeFromSuperview];
             }
         }
