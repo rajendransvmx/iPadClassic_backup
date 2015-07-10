@@ -413,6 +413,10 @@
             eventType = kCustomWebServiceUrlLink;
             break;
             
+        case RequestTypeCustomActionWebServiceAfterBefore:
+            eventType = kCustomWebServiceUrlLink;
+            break;
+            
         default:
             break;
             
@@ -551,6 +555,10 @@
             break;
             
         case RequestTypeCustomActionWebService:
+            /* Adding class_name and method_name for webservice call */
+            url =   [self getUrlWithStringApppended:kCustomWebServiceUrlLink];
+            break;
+        case RequestTypeCustomActionWebServiceAfterBefore:
             /* Adding class_name and method_name for webservice call */
             url =   [self getUrlWithStringApppended:kCustomWebServiceUrlLink];
             break;
@@ -778,8 +786,10 @@
             /******************************************************/
             
         case RequestTypeCustomActionWebService:
-            //class_name method_name from table or model
-            //self.eventName = kPushNotification;
+            self.eventName=[self getCustomWebserviceEventName];
+            break;
+            
+        case RequestTypeCustomActionWebServiceAfterBefore:
             self.eventName=[self getCustomWebserviceEventName];
             break;
 
@@ -829,6 +839,7 @@
     NSString *kRestUrlString = kRestUrl;
     switch (self.requestType)
     {
+        case RequestTypeCustomActionWebServiceAfterBefore:
         case RequestTypeCustomActionWebService:
         {
             kRestUrlString=kRestUrlForWebservice;
@@ -844,7 +855,6 @@
             }
         }
         break;
-            
         default:
             break;
     }

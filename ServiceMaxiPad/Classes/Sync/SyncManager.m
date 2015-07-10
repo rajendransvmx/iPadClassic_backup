@@ -56,7 +56,7 @@ NSString *kDataSyncStatusNotification       = @"DataSyncStatus";
 NSString *kEventSyncStatusNotification      = @"EventSyncStatus";
 NSString *kProfileValidationStatusNotification = @"ProfileValidationStatus";
 NSString *kUpdateEventNotification = @"UpdateEventOnNotification";
-
+NSString *kUpadteWebserviceData             = @"customActionWebServiceNotification";
 
 
 NSString *kSyncTimeUpdateNotification       = @"UpdateSyncTime";
@@ -672,7 +672,12 @@ static SyncManager *_instance;
                 [self recievedConfigSyncResponse:wsResponseStatus];
             }
                 break;
-            case CategoryTypeCustomWebServiceCall:
+            case CategoryTypeCustomWebServiceCall: //call for webservice
+            {
+                [self makeNextCallForCustomDataSyncWithResponse:wsResponseStatus];
+                break;
+            }
+            case CategoryTypeCustomWebServiceAfterBeforeCall:
             {
                 [self makeNextCallForCustomDataSyncWithResponse:wsResponseStatus];
                 break;
@@ -1875,7 +1880,7 @@ static SyncManager *_instance;
                     return NO; // do not proceed with custom call if the header record has no sfid. it means the record is not synced yet.
                 }
             }
-            [webserviceHelper initiateCustomWebServiceWithDelegate:self];
+            [webserviceHelper initiateCustomWebServiceForAfterBeforeWithDelegate:self];
             return YES;
         }
     }

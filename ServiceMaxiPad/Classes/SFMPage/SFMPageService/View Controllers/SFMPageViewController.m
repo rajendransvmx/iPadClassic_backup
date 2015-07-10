@@ -305,11 +305,14 @@
 }
 
 - (void) addNotificationObserver{
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dataSyncFinished) name:kUpadteWebserviceData object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dataSyncFinished) name:kDataSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(configSyncFinished:) name:kConfigSyncStatusNotification object:nil];
 }
 
 - (void) removeNotificationObserver{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kUpadteWebserviceData object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kDataSyncStatusNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kConfigSyncStatusNotification object:nil];
 }
@@ -842,11 +845,6 @@
 /* Load url from with parameters */
 -(void)makeCustomUrlCall:(WizardComponentModel *)model
 {
-    if ([[SyncManager sharedInstance] isDataSyncInProgress])
-    {
-        [self showDataSyncAlert];
-        return;
-    }
     /* load url with params */
     SFMCustomActionHelper *customActionHelper = [[SFMCustomActionHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
     UIApplication *ourApplication = [UIApplication sharedApplication];
@@ -868,34 +866,20 @@
             [ourApplication openURL:ourURL];
         }
     }
-//    BOOL isOpen = [ourApplication openURL:[NSURL URLWithString:[customActionHelper loadURL]]];
-//    if (!isOpen) {
-//        [self showWrongURLAlert];
-//    }
 }
 
 /* Call webservice call from with parameters */
 -(void)makeWebserviceCall:(WizardComponentModel *)model
 {
-    if ([[SyncManager sharedInstance] isDataSyncInProgress])
-    {
-        [self showDataSyncAlert];
+    /* This check for conflict. If record is in conflict state, then no need to invok WS */
+    if (self.sfmPageView.isConflictPresent) {
         return;
     }
     SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
     [self addActivityAndLoadingLabel];
-    [webserviceHelper initiateCustomWebServiceWithDelegate:self];
+    [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
 }
 
--(void)showDataSyncAlert
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
-                                                    message:@"Sync is In Progress. Try after sync completion."
-                                                   delegate:nil
-                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-                                          otherButtonTitles:nil];
-    [alert show];
-}
 -(void)showWrongURLAlert
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"

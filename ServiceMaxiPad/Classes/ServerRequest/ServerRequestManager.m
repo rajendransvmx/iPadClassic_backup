@@ -94,6 +94,7 @@
         case CategoryTypeChatterFeedInsert:
         case CategoryTypeChatterFeedUpdate:
         case CategoryTypeCustomWebServiceCall:
+        case CategoryTypeCustomWebServiceAfterBeforeCall:
             isapplicable = NO;
             break;
         
@@ -345,6 +346,11 @@
         case CategoryTypeCustomWebServiceCall:
             requestType = [self getNextRequestForCustomWebService:currentRequest andPreviousRequst:previousRequest];
             break;
+            
+        case CategoryTypeCustomWebServiceAfterBeforeCall:
+            requestType = [self getNextRequestForCustomWebServiceAfterBefore:currentRequest andPreviousRequst:previousRequest];
+            break;
+            
             
         default:
             break;
@@ -1177,6 +1183,23 @@
     }
     
     if(currentRequest.requestType == RequestTypeCustomActionWebService)
+    {
+        nextReuestType = RequestTypeNone;
+    }
+    return nextReuestType;
+}
+
+- (RequestType)getNextRequestForCustomWebServiceAfterBefore:(SVMXServerRequest *)currentRequest
+                               andPreviousRequst:(SVMXServerRequest *)previousRequst
+{
+    RequestType nextReuestType = 0;
+    
+    if (currentRequest == nil) {
+        nextReuestType = RequestTypeCustomActionWebServiceAfterBefore;
+        
+    }
+    
+    if(currentRequest.requestType == RequestTypeCustomActionWebServiceAfterBefore)
     {
         nextReuestType = RequestTypeNone;
     }

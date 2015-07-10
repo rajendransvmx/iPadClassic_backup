@@ -54,7 +54,7 @@
     RequestParamModel *reqParModel = [[RequestParamModel alloc]init];
     NSMutableArray *requestArray =[[NSMutableArray alloc] init];
 
-    if (self.categoryType == CategoryTypeCustomWebServiceCall) {
+    if (self.categoryType == CategoryTypeCustomWebServiceCall || self.categoryType == CategoryTypeCustomWebServiceAfterBeforeCall){
         /* taking value from pageLayout */
         NSDictionary *objectInfo=[self ObjectValue];
         if (objectInfo) {
@@ -68,15 +68,17 @@
                 [requestArray addObject:dict];
             }
         }
+    }
+    else if (self.categoryType == CategoryTypeCustomWebServiceCall)
+    {
         /* making parameter dictinory for custom Info */
         NSDictionary *parametersInfo=[self parameterValue];
         if (parametersInfo) {
             [requestArray addObject:parametersInfo];
         }
-        reqParModel.valueMap = requestArray;
-        return @[reqParModel];
     }
-    return nil;
+    reqParModel.valueMap = requestArray;
+    return @[reqParModel];
 }
 
 -(NSDictionary *)ObjectValue

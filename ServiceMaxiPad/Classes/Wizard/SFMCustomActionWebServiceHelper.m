@@ -50,6 +50,16 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
     [[TaskManager sharedInstance] addTask:taskModel];
 }
 
+-(void)initiateCustomWebServiceForAfterBeforeWithDelegate:(id)delegate
+{
+    /* Adding category name for Webservice call, based on category we are making requestType */
+    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceAfterBeforeCall
+                                             requestParam:nil
+                                           callerDelegate:delegate];
+    
+    [[TaskManager sharedInstance] addTask:taskModel];
+}
+
 -(id)initWithSFMPageRequestData:(NSString *)requestData requestType:(int)requestType
 {
     

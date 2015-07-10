@@ -351,6 +351,9 @@
         case RequestTypeCustomActionWebService:
             parser = [[CustomWebServiceParser alloc] init];
             break;
+        case RequestTypeCustomActionWebServiceAfterBefore:
+            parser = [[CustomWebServiceParser alloc] init];
+            break;
         
         default:
             SXLogWarning(@"Invalid parser type requested");

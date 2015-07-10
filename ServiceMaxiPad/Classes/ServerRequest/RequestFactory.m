@@ -93,6 +93,7 @@
             case RequestTypeChatterFeedInsert:
             case RequestTypeChatterFeedCommnetInsert:
             case RequestTypeCustomActionWebService:
+            case RequestTypeCustomActionWebServiceAfterBefore:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
             case RequestDependentPicklist:

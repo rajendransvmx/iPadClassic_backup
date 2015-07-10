@@ -252,6 +252,12 @@
                 baseServiceLayer =[[CustomActionWebServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
             }
             break;
+                
+            case CategoryTypeCustomWebServiceAfterBeforeCall:
+            {
+                baseServiceLayer =[[CustomActionWebServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
+            }
+                break;
             default:
                 return baseServiceLayer;
                 break;

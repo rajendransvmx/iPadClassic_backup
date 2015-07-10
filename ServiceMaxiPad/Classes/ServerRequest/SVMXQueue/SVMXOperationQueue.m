@@ -21,6 +21,7 @@ static SVMXOperationQueue *sharedInstanceSVMXOperationQue = nil;
         self.locationOpQueue = [[NSOperationQueue alloc] init];
         self.logsOpQueue     = [[NSOperationQueue alloc] init];
         self.getPriceOpQueue = [[NSOperationQueue alloc] init];
+        self.cusWsOpQueue    = [[NSOperationQueue alloc] init]; //this change for operation queue
     }
     return self;
 }
@@ -60,6 +61,10 @@ static SVMXOperationQueue *sharedInstanceSVMXOperationQue = nil;
             {
                 [self.getPriceOpQueue addOperation:operation];
             }
+            else if (categoryType == CategoryTypeCustomWebServiceCall) //This change for custom action parallel call
+            {
+                [self.cusWsOpQueue addOperation:operation];
+            }
             else
             {
                 [self.mainOpQueue addOperation:operation];
@@ -84,6 +89,10 @@ static SVMXOperationQueue *sharedInstanceSVMXOperationQue = nil;
         else if (categoryType == CategoryTypeGetPriceData)
         {
             [self.getPriceOpQueue cancelAllOperations];
+        }
+        else if (categoryType == CategoryTypeCustomWebServiceCall) //This change for custom action parallel call
+        {
+            [self.cusWsOpQueue cancelAllOperations];
         }
         else
         {

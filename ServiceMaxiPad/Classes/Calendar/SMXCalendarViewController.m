@@ -332,6 +332,7 @@
 
 -(void)setTheNotifications
 {
+    [self addObserver:self selector:@selector(dataSyncFinished:) withName:kUpadteWebserviceData AndObject:nil];
     [self addObserver:self selector:@selector(dataSyncFinished:) withName:kDataSyncStatusNotification AndObject:nil];
     [self addObserver:self selector:@selector(configSyncFinished:) withName:kConfigSyncStatusNotification AndObject:nil];
     [self addObserver:self selector:@selector(eventDisplayReset:) withName:EVENT_DISPLAY_RESET AndObject:nil];
@@ -381,19 +382,27 @@
 
 -(void)dataSyncFinished:(NSNotification *)pNotification
 {
-    SyncManager *lSyncManager = (SyncManager *) pNotification.object;
-    
-//    BOOL syncStatus = [lSyncManager syncInProgress];
-    SyncStatus syncStatus = [lSyncManager getSyncStatusFor:SyncTypeData];
-
-    if(syncStatus == SyncStatusSuccess)
+    if ([pNotification.name isEqualToString:kUpadteWebserviceData])
     {
         [self eventDisplayReset:nil];
-        //[self performSelectorInBackground:@selector(eventDisplayReset:) withObject:nil];
+        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
     }
-    //[self loadWizardData];
-    [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
-    [self changeSegementControlText];
+    else
+    {
+        SyncManager *lSyncManager = (SyncManager *) pNotification.object;
+        
+        //    BOOL syncStatus = [lSyncManager syncInProgress];
+        SyncStatus syncStatus = [lSyncManager getSyncStatusFor:SyncTypeData];
+        
+        if(syncStatus == SyncStatusSuccess)
+        {
+            [self eventDisplayReset:nil];
+            //[self performSelectorInBackground:@selector(eventDisplayReset:) withObject:nil];
+        }
+        //[self loadWizardData];
+        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
+        [self changeSegementControlText];
+    }
 
 }
 -(void)reloadCalendar:(NSNotification*)notification{
@@ -2235,6 +2244,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:kNetworkConnectionChanged
                                                   object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kUpadteWebserviceData object:nil];
 }
 #pragma mark - End
 
@@ -2255,11 +2265,6 @@
 }
 /* Load url from with parameters */
 -(void)makeCustomUrlCall:(WizardComponentModel *)model{
-    if ([[SyncManager sharedInstance] isDataSyncInProgress])
-    {
-        [self showDataSyncAlert];
-        return;
-    }
     SFMPage *sfmPage = [self getSFMPageModel];
     if (sfmPage)
     {
@@ -2284,16 +2289,7 @@
                 [ourApplication openURL:ourURL];
             }
         }
-//        BOOL isOpen = [ourApplication openURL:]];
-//        if (!isOpen) {
-//            [self showWrongURLAlert];
-//        }
     }
-    else
-    {
-        [self showNoProcessAlert];
-    }
-    
 }
 -(NSString *)removeSpaceFromUrl:(NSString *)url{
     if (url) {
@@ -2304,20 +2300,12 @@
 
 /* Call webservice call from with parameters */
 -(void)makeWebserviceCall:(WizardComponentModel *)model{
-    if ([[SyncManager sharedInstance] isDataSyncInProgress]) {
-        [self showDataSyncAlert];
-        return;
-    }
     SFMPage *sfmPage = [self getSFMPageModel];
     if (sfmPage)
     {
         SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
         [self addActivityAndLoadingLabel];
-        [webserviceHelper initiateCustomWebServiceWithDelegate:self];
-    }
-    else
-    {
-        [self showNoProcessAlert];
+        [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
     }
 }
 
@@ -2357,17 +2345,29 @@
     else
     {
         recordId = [SFMPageHelper getLocalIdForSFID:self.selectedEvent.whatId objectName:objectModel.objectName];
-        
     }
     SFMPageViewManager *viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:objectModel.objectName recordId:recordId];
     SFMPage *sfmPage = viewPageManager.sfmPageView.sfmPage;
     NSError *error = nil;
     BOOL isValidProcess = [viewPageManager isValidProcess:viewPageManager.processId error:&error];
-    if (isValidProcess) {
-        return sfmPage;
+    if (isValidProcess)
+    {
+        /* This check for conflict. If record is in conflict state, then no need to invok WS */
+        if (viewPageManager.sfmPageView.isConflictPresent)
+        {
+            return nil;
+        }
+        else
+        {
+            return sfmPage;
+        }
     }
     else
     {
+        AlertMessageHandler *alertHandler = [AlertMessageHandler sharedInstance];
+        NSString * buttonLOC = [[TagManager sharedInstance] tagByName:kTagAlertErrorOk];
+        
+        [alertHandler showCustomMessage:[error localizedDescription] withDelegate:nil title:[[TagManager sharedInstance] tagByName:kTagAlertIpadError] cancelButtonTitle:nil andOtherButtonTitles:[[NSArray alloc] initWithObjects:buttonLOC, nil]];
         return nil;
     }
 }
@@ -2431,13 +2431,13 @@
 }
 -(void)showNoProcessAlert
 {
-    //alert
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Custom Action"
-                                                    message:@"No valid SFM process to execute Custom WS"
-                                                   delegate:nil
-                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-                                          otherButtonTitles:nil];
-    [alert show];
+//    //alert
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Action unavailable"
+//                                                    message:@"The action cannot be completed due to a configuration error. Please contact your administrator."
+//                                                   delegate:nil
+//                                          cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+//                                          otherButtonTitles:nil];
+//    [alert show];
 }
 
 -(void)showDataSyncAlert

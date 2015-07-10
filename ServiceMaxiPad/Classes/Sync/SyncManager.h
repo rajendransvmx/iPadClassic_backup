@@ -25,6 +25,7 @@ extern NSString *kUpdateEventNotification;
 extern NSString *lastConfigSyncTimeKey;
 extern NSString *lastDataSyncTimeKey;
 extern NSString *syncMetaDataFile;
+extern NSString *kUpadteWebserviceData;
 
 @interface SyncManager : NSObject <FlowDelegate, SchedulerDelegate, OPDocCustomDelegate>
 

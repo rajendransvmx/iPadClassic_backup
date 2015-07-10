@@ -18,6 +18,7 @@
 #import "Utility.h"
 #import "DBRequestUpdate.h"
 #import "TransactionObjectService.h"
+#import "SyncManager.h"
 
 @interface CustomWebServiceParser ()
 
@@ -64,11 +65,26 @@
 
                 }
             }
+            /* refresh all screens with new data*/
+            [self sendNotification:kUpadteWebserviceData andUserInfo:nil];
         }
     }
     return nil;
 }
-
+- (void)sendNotification:(NSString *)notificationName andUserInfo:(NSDictionary *)userInfo {
+    
+    NSMutableDictionary *notificationDict = [[NSMutableDictionary alloc] init];
+    [notificationDict setValue:notificationName forKey:@"NotoficationName"];
+    [notificationDict setValue:userInfo forKey:@"UserInfo"];
+    [self performSelectorOnMainThread:@selector(postNotification:) withObject:notificationDict waitUntilDone:YES];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
+}
+- (void)postNotification:(NSDictionary *)notificationDict
+{
+    NSString *notificationName = [notificationDict objectForKey:@"NotoficationName"];
+    NSDictionary *userInfo = [notificationDict objectForKey:@"UserInfo"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
+}
 - (void)updateOrInsertTransactionObjectArray:(NSMutableDictionary *)objectrecords sfIdArray:(NSArray*)sfidArray objectName:(NSString *)objectName
 {
     NSArray *actualRecordsArray = [self getRecordsArrayForObjectName:objectName andSFIDArray:sfidArray];

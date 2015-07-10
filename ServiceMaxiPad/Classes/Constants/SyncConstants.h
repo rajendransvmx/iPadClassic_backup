@@ -59,6 +59,7 @@ typedef NS_ENUM(NSUInteger, CategoryType) {
     
     /***CustomAction--Call webView*****/
     CategoryTypeCustomWebServiceCall,
+    CategoryTypeCustomWebServiceAfterBeforeCall,
 };
 
 typedef NS_ENUM(NSUInteger, SyncType) {

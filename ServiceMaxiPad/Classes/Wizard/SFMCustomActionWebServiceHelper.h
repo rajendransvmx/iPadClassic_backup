@@ -19,6 +19,7 @@
 -(id)initWithSFMPage:(SFMPage *)sfmPageModel
      wizardComponent:(WizardComponentModel*)wizardModel;
 -(void)initiateCustomWebServiceWithDelegate:(id)delegate;
+-(void)initiateCustomWebServiceForAfterBeforeWithDelegate:(id)delegate;
 -(id)initWithSFMPageRequestData:(NSString *)requestData requestType:(int)requestType;
 
 @end
