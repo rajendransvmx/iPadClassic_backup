@@ -91,7 +91,7 @@
                 DynamicTableCreator *dynamicTableCreator = [[DynamicTableCreator alloc] init];
                 [dynamicTableCreator createDynamicTables];
             }
-            else if (self.requestType == RequestTXFetch&&  !callBack.callBack ) {
+            else if (self.requestType == RequestTXFetch && !callBack.callBack ) {
                 /* tx fetch is done*/
                 [self updateSfIdForSVMXEvent];
                 

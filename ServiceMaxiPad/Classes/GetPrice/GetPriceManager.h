@@ -35,6 +35,7 @@
 + (instancetype) new    __attribute__((unavailable("new not available, call sharedInstance instead")));
 
 -(void)intiateGetPriceSync;
+-(void)cancelGetPriceSync;
 -(BOOL)isGetPriceInProgress;
 
 @end

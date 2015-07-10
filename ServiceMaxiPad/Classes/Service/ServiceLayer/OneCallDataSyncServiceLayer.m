@@ -39,7 +39,7 @@
         callBack = [parserObj parseResponseWithRequestParam:requestParamModel
                                                responseData:responseData];
         
-        if (self.requestType == RequestTXFetch&&  !callBack.callBack ) {
+        if (self.requestType == RequestTXFetch &&  !callBack.callBack ) {
             /* tx fetch is done*/
             [self updateSfIdForSVMXEvent];
         }

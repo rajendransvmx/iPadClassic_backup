@@ -13,6 +13,7 @@
 #import "TransactionObjectModel.h"
 #import "SFPicklistService.h"
 #import "SFPicklistModel.h"
+#import "PlistManager.h"
 
 @implementation GetPriceDataServiceLayer
 
@@ -114,8 +115,24 @@
             SXLogWarning(@"Invalid post body parama for unidentified get price request");
             break;
     }
+    if(self.categoryType == CategoryTypeGetPriceData)
+    {
+        NSDictionary *lastSyncTimeDict = [self getLastSyncTimeForRecords];
+        paramObj.valueMap = [paramObj.valueMap arrayByAddingObject:lastSyncTimeDict];
+    }
     
     return [NSArray arrayWithObject:paramObj];
+}
+
+- (NSDictionary *)getLastSyncTimeForRecords {
+    NSMutableDictionary *lastSyncTimeDict = [NSMutableDictionary dictionary];
+    [lastSyncTimeDict setObject:kLastSyncTime forKey:kSVMXRequestKey];
+    NSString *lastSyncTime = [PlistManager getOneCallSyncTime];
+    if (lastSyncTime == nil) {
+        lastSyncTime = @"";
+    }
+    [lastSyncTimeDict setObject:lastSyncTime forKey:kSVMXRequestValue];
+    return lastSyncTimeDict;
 }
 
 -(NSArray*)getValuesArrayForLabour {

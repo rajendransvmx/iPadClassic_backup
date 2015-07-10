@@ -47,7 +47,7 @@
 
 -(void)deleteRecordsForSfIds:(NSArray *)recordsIds
 {
-    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorIn andFieldValues:recordsIds];
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:@"sfId" operatorType:SQLOperatorIn andFieldValues:recordsIds];
     DBRequestDelete *requestDelete = [[DBRequestDelete alloc] initWithTableName:[self tableName] whereCriteria:[NSArray arrayWithObject:criteriaOne] andAdvanceExpression:nil];
     [self executeStatement:[requestDelete query]];
     

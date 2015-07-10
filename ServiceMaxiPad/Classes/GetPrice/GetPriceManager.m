@@ -14,7 +14,10 @@
 #import "RequestConstants.h"
 
 @interface GetPriceManager ()
+
 @property(nonatomic, assign) BOOL isGetPriceProgress;
+@property(nonatomic, copy) NSString *getPriceTaskId;
+
 @end
 
 @implementation GetPriceManager
@@ -40,11 +43,13 @@
     return sharedInstance;
 }
 
+
 - (instancetype)initInstance
 {
     self = [super init];
     return self;
 }
+
 
 - (void)flowStatus:(id)status
 {
@@ -60,7 +65,8 @@
             }
             else
             {
-                if (wsResponseStatus.requestType == RequestGetPriceDataTypeThree || wsResponseStatus.syncStatus != SyncStatusSuccess)
+                if (wsResponseStatus.requestType == RequestSyncTimeLogs
+                    || wsResponseStatus.syncStatus != SyncStatusSuccess)
                 {
                     self.isGetPriceProgress = NO;
                 }
@@ -68,6 +74,7 @@
         }
     }
 }
+
 
 - (void)intiateGetPriceSync
 {
@@ -77,9 +84,19 @@
         TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeGetPriceData
                                                  requestParam:nil
                                                callerDelegate:self];
+        self.getPriceTaskId = taskModel.taskId;
         [[TaskManager sharedInstance] addTask:taskModel];
     }
 }
+
+
+-(void)cancelGetPriceSync
+{
+    [[TaskManager  sharedInstance] cancelFlowNodeWithId:self.getPriceTaskId];
+    [[TaskManager  sharedInstance] removeFlowNodeWithId:self.getPriceTaskId];
+   
+}
+
 
 - (void)dealloc
 {
