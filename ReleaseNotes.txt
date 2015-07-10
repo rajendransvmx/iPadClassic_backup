@@ -3,13 +3,13 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.107
+Version = 15.49.108
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-
+018055
 
 ---------------------
 Fixed - Known Issues 
@@ -19,16 +19,7 @@ None
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
-2. Splash screen has been updated.
 
-Handled below scenarios:
-3. No view process message is handled.
-4. If conflict, then no need to call web-service call.
-5. After and Before call in queue.
-6. Normal web service call in parallel.
-7. During sync also web service call should invoke.
-8. If custom web service response some data, then immediate refresh UI with new data.
-9. For non custom action web service, icon was coming. Now its fixed. 
 
  
 

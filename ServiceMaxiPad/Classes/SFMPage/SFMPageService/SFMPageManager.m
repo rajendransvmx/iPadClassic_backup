@@ -504,7 +504,7 @@ PageManagerErrorType;
     
     NSDictionary *dataDict = [SFMPageHelper getSlAInFo:self.objectName localId:self.recordId fieldNames:@[isAlldayEventKey]];
 
-    NSString *dateTime;
+    NSString *dateTime = @"";
     
     if (isAlldayEventKey !=nil) {
         if ([[dataDict objectForKey:isAlldayEventKey] caseInsensitiveCompare:@"true"] == NSOrderedSame)
@@ -551,7 +551,16 @@ PageManagerErrorType;
 {
     //Niraj: Defect number 017148
     //return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
-    return [self convertDateAndTime:[DateUtil getUserReadableDateForDateBaseDateString:dateTime]];
+    //return [self convertDateAndTime:[DateUtil getUserReadableDateForDateBaseDateString:dateTime]];//HS
+    NSString *dateStr = @"";
+    NSDate *date = [DateUtil getUserReadableDateForDateBaseDateString:dateTime];
+    if (date != nil)
+    {
+        dateStr = [self convertDateAndTime:date];
+    }
+    return dateStr;
+    //return [self convertDateAndTime:[DateUtil getUserReadableDateForDateBaseDateString:dateTime]];
+
     //Niraj: Defect number 017148
 }
 
