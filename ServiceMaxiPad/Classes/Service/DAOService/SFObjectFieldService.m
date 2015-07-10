@@ -347,6 +347,14 @@
 
 - (NSString*)getFieldLabelFromFieldName:(NSString*)fieldName andObjectName:(NSString*)objectName
 {
+    NSCharacterSet *cset = [NSCharacterSet characterSetWithCharactersInString:@"."];
+    NSRange range = [fieldName rangeOfCharacterFromSet:cset];
+    if (range.location == NSNotFound) {
+        // FieldName is proper
+    } else {
+        fieldName = [fieldName substringFromIndex:range.location+1];
+    }
+    
     DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"fieldName" operatorType:SQLOperatorEqual andFieldValue:fieldName];
     DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
     SFObjectFieldModel * model = [self getSFObjectFieldInfo:@[criteriaOne,criteriaTwo] advanceExpression:nil];
