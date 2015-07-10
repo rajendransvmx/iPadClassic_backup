@@ -50,5 +50,6 @@
 - (NSString *)getHeaderSalesForceId;
 - (SFMRecordFieldData *)getHeaderFieldDataForName:(NSString *)fieldName;
 - (BOOL)isAttachmentEnabled;
+- (BOOL)isSyncedRecords;
 
 @end

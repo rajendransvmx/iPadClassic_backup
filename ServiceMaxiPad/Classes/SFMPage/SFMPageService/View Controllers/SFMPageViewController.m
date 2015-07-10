@@ -875,9 +875,11 @@
     if (self.sfmPageView.isConflictPresent) {
         return;
     }
-    SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
-    [self addActivityAndLoadingLabel];
-    [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
+    if([self.sfmPageView.sfmPage isSyncedRecords]) {
+        SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
+        [self addActivityAndLoadingLabel];
+        [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
+    }
 }
 
 -(void)showWrongURLAlert

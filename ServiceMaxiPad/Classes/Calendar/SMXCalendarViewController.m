@@ -2303,11 +2303,15 @@
     SFMPage *sfmPage = [self getSFMPageModel];
     if (sfmPage)
     {
-        SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
-        [self addActivityAndLoadingLabel];
-        [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
+        if ([sfmPage isSyncedRecords])
+        {
+            SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
+            [self addActivityAndLoadingLabel];
+            [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
+        }
     }
 }
+
 
 #pragma mark Activity Management
 

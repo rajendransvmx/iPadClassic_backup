@@ -8,6 +8,7 @@
 
 #import "SFMPage.h"
 #import "SFMRecordFieldData.h"
+#import "StringUtil.h"
 
 @implementation SFMPage
 
@@ -57,5 +58,33 @@
     return model.enableAttachment;
 }
 
+-(BOOL)isSyncedRecords{
+    if ([StringUtil isStringNotNULL:[self getHeaderSalesForceId]] && [[self getHeaderSalesForceId] length]>0) {
+        NSDictionary *dict = self.detailsRecord;
+        for (NSString *pocessId in [dict allKeys]) {
+            NSArray *childList = [dict objectForKey:pocessId];
+            for (NSDictionary *records in childList) {
+                SFMRecordFieldData *recordFieldDataChild = [records objectForKey:kId];
+                if (recordFieldDataChild)
+                {
+                    NSString *SFMId = recordFieldDataChild.internalValue;
+                    if ([StringUtil isStringNotNULL:SFMId] && [SFMId length]>0)
+                    {
+                        
+                    }
+                    else
+                    {
+                        return NO;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        return NO;
+    }
+    return YES;
+}
 
 @end
