@@ -70,7 +70,10 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
         theClassNameMethodName = [self theURL:lSFMPage.process.pageLayout.headerLayout.pageLevelEvents andRequestType:requestType];
 
     }
-    if (!theClassNameMethodName || !theClassNameMethodName.length ) {
+    
+    NSString *headerId = [lSFMPage getHeaderSalesForceId];
+
+    if (!theClassNameMethodName || !theClassNameMethodName.length || !headerId || headerId.length!=18) {
         return nil;
     }
     
