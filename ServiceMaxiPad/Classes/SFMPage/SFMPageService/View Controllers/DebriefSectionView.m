@@ -110,7 +110,7 @@
     self.detailLabel.frame = CGRectMake(0,0, self.detailView.frame.size.width - 140, self.detailView.bounds.size.height);
     //self.detailView.backgroundColor = [UIColor greenColor];
     //self.detailLabel.backgroundColor = [UIColor blueColor];
-    CGRect detailImageFrame = CGRectMake(CGRectGetWidth(self.detailLabel.bounds) - 5,(self.detailView.frame.size.height - 20) / 2 + 2, 20, 20);
+    CGRect detailImageFrame = CGRectMake(CGRectGetWidth(self.detailLabel.bounds) - 17,(self.detailView.frame.size.height - 20) / 2 + 1, 20, 20);
     
     self.detailImage.frame = detailImageFrame;
     
@@ -164,7 +164,7 @@
 
 - (void)setDetailLabelText
 {
-    self.detailLabel.text = [[TagManager sharedInstance] tagByName:kTag_Details];
+    self.detailLabel.text = [[TagManager sharedInstance] tagByName:kTag_Open];
 }
 
 - (void)setNoDataLabelText:(NSString *)lineItem

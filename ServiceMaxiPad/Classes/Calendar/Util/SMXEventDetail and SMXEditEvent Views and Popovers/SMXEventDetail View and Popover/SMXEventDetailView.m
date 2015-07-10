@@ -392,7 +392,7 @@
     [buttonDetailPopover setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
 
     [buttonDetailPopover setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
-    [buttonDetailPopover setTitle:[[TagManager sharedInstance]tagByName:kTag_Details] forState:UIControlStateNormal];
+    [buttonDetailPopover setTitle:[[TagManager sharedInstance]tagByName:kTag_Open] forState:UIControlStateNormal];
     buttonDetailPopover.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     [buttonDetailPopover.titleLabel setFont:[UIFont fontWithName:FONT_HELVETICANUE_LIGHT size:18.]];
     [buttonDetailPopover addTarget:self action:@selector(buttonEditPopoverAction:) forControlEvents:UIControlEventTouchUpInside];
