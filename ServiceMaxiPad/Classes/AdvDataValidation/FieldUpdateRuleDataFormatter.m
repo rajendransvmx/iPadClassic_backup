@@ -258,7 +258,17 @@
                 for (SFMPageField *pageField in detailSections) {
                     NSString *fieldName = pageField.fieldName;
                     SFMRecordFieldData *fieldData = [record objectForKey:fieldName];
-                    NSString *value = fieldData.displayValue;//HS Fix for 018781,previously was internalValue
+                    
+                    NSString *value = nil;
+                    if ([pageField.dataType isEqualToString:kSfDTDateTime] || [pageField.dataType isEqualToString:kSfDTDate])
+                    {
+                        value = fieldData.internalValue;//Only for Date Time and Date fields
+                    }
+                    else
+                    {
+                        value = fieldData.displayValue;//HS Fix for 018781,previously was internalValue
+                        
+                    }
                     if ([StringUtil isStringEmpty:value]) {
                         value = @"";
                         if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {
