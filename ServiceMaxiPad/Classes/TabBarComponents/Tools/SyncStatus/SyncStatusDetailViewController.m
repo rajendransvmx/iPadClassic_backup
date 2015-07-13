@@ -111,6 +111,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 - (void) handleAppEnterForeground {
     [self updateDataSyncRelatedUI];
     [self updateConfigSyncRelatedUI];
+    [self updateReportSyncRelatedUI];
 }
 - (void)didReceiveMemoryWarning
 {
