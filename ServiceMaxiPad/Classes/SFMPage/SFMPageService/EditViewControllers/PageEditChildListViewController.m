@@ -633,7 +633,13 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
             [multiPageFieldView removeFromSuperview];
             
             UILabel *titleLabel = (UILabel*)[cell.contentView viewWithTag:TITLE_LABEL_TAG];
-            
+            if (titleLabel == nil)
+            {
+                titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(50,10,cell.frame.size.width, 20)];
+                titleLabel.backgroundColor = [UIColor clearColor];
+                titleLabel.tag = TITLE_LABEL_TAG;
+                [cell.contentView addSubview:titleLabel];
+            }
             NSString *theTitle = [self displayValueForIndexPath:indexPath];
             titleLabel.text = theTitle;
                 
