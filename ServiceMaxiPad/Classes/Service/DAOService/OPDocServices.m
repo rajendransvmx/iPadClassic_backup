@@ -211,6 +211,36 @@
     return lTheDataArray;
 }
 
+- (NSMutableArray*)getWorkOrderNameWithTableName:(NSString*)tableName withRecordIdArray:(NSMutableArray*)recordIdArray {
+    
+    __block NSMutableArray *workOrderNamesArray = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorIn andFieldValues:recordIdArray];
+    DBRequestSelect *requestSelect = [[DBRequestSelect alloc] initWithTableName:tableName andFieldNames:[NSArray arrayWithObjects:kWorkOrderName,kLocalId, nil] whereCriteria:criteria];
+    
+    
+    @autoreleasepool {
+        
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSMutableDictionary *columnDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+                [resultSet kvcMagic:columnDictionary];
+                [workOrderNamesArray addObject:columnDictionary];
+            }
+            [resultSet close];
+        }];
+    }
+    
+    return workOrderNamesArray;
+}
+
 
 -(BOOL)updateFileNameInTableForModel:(OPDocHTML*)model withNewFileName:(NSString *)lNewFileName
 {

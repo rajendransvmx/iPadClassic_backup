@@ -17,6 +17,7 @@
 #import "OPDocSignature.h"
 #import "FileManager.h"
 #import "FlowDelegate.h"
+#import "StringUtil.h"
 
 @interface OpDocHelper() <FlowDelegate>
 
@@ -664,35 +665,43 @@
 -(NSMutableArray*)getLocalOpDocHtmlFilesAndSignatureFiles {
     
     @autoreleasepool {
+        
+        OPDocServices *lOPDocHTMLService = [[OPDocServices alloc] init];
+        
         NSArray *opDocFiles = [self getHTMLFileList];
+        OPDocHTML *opDoctModel = [opDocFiles firstObject];
+        
+        NSMutableArray *recordIdsArray = [[NSMutableArray alloc] initWithCapacity:0];
+        
+        for (OPDocHTML *opDocHTML in opDocFiles) {
+            [recordIdsArray addObject:opDocHTML.record_id];
+        }
+        
+        NSMutableArray *workOrderNamesArray = [lOPDocHTMLService getWorkOrderNameWithTableName:opDoctModel.objectName withRecordIdArray:recordIdsArray];
+        
         NSString *filePath = nil;
-        NSMutableArray *fileNames = [NSMutableArray array];
-        for (int i = 0; i<opDocFiles.count; i++) {
-            
-            id OPDocObject = [opDocFiles objectAtIndex:i];
-            
-            if ([OPDocObject isKindOfClass:[OPDocHTML class]]) {
-                OPDocHTML *opDocHTMLFile = (OPDocHTML *)OPDocObject;
-                if ([opDocHTMLFile.Name length] > 0) {
-                    filePath =  [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:opDocHTMLFile.Name];
-                    if ([FileManager fileExitsAtPath:filePath]) {
-                        [fileNames addObject:opDocHTMLFile.Name];
+        NSMutableArray *fileNames = [[NSMutableArray alloc] initWithCapacity:0];
+        
+        for (OPDocHTML *opDocHTMLFile in opDocFiles)
+        {
+            if (![StringUtil isStringEmpty:opDocHTMLFile.Name])
+            {
+                filePath =  [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:opDocHTMLFile.Name];
+                
+                if ([FileManager fileExitsAtPath:filePath])
+                {
+                    for (NSDictionary *columnDictionary in workOrderNamesArray)
+                    {
+                        NSString *recordId = [columnDictionary valueForKey:kLocalId];
+                        
+                        if ([recordId isEqualToString:opDocHTMLFile.record_id])
+                        {
+                            NSString *workOrderName = [columnDictionary valueForKey:kWorkOrderName];
+                            NSString *opDocAppendedName = [NSString stringWithFormat:@"%@_%@",workOrderName,opDocHTMLFile.Name];
+                            [fileNames addObject:opDocAppendedName];
+                            break;
+                        }
                     }
-//                    
-//                    NSArray *opDocSignatureList = [self getSignatureListForHtmlModel:opDocHTMLFile];
-//                    for (int j= 0; j < opDocSignatureList.count; j++) {
-//                        id OPDocSignatureObject = [opDocSignatureList objectAtIndex:j];
-//                        NSString *lSignatureFilePath = nil;
-//                        if ([OPDocSignatureObject isKindOfClass:[OPDocSignature class]]) {
-//                            OPDocSignature *lOPDocSignatureFile = (OPDocSignature *)OPDocSignatureObject;
-//                            if ([lOPDocSignatureFile.Name length] > 0) {
-//                                 lSignatureFilePath =  [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:lOPDocSignatureFile.Name];
-//                                if ([FileManager fileExitsAtPath:lSignatureFilePath]) {
-//                                    [fileNames addObject:lOPDocSignatureFile.Name];
-//                                }
-//                            }
-//                        }
-//                    } // End of signature files.
                 }
             }
         } // End of OpDocHtml files.
@@ -700,6 +709,7 @@
         return fileNames;
     }
 }
+
 -(NSString *)getQueryForCheckingOPDOCFileUploadStatus
 {
     if(cSingleHtmlAndAssociatedSignatureListArray.count)

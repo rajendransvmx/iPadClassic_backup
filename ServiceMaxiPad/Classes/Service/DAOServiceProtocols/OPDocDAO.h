@@ -62,4 +62,7 @@
 //To Delete the SFID's from those records whose doc-Submission API has failed. This is done, so that when these files are submitted again for uploading, it gets the SFID's again. Its a FAIL-Safe mechanism.
 -(BOOL)updateTableToRemovetheSFIDForList:(NSArray *)listArray;
 
+//To get the workorder name with OpDocHTML table's recordID.
+- (NSMutableArray*)getWorkOrderNameWithTableName:(NSString*)tableName withRecordIdArray:(NSMutableArray*)recordIdArray;
+
 @end
