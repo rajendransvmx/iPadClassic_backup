@@ -1327,7 +1327,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     NSArray * detailFields = self.detailLayout.detailSectionFields;
     
     SFMPageField * field  = nil;
-    if([detailFields count] > 0)
+    if([detailFields count] > 0 && detailFields.count>fieldIndex)
     {
         field  = [detailFields objectAtIndex:fieldIndex];
     }
