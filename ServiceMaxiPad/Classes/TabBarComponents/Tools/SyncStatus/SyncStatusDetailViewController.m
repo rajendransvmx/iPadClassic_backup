@@ -493,6 +493,11 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     // Selected 'Data Sync' Option. Lets proceed it.
     if (buttonIndex != 0)
     {
+        if (![[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
+        {
+            [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeInternetNotReachable];
+            return;
+        }
         if(alertView.tag == kConfigSyncAlertTag)
         {
             [self startConfigSync];

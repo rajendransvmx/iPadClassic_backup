@@ -99,29 +99,31 @@
 - (void)reachabilityDidChanged:(NSNotification* )notification
 {
    // NSLog(@"SNetwork Reachbality Changed %@ ", [notification  description]);
-    
-    Reachability *curReach = [notification object];
-	NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
-    
-    NetworkStatus netStatus = [curReach currentReachabilityStatus];
-    
-    // By default NO.
-    NSNumber  *networkCurrentStatus = [NSNumber numberWithInt:0];
-    
-    if ((netStatus == ReachableViaWWAN) || ( netStatus == ReachableViaWiFi) )
-    {
-        self.isReachable = YES;
-        networkCurrentStatus = [NSNumber numberWithInt:1];
-    }
-    else
-    {
-        self.isReachable = NO;
-    }
-    
-    // Post notifications to other observ class : This could be other components in the application
-    [[NSNotificationCenter defaultCenter] postNotificationName:kNetworkConnectionChanged
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        Reachability *curReach = [notification object];
+        NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
+        
+        NetworkStatus netStatus = [curReach currentReachabilityStatus];
+        
+        // By default NO.
+        NSNumber  *networkCurrentStatus = [NSNumber numberWithInt:0];
+        
+        if ((netStatus == ReachableViaWWAN) || ( netStatus == ReachableViaWiFi) )
+        {
+            self.isReachable = YES;
+            networkCurrentStatus = [NSNumber numberWithInt:1];
+        }
+        else
+        {
+            self.isReachable = NO;
+        }
+       
+        // Post notifications to other observ class : This could be other components in the application
+       [[NSNotificationCenter defaultCenter] postNotificationName:kNetworkConnectionChanged
                                                         object:networkCurrentStatus
                                                       userInfo:nil];
+    });
     
    // NSLog(@"------------------ SNetwork Reachbality status ------------ %d", self.isReachable);
     
