@@ -2303,7 +2303,7 @@
     SFMPage *sfmPage = [self getSFMPageModel];
     if (sfmPage)
     {
-        if ([sfmPage isSyncedRecords])
+        if ([sfmPage areChildRecordsSynced])
         {
             SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
             [self addActivityAndLoadingLabel];

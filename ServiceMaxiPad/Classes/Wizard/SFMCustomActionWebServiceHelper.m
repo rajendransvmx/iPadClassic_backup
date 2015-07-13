@@ -15,6 +15,7 @@
 #import "CacheConstants.h"
 #import "SFMPageEditManager.h"
 #import "StringUtil.h"
+#import "SFMPageHelper.h"
 
 @implementation SFMCustomActionWebServiceHelper
 
@@ -72,8 +73,12 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
     }
     
     NSString *headerId = [lSFMPage getHeaderSalesForceId];
-
-    if (!theClassNameMethodName || !theClassNameMethodName.length || !headerId || headerId.length!=18) {
+    BOOL childSFIDPresent = [lSFMPage areChildRecordsSynced];
+    
+   BOOL conflictStatus = [SFMPageHelper conflictExistForObjectName:lSFMPage.objectName
+                                     recordId:lSFMPage.recordId];
+    
+    if (!theClassNameMethodName || !theClassNameMethodName.length || !headerId || headerId.length!=18 || !childSFIDPresent || conflictStatus) {
         return nil;
     }
     

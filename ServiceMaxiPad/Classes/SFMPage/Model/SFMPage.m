@@ -58,7 +58,7 @@
     return model.enableAttachment;
 }
 
--(BOOL)isSyncedRecords{
+-(BOOL)areChildRecordsSynced{
     if ([StringUtil isStringNotNULL:[self getHeaderSalesForceId]] && [[self getHeaderSalesForceId] length]>0) {
         NSDictionary *dict = self.detailsRecord;
         for (NSString *pocessId in [dict allKeys]) {

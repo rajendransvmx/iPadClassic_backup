@@ -875,7 +875,7 @@
     if (self.sfmPageView.isConflictPresent) {
         return;
     }
-    if([self.sfmPageView.sfmPage isSyncedRecords]) {
+    if([self.sfmPageView.sfmPage areChildRecordsSynced]) {
         SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
         [self addActivityAndLoadingLabel];
         [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
