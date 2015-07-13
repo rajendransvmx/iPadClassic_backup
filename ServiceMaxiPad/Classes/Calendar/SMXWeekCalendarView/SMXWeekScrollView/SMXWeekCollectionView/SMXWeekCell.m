@@ -487,6 +487,8 @@ static UIImage *lineImage;
         }
     }
     
+    [cEventsWhichAccomodateSmallerEvents removeAllObjects];
+    
     for (SMXBlueButton *lButton in arrayButtonsEvents) {
         [lButton setEventSubjectLabelPosition];
         
