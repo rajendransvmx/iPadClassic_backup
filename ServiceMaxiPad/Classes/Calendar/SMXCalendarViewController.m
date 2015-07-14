@@ -2356,15 +2356,7 @@
     BOOL isValidProcess = [viewPageManager isValidProcess:viewPageManager.processId error:&error];
     if (isValidProcess)
     {
-        /* This check for conflict. If record is in conflict state, then no need to invok WS */
-        if (viewPageManager.sfmPageView.isConflictPresent)
-        {
-            return nil;
-        }
-        else
-        {
-            return sfmPage;
-        }
+        return sfmPage;
     }
     else
     {

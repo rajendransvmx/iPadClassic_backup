@@ -871,10 +871,6 @@
 /* Call webservice call from with parameters */
 -(void)makeWebserviceCall:(WizardComponentModel *)model
 {
-    /* This check for conflict. If record is in conflict state, then no need to invok WS */
-    if (self.sfmPageView.isConflictPresent) {
-        return;
-    }
     if([self.sfmPageView.sfmPage areChildRecordsSynced]) {
         SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
         [self addActivityAndLoadingLabel];
