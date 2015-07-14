@@ -2303,12 +2303,9 @@
     SFMPage *sfmPage = [self getSFMPageModel];
     if (sfmPage)
     {
-        if ([sfmPage areChildRecordsSynced])
-        {
-            SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
-            [self addActivityAndLoadingLabel];
-            [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
-        }
+        SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
+        [self addActivityAndLoadingLabel];
+        [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
     }
 }
 

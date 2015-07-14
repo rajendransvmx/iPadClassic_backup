@@ -871,11 +871,9 @@
 /* Call webservice call from with parameters */
 -(void)makeWebserviceCall:(WizardComponentModel *)model
 {
-    if([self.sfmPageView.sfmPage areChildRecordsSynced]) {
-        SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
-        [self addActivityAndLoadingLabel];
-        [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
-    }
+    SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
+    [self addActivityAndLoadingLabel];
+    [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceWithDelegate:) withObject:self];
 }
 
 -(void)showWrongURLAlert
