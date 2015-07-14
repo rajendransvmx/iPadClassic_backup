@@ -15,11 +15,11 @@ Fixed Defects
 018091
 019182 
 018651
+019285
 
 ---------------------
 Fixed - Known Issues 
 --------------------- 
-None
 
 Additional Notes
 ---------------------
