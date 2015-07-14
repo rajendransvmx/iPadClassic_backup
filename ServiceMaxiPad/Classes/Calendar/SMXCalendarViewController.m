@@ -2272,6 +2272,7 @@
         SFMCustomActionHelper *customActionHelper=[[SFMCustomActionHelper alloc] initWithSFMPage:sfmPage wizardComponent:model];
         UIApplication *ourApplication = [UIApplication sharedApplication];
         NSString *string = [customActionHelper loadURL];
+        string =[string stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSURL *ourURL = [NSURL URLWithString:string];
         if ([ourApplication canOpenURL:ourURL])
         {

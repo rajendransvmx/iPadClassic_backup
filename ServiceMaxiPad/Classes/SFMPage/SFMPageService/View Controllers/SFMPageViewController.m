@@ -849,6 +849,7 @@
     SFMCustomActionHelper *customActionHelper = [[SFMCustomActionHelper alloc] initWithSFMPage:self.sfmPageView.sfmPage wizardComponent:model];
     UIApplication *ourApplication = [UIApplication sharedApplication];
     NSString *string = [customActionHelper loadURL];//[self removeSpaceFromUrl:[customActionHelper loadURL]];
+    string =[string stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL *ourURL = [NSURL URLWithString:string];
     if ([ourApplication canOpenURL:ourURL])
     {
