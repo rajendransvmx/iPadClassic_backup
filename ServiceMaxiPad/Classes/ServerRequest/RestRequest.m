@@ -1157,10 +1157,11 @@
 
 //    [self.requestIdentifier
     
-    if (self.requestType == RequestOneCallDataSync && self.requestIdentifier && self.requestIdentifier.length)
+    if (self.requestType == RequestOneCallDataSync)
     {
-        NSLog(@"self.requestIdentifier remembered on error.: %@", self.requestIdentifier);
-        [[NSUserDefaults standardUserDefaults] setObject:self.requestIdentifier forKey:@"requestIdentifier"];
+        SXLogDebug(@"==============\n clientRequestIdentifier remembered on error.: %@\n\n==============", self.clientRequestIdentifier);
+        
+        [[NSUserDefaults standardUserDefaults] setObject:self.clientRequestIdentifier forKey:@"requestIdentifier"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
