@@ -70,7 +70,7 @@
     }
     else{
         /*Get all the BusinessRuleProcess objects*/
-        NSArray *bizRuleProcessArray = [dbService processBusinessRuleForProcessId:self.processId];
+        NSMutableArray *bizRuleProcessArray = [NSMutableArray arrayWithArray:[dbService processBusinessRuleForProcessId:self.processId]];
         
         if ([bizRuleProcessArray count] == 0) {
             SXLogWarning(@"No biz rule process available");
@@ -80,6 +80,15 @@
         else{
             /*Get all the BusinessRule objects*/
             NSArray *bizRules = [dbService businessRulesForBizRuleProcesses:bizRuleProcessArray];
+            
+            NSArray *tempArray = [NSArray arrayWithArray:bizRuleProcessArray];
+            
+            for(ProcessBusinessRuleModel *bizRuleProcess in tempArray) {
+                NSArray *filteredArray = [bizRules filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"Id == [c] %@", bizRuleProcess.businessRule]];
+                if ([filteredArray count] == 0) {
+                    [bizRuleProcessArray removeObject:bizRuleProcess];
+                }
+            }
             
             if ([bizRules count] == 0) {
                 SXLogWarning(@"No biz rule available");

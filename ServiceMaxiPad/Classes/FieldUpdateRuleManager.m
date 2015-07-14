@@ -11,6 +11,7 @@
 #import "BusinessRuleConstants.h"
 #import "FieldUpdateRuleDataFormatter.h"
 #import "Utility.h"
+#import "ProcessBusinessRuleModel.h"
 
 @interface FieldUpdateRuleManager ()
 @property (nonatomic, strong) FieldUpdateRuleDataFormatter *formulaDataFormatter;
@@ -32,8 +33,17 @@
         
         BusinessRuleDatabaseService *dbService = [[BusinessRuleDatabaseService alloc] init];
         
-        NSArray *bizRuleProcessArray = [dbService processBusinessRuleForProcessId:self.processId];
+        NSMutableArray *bizRuleProcessArray = [NSMutableArray arrayWithArray:[dbService processBusinessRuleForProcessId:self.processId]];
         NSArray *fieldUpdateRules = [dbService fieldUpdateRulesForBizRuleProcesses:bizRuleProcessArray];
+        
+        NSArray *tempArray = [NSArray arrayWithArray:bizRuleProcessArray];
+        
+        for(ProcessBusinessRuleModel *bizRuleProcess in tempArray) {
+            NSArray *filteredArray = [fieldUpdateRules filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"Id == [c] %@", bizRuleProcess.businessRule]];
+            if ([filteredArray count] == 0) {
+                [bizRuleProcessArray removeObject:bizRuleProcess];
+            }
+        }
         
         if ([fieldUpdateRules count] > 0) {
             

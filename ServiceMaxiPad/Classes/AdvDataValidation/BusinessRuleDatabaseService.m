@@ -57,8 +57,9 @@
                 [ruleIds addObject:process.businessRule];
             }
 
+            // 019285
             DBCriteria * dbCriteria1 = [[DBCriteria alloc] initWithFieldName:kBizRuleSfId operatorType:SQLOperatorIn andFieldValues:ruleIds];
-            DBCriteria * dbCriteria2 = [[DBCriteria alloc] initWithFieldName:kBusinessRuleRuleType operatorType:SQLOperatorNotEqual andFieldValue:kBizRuleTypeFieldUpdate];
+            DBCriteria * dbCriteria2 = [[DBCriteria alloc] initWithFieldName:kBusinessRuleRuleType operatorType:SQLOperatorIsNull andFieldValue:nil];
 
             id<BusinessRuleDAO> bizRuleDao = [FactoryDAO serviceByServiceType:ServiceTypeBusinessRule];
             bizRuleArray = [bizRuleDao fetchBusinessRuleInfoByFields:nil andCriteriaArray:@[dbCriteria1, dbCriteria2]];
