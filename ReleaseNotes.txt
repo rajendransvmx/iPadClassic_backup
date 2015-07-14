@@ -3,13 +3,18 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.109
+Version = 15.49.110
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-019057 - SVMX Formulas : Inconsistent behavior for On Load and On Save formula execution.
+018934
+019279
+018087
+018091
+019182 
+018651
 
 ---------------------
 Fixed - Known Issues 
@@ -19,6 +24,9 @@ None
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
+2. Change for custom action web service :
+	 No need to check for record is conflicts or not.
+	 Not checking for blank and null for Id of the records.
 
 
 

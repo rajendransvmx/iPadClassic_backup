@@ -2592,6 +2592,7 @@
     return fieldUpdateRuleExists;
 }
 
+//Fix for 019057
 -(void)updateSFMPageWithFieldUpdateResponse:(NSString *)response andSFMPage:(SFMPage *)sfmPage {
     NSDictionary *tempDict = (NSDictionary *)[Utility objectFromJsonString:response];
     NSDictionary *responseDict = [tempDict objectForKey:@"response"];
@@ -2661,11 +2662,7 @@
                                     recordField.internalValue = internalValue;
                                     recordField.displayValue = displayValue;
                                 }
-
-                            
-                           // recordField.internalValue = internalValue;
-                            //recordField.displayValue = displayValue;
-                            //}
+                         
                            }
                         
                       }
