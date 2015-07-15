@@ -179,8 +179,9 @@
  *
  **/
 
-
 #import <Foundation/Foundation.h>
+static NSString *kDateFormatFormula = @"%Y-%m-%d";
+static NSString *kDateTimeFormatFormula = @"%Y-%m-%d %H:%M:%S"; /*2015-07-15 */
 
 static NSString *kDateFormatDefault = @"%Y-%m-%dT%H:%M:%S%z";    /** 2014-05-18T16:36:20+0530 */
 static NSString *kDateFormatType1   = @"%Y-%m-%d %H:%M:%S";      /** 2014-05-18 16:36:20 */
@@ -534,5 +535,11 @@ static NSString *kDateFormatType24Hr  = @"%H:%M";
 //Niraj: Defect number 017148
 
 + (NSString*)getLocalDateForGetpriceFromDateString:(NSString*)date;
+
+
++ (NSString*)getLocalDateForFormulaFromDateString:(NSString*)date;
++ (NSString*)getLocalDateTimeForFormulaFromDateString:(NSString*)date;
+
+
 @end
 

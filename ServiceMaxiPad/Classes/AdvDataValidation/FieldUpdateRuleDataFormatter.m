@@ -216,9 +216,17 @@
                    for (SFMPageField *pageField in headerFields) {
                    SFMRecordFieldData *recordField = [headerRecords objectForKey:pageField.fieldName];
                        NSString *value = nil;
-                       if ([pageField.dataType isEqualToString:kSfDTDateTime] || [pageField.dataType isEqualToString:kSfDTDate])
+                       if ([pageField.dataType isEqualToString:kSfDTDate])
+                       {
+                           
+                           value = recordField.internalValue;//Only for Date Time and Date fields
+                           value = [DateUtil getLocalDateForFormulaFromDateString:value];
+                           
+                       }
+                       else if([pageField.dataType isEqualToString:kSfDTDateTime])
                        {
                            value = recordField.internalValue;//Only for Date Time and Date fields
+                           value = [DateUtil getLocalDateTimeForFormulaFromDateString:value];
                        }
                        else
                        {
@@ -227,7 +235,8 @@
                        }
                    if ([StringUtil isStringEmpty:value]) {
                     value = @"";
-                    if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {
+                    if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger])
+                    {
                         value = @"0";
                     }
                 }
@@ -262,9 +271,17 @@
                     SFMRecordFieldData *fieldData = [record objectForKey:fieldName];
                     
                     NSString *value = nil;
-                    if ([pageField.dataType isEqualToString:kSfDTDateTime] || [pageField.dataType isEqualToString:kSfDTDate])
+                    if ([pageField.dataType isEqualToString:kSfDTDate])
+                    {
+                        
+                        value = fieldData.internalValue;//Only for Date Time and Date fields
+                        value = [DateUtil getLocalDateForFormulaFromDateString:value];
+                        
+                    }
+                    else if([pageField.dataType isEqualToString:kSfDTDateTime])
                     {
                         value = fieldData.internalValue;//Only for Date Time and Date fields
+                        value = [DateUtil getLocalDateTimeForFormulaFromDateString:value];
                     }
                     else
                     {

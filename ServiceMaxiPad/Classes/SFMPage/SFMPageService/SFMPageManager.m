@@ -554,6 +554,7 @@ PageManagerErrorType;
     //return [self convertDateAndTime:[DateUtil getUserReadableDateForDateBaseDateString:dateTime]];//HS
     NSString *dateStr = @"";
     NSDate *date = [DateUtil getUserReadableDateForDateBaseDateString:dateTime];
+    //Fix:018714 for Null value
     if (date != nil)
     {
         dateStr = [self convertDateAndTime:date];
@@ -589,6 +590,63 @@ PageManagerErrorType;
     }
     return userdateString;
 }
+
+//For  Formulas Process
+-(NSString *)getUserReadableDateTimeFromFormula:(NSString *)dateTime
+{
+    NSString *dateString = nil;
+    NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateTimeFormatFormula];
+    if (date != nil) {
+        dateString = [NSDate localStringFromDate:date];
+    }
+    return dateString;
+}
+-(NSString *)getUserReadableDateFromFormula:(NSString *)dateTime
+{
+    NSString *dateString = nil;
+    NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateFormatFormula];
+    if (date != nil) {
+        dateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+    }
+    return dateString;
+}
+
+//For Settingback to internal Values
+
+-(NSString *)getDBReadableDateTimeFromFormula:(NSString *)dateTime
+{
+    NSString *dateString = nil;
+    NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateTimeFormatFormula];
+    if (date != nil) {
+        dateString = [NSDate localStringFromDate:date];
+    }
+    return dateString;
+}
+
+-(NSString *)getDBDateFromFormula:(NSString *)dateTime
+{
+    NSString *dateString = nil;
+    NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateFormatFormula];
+    if (date != nil) {
+        dateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+    }
+    return dateString;
+}
+
+
+
+
+//- (NSString *)getUserReadableDateForValueMapping:(NSString *)datetime
+//{
+//    NSString *userdateString = @"";
+//    NSDate * date = [DateUtil getDateFromDatabaseString:datetime];
+//    if (date != nil) {
+//        userdateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+//    }
+//    return userdateString;
+//}
+
+//Ends here
 
 - (NSString *)getDateForValueMapping:(NSString *)datetime
 {

@@ -2651,12 +2651,11 @@
                             {
                                 NSString *fieldName = pageField.fieldName;
                             
-                              //for (fieldName in lineRecord) {
                             //key is SFMPageField
                             SFMRecordFieldData *recordField = [sfmRecord objectForKey:fieldName];
-                            id internalValue = [lineRecord objectForKey:fieldName];
-                            id displayValue = [lineRecord objectForKey:fieldName];
-                            if (![internalValue isKindOfClass:[NSString class]])
+                                id internalValue = [lineRecord objectForKey:fieldName];
+                                id displayValue = [lineRecord objectForKey:fieldName];
+                            if (![displayValue isKindOfClass:[NSString class]])
                             {
                                 internalValue = [NSString stringWithFormat:@"%@",internalValue];
                                 displayValue = [NSString stringWithFormat:@"%@",displayValue];
@@ -2664,9 +2663,12 @@
                                 
                                 if ([pageField.dataType isEqualToString:kSfDTDate])
                                 {
-                                    if (![StringUtil isStringEmpty:recordField.internalValue])
+                                    if (![StringUtil isStringEmpty:displayValue])
                                     {
-                                       displayValue = [self getUserReadableDate:internalValue];
+                                        NSDate * date = [DateUtil dateFromString:displayValue inFormat:kDateFormatFormula];
+
+                                        internalValue = [DateUtil getDatabaseStringForDate:date];
+                                       displayValue = [self getUserReadableDateFromFormula:displayValue];
                                     }
                                     recordField.internalValue = internalValue;
                                     recordField.displayValue = displayValue;
@@ -2674,9 +2676,12 @@
                                 }
                                 else if([pageField.dataType isEqualToString:kSfDTDateTime])
                                 {
-                                    if (![StringUtil isStringEmpty:recordField.internalValue])
+                                    if (![StringUtil isStringEmpty:displayValue])
                                     {
-                                        displayValue = [self getUserReadableDateTime:internalValue];
+                                        NSDate * date = [DateUtil dateFromString:displayValue inFormat:kDateTimeFormatFormula];
+                                        
+                                        internalValue = [DateUtil getDatabaseStringForDate:date];
+                                        displayValue = [self getUserReadableDateTimeFromFormula:displayValue];
 
                                     }
                                     
@@ -2700,6 +2705,7 @@
             }
         }
         else {
+            
             if (!([key isEqualToString:@"Id"] || [key isEqualToString:@"localId"])) {
                 
                 for (SFMHeaderSection *headerSection in headerLayouts.sections)
@@ -2708,14 +2714,12 @@
                     {
                         NSString *fieldName = sfmPageField.fieldName;
                         
-//                        if ([sfmPageField.fieldName isEqualToString:key])
-//                        {
                             SFMRecordFieldData *recordField = [headerRecord objectForKey:fieldName];
-                            
+
                             id internalValue = [responseDict objectForKey:fieldName];
                             id displayValue = [responseDict objectForKey:fieldName];
                             
-                            if (![internalValue isKindOfClass:[NSString class]])
+                            if (![displayValue isKindOfClass:[NSString class]])
                             {
                                 internalValue = [NSString stringWithFormat:@"%@",internalValue];
                                 displayValue = [NSString stringWithFormat:@"%@",displayValue];
@@ -2723,9 +2727,12 @@
                             
                             if ([sfmPageField.dataType isEqualToString:kSfDTDate])
                             {
-                                if (![StringUtil isStringEmpty:recordField.internalValue])
+                                if (![StringUtil isStringEmpty:displayValue])
                                 {
-                                   displayValue = [self getUserReadableDate:internalValue];
+                                    NSDate * date = [DateUtil dateFromString:displayValue inFormat:kDateFormatFormula];
+                                    
+                                    internalValue = [DateUtil getDatabaseStringForDate:date];
+                                   displayValue = [self getUserReadableDateFromFormula:displayValue];
                                 }
                                 recordField.internalValue = internalValue;
                                 recordField.displayValue = displayValue;
@@ -2733,9 +2740,13 @@
                             }
                             else if([sfmPageField.dataType isEqualToString:kSfDTDateTime])
                             {
-                                if (![StringUtil isStringEmpty:recordField.internalValue])
+                                if (![StringUtil isStringEmpty:displayValue])
                                 {
-                                   displayValue = [self getUserReadableDateTime:internalValue];
+                                    NSDate * date = [DateUtil dateFromString:displayValue inFormat:kDateTimeFormatFormula];
+                                    
+                                    internalValue = [DateUtil getDatabaseStringForDate:date];
+                                    displayValue = [self getUserReadableDateTimeFromFormula:displayValue];
+                                    
                                 }
                                 
                                 recordField.internalValue = internalValue;
@@ -2750,9 +2761,6 @@
                                 recordField.internalValue = internalValue;
                                 recordField.displayValue = displayValue;
                             }
-                            
-                            
-                        //}
                     }
                 }
                 

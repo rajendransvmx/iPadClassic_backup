@@ -278,7 +278,13 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 
 + (NSDate *)getDateFromDatabaseString:(NSString *)dateString{
     
-    return [self dateFromString:dateString inFormat:kDateFormatForDatabase];
+    
+    if ((dateString != NULL)||(dateString != nil))
+    {
+        return [self dateFromString:dateString inFormat:kDateFormatForDatabase];
+
+    }
+    return nil;
 }
 
 #pragma mark - Current Date Time Methods
@@ -736,6 +742,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     return format;
 }
 
+//For DateTime
 + (NSString*)getLocalDateForGetpriceFromDateString:(NSString*)date
 {
     // NSString *date = @"Sun, 09 Mar 2015 12:00:52 AM"; //@"2015-03-08 06:00:09";
@@ -759,6 +766,30 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     }
     return nil;
 }
+
+//For DateTime
++ (NSString*)getLocalDateTimeForFormulaFromDateString:(NSString*)dateTime
+{
+    NSString *userdateString = @"";
+    NSDate * date = [DateUtil getDateFromDatabaseString:dateTime];
+    if (date != nil) {
+        userdateString = [DateUtil stringFromDate:date inFormat:kDateTimeFormatFormula];
+    }
+    return userdateString;
+}
+
+//only for Date
++ (NSString*)getLocalDateForFormulaFromDateString:(NSString*)date
+{
+    NSString *userdateString = @"";
+    NSDate * theDate = [DateUtil getDateFromDatabaseString:date];
+    if (date != nil) {
+        userdateString = [DateUtil stringFromDate:theDate inFormat:kDateFormatFormula];
+    }
+    return userdateString;
+    
+}
+
 
 @end
 
