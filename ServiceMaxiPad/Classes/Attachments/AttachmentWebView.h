@@ -22,6 +22,7 @@
 @property (nonatomic, copy) NSString *parentObjectName;
 @property (nonatomic, copy) NSString *parentSFObjectName;
 @property (nonatomic, copy) NSString *parentId;
+@property (nonatomic, copy) NSString *parentLocalId;
 @property (nonatomic, strong) IBOutlet UIActivityIndicatorView * activity;
 @property (nonatomic, weak)  id <AttachmentWebviewdelegate> webviewdelgate;
 @property (nonatomic, assign) BOOL isInViewMode;

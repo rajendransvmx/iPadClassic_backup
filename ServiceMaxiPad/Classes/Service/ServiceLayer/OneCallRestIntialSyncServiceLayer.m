@@ -547,9 +547,19 @@
 #pragma mark - get price code snippet
 - (NSArray *)getRequestParametersForGetPriceCodeSnippet
 {
+    /*
     RequestParamModel *model = [[RequestParamModel alloc]init];
     NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"JAVASCRIPT",kSVMXRequestValue,@"type",kSVMXRequestKey, nil];
     model.valueMap = [NSArray arrayWithObjects:dict, nil];
+    return @[model];
+    */
+    
+    RequestParamModel *model = [[RequestParamModel alloc]init];
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:@"JAVASCRIPT",kSVMXRequestValue,@"type",kSVMXRequestKey, nil];
+    NSDictionary *dictForThirdPartyApp = [[NSDictionary alloc] initWithObjectsAndKeys:@"JSON",kSVMXRequestValue,@"type",kSVMXRequestKey, nil];
+    
+    model.valueMap = [NSArray arrayWithObjects:dict, dictForThirdPartyApp, nil];
+    model.values = @[@"Code008" ];
     return @[model];
 }
 

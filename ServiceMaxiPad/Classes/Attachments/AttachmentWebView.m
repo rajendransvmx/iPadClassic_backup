@@ -21,6 +21,13 @@
 #import "DateUtil.h"
 #import "StringUtil.h"
 #import "PushNotificationHeaders.h"
+#import "FactoryDAO.h"
+#import "MobileDeviceSettingDAO.h"
+//#import "SharePdfCustomActivity.h"
+//#import "ShareToPulseActivity.h"
+#import "ThirdPartyApp.h"
+#import "ThirdPartyAppActivity.h"
+#import "SFMPageHelper.h"
 
 static NSInteger const kDeleteButton = 321;
 
@@ -47,12 +54,11 @@ static NSInteger const kDeleteButton = 321;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+//    self.webView.backgroundColor = [UIColor navBarBG];
+//    self.view.backgroundColor = [UIColor navBarBG];
     [self populateNavigationBar];
     [self loadwebview];
-    self.webView.scrollView.contentInset = UIEdgeInsetsMake(0.0,0.0,0.0,0.0);
     [self registerForPopOverDismissNotification];
-    
 }
 
 -(void)loadwebview
@@ -87,6 +93,7 @@ static NSInteger const kDeleteButton = 321;
     }
     
     self.url = [AttachmentUtility getUrlForAttachment:_attachmentTXModel];
+    NSLog(@"URL : %@",self.url);
     NSURLRequest *requestObj = [NSURLRequest requestWithURL:self.url];
     [self.webView loadRequest:requestObj];
 }
@@ -122,21 +129,109 @@ static NSInteger const kDeleteButton = 321;
         
         if (fileUrl != nil)
         {
-            [self displaySharingView:fileUrl sender:(UIBarButtonItem *)sender];
+            [self displaySharingView:data forUrl:fileUrl sender:(UIBarButtonItem *)sender];
         }
     }
 }
 
-//D-00003728
-- (void)displaySharingView:(NSURL*)url sender:(UIBarButtonItem *)button
+
+
+- (NSString *)JSONStringforthirdPartyAppsDocSharing
 {
-    //11450
-    UIActivityViewController * sharingView = [[UIActivityViewController alloc] initWithActivityItems:@[url] applicationActivities:nil];
+    NSString *jsonString = @"";
+    
+    jsonString = [AttachmentHelper getJSONStringForThirdPartyAppConnect];
+    
+    return jsonString;
+}
+
+- (NSArray *) thirdPartyAppListFor:(NSArray *)array {
+    
+    NSString *filePath = [AttachmentUtility filePathForAttachment:_attachmentTXModel];;
+    
+    if (![StringUtil containsString:@"pdf" inString:filePath]) {
+        return nil;
+    }
+    NSMutableArray *thirdPartyApps = [[NSMutableArray alloc] init] ;
+    for (NSDictionary *dict in array) {
+        
+        ThirdPartyApp *app = [[ThirdPartyApp alloc] initWithDictionary:dict];
+        /*
+        for (NSString *param in [app.urlParameters componentsSeparatedByString:@"&"]) {
+            
+//            if ([param containsString:@"$"] && ![param containsString:@"="]) { // Only for IOS 8+
+            
+            
+            if ([StringUtil containsString:@"$" inString:param] && ![StringUtil containsString:@"=" inString:param]) {
+ 
+            
+                NSString *paramValue = [param stringByReplacingOccurrencesOfString:@"$" withString:@""];
+                [app.parameterValueDict setObject:paramValue forKey:param];
+            }
+            else if ([StringUtil containsString:@"=" inString:param]) {
+                
+                NSArray *elts = [param componentsSeparatedByString:@"="];
+                if([elts count] < 2) continue;
+                    [app.parameterDict setObject:[elts objectAtIndex:1] forKey:[elts objectAtIndex:0]];
+                NSString *paramValue = [[elts objectAtIndex:1] stringByReplacingOccurrencesOfString:@"$" withString:@""];
+                [app.parameterValueDict setObject:paramValue forKey:[elts objectAtIndex:1]];
+            }
+         
+            
+            
+        }
+         
+         */
+        app.urlParameters = filePath;
+        
+        [thirdPartyApps addObject:app];
+        NSLog(@"app description : %@",app.parameterValueDict);
+    }
+    
+    return thirdPartyApps;
+}
+
+
+- (void)displaySharingView:(NSData *)data forUrl:(NSURL *)url sender:(UIBarButtonItem *)button
+{
+
+    
+    NSString *jsonString = [self JSONStringforthirdPartyAppsDocSharing];
+    
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    id json = nil;
+    if (jsonData != nil) {
+        NSError *error1;
+         json = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error1];
+        NSLog(@"err %@",error1.debugDescription);
+    }
+    
+    NSArray *thirdPartyApps = [self thirdPartyAppListFor:json];
+    NSMutableArray *appActivities = [NSMutableArray new];
+    
+    for (ThirdPartyApp *app in thirdPartyApps) {
+        
+        app.parameterValueDict = [SFMPageHelper getDataForObject:_parentSFObjectName fields:[app.parameterValueDict allValues] recordId:_parentLocalId];
+        
+        ThirdPartyAppActivity *appActivity = [[ThirdPartyAppActivity alloc] initWithThirdPartyApp:app];
+        [appActivities addObject:appActivity];
+        
+    }
+    
+    UIActivityViewController * sharingView = [[UIActivityViewController alloc] initWithActivityItems:@[url] applicationActivities:appActivities];
+    
     
     NSArray * excludedActivities = nil;
     NSMutableArray *sharingOptions = [NSMutableArray arrayWithArray:@[UIActivityTypeAssignToContact, UIActivityTypePostToTwitter, UIActivityTypePostToFacebook,
-                                                                      UIActivityTypePostToWeibo, UIActivityTypePostToFlickr,
-                                                                      UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo, UIActivityTypeAddToReadingList]];
+                                                                      UIActivityTypePostToWeibo,
+                                                                      UIActivityTypePostToFlickr,
+                                                                    /*  UIActivityTypeAirDrop,
+                                                                      UIActivityTypeMail,
+                                                                      UIActivityTypePrint,
+                                                                      UIActivityTypeCopyToPasteboard, */
+                                                                      UIActivityTypePostToVimeo,
+                                                                      UIActivityTypePostToTencentWeibo,
+                                                                      UIActivityTypeAddToReadingList]];
     
     if (![[AttachmentUtility imageTypesDict] valueForKey:self.attachmentTXModel.extensionName])
     {
@@ -162,6 +257,7 @@ static NSInteger const kDeleteButton = 321;
 */
     [sharingView setCompletionHandler:^(NSString *activityType, BOOL completed) {
         SXLogDebug (@"Activity Type = %@ Completed = %d", activityType, completed);
+        NSLog(@"Activity Type = %@ Completed = %d", activityType, completed);
         if (activityType == UIActivityTypeMail)
         {
             if (![MFMailComposeViewController canSendMail])

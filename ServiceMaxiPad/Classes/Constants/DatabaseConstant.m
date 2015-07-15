@@ -432,3 +432,5 @@ NSString * const kBeforeSaveProcessKey = @"Before Save/Update";
 NSString * const kAfterSaveProcessKey = @"After Save/Update";
 NSString * const kAfterSaveInsertKey = @"After Save/Insert";
 NSString * const kWebserviceProcessKey = @"WEBSERVICE";
+NSString * const kCodeSnippetID      = ORG_NAME_SPACE@"__SnippetId__c";
+

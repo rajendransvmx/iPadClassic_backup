@@ -13,6 +13,8 @@
 		117656DB1B3928A200BA0B63 /* selectFilled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D71B3928A200BA0B63 /* selectFilled@2x.png */; };
 		11B972AB1B3EB6B9007596A6 /* OpDocFilesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B972A91B3EB6B9007596A6 /* OpDocFilesTableViewController.m */; };
 		11B972AC1B3EB6B9007596A6 /* OpDocFilesTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 11B972AA1B3EB6B9007596A6 /* OpDocFilesTableViewController.xib */; };
+		11FF9E441B5657E5000FE90C /* ThirdPartyApp.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FF9E411B5657E5000FE90C /* ThirdPartyApp.m */; };
+		11FF9E451B5657E5000FE90C /* ThirdPartyAppActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FF9E431B5657E5000FE90C /* ThirdPartyAppActivity.m */; };
 		18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18071BC61A14B62500DC723A /* upArrow@2x.png */; };
 		180E3AB11B3AE45F0055036D /* FieldUpdateRuleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E3AB01B3AE45F0055036D /* FieldUpdateRuleManager.m */; };
 		1814AD1A1B2AA775001167DE /* CustomActionURLModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD191B2AA775001167DE /* CustomActionURLModel.m */; };
@@ -1050,6 +1052,10 @@
 		11B972A81B3EB6B9007596A6 /* OpDocFilesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpDocFilesTableViewController.h; sourceTree = "<group>"; };
 		11B972A91B3EB6B9007596A6 /* OpDocFilesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpDocFilesTableViewController.m; sourceTree = "<group>"; };
 		11B972AA1B3EB6B9007596A6 /* OpDocFilesTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OpDocFilesTableViewController.xib; sourceTree = "<group>"; };
+		11FF9E401B5657E5000FE90C /* ThirdPartyApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThirdPartyApp.h; sourceTree = "<group>"; };
+		11FF9E411B5657E5000FE90C /* ThirdPartyApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdPartyApp.m; sourceTree = "<group>"; };
+		11FF9E421B5657E5000FE90C /* ThirdPartyAppActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThirdPartyAppActivity.h; sourceTree = "<group>"; };
+		11FF9E431B5657E5000FE90C /* ThirdPartyAppActivity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdPartyAppActivity.m; sourceTree = "<group>"; };
 		18071BC61A14B62500DC723A /* upArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "upArrow@2x.png"; sourceTree = "<group>"; };
 		180E3AAF1B3AE45F0055036D /* FieldUpdateRuleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldUpdateRuleManager.h; sourceTree = "<group>"; };
 		180E3AB01B3AE45F0055036D /* FieldUpdateRuleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FieldUpdateRuleManager.m; sourceTree = "<group>"; };
@@ -2961,6 +2967,17 @@
 				11B972AA1B3EB6B9007596A6 /* OpDocFilesTableViewController.xib */,
 			);
 			path = OpDoctFilesTablesViewControoler;
+			sourceTree = "<group>";
+		};
+		11FF9E3F1B5657E5000FE90C /* ThirdParty */ = {
+			isa = PBXGroup;
+			children = (
+				11FF9E401B5657E5000FE90C /* ThirdPartyApp.h */,
+				11FF9E411B5657E5000FE90C /* ThirdPartyApp.m */,
+				11FF9E421B5657E5000FE90C /* ThirdPartyAppActivity.h */,
+				11FF9E431B5657E5000FE90C /* ThirdPartyAppActivity.m */,
+			);
+			path = ThirdParty;
 			sourceTree = "<group>";
 		};
 		180E3AAE1B3AE41A0055036D /* FieldUpdateRuleManager */ = {
@@ -6241,6 +6258,7 @@
 		C3EF97761A036CAE00476293 /* Attachments */ = {
 			isa = PBXGroup;
 			children = (
+				11FF9E3F1B5657E5000FE90C /* ThirdParty */,
 				C362BE6C1A1442220067E09E /* SVMX_ImagePicker */,
 				C362BE671A1436820067E09E /* AttachmentPopoverViewController.h */,
 				C362BE681A1436820067E09E /* AttachmentPopoverViewController.m */,
@@ -7130,6 +7148,7 @@
 				1814AD211B2B04D2001167DE /* SFMCustomActionHelper.m in Sources */,
 				57BA2CEB1A11059E0081389B /* ProductManualServiveLayer.m in Sources */,
 				184A8EF019E7A535006DA6BE /* GTMStringEncoding.m in Sources */,
+				11FF9E441B5657E5000FE90C /* ThirdPartyApp.m in Sources */,
 				183A9A7D19E6949800919345 /* DBRequestConstant.m in Sources */,
 				183AA1A819E6D26400919345 /* SFMRecordFieldData.m in Sources */,
 				183A9FE819E6B18500919345 /* UniversalService.m in Sources */,
@@ -7222,6 +7241,7 @@
 				184A8E6019E7A0BE006DA6BE /* SMXDayCalendarView.m in Sources */,
 				183AA03A19E6BDB300919345 /* TXFetchHelper.m in Sources */,
 				183AA1A319E6D26400919345 /* SFMPageHistoryInfo.m in Sources */,
+				11FF9E451B5657E5000FE90C /* ThirdPartyAppActivity.m in Sources */,
 				183A9FC219E6B18500919345 /* AttachmentsService.m in Sources */,
 				183A9FEB19E6B18500919345 /* AttachmentServiceLayer.m in Sources */,
 				18A2FE9019F6A412002BDA6D /* LocationPingManager.m in Sources */,

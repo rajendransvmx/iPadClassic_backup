@@ -28,6 +28,9 @@
 #import "AttachmentLocalService.h"
 #import "AttachmentLocalDAO.h"
 #import "AttachmentLocalModel.h"
+#import "DatabaseConstant.h"
+
+static NSString *const kThirdPartyApps                  = @"Third Party Apps";
 
 @implementation AttachmentHelper
 
@@ -438,6 +441,31 @@
 
     [attachmentService deleteRecordsForParentId:parentId];
     [AttachmentHelper deleteAttachmentLocalModelFromDB:parentId];
+}
+
+
+#pragma mark -
+#pragma mark Numerial Third Party App connect.
+
++ (NSString *)getJSONStringForThirdPartyAppConnect {
+    
+    NSString *tableName = kTableCodeSnippet;
+    NSArray *fields = [NSArray arrayWithObjects:kId,kCodeSnippetData,nil];
+    
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kCodeSnippetName operatorType:SQLOperatorEqual andFieldValue:kThirdPartyApps];
+    
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:kCodeSnippetID operatorType:SQLOperatorEqual andFieldValue:@"Code008"];
+    NSString *advExpression = @"(1 or 2)";
+    
+    
+    id <TransactionObjectDAO>transObjectService  = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    NSArray *allRecords = [transObjectService fetchDataWithhAllFieldsAsStringObjects:tableName fields:fields expression:advExpression criteria:@[criteria1,criteria2]];
+    
+    for (TransactionObjectModel *model in allRecords) {
+        return [[model getFieldValueDictionary] objectForKey:kCodeSnippetData];
+    }
+    return nil;
+    
 }
 
 @end

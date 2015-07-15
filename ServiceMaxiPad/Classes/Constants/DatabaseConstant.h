@@ -422,3 +422,5 @@ extern NSString * const kBeforeSaveProcessKey;
 extern NSString * const kAfterSaveProcessKey;
 extern NSString * const kAfterSaveInsertKey;
 extern NSString * const kWebserviceProcessKey;
+
+extern NSString *const kCodeSnippetID;

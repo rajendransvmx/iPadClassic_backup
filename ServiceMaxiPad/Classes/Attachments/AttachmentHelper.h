@@ -55,4 +55,6 @@
 
 +(void)deleteAttachmentsFromDBDirectoryForParentId:(NSString*)parentId;
 
++(NSString *)getJSONStringForThirdPartyAppConnect; // For Numerial Third Party App connect - BSP 12Jun
+
 @end
