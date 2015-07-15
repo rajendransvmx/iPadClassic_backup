@@ -214,6 +214,7 @@
     
     dbriefView.section = section;
     [dbriefView setExpandImage:[self isSectionExpanded:section]];
+    dbriefView.detailView.hidden = NO;
     [dbriefView setDetailLabelText];
     [dbriefView setNoDataLabelText:[self getTitleForTableView]];
     return dbriefView;

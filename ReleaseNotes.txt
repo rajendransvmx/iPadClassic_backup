@@ -3,30 +3,17 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.110
+Version = 15.49.111
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-018934
-019279
-018087
-018091
-019182 
-018651
-019285
-
+019074
 ---------------------
-Fixed - Known Issues 
---------------------- 
 
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
-2. Change for custom action web service :
-	 No need to check for record is conflicts or not.
-	 Not checking for blank and null for Id of the records.
-
 
 

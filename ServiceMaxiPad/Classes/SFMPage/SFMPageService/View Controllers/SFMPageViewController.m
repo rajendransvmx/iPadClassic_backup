@@ -267,10 +267,6 @@
     {
         [self.tempViewController reloadTableView];
     }
-
-
-    
-  
 }
 
 - (void)viewWillDisappear:(BOOL)animated
