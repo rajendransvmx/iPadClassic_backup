@@ -3,17 +3,21 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.111
+Version = 15.49.112
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-019074
+018999
+019561
+
+
 ---------------------
 
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
+2. Third Party App integration with ServiceMaxApp
 
 
