@@ -325,6 +325,8 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     SFMPageUrlFieldCollectionViewCell *cell = (SFMPageUrlFieldCollectionViewCell*) [cellContentView superview];
     UIApplication *ourApplication = [UIApplication sharedApplication];
     NSString *string = [self removeSpaceFromUrl:cell.fieldValue.text];
+    /* allowing url for special character, It was not opening with special character */
+    string =[string stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL *ourURL = [NSURL URLWithString:string];
     if ([ourApplication canOpenURL:ourURL])
     {
