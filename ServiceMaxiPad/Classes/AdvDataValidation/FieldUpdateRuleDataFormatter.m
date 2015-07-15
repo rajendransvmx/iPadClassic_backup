@@ -107,11 +107,13 @@
 - (void)fillDetailRuleInfo:(NSMutableDictionary *)mainRuleDict{
     @autoreleasepool {
         NSArray *detailLayouts = self.sfmPage.process.pageLayout.detailLayouts;
+        NSDictionary *components = self.sfmPage.process.component;
         for (SFMDetailLayout *detailLayout in detailLayouts) {
+            SFProcessComponentModel *componentModel = [components objectForKey:detailLayout.processComponentId];
             NSMutableDictionary *detailRuleDict = [NSMutableDictionary dictionary];
             [detailRuleDict setObject:detailLayout.pageLayoutId forKey:@"key"];
-            [detailRuleDict setObject:detailLayout.name forKey:@"id"];
-            [detailRuleDict setObject:detailLayout.name forKey:@"name"];
+            [detailRuleDict setObject:componentModel.targetObjectLabel forKey:@"id"];
+            [detailRuleDict setObject:componentModel.targetObjectLabel forKey:@"name"];
             
             NSMutableArray *rulesArray = [NSMutableArray array];
             
@@ -123,7 +125,7 @@
             }
             
             [detailRuleDict setObject:rulesArray forKey:@"rules"];
-            [mainRuleDict setObject:detailRuleDict forKey:detailLayout.name];
+            [mainRuleDict setObject:detailRuleDict forKey:componentModel.targetObjectLabel];
         }
     }
 }
