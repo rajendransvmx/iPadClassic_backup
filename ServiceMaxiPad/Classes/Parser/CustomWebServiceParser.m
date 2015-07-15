@@ -89,22 +89,25 @@
 {
     NSArray *actualRecordsArray = [self getRecordsArrayForObjectName:objectName andSFIDArray:sfidArray];
     NSMutableArray *updatedModelArray =[[NSMutableArray alloc] initWithCapacity:0];
-    
     for (TransactionObjectModel *model in actualRecordsArray)
     {
         NSMutableDictionary *actualModelDict = [model getFieldValueMutableDictionary];
         NSString *recordSFID = [actualModelDict objectForKey:kId];
         TransactionObjectModel *toBeUpdatedModel = [objectrecords objectForKey:recordSFID];
         NSMutableDictionary *toBeUpdatedDict = [toBeUpdatedModel getFieldValueMutableDictionary];
+        if ([toBeUpdatedDict objectForKey:kAttributeKey]) {
+            [toBeUpdatedDict removeObjectForKey:kAttributeKey];
+        }
         NSArray *toBeUpdatedAllKeys = [toBeUpdatedDict allKeys];
         
         for (NSString *keyString in toBeUpdatedAllKeys)
         {
             NSString *valueToBeUpdated = [toBeUpdatedDict valueForKey:keyString];
-            if (valueToBeUpdated != nil && [StringUtil isStringNotNULL:valueToBeUpdated] && [actualModelDict valueForKey:keyString])
+            if (![StringUtil isStringNotNULL:valueToBeUpdated])
             {
-                [actualModelDict setValue:valueToBeUpdated forKey:keyString];
+                valueToBeUpdated = @"";
             }
+            [actualModelDict setValue:valueToBeUpdated forKey:keyString];
         }
         [model setFieldValueDictionaryForFields:actualModelDict];
         [updatedModelArray addObject:model];
