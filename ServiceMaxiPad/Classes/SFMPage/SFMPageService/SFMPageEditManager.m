@@ -369,7 +369,37 @@
         NSMutableDictionary * eachDict = [[NSMutableDictionary alloc] init];
         for (SFObjectMappingComponentModel * mappingModel in mappingArray ) {
             
-            SFMRecordFieldData * recordField = [[SFMRecordFieldData alloc] initWithFieldName: mappingModel.targetFieldName value:mappingModel.mappingValue andDisplayValue:mappingModel.mappingValue];
+            /*  ===================================================  */
+                /*Defect: 018999, non translated display values */
+            /*  ===================================================  */
+            
+           
+            
+            NSString *displayValue = mappingModel.mappingValue;
+            NSString *internalValue = mappingModel.mappingValue;
+            
+            if(sfmPage.process.processInfo.processType != nil && [sfmPage.process.processInfo.processType isEqualToString:kProcessTypeStandAloneCreate])
+            {
+                NSString *pickListDisplayValue;
+                
+                id <SFPicklistDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
+              
+                    pickListDisplayValue = [picklistService getDisplayValueFromPicklistForObjectName:sfmPage.objectName withMappingCompenent:mappingModel];
+                if(pickListDisplayValue){
+                    
+                    /* update same value for both display and internal value */
+                    
+                    displayValue = pickListDisplayValue;
+                    internalValue = pickListDisplayValue;
+                    
+                }
+                
+            }
+            
+            /*  ===================================================  */
+                     /* END */
+            /*  ===================================================    */
+            SFMRecordFieldData * recordField = [[SFMRecordFieldData alloc] initWithFieldName: mappingModel.targetFieldName value:internalValue andDisplayValue:displayValue];
             
             if(mappingModel.targetFieldName != nil){
                 

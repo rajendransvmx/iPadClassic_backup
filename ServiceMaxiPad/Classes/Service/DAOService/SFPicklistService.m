@@ -14,6 +14,7 @@
 #import "DBRequestSelect.h"
 #import "DBRequestUpdate.h"
 #import "SQLResultSet.h"
+#import "SFObjectMappingComponentModel.h"
 
 @implementation SFPicklistService
 
@@ -162,6 +163,49 @@
     return resultSet;
 
 }
+
+-(NSString *) getDisplayValueFromPicklistForObjectName:(NSString *)objectName withMappingCompenent:(SFObjectMappingComponentModel *)mappingCompenent
+{
+ 
+    NSString *displayValue = nil;
+
+    DBCriteria * criteriaObjectName1 = [[DBCriteria alloc] initWithFieldName:kfieldname operatorType:SQLOperatorEqual andFieldValue:mappingCompenent.targetFieldName];
+    
+    DBCriteria * criteriaObjectName2 = [[DBCriteria alloc] initWithFieldName:kvalue operatorType:SQLOperatorEqual andFieldValue:mappingCompenent.mappingValue];
+    
+     DBCriteria * criteriaObjectName3 = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:objectName];
+    
+    
+    NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaObjectName1, criteriaObjectName2,criteriaObjectName3,
+                                  nil];
+    NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"label", nil];
+    
+    
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kSFPicklist andFieldNames:fieldNames whereCriterias:criteriaObjects andAdvanceExpression:@"(1 AND 2 AND 3)"];
+    
+    __block NSString *labelValue = nil;
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                labelValue = [resultSet stringForColumn:@"label"];
+                
+            }
+            [resultSet close];
+        }];
+    }
+    
+    displayValue = labelValue;
+    
+    return displayValue;
+}
+
 
 
 @end

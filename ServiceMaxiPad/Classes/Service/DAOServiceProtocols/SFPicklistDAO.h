@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CommonServiceDAO.h"
+#import "SFObjectMappingComponentModel.h"
 @class  DBCriteria;
 
 @protocol SFPicklistDAO <CommonServiceDAO>
@@ -26,5 +27,7 @@
 
 -(void)updateSFPicklistTable:(NSArray *)sfPickListTables;
 - (NSArray *)getListOfLaborActivityType;
+-(NSString *) getDisplayValueFromPicklistForObjectName:(NSString *)objectName withMappingCompenent:(SFObjectMappingComponentModel *)mappingCompenent;
+
 
 @end
