@@ -27,7 +27,7 @@
 
 
 + (NSString *)stringDayOfDate:(NSDate *)date;
-+ (NSString *)stringDayOfDate:(NSDate *)date WithTime:(NSDate *)time;
++ (NSString *)stringEventDetailDayOfDate:(NSDate *)date;
 + (NSString *)stringTimeOfDate:(NSDate *)date;
 + (NSDateComponents *)componentsOfCurrentDate;
 + (NSDateComponents *)componentsOfDate:(NSDate *)date;
@@ -40,6 +40,13 @@
 + (NSDate *)combineDate:(NSDate *)date withTime:(NSDate *)time;
 
 //Niraj: Defect number 017148
-+(NSString *)localStringFromDate:(NSDate *)date;
-//Niraj: Defect number 017148
++(NSString *)localDateTimeStringFromDate:(NSDate *)date;
++(NSString *)localDateTimeStringFromDate:(NSDate *)date inFormat:(NSString*)format;
+
++ (NSString *)stringTime12hrDate:(NSDate *)date;
++ (NSString *)stringWeekDayDate:(NSDate *)date;
++ (NSString *)stringMonthDate:(NSDate *)date;
++ (NSString *)stringDayDate:(NSDate *)date;
++ (NSString *)stringYearDate:(NSDate *)date;
+
 @end

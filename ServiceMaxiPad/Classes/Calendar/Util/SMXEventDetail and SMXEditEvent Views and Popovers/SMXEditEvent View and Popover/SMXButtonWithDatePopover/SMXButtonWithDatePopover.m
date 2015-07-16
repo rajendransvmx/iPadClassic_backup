@@ -80,9 +80,7 @@
 - (void)valueChanged:(NSDate *)newDate {
     
     NSDateComponents *compNewDate = newDate.componentsOfDate;
-    
     dateOfButton = [NSDate dateWithYear:compNewDate.year month:compNewDate.month day:compNewDate.day];
-    
     [self setTitle:[NSDate stringDayOfDate:dateOfButton] forState:UIControlStateNormal];
 }
 

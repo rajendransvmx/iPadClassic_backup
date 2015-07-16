@@ -445,8 +445,8 @@
 
 //    NSString *beginDate = [NSDate stringDayOfDate:event.dateTimeBegin WithTime:event.dateTimeBegin];
 //    NSString *endDate = [NSDate stringDayOfDate:event.dateTimeEnd WithTime:event.dateTimeEnd];
-    NSString *beginDate = [NSDate stringDayOfDate:event.dateTimeBegin_multi WithTime:event.dateTimeBegin_multi];
-    NSString *endDate = [NSDate stringDayOfDate:event.dateTimeEnd_multi WithTime:event.dateTimeEnd_multi];
+    NSString *beginDate = [NSDate stringEventDetailDayOfDate:event.dateTimeBegin_multi];
+    NSString *endDate = [NSDate stringEventDetailDayOfDate:event.dateTimeEnd_multi];
 
     [labelDate setText:[NSString stringWithFormat:@"%@ to %@", beginDate, endDate]];
     [labelDate setTextColor:LABEL_VALUE_COLOR];

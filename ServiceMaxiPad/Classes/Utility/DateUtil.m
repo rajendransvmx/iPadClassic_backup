@@ -31,6 +31,8 @@
 
 #import "TagConstant.h"
 #import "TagManager.h"
+#import "NSDate+SMXDaysCount.h"
+
 /** 2014-04-30T09:44:42.000+0000 */
 
 static NSString *kDateFormatForDatabase = @"%Y-%m-%dT%H:%M:%S.000%z";
@@ -341,7 +343,16 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     
     NSString * dateInString = nil;
     NSString *datePrefix = nil;
-    NSString *timeString = [self stringFromDate:date inFormat:kDateFormatType6];
+    NSString *timeString = nil;//[self stringFromDate:date inFormat:kDateFormatType6];
+    if ([self iSDeviceTime24HourFormat])
+    {
+        timeString = [NSDate stringTimeOfDate:date];
+    }
+    else
+    {
+        timeString = [NSDate stringTime12hrDate:date];
+    }
+    
     if ([date isToday]) {
         //Today
         datePrefix = [[TagManager sharedInstance] tagByName:kTag_Today];
@@ -352,7 +363,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         //Yesterday
         datePrefix = [[TagManager sharedInstance] tagByName:kTag_Yesterday];
     } else {
-        datePrefix = [self stringFromDate:date inFormat:kDateFormatType7];
+        datePrefix = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatType7];//[self stringFromDate:date inFormat:kDateFormatType7];
     }
     dateInString = [NSString stringWithFormat:@"%@ %@",datePrefix,[timeString lowercaseString]];
     return dateInString;
@@ -363,13 +374,14 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     
     NSString * dateInString = nil;
     NSString *datePrefix = nil;
-    BOOL is24Hr = [self iSDeviceTime24HourFormat];
     NSString *timeString = @"";
-    
-    if (is24Hr) {
-        timeString = [self stringFromDate:date inFormat:kDateFormatType24Hr];
-    } else {
-        timeString = [self stringFromDate:date inFormat:kDateFormatType6];
+    if ([self iSDeviceTime24HourFormat])
+    {
+        timeString = [NSDate stringTimeOfDate:date];
+    }
+    else
+    {
+        timeString = [NSDate stringTime12hrDate:date];
     }
     
     if ([date isToday]) {
@@ -382,7 +394,8 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         //Yesterday
         datePrefix = [[TagManager sharedInstance] tagByName:kTag_Yesterday];
     } else {
-        datePrefix = [self stringFromDate:date inFormat:kDateFormatType7];
+        datePrefix = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatType7];
+        //[self stringFromDate:date inFormat:kDateFormatType7];
     }
     
     dateInString = [NSString stringWithFormat:@"%@ %@",datePrefix,[timeString lowercaseString]];
@@ -421,7 +434,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         //Yesterday
         datePrefix = [[TagManager sharedInstance] tagByName:kTag_Yesterday];
     } else {
-        datePrefix = [self stringFromDate:date inFormat:kDateFormatType5];
+        datePrefix = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatType5];
     }
     dateInString = datePrefix;
     return dateInString;
@@ -504,6 +517,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 
 +(NSString *)getUserReadableDateForDateBaseDate:(NSString *)dateString
 {
+    /*
     NSString *userdateString = nil;
     
     if ([dateString length] > 0){
@@ -514,7 +528,9 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         }
     }
     return userdateString;
-    
+     */
+    //Anoop : 019268 017148 018047
+    return [NSDate localDateTimeStringFromDate:[DateUtil getUserReadableDateForDateBaseDateString:dateString]];
 }
 
 +(NSString *)getUserTimeFormat
@@ -546,7 +562,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     NSString *dateString = nil;
     NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateFormatDefault];
     if (date != nil) {
-        dateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+        dateString = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatForSFMEdit];//[DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
     }
     return dateString;
 }
@@ -593,7 +609,8 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     
 }
 
-+ (NSDate *)dateWithOutTime:(NSDate *)datDate{
++ (NSDate *)dateWithOutTime:(NSDate *)datDate
+{
     if( datDate == nil ) {
         datDate = [NSDate date];
     }
@@ -696,7 +713,15 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     
     NSString * dateInString = nil;
     NSString *datePrefix = nil;
-    NSString *timeString = [self stringFromDate:date inFormat:[self getDateTimeFormat]];
+    NSString *timeString = nil;//[self stringFromDate:date inFormat:kDateFormatType6];
+    if ([self iSDeviceTime24HourFormat])
+    {
+        timeString = [NSDate stringTimeOfDate:date];
+    }
+    else
+    {
+        timeString = [NSDate stringTime12hrDate:date];
+    }
     if ([date isToday]) {
         datePrefix = [[TagManager sharedInstance] tagByName:kTag_Today];
     } else if([date isTomorrow]) {
@@ -704,7 +729,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     } else if([date isYesterday]) {
         datePrefix = [[TagManager sharedInstance] tagByName:kTag_Yesterday];
     } else {
-        datePrefix = [self stringFromDate:date inFormat:kDateFormatType8];
+        datePrefix = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatType8];//[self stringFromDate:date inFormat:kDateFormatType8];
     }
     if ([datePrefix rangeOfString:@","].location == NSNotFound) {
         dateInString = [NSString stringWithFormat:@"%@, %@",datePrefix,timeString];
@@ -716,38 +741,33 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     return dateInString;
 }
 
-+ (NSString *)getDateTimeFormat
-{
-    NSString *format = nil;
-    if ([self iSDeviceTime24HourFormat]) {
-        format = kDateFormatType24Hr;
-    }
-    else {
-        format = kDateFormatType6;
-    }
-    return format;
-}
 
 + (NSString*)getLocalDateForGetpriceFromDateString:(NSString*)date
 {
     // NSString *date = @"Sun, 09 Mar 2015 12:00:52 AM"; //@"2015-03-08 06:00:09";
     NSString *localDateInString = nil;
-    NSDate *dateTime;
+    NSDate *dateTime = nil;
+    
     if (date != nil) {
+        
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"EEE, dd MMM yyyy hh:mm:ss a"];
-        NSLocale *locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-        [dateFormatter setLocale:locale];
-        [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+        [dateFormatter setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+        if([self iSDeviceTime24HourFormat])
+        {
+           [dateFormatter setDateFormat:@"EEE MMM dd, yyyy HH:mm"];
+        }
+        else
+        {
+           [dateFormatter setDateFormat:@"EEE MMM dd, yyyy hh:mm a"];
+        }
         dateTime = [dateFormatter dateFromString:date];
         
         NSDateFormatter *dateFormatterTwo = [[NSDateFormatter alloc] init];
-        [dateFormatterTwo setDateFormat:@"yyyy-MM-dd HH:mm:ss"]; // "2015-03-08 00:00:00"
-        [dateFormatterTwo setLocale:locale];
-        [dateFormatterTwo setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+        [dateFormatterTwo setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+        [dateFormatterTwo setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+        [dateFormatterTwo setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         localDateInString = [dateFormatterTwo stringFromDate:dateTime];
         return localDateInString;
-        
     }
     return nil;
 }

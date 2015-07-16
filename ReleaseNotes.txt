@@ -3,12 +3,14 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.020
+Version = 15.40.021
 ===========================================
 -------------
 Fixed Defects
 -------------
-018572 - Output document fail in Spring 15 SP App for iPad 4.
+018047 - On selecting a date from date picker ,date is displayed in english rather than the device language
+
+019268 - Get Price on the iPad not working
 
 -------------
 Known Issues
@@ -29,12 +31,7 @@ None
 Additional Notes
 ---------------------
 Changes Made :
-
-1. Fixed call back issue related to Get price request
-2. Removed field names from Datasync request calls
-3. Removed field empty (id)array for objects in TX_FETCH
-4. Fixed call back issue on SFM page layout request.
-5. Changed the schema for Pulse App communication.
+Local date format in all date time display fields.
  
 
 

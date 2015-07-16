@@ -10,6 +10,7 @@
 #import "StringUtil.h"
 #import "DateUtil.h"
 #import "MBProgressHUD.h"
+#import "NSDate+SMXDaysCount.h"
 
 @interface PageEditDateTimeFieldController ()
 
@@ -50,7 +51,6 @@
     self.dateTimePicker.backgroundColor = [UIColor whiteColor];
     self.dateTimePicker.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.dateTimePicker.datePickerMode = UIDatePickerModeDateAndTime;
-    
     [self.dateTimePicker addTarget:self action:@selector(pickerValueChanged:) forControlEvents:UIControlEventValueChanged];
     
     [self.view addSubview:self.dateTimePicker];
@@ -97,7 +97,8 @@
 {
     if (date != nil){
         NSString *internaValue = [DateUtil getSecZeroedDatabaseStringForDate:date];
-        NSString *dateString = [DateUtil getSecZeroedUserReadableDateForGMT:date];
+        //ANOOP 017148: [DateUtil getSecZeroedUserReadableDateForGMT:date];
+        NSString *dateString = [NSDate localDateTimeStringFromDate:date];
         if (![StringUtil isStringEmpty:dateString] && ![StringUtil isStringEmpty:internaValue])
         {
             self.recordData.displayValue = dateString;

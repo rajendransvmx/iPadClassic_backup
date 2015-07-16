@@ -136,11 +136,6 @@
             [urlRequest setValue:kContentType forHTTPHeaderField:@"content-type"];
             [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Accept-Encoding"];
             
-            
-            
-            
-
-            
             /** Set Header properties  */
             NSDictionary *otherHttpHeaders = [self httpHeaderParameters];
             NSArray *allKeys = [otherHttpHeaders allKeys];

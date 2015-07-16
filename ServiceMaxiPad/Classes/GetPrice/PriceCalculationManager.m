@@ -77,8 +77,9 @@
 - (NSString *)getCodeSnippet {
     
     @autoreleasepool {
-        NSString *codeSnipppet = [self getCodeSnippetFromDb];
         
+        NSString *codeSnipppet = [self getCodeSnippetFromDb];
+    
         codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&quot;" withString:@"\""];
         codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"&amp;" withString:@"&"];
         codeSnipppet = [codeSnipppet stringByReplacingOccurrencesOfString:@"\n" withString:@"  "];
