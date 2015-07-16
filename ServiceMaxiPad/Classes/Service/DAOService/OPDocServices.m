@@ -211,12 +211,62 @@
     return lTheDataArray;
 }
 
+-(NSMutableArray*)getDistinctTableNamesFromOpDocHTMLWithFields:(NSArray*)fieldNames withDistinctFlag:(BOOL)isDistinct {
+    
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:fieldNames whereCriteria:nil];
+    
+    if (isDistinct) {
+        
+        [requestSelect setDistinctRowsOnly];
+    }
+    
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSString *tableName = [resultSet stringForColumnIndex:0];
+                [records addObject:tableName];
+            }
+        }];
+    }
+    
+    return records;
+}
+
 - (NSMutableArray*)getWorkOrderNameWithTableName:(NSString*)tableName withRecordIdArray:(NSMutableArray*)recordIdArray {
     
     __block NSMutableArray *workOrderNamesArray = [[NSMutableArray alloc] initWithCapacity:0];
     
+    
+    NSString *columnName = kWorkOrderName;
+
+    BOOL isWorkOrerNameExits = [self isColumn:kWorkOrderName existInTable:tableName];
+    if (isWorkOrerNameExits == YES) {
+        columnName = kWorkOrderName;
+    } else {
+        
+        BOOL isCaseNumberColumnExits = [self isColumn:kCaseNameField existInTable:tableName];
+        
+        if (isCaseNumberColumnExits == YES) {
+            columnName = kCaseNameField;
+        } else {
+            columnName = nil;
+        }
+    }
+    
+    if (columnName == nil) {
+        return workOrderNamesArray;
+    }
+    
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorIn andFieldValues:recordIdArray];
-    DBRequestSelect *requestSelect = [[DBRequestSelect alloc] initWithTableName:tableName andFieldNames:[NSArray arrayWithObjects:kWorkOrderName,kLocalId, nil] whereCriteria:criteria];
+    DBRequestSelect *requestSelect = [[DBRequestSelect alloc] initWithTableName:tableName andFieldNames:[NSArray arrayWithObjects:columnName,kLocalId, nil] whereCriteria:criteria];
     
     
     @autoreleasepool {
@@ -231,7 +281,8 @@
             
             while ([resultSet next]) {
                 NSMutableDictionary *columnDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
-                [resultSet kvcMagic:columnDictionary];
+                [columnDictionary setObject:[resultSet stringForColumnIndex:0] forKey:kWorkOrderName];
+                [columnDictionary setObject:[resultSet stringForColumnIndex:1] forKey:kLocalId];
                 [workOrderNamesArray addObject:columnDictionary];
             }
             [resultSet close];
@@ -241,7 +292,28 @@
     return workOrderNamesArray;
 }
 
-
+- (BOOL)isColumn:(NSString *)columnName existInTable:(NSString*)tableName
+{
+    __block BOOL retValue = NO;
+    
+    DBRequestSelect *requestSelect = [[DBRequestSelect alloc] initWithTableName:tableName andFieldNames:[NSArray arrayWithObjects:columnName, nil] whereCriteria:nil];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                retValue = YES;
+            }
+            [resultSet close];
+        }];
+    }
+    return retValue;
+}
 -(BOOL)updateFileNameInTableForModel:(OPDocHTML*)model withNewFileName:(NSString *)lNewFileName
 {
     

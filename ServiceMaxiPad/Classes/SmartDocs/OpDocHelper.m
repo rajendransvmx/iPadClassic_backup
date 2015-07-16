@@ -669,15 +669,50 @@
         OPDocServices *lOPDocHTMLService = [[OPDocServices alloc] init];
         
         NSArray *opDocFiles = [self getHTMLFileList];
-        OPDocHTML *opDoctModel = [opDocFiles firstObject];
         
-        NSMutableArray *recordIdsArray = [[NSMutableArray alloc] initWithCapacity:0];
+        NSArray *fileds =[ [NSArray alloc] initWithObjects:@"objectName", nil];
         
-        for (OPDocHTML *opDocHTML in opDocFiles) {
-            [recordIdsArray addObject:opDocHTML.record_id];
+        NSArray *tableNames = [lOPDocHTMLService getDistinctTableNamesFromOpDocHTMLWithFields:fileds withDistinctFlag:YES];
+        
+        
+        
+        NSMutableArray *serviceReports = [[NSMutableArray alloc] initWithCapacity:0];
+
+        
+        for (NSString *tableName in tableNames) {
+            
+            NSMutableDictionary *reportsDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+            NSMutableArray *recordIdsArray = [[NSMutableArray alloc] initWithCapacity:0];
+            [reportsDictionary setObject:tableName forKey:@"tableName"];
+            for (OPDocHTML *opDocHTML in opDocFiles) {
+                
+                if([tableName isEqualToString:opDocHTML.objectName]) {
+                    [recordIdsArray addObject:opDocHTML.record_id];
+                }
+            }
+            [reportsDictionary setObject:recordIdsArray forKey:@"recordIds"];
+            [serviceReports addObject:reportsDictionary];
         }
         
-        NSMutableArray *workOrderNamesArray = [lOPDocHTMLService getWorkOrderNameWithTableName:opDoctModel.objectName withRecordIdArray:recordIdsArray];
+
+        NSMutableArray *workOrderNamesArray = [[NSMutableArray alloc] initWithCapacity:0];
+
+        for (NSDictionary *reportDictionary in serviceReports) {
+            
+            NSMutableArray *array = [lOPDocHTMLService getWorkOrderNameWithTableName:[reportDictionary objectForKey:@"tableName"] withRecordIdArray:[reportDictionary objectForKey:@"recordIds"]];
+            if (array.count == 0) {// If query fails to return the data then save recordIds.
+                array = [[NSMutableArray alloc] initWithCapacity:0];
+                for (NSString *recordId in [reportDictionary objectForKey:@"recordIds"]) {
+                    NSMutableDictionary *columnDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+                    [columnDictionary setObject:@"" forKey:kWorkOrderName];
+                    [columnDictionary setObject:recordId forKey:kLocalId];
+                    [array addObject:columnDictionary];
+                }
+            }
+            [workOrderNamesArray addObjectsFromArray:array];
+        }
+        
+        
         
         NSString *filePath = nil;
         NSMutableArray *fileNames = [[NSMutableArray alloc] initWithCapacity:0];
@@ -697,7 +732,12 @@
                         if ([recordId isEqualToString:opDocHTMLFile.record_id])
                         {
                             NSString *workOrderName = [columnDictionary valueForKey:kWorkOrderName];
-                            NSString *opDocAppendedName = [NSString stringWithFormat:@"%@_%@",workOrderName,opDocHTMLFile.Name];
+                            NSString *opDocAppendedName = nil;
+                            if ([workOrderName length] == 0 || workOrderName == nil) {
+                                opDocAppendedName = [NSString stringWithFormat:@"%@",opDocHTMLFile.Name];
+                            } else {
+                                opDocAppendedName = [NSString stringWithFormat:@"%@_%@",workOrderName,opDocHTMLFile.Name];
+                            }
                             [fileNames addObject:opDocAppendedName];
                             break;
                         }

@@ -643,6 +643,8 @@ const NSInteger alertViewTagForConfigSync   = 888889;
         reportsButton.layer.borderWidth = 0.8;
         [reportsButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
         reportsButton.enabled = NO;
+        
+        [self performSelectorOnMainThread:@selector(dismissPopoverOnMainThread) withObject:nil waitUntilDone:NO];
     }
     
     if (![StringUtil isStringEmpty:lastSyncDate])
@@ -745,6 +747,12 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     if ([self.popOver isPopoverVisible] && self.popOver != nil) {
         [self.popOver dismissPopoverAnimated:YES];
     }
+}
+- (void)dismissPopoverOnMainThread {
+    if ([self.popOver isPopoverVisible] && self.popOver != nil) {
+        [self.popOver dismissPopoverAnimated:YES];
+    }
+
 }
 
 @end
