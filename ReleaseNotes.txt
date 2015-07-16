@@ -3,15 +3,13 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.113
+Version = 15.49.114
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-019018 - Rollup Max/Min - Not working on iPad if its configured on Expense line.
-019175 - SVMX Formulas : Date functions are not handled on iPad.
-
+019903 - SVMX Formula: Not Working on Latest iPad build.
 
 ---------------------
 
@@ -19,5 +17,3 @@ Additional Notes
 ---------------------
 1. Namespace set to SVMXC
 2. Third Party App integration with ServiceMaxApp
-
-
