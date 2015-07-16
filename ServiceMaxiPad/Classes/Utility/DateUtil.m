@@ -31,6 +31,8 @@
 
 #import "TagConstant.h"
 #import "TagManager.h"
+#import "StringUtil.h"
+
 /** 2014-04-30T09:44:42.000+0000 */
 
 static NSString *kDateFormatForDatabase = @"%Y-%m-%dT%H:%M:%S.000%z";
@@ -770,6 +772,10 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 //For DateTime
 + (NSString*)getLocalDateTimeForFormulaFromDateString:(NSString*)dateTime
 {
+    // 019920
+    if([StringUtil isStringEmpty:dateTime]) {
+        return @"";
+    }
     NSString *userdateString = @"";
     NSDate * date = [DateUtil getDateFromDatabaseString:dateTime];
     if (date != nil) {
@@ -781,6 +787,10 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 //only for Date
 + (NSString*)getLocalDateForFormulaFromDateString:(NSString*)date
 {
+    // 019920
+    if ([StringUtil isStringEmpty:date]) {
+        return @"";
+    }
     NSString *userdateString = @"";
     NSDate * theDate = [DateUtil getDateFromDatabaseString:date];
     if (date != nil) {
