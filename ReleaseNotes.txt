@@ -8,9 +8,11 @@ Version = 15.40.021
 -------------
 Fixed Defects
 -------------
-018047 - On selecting a date from date picker ,date is displayed in english rather than the device language
+018047: 
+On selecting a date from date picker ,date is displayed in english rather than the device language
 
-019268 - Get Price on the iPad not working
+019268:
+Get Price Feature not working issue fixed. 
 
 -------------
 Known Issues
