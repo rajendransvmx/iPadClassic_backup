@@ -28,11 +28,13 @@
     if (![responseData isKindOfClass:[NSDictionary class]]) {
         return nil;
     }
-    BOOL isSuccess = [[responseData objectForKey:@"success"] intValue];
-    if(!isSuccess)
-    {
-        return nil;
-    }
+    
+   /* handling attempt to dereference a null objec for page layout Ids */
+//    BOOL isSuccess = [[responseData objectForKey:@"success"] intValue];
+//    if(!isSuccess)
+//    {
+//        return nil;
+//    }
     
     @synchronized([self class]){
         @autoreleasepool {
