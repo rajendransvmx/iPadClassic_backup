@@ -124,11 +124,8 @@
             SXLogWarning(@"Invalid post body parama for unidentified get price request");
             break;
     }
-    if(self.categoryType == CategoryTypeGetPriceData)
-    {
-        NSDictionary *lastSyncTimeDict = [self getLastSyncTimeForRecords];
-        paramObj.valueMap = [paramObj.valueMap arrayByAddingObject:lastSyncTimeDict];
-    }
+    NSDictionary *lastSyncTimeDict = [self getLastSyncTimeForRecords];
+    paramObj.valueMap = [paramObj.valueMap arrayByAddingObject:lastSyncTimeDict];
     
     return [NSArray arrayWithObject:paramObj];
 }

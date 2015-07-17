@@ -488,8 +488,7 @@ static NSString *GetPriceDataTwo = @"2";
         modelObj.objectName = objectName;
         modelObj.syncType = @"DataSync";
         modelObj.syncFlag = NO;
-        if ([[GetPriceManager sharedInstance] isGetPriceInProgress]
-            && self.categoryType == CategoryTypeGetPriceData)
+        if ([[GetPriceManager sharedInstance] isGetPriceInProgress])
         {
             modelObj.parallelSyncType = kParallelGetPriceSync;
         }
