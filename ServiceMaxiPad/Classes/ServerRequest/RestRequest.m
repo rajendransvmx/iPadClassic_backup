@@ -84,16 +84,13 @@
 
         if (requestIdentifierOfLastFailedRequest && requestIdentifierOfLastFailedRequest.length && requestType == RequestOneCallDataSync)
         {
-            self.requestIdentifier = requestIdentifierOfLastFailedRequest; // BUG #018451
-            NSLog(@"self.requestIdentifier re-used.: %@", self.requestIdentifier);
+            self.requestIdentifier = requestIdentifierOfLastFailedRequest;
 
         }
         else
         {
             self.requestIdentifier =  [AppManager generateUniqueId];
         }
-        
-        NSLog(@"self.requestIdentifier being used: %@", self.requestIdentifier);
 
         CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
         
@@ -186,7 +183,7 @@
                 
                 if (httpPostDictionary != nil) {
                     
-                    NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
+                    //NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
                     
                     NSData *someData = [NSJSONSerialization dataWithJSONObject:httpPostDictionary options:0 error:nil];
                     [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Content-Encoding"];

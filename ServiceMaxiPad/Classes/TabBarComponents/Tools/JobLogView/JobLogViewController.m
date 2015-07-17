@@ -104,12 +104,7 @@
         }
 
         [[AutoLockManager sharedManager] disableAutoLockSettingFor:pushLogsAL];
-
-        TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeJobLog
-                                                 requestParam:nil
-                                               callerDelegate:self];
-        [[TaskManager sharedInstance] addTask:taskModel];
-        
+        [self performSelectorInBackground:@selector(initiateJobLogInBackground) withObject:nil];
 
     }
     else
@@ -120,6 +115,14 @@
         SXLogError(@"Error: No logs to push");
     }
    
+}
+
+- (void)initiateJobLogInBackground
+{
+    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeJobLog
+                                             requestParam:nil
+                                           callerDelegate:self];
+    [[TaskManager sharedInstance] addTask:taskModel];
 }
 
 - (BOOL)isLogSettingsON {
