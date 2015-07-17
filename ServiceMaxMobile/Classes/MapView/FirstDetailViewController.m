@@ -1057,8 +1057,12 @@ static NSString * const GMAP_ANNOTATION_SELECTED = @"gMapAnnontationSelected";
          appDelegate.sfmPageController.processId = pinfo.process_id;
         [appDelegate.sfmPageController.detailView view];
        
-        [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
-        [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [self presentViewController:appDelegate.sfmPageController animated:YES completion:nil];
+            [appDelegate.sfmPageController.detailView didReceivePageLayoutOffline];
+        });
+        
     }
     else
     {
