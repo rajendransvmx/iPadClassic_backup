@@ -11,10 +11,14 @@
 
 @protocol SyncHeapDAO <CommonServiceDAO>
 
--(void)deleteRecordsForSfIds:(NSArray *)recordsIds;
--(NSArray *)getAllIdsFromHeapTableForObjectName:(NSString *) objectName  forLimit:(NSInteger)limi;
+-(void)deleteRecordsForSfIds:(NSArray *)recordsIds
+         forParallelSyncType:(NSString*)parallelSyncType;
+-(NSArray *)getAllIdsFromHeapTableForObjectName:(NSString *)objectName
+                                       forLimit:(NSInteger)limit
+                            forParallelSyncType:(NSString*)parallelSyncType;
 -(NSArray *)getDistinctObjectNames;
--(void)deleteRecordsFromHeap:(NSDictionary *)deletedIdsdict;
+-(void)deleteRecordsFromHeap:(NSDictionary *)deletedIdsdict
+         forParallelSyncType:(NSString*)parallelSyncType;
 -(NSArray*)getRecordsFromQuery:(NSString*)query;
 -(BOOL)doesRecordExistForId:(NSString *)recordId;
 

@@ -24,15 +24,16 @@
 @interface SyncRecordHeapModel : NSObject
 
 @property(nonatomic) BOOL syncFlag;
+@property(nonatomic, copy) NSString *sfId;
+@property(nonatomic, copy) NSString *localId;
+@property(nonatomic, copy) NSString *objectName;
+@property(nonatomic, copy) NSString *syncType;
+@property(nonatomic, copy) NSString *recordType;
+@property(nonatomic, copy) NSString *syncResponseType;
+@property(nonatomic, copy) NSString *parallelSyncType;
 
-@property(nonatomic, strong) NSString *sfId;
-@property(nonatomic, strong) NSString *localId;
-@property(nonatomic, strong) NSString *objectName;
-@property(nonatomic, strong) NSString *syncType;
-//@property(nonatomic, strong) NSString *jsonRecord;
-@property(nonatomic, strong) NSString *recordType;
-@property(nonatomic,strong) NSString *syncResponseType;
 
 - (id)init;
+
 
 @end

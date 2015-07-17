@@ -20,6 +20,7 @@
 #import "SMXImportantFilesForCalendar.h"
 #import "StringUtil.h"
 #import "TagManager.h"
+#import "DateUtil.h"
 
 @implementation NSDate (SMXDaysCount)
 
@@ -112,6 +113,7 @@
 + (NSString *)stringTimeOfDate:(NSDate *)date {
     
     NSDateFormatter *dateFormater = [NSDateFormatter new];
+     [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
     [dateFormater setDateFormat:@"HH:mm"];
     
     return [dateFormater stringFromDate:date];
@@ -120,7 +122,7 @@
 + (NSString *)stringTimeWithAMPMOfDate:(NSDate *)date {
     
     NSDateFormatter *dateFormater = [NSDateFormatter new];
-    [dateFormater setDateFormat:@"hh:mm:ss a"];//HS 3Jul15 Fix:018737
+    [dateFormater setDateFormat:@"hh:mm a"];
     
     NSString *lTime = [dateFormater stringFromDate:date];
     
@@ -130,34 +132,105 @@
     return lTime;
 }
 
-+ (NSString *)stringDayOfDate:(NSDate *)date {
-    
-    NSDateComponents *comp = [NSDate componentsOfDate:date];
-
-    //    return [NSString stringWithFormat:@"%@, %i/%i/%i", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:comp.weekday]], comp.day, comp.month, comp.year];
-    return [NSString stringWithFormat:@"%@ %@ %li, %li", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year];
++ (NSString *)stringDayOfDate:(NSDate *)date
+{
+    return [self localDateTimeStringFromDate:date];
+    /*
+     NSDateComponents *comp = [NSDate componentsOfDate:date];
+     return [NSString stringWithFormat:@"%@ %@ %li, %li", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year];
+     */
 }
 
-+ (NSString *)stringDayOfDate:(NSDate *)date WithTime:(NSDate *)time {
++ (NSString *)stringEventDetailDayOfDate:(NSDate *)date {
     
-    
-    NSDateComponents *comp = [NSDate componentsOfDate:date];
-    NSString *lTime = [NSDate stringTimeWithAMPMOfDate:time];
-    
-    //    return [NSString stringWithFormat:@"%@, %i/%i/%i", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:comp.weekday]], comp.day, comp.month, comp.year];
-    
-    return [NSString stringWithFormat:@"%@ %@ %li, %li  %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year, lTime]; ////HS 3Jul Fix:018737 ,removed "hyphen"
+    NSString *lTime = nil;
+    if ([DateUtil iSDeviceTime24HourFormat])
+    {
+        lTime = [NSDate localDateTimeStringFromDate:date inFormat:@"EEE MMM dd, yyyy - HH:mm"];
+    }
+    else
+    {
+        lTime = [NSDate localDateTimeStringFromDate:date inFormat:@"EEE MMM dd, yyyy - hh:mm a"];
+    }
+    return lTime;
+
 }
 
-//Niraj: Defect number 017148
-//Here we are modifying date with local tags
-+(NSString *)localStringFromDate:(NSDate *)date{
-    NSDateComponents *comp = [NSDate componentsOfDate:date];
-    NSString *lTime = [NSDate stringTimeWithAMPMOfDate:date];
-    //return [NSString stringWithFormat:@"%@, %li %@ %li - %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], (long)comp.day,[arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.year,lTime];
-    return [NSString stringWithFormat:@"%@ %@ %li, %li  %@", [dictWeekNumberName objectForKey:[NSNumber numberWithInt:(int)comp.weekday]], [arrayMonthNameAbrev objectAtIndex:comp.month-1], (long)comp.day, (long)comp.year, lTime]; //HS 3Jul Fix:018737 removed "hyphen"
++(NSString *)localDateTimeStringFromDate:(NSDate *)date
+{
+    NSString *lTime = nil;
+    if (date != nil) {
+        NSDateFormatter *dateFormater = [NSDateFormatter new];
+        [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+        if ([DateUtil iSDeviceTime24HourFormat]) {
+            [dateFormater setDateFormat:@"EEE MMM dd, yyyy HH:mm"];
+            lTime = [dateFormater stringFromDate:date];
+        }
+        else
+        {
+            [dateFormater setDateFormat:@"EEE MMM dd, yyyy hh:mm a"];
+            lTime = [dateFormater stringFromDate:date];
+        }
+    }
+    return lTime;
 }
-//Niraj: Defect number 017148
+
++(NSString *)localDateTimeStringFromDate:(NSDate *)date inFormat:(NSString*)format
+{
+    NSString *lTime = nil;
+    NSDateFormatter *dateFormater = [NSDateFormatter new];
+    [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+    [dateFormater setDateFormat:format];
+    lTime = [dateFormater stringFromDate:date];
+    
+    return lTime;
+}
+
++ (NSString *)stringTime12hrDate:(NSDate *)date {
+    
+    NSDateFormatter *dateFormater = [NSDateFormatter new];
+    [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+    [dateFormater setDateFormat:@"hh:mm a"];
+    NSString *lTime = [dateFormater stringFromDate:date];
+    return lTime;
+}
+
++ (NSString *)stringWeekDayDate:(NSDate *)date {
+    
+    NSDateFormatter *dateFormater = [NSDateFormatter new];
+    [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+    [dateFormater setDateFormat:@"EEE"];
+    NSString *weekDay = [dateFormater stringFromDate:date];
+    return weekDay;
+}
+
++ (NSString *)stringMonthDate:(NSDate *)date {
+    
+    NSDateFormatter *dateFormater = [NSDateFormatter new];
+    [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+    [dateFormater setDateFormat:@"MMM"];
+    NSString *month = [dateFormater stringFromDate:date];
+    return month;
+}
+
++ (NSString *)stringDayDate:(NSDate *)date {
+    
+    NSDateFormatter *dateFormater = [NSDateFormatter new];
+    [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+    [dateFormater setDateFormat:@"dd"];
+    NSString *day = [dateFormater stringFromDate:date];
+    return day;
+}
+
++ (NSString *)stringYearDate:(NSDate *)date {
+    
+    NSDateFormatter *dateFormater = [NSDateFormatter new];
+    [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
+    [dateFormater setDateFormat:@"yyyy"];
+    NSString *year = [dateFormater stringFromDate:date];
+    return year;
+}
+
 
 + (NSDateComponents *)componentsWithYear:(NSInteger)year month:(NSInteger)month day:(NSInteger)day {
     

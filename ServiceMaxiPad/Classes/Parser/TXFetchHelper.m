@@ -184,9 +184,12 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
    return isSucces;
 }
 
-- (NSMutableDictionary *)getIdListFromSyncHeapTableWithLimit:(NSInteger)overAllIdLimit {
-    @synchronized([self class]){
-        
+- (NSMutableDictionary *)getIdListFromSyncHeapTableWithLimit:(NSInteger)overAllIdLimit
+                                         forParallelSyncType:(NSString*)parallelSyncType
+{
+    
+    @synchronized([self class])
+    {
         @autoreleasepool {
             SyncHeapService *heapService = [[SyncHeapService alloc] init];
             
@@ -205,7 +208,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
                     NSString *objectName = objectModel.objectName;
                     NSMutableDictionary *idsDictionary = [[NSMutableDictionary alloc] init];
                     
-                    NSArray *syncRecordIdModels =  [heapService getAllIdsFromHeapTableForObjectName:objectName forLimit:numberOfRecordsPerObject];
+                    NSArray *syncRecordIdModels =  [heapService getAllIdsFromHeapTableForObjectName:objectName forLimit:numberOfRecordsPerObject forParallelSyncType:parallelSyncType];
                     for (SyncRecordHeapModel *idModel in syncRecordIdModels) {
                         if (![StringUtil isStringEmpty:idModel.sfId] ) {
                             [idsDictionary setObject:idModel.sfId forKey:idModel.sfId];
@@ -230,7 +233,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
                 
                 if ([objectIdsDictionary count] > 0) {
                     /* DELETE the BELOW IDS*/
-                    [heapService    deleteRecordsFromHeap:objectIdsDictionary];
+                    [heapService  deleteRecordsFromHeap:objectIdsDictionary forParallelSyncType:parallelSyncType];
                     return objectIdsDictionary;
                 }
                 return nil;
@@ -238,6 +241,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
         }
    }
 }
+
 - (NSArray *)getValueMapDictionary:(NSDictionary *)objectDictionary {
     /* Form a request parameters and get client info */
     NSMutableArray *valueMapArray = [[NSMutableArray alloc] init];

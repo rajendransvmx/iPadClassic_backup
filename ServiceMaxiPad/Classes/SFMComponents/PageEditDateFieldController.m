@@ -10,6 +10,7 @@
 #import "DateUtil.h"
 #import "StringUtil.h"
 #import "MBProgressHUD.h"
+#import "NSDate+SMXDaysCount.h"
 
 @interface PageEditDateFieldController ()
 
@@ -97,7 +98,7 @@
 {
     if (date != nil) {
         NSString *internaValue = [DateUtil stringFromDate:date inFormat:kDataBaseDate];
-        NSString *dateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+        NSString *dateString = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatForSFMEdit];//[DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
         if (![StringUtil isStringEmpty:dateString] && ![StringUtil isStringEmpty:internaValue])
         {
             self.recordData.displayValue = dateString;

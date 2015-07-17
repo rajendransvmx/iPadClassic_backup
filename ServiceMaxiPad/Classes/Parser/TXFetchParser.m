@@ -21,7 +21,8 @@
 @implementation TXFetchParser
 
 -(ResponseCallback*)parseResponseWithRequestParam:(RequestParamModel*)requestParamModel
-                                     responseData:(id)newResponseData{
+                                     responseData:(id)newResponseData
+{
     
     if (![newResponseData isKindOfClass:[NSDictionary class]]) {
         return nil;
@@ -125,9 +126,15 @@
         if (currentCount < kOverallIdLimit)
         {
             
-            NSMutableDictionary *objectListDictioanry =
-            [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount)];
-            
+            NSMutableDictionary *objectListDictioanry = nil;
+            if (self.categoryType == CategoryTypeGetPriceData)
+            {
+               [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:kParallelGetPriceSync];
+            }
+            else
+            {
+               [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:nil];
+            }
             
             for (NSString *eachObjectName in [objectListDictioanry allKeys]) {
                 

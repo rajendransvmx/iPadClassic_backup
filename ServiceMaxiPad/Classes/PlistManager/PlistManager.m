@@ -107,8 +107,8 @@ static NSString *const kPersistantStorageOneCallSyncTime              = @"one_ca
 static NSString *const kPersistantStorageOneCallSyncPutUpdateTime     = @"one_call_sync_put_update_time";
 static NSString *const kPersistantStorageOneCallSyncTemporaryTime     = @"one_call_sync_temp_time";
 static NSString *const kOneCallLastLocalid                            = @"kOneCallLastLocalid";
-
-static NSString *const kPersistantStorageInitialSyncTime             = @"InitailSyncTime";
+static NSString *const kPersistantStorageInitialSyncTime              = @"InitailSyncTime";
+static NSString *const kPersistantStorageGetPriceSyncTime                    = @"GetPriceSyncTime";
 
 static NSString *const kRefreshToken    = @"rfrt";
 
@@ -967,10 +967,25 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
 
 #pragma mark - Get/Set datetime for one call sync
 
++ (NSString *)getGetPriceSyncTime {
+    
+    return [[NSUserDefaults standardUserDefaults] stringForKey:kPersistantStorageGetPriceSyncTime];
+}
+
++ (void)storeGetPriceSyncTime:(NSString *)time {
+    
+    if (time != nil)
+    {
+        [[NSUserDefaults standardUserDefaults] setObject:time forKey:kPersistantStorageGetPriceSyncTime];
+        [[NSUserDefaults standardUserDefaults]  synchronize];
+    }
+}
+
 + (NSString *)getOneCallSyncTime {
 
       return [[NSUserDefaults standardUserDefaults] stringForKey:kPersistantStorageOneCallSyncTime];
 }
+
 + (void)storeOneCallSyncTime:(NSString *)time {
     if (time != nil) {
         [[NSUserDefaults standardUserDefaults] setObject:time forKey:kPersistantStorageOneCallSyncTime];

@@ -185,6 +185,7 @@ extern NSString *const kSVMXCallBack;
 extern NSString *const kName;
 extern NSString *const kSVMXContextKey;
 extern NSString *const kTimeLogKey;
+extern NSString *const kGetPriceContext;
 extern NSString *const kInItialSyncContext;
 extern NSString *const kConfigSyncContext;
 extern NSString *const kDataSyncContext;

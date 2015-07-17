@@ -90,6 +90,9 @@ extern  NSString *const kPreferenceOrganizationCustom;
 
 + (void)recordApplicationLaunchPoint;
 
++ (NSString *)getGetPriceSyncTime;
++ (void)storeGetPriceSyncTime:(NSString *)time;
+
 + (NSString *)getOneCallSyncTime;
 + (void)storeOneCallSyncTime:(NSString *)time;
 

@@ -8,4 +8,5 @@
 
 #import "SyncConstants.h"
 
+NSString *const kParallelGetPriceSync = @"GetPriceSync";
 

@@ -549,34 +549,16 @@ PageManagerErrorType;
 
 -(NSString *)getUserReadableDateTime:(NSString *)dateTime
 {
-    //Niraj: Defect number 017148
-    //return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
-    //return [self convertDateAndTime:[DateUtil getUserReadableDateForDateBaseDateString:dateTime]];//HS
-    NSString *dateStr = @"";
-    NSDate *date = [DateUtil getUserReadableDateForDateBaseDateString:dateTime];
-    //Fix:018714 for Null value
-    if (date != nil)
-    {
-        dateStr = [self convertDateAndTime:date];
-    }
-    return dateStr;
-    //return [self convertDateAndTime:[DateUtil getUserReadableDateForDateBaseDateString:dateTime]];
-
-    //Niraj: Defect number 017148
+     return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
 }
-
-//Niraj: Defect number 017148
--(NSString *)convertDateAndTime:(NSDate *)dateLoc{
-    return [NSDate localStringFromDate:dateLoc];;
-}
-//Niraj: Defect number 017148
 
 -(NSString *)getUserReadableDate:(NSString *)dateTime
 {
     NSString *dateString = nil;
     NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateFormatDefault];
     if (date != nil) {
-        dateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+        dateString = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatForSFMEdit];
+        //ANOOP 017148:[DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
     }
     return dateString;
 }
@@ -586,7 +568,8 @@ PageManagerErrorType;
     NSString *userdateString = @"";
     NSDate * date = [DateUtil getDateFromDatabaseString:datetime];
     if (date != nil) {
-        userdateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+        userdateString = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatForSFMEdit];
+        //ANOOP 017148:[DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
     }
     return userdateString;
 }
@@ -594,13 +577,9 @@ PageManagerErrorType;
 //For  Formulas Process
 -(NSString *)getUserReadableDateTimeFromFormula:(NSString *)dateTime
 {
-    NSString *dateString = nil;
-    NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateTimeFormatFormula];
-    if (date != nil) {
-        dateString = [NSDate localStringFromDate:date];
-    }
-    return dateString;
+   return [self getUserReadableDateTime:dateTime];
 }
+
 -(NSString *)getUserReadableDateFromFormula:(NSString *)dateTime
 {
     NSString *dateString = nil;
@@ -615,12 +594,7 @@ PageManagerErrorType;
 
 -(NSString *)getDBReadableDateTimeFromFormula:(NSString *)dateTime
 {
-    NSString *dateString = nil;
-    NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateTimeFormatFormula];
-    if (date != nil) {
-        dateString = [NSDate localStringFromDate:date];
-    }
-    return dateString;
+   return [self getUserReadableDateTime:dateTime];
 }
 
 -(NSString *)getDBDateFromFormula:(NSString *)dateTime

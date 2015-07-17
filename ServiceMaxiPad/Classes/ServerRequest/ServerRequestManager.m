@@ -72,6 +72,7 @@
         case CategoryTypeOneCallConfigSync:
         case CategoryTypeSFMSearch:
         case CategoryTypeResetApp:
+        case CategoryTypeGetPriceData:
         case CategoryTypeJobLog:                    // By default Yes :)
             isapplicable = YES;
             break;
@@ -134,6 +135,9 @@
         case CategoryTypeSFMSearch:
             contextValue = kSfmSearchContext;
             break;
+        case CategoryTypeGetPriceData:
+            contextValue = kGetPriceContext;
+            break;
             
         default:
             contextValue = @"--";
@@ -179,6 +183,7 @@
            /* Setting the next request type */
            RequestType nextNextRequestType =  [self getNextRequestForCategoryType:categoryType currenrRequest:nextServerRequest previousRequest:previousRequest];
            nextServerRequest.nextRequestType = nextNextRequestType;
+           nextServerRequest.categoryType = categoryType;
            return nextServerRequest;
        }
 }
@@ -755,8 +760,19 @@
             nextRequestType = RequestGetPriceDataTypeThree;
             break;
         case RequestGetPriceDataTypeThree:
-            nextRequestType = RequestTypeNone;
+            nextRequestType = RequestCleanUpSelect;
             break;
+        case RequestCleanUpSelect:
+            nextRequestType = RequestTXFetch;
+            break;
+        case RequestTXFetch:
+            nextRequestType = RequestCleanUp;
+            break;
+        case RequestCleanUp:
+            nextRequestType = RequestSyncTimeLogs;
+            break;
+        case RequestSyncTimeLogs:
+            nextRequestType = RequestTypeNone;
         default:
             break;
     }

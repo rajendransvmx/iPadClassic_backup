@@ -13,6 +13,8 @@
 #import "FactoryDAO.h"
 #import "SyncHeapDAO.h"
 #import "RequestParamModel.h"
+#import "GetPriceManager.h"
+#import "SyncConstants.h"
 
 static NSString *GetPriceDataZero = @"0";
 static NSString *GetPriceDataOne = @"1";
@@ -486,6 +488,11 @@ static NSString *GetPriceDataTwo = @"2";
         modelObj.objectName = objectName;
         modelObj.syncType = @"DataSync";
         modelObj.syncFlag = NO;
+        if ([[GetPriceManager sharedInstance] isGetPriceInProgress]
+            && self.categoryType == CategoryTypeGetPriceData)
+        {
+            modelObj.parallelSyncType = kParallelGetPriceSync;
+        }
         
         // To avoid duplicates
         [heapDictionary setObject:modelObj forKey:recordId];

@@ -207,7 +207,7 @@ NSString *const kTaskPriorityHigh = @"High";
                     
                     if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)] && [syncHeapService conformsToProtocol:@protocol(SyncHeapDAO)]) {
                         
-                        [syncHeapService deleteRecordsForSfIds:@[model.sfId]];
+                        [syncHeapService deleteRecordsForSfIds:@[model.sfId] forParallelSyncType:nil];
                         
                         // delete conflict entry if task is deleted..
                         [editHelper deleteRecordWithIds:@[model.sfId] fromObjectName:kSyncErrorConflictTableName andCriteriaFieldName:kSyncRecordSFId];

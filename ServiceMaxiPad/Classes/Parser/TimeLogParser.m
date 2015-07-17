@@ -44,7 +44,7 @@
         
         if ([responseData isKindOfClass:[NSDictionary class]])
         {
-            [[TimeLogCacheManager sharedInstance] clearAllFailureList];
+            [[TimeLogCacheManager sharedInstance] clearAllFailureListforCategoryType:self.categoryType];
             NSArray *valueMaps = [responseData objectForKey:kSVMXRequestSVMXMap];
             if ([valueMaps count] > 0) {
                 for (NSDictionary *dictObj in valueMaps) {
@@ -53,8 +53,8 @@
                     if (![string isKindOfClass:[NSNull class]] && [string isEqualToString:kTimeLogRequestID]) {
                         for (NSString *logId in  [dictObj valueForKey:kSVMXRequestValues]) {
                             
-                            [[TimeLogCacheManager sharedInstance] deleteLogEntryForId:logId];
-                            SXLogDebug(@"TIME_LOG_CACHE %@",[[TimeLogCacheManager sharedInstance] getAllLogEntry]);
+                            [[TimeLogCacheManager sharedInstance] deleteLogEntryForId:logId forCategoryType:self.categoryType];
+                            SXLogDebug(@"TIME_LOG_CACHE %@",[[TimeLogCacheManager sharedInstance] getAllLogEntryforCategoryType:self.categoryType]);
                         }
                         
                     }

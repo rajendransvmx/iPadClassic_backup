@@ -361,7 +361,7 @@
             NSString *contextValue =  [[ServerRequestManager sharedInstance]
                                        getTheContextvalueForCategoryType:self.categoryType];
             
-            finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
+            finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue forCategoryType:self.categoryType];
         }
         
         requestParamModel.valueMap = finalarray;
@@ -570,7 +570,7 @@
         TXFetchHelper *helper = [[TXFetchHelper alloc] init];
         NSMutableArray *requestParams = [[NSMutableArray alloc] init];
         for (int counter = 0;counter < requestCount;counter++) {
-            NSDictionary *recordIdDict =  [helper getIdListFromSyncHeapTableWithLimit:kOverallIdLimit];
+            NSDictionary *recordIdDict =  [helper getIdListFromSyncHeapTableWithLimit:kOverallIdLimit forParallelSyncType:nil];
             if ([recordIdDict count] <= 0) {
                 break;
             }

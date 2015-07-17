@@ -12,16 +12,31 @@
 #import "SyncRecordHeapModel.h"
 #import "SQLResultSet.h"
 #import "DBRequestDelete.h"
+
 @implementation SyncHeapService
 
 - (NSString *)tableName
 {
     return @"Sync_Records_Heap";
 }
-- (NSArray *)getAllIdsFromHeapTableForObjectName:(NSString *) objectName  forLimit:(NSInteger)limit
+
+-(NSArray *)getAllIdsFromHeapTableForObjectName:(NSString *)objectName
+                                       forLimit:(NSInteger)limit
+                            forParallelSyncType:(NSString*)parallelSyncType;
 {
-    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
-    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:[NSArray arrayWithObjects:@"sfId", nil] whereCriteria:criteria1];
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
+    DBRequestSelect * requestSelect = nil;
+    if (parallelSyncType != nil && ![parallelSyncType isKindOfClass:[NSNull class]])
+    {
+        DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:@"parallelSyncType" operatorType:SQLOperatorEqual andFieldValue:parallelSyncType];
+        requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:[NSArray arrayWithObjects:@"sfId", nil] whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:@"1 AND 2"];
+    }
+    else
+    {
+        DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:@"parallelSyncType" operatorType:SQLOperatorIsNull andFieldValue:nil];
+        requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:[NSArray arrayWithObjects:@"sfId", nil] whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:@"1 AND 2"];
+    }
+    
     if(limit != 0)
     {
         [requestSelect setLimit:limit];
@@ -29,7 +44,7 @@
     [requestSelect setDistinctRowsOnly];
     
     return [self getRecordsFromQuery:[requestSelect query]];
-
+ 
 }
 
 -(NSArray *)getDistinctObjectNames
@@ -43,14 +58,23 @@
     return nil;
 }
 
-
-
 -(void)deleteRecordsForSfIds:(NSArray *)recordsIds
+         forParallelSyncType:(NSString*)parallelSyncType
 {
     DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:@"sfId" operatorType:SQLOperatorIn andFieldValues:recordsIds];
-    DBRequestDelete *requestDelete = [[DBRequestDelete alloc] initWithTableName:[self tableName] whereCriteria:[NSArray arrayWithObject:criteriaOne] andAdvanceExpression:nil];
-    [self executeStatement:[requestDelete query]];
+    DBRequestDelete *requestDelete = nil;
     
+    if (parallelSyncType != nil && ![parallelSyncType isKindOfClass:[NSNull class]])
+    {
+        DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:@"parallelSyncType" operatorType:SQLOperatorEqual andFieldValue:parallelSyncType];
+        requestDelete = [[DBRequestDelete alloc] initWithTableName:[self tableName] whereCriteria:@[criteriaOne, criteriaTwo] andAdvanceExpression:nil];
+    }
+    else
+    {
+        DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:@"parallelSyncType" operatorType:SQLOperatorIsNull andFieldValue:nil];
+        requestDelete = [[DBRequestDelete alloc] initWithTableName:[self tableName] whereCriteria:@[criteriaOne, criteriaTwo] andAdvanceExpression:nil];
+    }
+    [self executeStatement:[requestDelete query]];
 }
 
 - (NSArray*)getRecordsFromQuery:(NSString*)query
@@ -74,16 +98,17 @@
 }
 
 -(void)deleteRecordsFromHeap:(NSDictionary *)deletedIdsdict
+         forParallelSyncType:(NSString*)parallelSyncType
 {
-    NSMutableArray * idsArray = [[NSMutableArray alloc] init];
-    
+    NSMutableArray * idsArray = [[NSMutableArray alloc] initWithCapacity:0];
     NSArray * allkeys = [deletedIdsdict allKeys];
     
-    for (NSString * objName in allkeys ) {
+    for (NSString * objName in allkeys )
+    {
         NSDictionary  *idsListDict = [deletedIdsdict objectForKey:objName];
         [idsArray addObjectsFromArray:[idsListDict allKeys]];
     }
-   [self deleteRecordsForSfIds:idsArray];
+   [self deleteRecordsForSfIds:idsArray forParallelSyncType:parallelSyncType];
 }
 
 - (BOOL)doesRecordExistForId:(NSString *)recordId {

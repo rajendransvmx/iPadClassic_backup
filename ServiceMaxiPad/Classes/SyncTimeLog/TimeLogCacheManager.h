@@ -18,6 +18,8 @@
 
 #import <Foundation/Foundation.h>
 #import "TimeLogModel.h"
+#import "SyncConstants.h"
+
 @interface TimeLogCacheManager : NSObject
 
 + (instancetype) sharedInstance;
@@ -38,7 +40,8 @@
  * @return void
  *
  */
-- (void) logEntryForSyncResponceTime:(TimeLogModel *)modelObject;
+- (void) logEntryForSyncResponceTime:(TimeLogModel *)modelObject
+                     forCategoryType:(CategoryType)categoryType;
 
 /**
  * @name  <deleteLogEntryForId>
@@ -53,7 +56,8 @@
  * @return void
  *
  */
-- (void) deleteLogEntryForId:(NSString *)logId;
+- (void) deleteLogEntryForId:(NSString *)logId
+             forCategoryType:(CategoryType)categoryType;
 
 /**
  * @name  <getLogEntry>
@@ -68,7 +72,7 @@
  * @return void
  *
  */
-- (NSDictionary *) getLogEntry;
+- (NSDictionary *) getLogEntryforCategoryType:(CategoryType)categoryType;
 
 /**
  * @name  <getAllLogEntry>
@@ -80,7 +84,7 @@
  * @return complete cache in request format
  *
  */
-- (NSDictionary *) getAllLogEntry;
+- (NSDictionary *) getAllLogEntryforCategoryType:(CategoryType)categoryType;
 
 /**
  * @name  <isCacheEmpty>
@@ -92,7 +96,7 @@
  * @return empty/non empty
  *
  */
-- (BOOL) isCacheEmpty;
+- (BOOL) isCacheEmptyforCategoryType:(CategoryType)categoryType;
 
 /**
  * @name  <getRequestParameterForLogging>
@@ -105,7 +109,9 @@
  *
  */
 
-- (NSArray *)getRequestParameterForTimeLogWithCategory:(NSString *)category;
+- (NSArray *)getRequestParameterForTimeLogWithCategory:(NSString *)category
+                                       forCategoryType:(CategoryType)categoryType;
+
 /**
  * @name  <getCompleteLogEntry>
  *
@@ -116,8 +122,9 @@
  * @return empty/non empty
  *
  */
-- (NSArray *) getCompleteLogEntry;
+- (NSArray *) getCompleteLogEntryforCategoryType:(CategoryType)categoryType;
 
-- (void) addEntryToFailureList:(NSString *)requestId;
-- (void) clearAllFailureList;
+- (void) addEntryToFailureList:(NSString *)requestId forCategoryType:(CategoryType)categoryType;
+- (void) clearAllFailureListforCategoryType:(CategoryType)categoryType;;
+
 @end

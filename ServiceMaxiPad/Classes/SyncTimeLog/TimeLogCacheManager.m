@@ -15,8 +15,13 @@
 @interface TimeLogCacheManager ()
 
 @property (nonatomic, strong) NSMutableDictionary *timeCacheDictionary;
-@property (nonatomic, strong) NSMutableArray      *logIdArray;
-@property (nonatomic, strong) NSMutableArray      *syncRequestIdForFailure;
+@property (nonatomic, strong) NSMutableDictionary *getPriceTimeCacheDictionary;
+
+@property (nonatomic, strong) NSMutableArray      *logIdTimeCacheArray;
+@property (nonatomic, strong) NSMutableArray      *logIdGetPriceTimeCacheArray;
+
+@property (nonatomic, strong) NSMutableArray      *syncRequestTimeCacheIdForFailure;
+@property (nonatomic, strong) NSMutableArray      *syncRequestGetPriceTimeCacheIdForFailure;
 
 @end
 
@@ -35,7 +40,7 @@
     return sharedInstance;
 }
 - (instancetype) initInstance {
-
+    
     self = [super init];
     return self;
 }
@@ -43,31 +48,75 @@
 - (void)dealloc {
     // Should never be called, but just here for clarity really.
 }
-- (void)addEntryToFailureList:(NSString *)requestId {
-    if (self.syncRequestIdForFailure == nil) {
-        self.syncRequestIdForFailure = [[NSMutableArray alloc] init];
+
+- (void)addEntryToFailureList:(NSString *)requestId
+              forCategoryType:(CategoryType)categoryType
+{
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        if (self.syncRequestGetPriceTimeCacheIdForFailure == nil) {
+            self.syncRequestGetPriceTimeCacheIdForFailure = [[NSMutableArray alloc] initWithCapacity:0];
+        }
+        [self.syncRequestGetPriceTimeCacheIdForFailure addObject:requestId];
     }
-    [self.syncRequestIdForFailure addObject:requestId];
+    else
+    {
+        if (self.syncRequestTimeCacheIdForFailure == nil) {
+            self.syncRequestTimeCacheIdForFailure = [[NSMutableArray alloc] initWithCapacity:0];
+        }
+        [self.syncRequestTimeCacheIdForFailure addObject:requestId];
+    }
 }
-- (void) clearAllFailureList {
-    
-    [self.syncRequestIdForFailure removeAllObjects];
-    self.syncRequestIdForFailure = nil;
+
+- (void) clearAllFailureListforCategoryType:(CategoryType)categoryType
+{
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        [self.syncRequestGetPriceTimeCacheIdForFailure removeAllObjects];
+        self.syncRequestGetPriceTimeCacheIdForFailure = nil;
+    }
+    else
+    {
+        [self.syncRequestTimeCacheIdForFailure removeAllObjects];
+        self.syncRequestTimeCacheIdForFailure = nil;
+    }
 }
+
 #pragma mark - Cache method
-- (void) logEntryForSyncResponceTime:(TimeLogModel *)modelObject {
+- (void) logEntryForSyncResponceTime:(TimeLogModel *)modelObject
+                     forCategoryType:(CategoryType)categoryType {
     
     if (modelObject.timeT4 == nil || modelObject.timeT5 == nil ) {
         return;
     }
-    if (self.logIdArray == nil) {
-        self.logIdArray = [[NSMutableArray alloc] init];
+    
+    NSMutableArray *logIdArray = nil;
+    NSMutableDictionary *cacheDictionary = nil;
+    
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        if (self.logIdGetPriceTimeCacheArray == nil) {
+            self.logIdGetPriceTimeCacheArray = [[NSMutableArray alloc] init];
+        }
+        if (self.getPriceTimeCacheDictionary == nil) {
+            self.getPriceTimeCacheDictionary = [[NSMutableDictionary alloc] init];
+        }
+        logIdArray = self.logIdGetPriceTimeCacheArray;
+        cacheDictionary = self.getPriceTimeCacheDictionary;
     }
-    if (self.timeCacheDictionary == nil) {
-        self.timeCacheDictionary = [[NSMutableDictionary alloc] init];
+    else
+    {
+        if (self.logIdTimeCacheArray == nil) {
+            self.logIdTimeCacheArray = [[NSMutableArray alloc] init];
+        }
+        if (self.timeCacheDictionary == nil) {
+            self.timeCacheDictionary = [[NSMutableDictionary alloc] init];
+        }
+        logIdArray = self.logIdTimeCacheArray;
+        cacheDictionary = self.timeCacheDictionary;
     }
     
-    NSMutableDictionary *dictionary = [self.timeCacheDictionary objectForKey:modelObject.timeLogIdvalue]; //if anything is available already
+    NSMutableDictionary *dictionary = [cacheDictionary objectForKey:modelObject.timeLogIdvalue];
     if (dictionary == nil) {
         
         dictionary = [[NSMutableDictionary alloc] init];
@@ -76,29 +125,61 @@
     [dictionary setObject:modelObject.timeT5 forKey:kTimeT5];
     [dictionary setObject:modelObject.syncRequestStatus forKey:kTimeLogStatus];
     
-    [self.timeCacheDictionary setObject:dictionary forKey:modelObject.timeLogIdvalue];
+    [cacheDictionary setObject:dictionary forKey:modelObject.timeLogIdvalue];
     
-    [self.logIdArray addObject:modelObject.timeLogIdvalue];
+    [logIdArray addObject:modelObject.timeLogIdvalue];
 }
-- (void) deleteLogEntryForId:(NSString *)logId {
+
+- (void) deleteLogEntryForId:(NSString *)logId
+             forCategoryType:(CategoryType)categoryType
+{
+    NSMutableArray *logIdArray = nil;
+    NSMutableDictionary *cacheDictionary = nil;
     
-    NSMutableDictionary *dictionary = [self.timeCacheDictionary objectForKey:logId];
-    if (dictionary != nil) {
-        [self.timeCacheDictionary removeObjectForKey:logId];
-        [self.logIdArray removeObject:logId];
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        logIdArray = self.logIdGetPriceTimeCacheArray;
+        cacheDictionary = self.getPriceTimeCacheDictionary;
+    }
+    else
+    {
+        logIdArray = self.logIdTimeCacheArray;
+        cacheDictionary = self.timeCacheDictionary;
+    }
+    
+    NSMutableDictionary *dictionary = [cacheDictionary objectForKey:logId];
+    if (dictionary != nil)
+    {
+        [cacheDictionary removeObjectForKey:logId];
+        [logIdArray removeObject:logId];
     }
 }
-- (NSDictionary *) getLogEntry {
+
+- (NSDictionary *) getLogEntryforCategoryType:(CategoryType)categoryType
+{
+    NSMutableArray *logIdArray = nil;
+    NSMutableDictionary *cacheDictionary = nil;
     
-    NSString *logId = [self.logIdArray lastObject];
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        logIdArray = self.logIdGetPriceTimeCacheArray;
+        cacheDictionary = self.getPriceTimeCacheDictionary;
+    }
+    else
+    {
+        logIdArray = self.logIdTimeCacheArray;
+        cacheDictionary = self.timeCacheDictionary;
+    }
+    
+    NSString *logId = [logIdArray lastObject];
     NSMutableDictionary *logIDDict = nil;
-    if ([self.timeCacheDictionary count] > 0 && logId.length > 0) {
+    if ([cacheDictionary count] > 0 && logId.length > 0) {
         
         logIDDict = [[NSMutableDictionary alloc] init];
-        NSDictionary * tempDict = [self.timeCacheDictionary objectForKey:logId];
+        NSDictionary * tempDict = [cacheDictionary objectForKey:logId];
         NSString * t4TimeStamp  = [tempDict objectForKey:kTimeT4];
         NSString * t5TimeStamp  = [tempDict objectForKey:kTimeT5];
-
+        
         NSMutableDictionary * t4Dict = [[NSMutableDictionary alloc] init];
         [t4Dict setObject:kTimeT4 forKey:kSVMXRequestKey];
         [t4Dict setObject:t4TimeStamp forKey:kSVMXRequestValue];
@@ -106,35 +187,72 @@
         NSMutableDictionary * t5Dict = [[NSMutableDictionary alloc] init];
         [t5Dict setObject:kTimeT5 forKey:kSVMXRequestKey];
         [t5Dict setObject:t5TimeStamp forKey:kSVMXRequestValue];
-
+        
         [logIDDict setValue:@[t4Dict,t5Dict] forKey:logId];
     }
     return logIDDict;
 }
-- (NSDictionary *) getAllLogEntry {
-    return self.timeCacheDictionary;
-}
-- (BOOL) isCacheEmpty {
-    if ([self.timeCacheDictionary count] == 0) {
-        return YES;
+
+- (NSDictionary *)getAllLogEntryforCategoryType:(CategoryType)categoryType
+{
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        return self.getPriceTimeCacheDictionary;
     }
-    return NO;
+    else
+    {
+        return self.timeCacheDictionary;
+    }
 }
+
+- (BOOL) isCacheEmptyforCategoryType:(CategoryType)categoryType
+{
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        if ([self.getPriceTimeCacheDictionary count] == 0) {
+            return YES;
+        }
+        return NO;
+    }
+    else
+    {
+        if ([self.timeCacheDictionary count] == 0) {
+            return YES;
+        }
+        return NO;
+    }
+}
+
 #pragma mark - Get entry for request parameter
 //special request parameters
--(NSArray *) getCompleteLogEntry {
+-(NSArray *) getCompleteLogEntryforCategoryType:(CategoryType)categoryType
+{
+    NSMutableArray *logIdArray = nil;
+    NSMutableArray *failureIdArray = nil;
+    NSMutableDictionary *cacheDictionary = nil;
     
-    NSMutableArray *finalArray = [[NSMutableArray alloc]init];
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        logIdArray = self.logIdGetPriceTimeCacheArray;
+        cacheDictionary = self.getPriceTimeCacheDictionary;
+        failureIdArray = self.syncRequestGetPriceTimeCacheIdForFailure;
+    }
+    else
+    {
+        logIdArray = self.logIdTimeCacheArray;
+        cacheDictionary = self.timeCacheDictionary;
+        failureIdArray = self.syncRequestTimeCacheIdForFailure;
+    }
     
-    NSDictionary *attributeValue = [[NSDictionary alloc]initWithObjectsAndKeys:ktimeLogType,kRequestTypeKey , nil];
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *dictFailure = [[NSMutableDictionary alloc] init];
-    for (NSString *logid in self.logIdArray) {
+    NSMutableArray *finalArray = [[NSMutableArray alloc] initWithCapacity:0];
+    NSDictionary *attributeValue = [[NSDictionary alloc] initWithObjectsAndKeys:ktimeLogType,kRequestTypeKey , nil];
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    NSMutableDictionary *dictFailure = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    for (NSString *logid in logIdArray) {
         
-        NSDictionary *logDict = [self.timeCacheDictionary objectForKey:logid];
-        
-        NSMutableDictionary *finalValueDict = [[NSMutableDictionary alloc] init];
-        
+        NSDictionary *logDict = [cacheDictionary objectForKey:logid];
+        NSMutableDictionary *finalValueDict = [[NSMutableDictionary alloc] initWithCapacity:0];
         [finalValueDict setObject:attributeValue forKey:kAttributeKey];
         
         //Special request we need to send in format required compatible with salesforce.
@@ -146,10 +264,10 @@
         
         //        NSDate *dateT5 =[DateUtil dateFromString:[logDict objectForKey:kTimeT5] inFormat:kDateFormatType1];
         //        NSString *dateStringT5 = [DateUtil stringFromDate:dateT5 inFormat:kDateFormatType4];
-
+        
         NSString *dateStringT5 = [[logDict objectForKey:kTimeT5] stringByReplacingOccurrencesOfString:@" " withString:@"T"];
         
-
+        
         [finalValueDict setObject:dateStringT4 forKey:kTimeLogClientReceivingTimeStamp];
         [finalValueDict setObject:dateStringT5 forKey:kTimeLogClientProcessingTimeStamp];
         [finalValueDict setObject:[logDict objectForKey:kTimeLogStatus] forKey:kTimeLogStatus];
@@ -163,11 +281,11 @@
         NSString *jsonString = [self jsonStringForArray:finalArray WithPrettyPrint:YES];
         [dict setObject:jsonString forKey:kSVMXRequestValue];
         
-        if ([self.syncRequestIdForFailure count] > 0) {
+        if ([failureIdArray count] > 0) {
             
             [dictFailure setObject:kTimeLogFailureID forKey:kSVMXRequestKey];
-           // NSString *jsonArray = [self jsonStringForArray:self.syncRequestIdForFailure WithPrettyPrint:YES];
-            [dictFailure setObject:self.syncRequestIdForFailure forKey:kSVMXRequestValues];
+            // NSString *jsonArray = [self jsonStringForArray:self.syncRequestTimeCacheIdForFailure WithPrettyPrint:YES];
+            [dictFailure setObject:failureIdArray forKey:kSVMXRequestValues];
         }
         if ([dictFailure count] > 0) {
             return @[dict,dictFailure];
@@ -201,7 +319,7 @@
  *
  * \par
  *  <Longer description starts here>
- *  Adding t1,t4,t5,logID,category to the request 
+ *  Adding t1,t4,t5,logID,category to the request
  *
  *
  *
@@ -210,24 +328,25 @@
  */
 
 - (NSArray *)getRequestParameterForTimeLogWithCategory:(NSString *)category
+                                       forCategoryType:(CategoryType)categoryType
 {
     //T1 - time.
     NSString *timeT1 = [DateUtil gmtStringFromDate:[NSDate date] inFormat:kDateFormatType1];
     //[DateUtil stringFromDate:[NSDate date] inFormat:kDateFormatType1];
-
+    
     //key - t1 value - t1 timestamp
     NSDictionary *t1 = @{kSVMXRequestKey:kTimeT1, kSVMXRequestValue:timeT1};
     NSDictionary *context = @{kSVMXRequestKey:kSVMXContextKey, kSVMXRequestValue:category};
-
+    
     //t4 + t5
-    NSDictionary *dictForRequestParameter = [self getLogEntry];
+    NSDictionary *dictForRequestParameter = [self getLogEntryforCategoryType:categoryType];
     
     NSDictionary *t45Dict = nil;
     
     if (dictForRequestParameter != nil) {
         
         NSString *logId = (dictForRequestParameter.count > 0) ? [[dictForRequestParameter allKeys] lastObject] : nil;
-      
+        
         
         NSArray * internalValues = [dictForRequestParameter objectForKey:logId];
         
@@ -239,9 +358,9 @@
             t45Dict = nil;
         }
         else {
-            [self deleteLogEntryForId:logId];
+            [self deleteLogEntryForId:logId forCategoryType:categoryType];
         }
-
+        
     }
     NSArray *result = nil;
     if (t45Dict) {
@@ -251,12 +370,12 @@
         
         //if t4 and t5 value is present in cache we are sending as part of request along with t1, category type and logId
         result =@[dict];
-
+        
     } else {
-               NSArray *array = @[t1,context];
+        NSArray *array = @[t1,context];
         NSDictionary *dict = @{kSVMXRequestKey:kTimeLogKey,
                                kSVMXRequestSVMXMap:array};
-
+        
         //if t4 and t5 value is not present in cache : t1, category type and logId
         result =@[dict];
     }

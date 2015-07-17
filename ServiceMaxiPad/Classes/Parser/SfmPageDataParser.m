@@ -87,7 +87,7 @@
             NSString *contextValue =  [[ServerRequestManager sharedInstance]
                                        getTheContextvalueForCategoryType:self.categoryType];
             
-            NSArray *finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
+            NSArray *finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue forCategoryType:self.categoryType];
             
             if([finalarray count] > 0)
             {

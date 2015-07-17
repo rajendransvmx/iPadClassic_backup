@@ -102,7 +102,8 @@
                         id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
                         
                         if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
-                            sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:partiallyExecutedObjName forLimit:0];
+                            sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:partiallyExecutedObjName
+                                                                                forLimit:0 forParallelSyncType:nil];
                             NSMutableArray *sfids = [[NSMutableArray alloc] init];
                             for (SyncRecordHeapModel *model in sfidsArray) {
                                 [sfids addObject:model.sfId];

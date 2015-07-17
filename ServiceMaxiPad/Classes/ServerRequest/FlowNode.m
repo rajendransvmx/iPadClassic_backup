@@ -391,7 +391,7 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
             if (model != nil) {
                 model.timeT5 = [DateUtil gmtStringFromDate:[NSDate date] inFormat:kDateFormatType1];
                 //[DateUtil stringFromDate:[NSDate date] inFormat:kDateFormatType1];
-                [[TimeLogCacheManager sharedInstance] logEntryForSyncResponceTime:model];
+                [[TimeLogCacheManager sharedInstance] logEntryForSyncResponceTime:model forCategoryType:self.nodecategoryType];
             }
         }
         //PA
@@ -553,7 +553,7 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
         }
         else
         {
-            [[TimeLogCacheManager sharedInstance] addEntryToFailureList:requestObject.clientRequestIdentifier];
+            [[TimeLogCacheManager sharedInstance] addEntryToFailureList:requestObject.clientRequestIdentifier forCategoryType:self.nodecategoryType];
             //Shravya/Vipin To do: Send NSError to the delegate
             [self sendProgressStatusFor:requestObject.requestType syncStatus:SyncStatusFailed withError:error];
             [self flowCompleted];

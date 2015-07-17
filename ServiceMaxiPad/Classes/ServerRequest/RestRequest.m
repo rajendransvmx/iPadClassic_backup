@@ -25,6 +25,7 @@
 
 @implementation RestRequest
 @synthesize dataDictionary;
+@synthesize apiType;
 
 #pragma mark - request lifecycle method
 /**
@@ -72,7 +73,7 @@
  */
 
 
-- (id)initWithType:(RequestType)requestType 
+- (id)initWithType:(RequestType)requestType
 {
     self = [super init];
 	if (self != nil)
@@ -421,6 +422,7 @@
             break;
             
     }
+    
     return eventType;
     
 }
@@ -1080,7 +1082,7 @@
         NSMutableArray *valueMapArray = [NSMutableArray arrayWithArray:self.requestParameter.valueMap];
         NSString *contextValue =  [[ServerRequestManager sharedInstance]
                                    getTheContextvalueForCategoryType:self.categoryType];
-        NSArray *finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue];
+        NSArray *finalarray = [[TimeLogCacheManager sharedInstance] getRequestParameterForTimeLogWithCategory:contextValue forCategoryType:self.categoryType];
         if ([finalarray count] > 0) {
             [valueMapArray addObjectsFromArray:finalarray];
             //[valueMapArray insertObject:[finalarray objectAtIndex:0] atIndex:0];

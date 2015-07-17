@@ -94,7 +94,7 @@
             NSArray *conflictIds = [ResolveConflictsHelper fetchSfIdsFromConflictRecords];
             if (conflictIds > 0) {
                 SyncHeapService *heapServiceObj = [[SyncHeapService alloc] init];
-                [heapServiceObj deleteRecordsForSfIds:conflictIds];
+                [heapServiceObj deleteRecordsForSfIds:conflictIds forParallelSyncType:nil];
             }
             return [self getTxFetcRequestParamsForRequestCount:count];
         }

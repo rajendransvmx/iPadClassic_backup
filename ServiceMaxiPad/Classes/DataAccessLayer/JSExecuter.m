@@ -14,7 +14,7 @@
 
 @interface JSExecuter()
 
-- (void)createWebviewWithFrame:(CGRect)newFrame ;
+- (void)createWebviewWithFrame:(CGRect)newFrame;
 - (void)passEventToDelegate:(NSURL *)absoluteUrl andScheme:(NSString *)scheme;
 
 @end

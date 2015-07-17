@@ -106,3 +106,4 @@ typedef  NS_ENUM(NSUInteger, SyncProgressStatus) {
     
 } ;
 
+extern NSString *const kParallelGetPriceSync;

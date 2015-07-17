@@ -14,6 +14,8 @@
 #import "SFPicklistService.h"
 #import "SFPicklistModel.h"
 #import "PlistManager.h"
+#import "TXFetchHelper.h"
+#import "TimeLogCacheManager.h"
 
 @implementation GetPriceDataServiceLayer
 
@@ -61,6 +63,12 @@
             break;
         case RequestGetPriceDataTypeThree:
             return [self getRequestParamModelForGetPriceData:RequestGetPriceDataTypeThree];
+            break;
+        case RequestTXFetch:
+            return [self getTxFetcRequestParamsForRequestCount:count];
+            break;
+        case RequestSyncTimeLogs:
+            return [super getRequestParametersWithRequestCount:count];
             break;
           default:
             break;
@@ -111,6 +119,7 @@
             paramObj.valueMap = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjectsAndKeys:kGetPriceDataLastIndex,kSVMXKey,@3,kSVMXValue, nil]];
             break;
             
+            
         default:
             SXLogWarning(@"Invalid post body parama for unidentified get price request");
             break;
@@ -124,11 +133,17 @@
     return [NSArray arrayWithObject:paramObj];
 }
 
-- (NSDictionary *)getLastSyncTimeForRecords {
-    NSMutableDictionary *lastSyncTimeDict = [NSMutableDictionary dictionary];
+- (NSDictionary *)getLastSyncTimeForRecords
+{
+    NSMutableDictionary *lastSyncTimeDict = [[NSMutableDictionary alloc] initWithCapacity:0];
     [lastSyncTimeDict setObject:kLastSyncTime forKey:kSVMXRequestKey];
-    NSString *lastSyncTime = [PlistManager getOneCallSyncTime];
-    if (lastSyncTime == nil) {
+    NSString *lastSyncTime = [PlistManager getGetPriceSyncTime];
+    if (lastSyncTime == nil)
+    {
+        lastSyncTime = [PlistManager getOneCallSyncTime];
+    }
+    if (lastSyncTime == nil)
+    {
         lastSyncTime = @"";
     }
     [lastSyncTimeDict setObject:lastSyncTime forKey:kSVMXRequestValue];
@@ -169,5 +184,27 @@
     }
     return values;
 }
+
+
+- (NSArray *)getTxFetcRequestParamsForRequestCount:(NSInteger )requestCount {
+    @autoreleasepool
+    {
+        TXFetchHelper *helper = [[TXFetchHelper alloc] init];
+        NSMutableArray *requestParams = [[NSMutableArray alloc] initWithCapacity:0];
+        for (int counter = 0; counter < requestCount; counter++)
+        {
+            NSDictionary *recordIdDict =  [helper getIdListFromSyncHeapTableWithLimit:kOverallIdLimit forParallelSyncType:kParallelGetPriceSync];
+            if ([recordIdDict count] <= 0) {
+                break;
+            }
+            RequestParamModel *paramObj = [[RequestParamModel alloc]init];
+            paramObj.requestInformation = recordIdDict;
+            paramObj.valueMap = [helper getValueMapDictionary:recordIdDict];
+            [requestParams addObject:paramObj];
+        }
+        return requestParams;
+    }
+}
+
 
 @end

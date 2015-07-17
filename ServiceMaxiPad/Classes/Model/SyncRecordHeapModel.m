@@ -28,9 +28,9 @@
 @synthesize localId;
 @synthesize objectName;
 @synthesize syncType;
-//@synthesize jsonRecord;
 @synthesize syncFlag;
 @synthesize recordType;
+@synthesize parallelSyncType;
 
 - (id)init
 {
@@ -44,13 +44,12 @@
 
 - (void)dealloc
 {
-    
     sfId = nil;
     localId = nil;
 	objectName = nil;
 	syncType = nil;
-	//jsonRecord = nil;
 	recordType = nil;
+    parallelSyncType = nil;
 }
 
 

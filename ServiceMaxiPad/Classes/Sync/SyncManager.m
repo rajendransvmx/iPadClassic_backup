@@ -298,7 +298,7 @@ static SyncManager *_instance;
                 if (self.isGetPriceCallEnabled)
                 {
                     self.isGetPriceCallEnabled = NO;
-                    [[GetPriceManager sharedInstance] performSelectorInBackground:@selector(intiateGetPriceSync) withObject:nil];
+                    [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
                 }
             }
             break;
@@ -325,6 +325,16 @@ static SyncManager *_instance;
         default:
             break;
     }
+}
+
+- (void)initiateGetPriceInBackGround
+{
+   [[GetPriceManager sharedInstance] intiateGetPriceSync];
+}
+
+- (void)cancelGetPriceInBackGround
+{
+    [[GetPriceManager sharedInstance] cancelGetPriceSync];
 }
 
 
@@ -429,6 +439,7 @@ static SyncManager *_instance;
 
 - (void)performInitialSync
 {
+    [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
     [self enableAllParallelSync:NO];
     self.initialSyncStatus = SyncStatusInProgress;
     [self prepareDatabaseForInitialSync];
@@ -443,6 +454,7 @@ static SyncManager *_instance;
 
 - (void)performResetApp
 {
+    [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
     [self prepareDatabaseForInitialSync];
     [SMDataPurgeHelper startedConfigSyncTime];
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeResetApp requestParam:nil callerDelegate:self];
@@ -451,6 +463,7 @@ static SyncManager *_instance;
 
 - (void)performConfigSync
 {
+    [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
     self.configSyncStatus = SyncStatusInProgress;
     [SMDataPurgeHelper startedConfigSyncTime];
     [self enableAllParallelSync:NO];

@@ -16,7 +16,8 @@ extern NSString *const UpdateQueryCache;
 
 - (BOOL)insertObjects:(NSArray *)objects
        withObjectName:(NSString *)objectName;
-- (NSMutableDictionary *)getIdListFromSyncHeapTableWithLimit:(NSInteger)overAllIdLimit;
+- (NSMutableDictionary *)getIdListFromSyncHeapTableWithLimit:(NSInteger)overAllIdLimit
+                                         forParallelSyncType:(NSString*)parallelSyncType;
 - (id)initWithCheckForDuplicateRecords:(BOOL)shouldCheck ;
 - (NSArray *)getValueMapDictionary:(NSDictionary *)objectDictionary;
 - (DBRequestInsert *)getInsertQuery:(NSString *)objectName;

@@ -180,7 +180,7 @@ NSString *const kTableSYNCErrorConflictSchema = @"CREATE TABLE IF NOT EXISTS Syn
 
 NSString *const kTableSYNCHistorySchema = @"CREATE TABLE IF NOT EXISTS SYNC_HISTORY ('last_sync_time' DATETIME, 'sync_type' VARCHAR, 'request_id' VARCHAR, 'SYNC_STATUS' BOOL )";
 
-NSString *const kTableSyncRecordsHeapSchema = @"CREATE TABLE IF NOT EXISTS Sync_Records_Heap ('sfId' VARCHAR, 'localId' VARCHAR, 'objectName' VARCHAR, 'syncType' VARCHAR, 'syncFlag' BOOL, 'recordType' VARCHAR, 'syncResponseType' VARCHAR)";
+NSString *const kTableSyncRecordsHeapSchema = @"CREATE TABLE IF NOT EXISTS Sync_Records_Heap ('sfId' VARCHAR, 'localId' VARCHAR, 'objectName' VARCHAR, 'syncType' VARCHAR, 'syncFlag' BOOL, 'recordType' VARCHAR, 'syncResponseType' VARCHAR, 'parallelSyncType' VARCHAR)";
 
 NSString *const kTableTroubleshootDataSchema = @"CREATE TABLE IF NOT EXISTS TroubleshootData ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE DEFAULT (0), 'DeveloperName' VARCHAR, 'Id' VARCHAR,  'Keywords' TEXT,  'Name' VARCHAR,  'Type' VARCHAR)";
 

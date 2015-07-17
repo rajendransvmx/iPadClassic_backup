@@ -86,6 +86,7 @@ NSString *const kSVMXRequestValueUpper   =  @"VALUE";
 NSString *const kSVMXContextKey     =  @"SVMX_LOG_CONTEXT";
 NSString *const kTimeLogKey         =  @"SVMX_TIME_LOG";
 NSString *const kInItialSyncContext =  @"INITIAL SYNC";
+NSString *const kGetPriceContext    =  @"GET PRICE SYNC";
 NSString *const kConfigSyncContext  =  @"CONFIG SYNC";
 NSString *const kDataSyncContext    =  @"INCREMENTAL DATA SYNC";
 NSString *const kSfmSearchContext   =  @"SFM SEARCH";

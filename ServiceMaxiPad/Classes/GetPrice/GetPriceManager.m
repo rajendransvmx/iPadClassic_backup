@@ -69,6 +69,7 @@
                     || wsResponseStatus.syncStatus != SyncStatusSuccess)
                 {
                     self.isGetPriceProgress = NO;
+                    self.getPriceTaskId = nil;
                 }
             }
         }
@@ -92,11 +93,30 @@
 
 -(void)cancelGetPriceSync
 {
-    [[TaskManager  sharedInstance] cancelFlowNodeWithId:self.getPriceTaskId];
-    [[TaskManager  sharedInstance] removeFlowNodeWithId:self.getPriceTaskId];
-   
+    if (self.getPriceTaskId != nil)
+    {
+        [[TaskManager  sharedInstance] cancelFlowNodeWithId:self.getPriceTaskId];
+        [[TaskManager  sharedInstance] removeFlowNodeWithId:self.getPriceTaskId];
+    }
 }
 
+
+/*TODO : Check for LAST_SYNC key */
+/** storing in userdefaults */
+/*
+NSString *lastSyncKey  =  [objectDict objectForKey:kSVMXRequestKey];
+if (![StringUtil isStringEmpty:lastSyncKey] && [lastSyncKey isEqualToString:kLastSync]) {
+    [self updateLastSyncTime:objectDict];
+    continue;
+}
+- (void)updateLastSyncTime:(NSDictionary *)lastSyncDictionary{
+    NSString *lastDate = [lastSyncDictionary objectForKey:kSVMXRequestValue];
+    if (![StringUtil isStringEmpty:lastDate]) {
+        [PlistManager storeOneCallSyncTime:lastDate];
+        [PlistManager storeInitiaSyncSyncTimeForDP:lastDate];
+    }
+}
+*/
 
 - (void)dealloc
 {
