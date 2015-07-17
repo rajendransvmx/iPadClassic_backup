@@ -29,5 +29,6 @@
 
 
 -(BOOL)deleteUpdatedRecordsForModifiedRecordModel:(ModifiedRecordModel *)model; // CustomCall. TO delete the record which is updated.
+- (NSArray *)getModifiedRecordListforRecordId:(NSString *)recordID sfid:(NSString *)sfId;
 
 @end

@@ -86,7 +86,10 @@
 
 - (NSInteger)getLastLocalId {
     DBField *aField = [[DBField alloc] initWithFieldName:kLocalId andTableName:kModifiedRecords];
-    DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithField:aField aggregateFunction:SQLAggregateFunctionMax whereCriterias:nil andAdvanceExpression:nil];
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorNotEqual andFieldValue:@"AFTERINSERT"];
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorNotEqual andFieldValue:@"BEFOREUPDATE"];
+    DBCriteria *criteria3 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorNotEqual andFieldValue:@"AFTERUPDATE"];
+    DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithField:aField aggregateFunction:SQLAggregateFunctionMax whereCriterias:@[criteria1,criteria2,criteria3] andAdvanceExpression:@"(1 AND 2 AND 3)"];
     __block NSInteger maxNumber = -1;
     @autoreleasepool {
     DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
@@ -153,9 +156,12 @@
     DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:@"requestData"
                                                       operatorType:SQLOperatorEqual
                                                      andFieldValue:model.requestData];
+    DBCriteria *criteriaFour = [[DBCriteria alloc]initWithFieldName:kLocalId
+                                                        operatorType:SQLOperatorEqual
+                                                       andFieldValue:[NSString stringWithFormat:@"%ld", (long)model.localId]];
     
     BOOL status = [self deleteRecordsFromObject:kModifiedRecords
-                                  whereCriteria:@[criteriaOne,criteriaTwo,criteriaThree]
+                                  whereCriteria:@[criteriaOne,criteriaTwo,criteriaThree,criteriaFour]
                            andAdvanceExpression:nil];
     return status;
 }
@@ -206,7 +212,13 @@
     
     DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:recordId];
     
-    NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria1,criteria2] andAdvancedExpression:@"(1 or 2)"];
+    DBCriteria *criteria3 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorNotEqual andFieldValue:kModificationTypeAfterInsert];
+
+    DBCriteria *criteria4 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorNotEqual andFieldValue:kModificationTypeBeforeUpdate];
+
+    DBCriteria *criteria5 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorNotEqual andFieldValue:kModificationTypeAfterUpdate];
+
+    NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria1,criteria2,criteria3,criteria4,criteria5] andAdvancedExpression:@"((1 or 2) and 3 and 4 and 5)"];
     
     if(totalCount > 0)
     {
@@ -275,7 +287,7 @@
     DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"BEFOREUPDATE"];
     DBCriteria *criteria3 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"AFTERUPDATE"];
 
-    DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:@[@"operation", @"requestData", @"recordLocalId"] whereCriterias:@[criteria1, criteria2, criteria3] andAdvanceExpression:@"(1 OR 2 OR 3)"];
+    DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:@[@"operation", @"requestData", @"recordLocalId", kLocalId] whereCriterias:@[criteria1, criteria2, criteria3] andAdvanceExpression:@"(1 OR 2 OR 3)"];
     
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     
@@ -297,6 +309,38 @@
         }];
     }
     return records;
+}
+
+- (NSArray *)getModifiedRecordListforRecordId:(NSString *)recordID sfid:(NSString *)sfId
+{
+    
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:recordID];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"UPDATE"];
+    DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfId];
+    
+    DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteriaOne, criteriaTwo, criteriaThree] andAdvanceExpression:@"(1 AND 2 AND 3)"];
+    
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectQuery query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
+                
+                [resultSet kvcMagic:model];
+                [records addObject:model];
+            }
+            [resultSet close];
+        }];
+    }
+    return records;
+
 }
 
 @end

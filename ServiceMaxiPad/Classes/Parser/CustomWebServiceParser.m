@@ -19,6 +19,8 @@
 #import "DBRequestUpdate.h"
 #import "TransactionObjectService.h"
 #import "SyncManager.h"
+#import "SFMPageEditManager.h"
+#import "ModifiedRecordsDAO.h"
 
 @interface CustomWebServiceParser ()
 
@@ -85,6 +87,7 @@
     NSDictionary *userInfo = [notificationDict objectForKey:@"UserInfo"];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
 }
+
 - (void)updateOrInsertTransactionObjectArray:(NSMutableDictionary *)objectrecords sfIdArray:(NSArray*)sfidArray objectName:(NSString *)objectName
 {
     NSArray *actualRecordsArray = [self getRecordsArrayForObjectName:objectName andSFIDArray:sfidArray];
@@ -94,10 +97,12 @@
         NSMutableDictionary *actualModelDict = [model getFieldValueMutableDictionary];
         NSString *recordSFID = [actualModelDict objectForKey:kId];
         TransactionObjectModel *toBeUpdatedModel = [objectrecords objectForKey:recordSFID];
+        
         NSMutableDictionary *toBeUpdatedDict = [toBeUpdatedModel getFieldValueMutableDictionary];
         if ([toBeUpdatedDict objectForKey:kAttributeKey]) {
             [toBeUpdatedDict removeObjectForKey:kAttributeKey];
         }
+        [self fieldMergeHelper:toBeUpdatedDict andObjectName:objectName andRecordID:[actualModelDict objectForKey:kLocalId] andSfid:recordSFID];
         NSArray *toBeUpdatedAllKeys = [toBeUpdatedDict allKeys];
         
         for (NSString *keyString in toBeUpdatedAllKeys)
@@ -122,6 +127,30 @@
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:array];
     NSArray *dataArray = [transactionService fetchDataForObject:objName fields:nil expression:nil criteria:@[criteria]];
     return dataArray;
+}
+
+-(void)fieldMergeHelper:(NSDictionary *)toBeUpdatedRecords andObjectName:(NSString *)objectName andRecordID:(NSString *)recordID andSfid:(NSString *)sfid
+{
+    
+    SFMPageEditManager *pageEditManager = [[SFMPageEditManager alloc]init];
+    pageEditManager.dataDictionaryAfterModification = [[NSMutableDictionary alloc]initWithDictionary: toBeUpdatedRecords];
+    
+    NSString *modifiedFieldAsJson = [pageEditManager getJsonStringAfterComparisionForObject:objectName recordId:recordID sfid:sfid andSettingsFlag:YES];
+    if (!modifiedFieldAsJson) {
+        return;
+    }
+    
+    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    NSArray *modifiedRecordList =   [modifiedRecordService getModifiedRecordListforRecordId:recordID sfid:sfid];
+    
+    if (modifiedRecordList && modifiedRecordList.count) {
+        ModifiedRecordModel *model = [modifiedRecordList objectAtIndex:0];
+        model.fieldsModified = modifiedFieldAsJson;
+        
+        [modifiedRecordService updateFieldsModifed:model];
+
+    }
+    
 }
 
 @end
