@@ -787,35 +787,66 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     return nil;
 }
 
-//For DateTime
-+ (NSString*)getLocalDateTimeForFormulaFromDateString:(NSString*)dateTime
-{
-    // 019920
-    if([StringUtil isStringEmpty:dateTime]) {
-        return @"";
+
+
+#pragma mark - GE formula
+
++(NSString *)getFormulaDateFromGMTDate:(NSString *)dateInGMT isDateWithTime:(BOOL)isDateWithTime {
+    NSString *dateInDeviceTimeZone = @"";
+    if (![StringUtil isStringEmpty:dateInGMT]) {
+        dateInDeviceTimeZone = (isDateWithTime)?[DateUtil getUserReadableDateForDateBaseDate:dateInGMT]:[DateUtil getUserReadableDateForDBDateTime:dateInGMT];
+        
+        NSDateFormatter *dateformatter = [[NSDateFormatter alloc] init];
+        NSDateComponents * dateComponents = [DateUtil getDateComponents];
+        [dateformatter setTimeZone:[dateComponents timeZone]];
+        
+        NSString *dateFormat = @"";
+        if (isDateWithTime) {
+            dateFormat = ([DateUtil iSDeviceTime24HourFormat])?kFormulaDateTimeUserReadable24Hr:kFormulaDateTimeUserReadable12Hr;
+        }
+        else {
+            dateFormat = kFormulaDateUserReadable;
+        }
+        
+        [dateformatter setDateFormat:dateFormat];
+        NSDate *date = [dateformatter dateFromString:dateInDeviceTimeZone];
+        dateFormat = (isDateWithTime)?kFormulaDateTimeForModule:kFormulaDateForModule;
+        [dateformatter setDateFormat:dateFormat];
+        dateInDeviceTimeZone = [dateformatter stringFromDate:date];
     }
-    NSString *userdateString = @"";
-    NSDate * date = [DateUtil getDateFromDatabaseString:dateTime];
-    if (date != nil) {
-        userdateString = [DateUtil stringFromDate:date inFormat:kDateTimeFormatFormula];
-    }
-    return userdateString;
+    return dateInDeviceTimeZone;
 }
 
-//only for Date
-+ (NSString*)getLocalDateForFormulaFromDateString:(NSString*)date
-{
-    // 019920
-    if ([StringUtil isStringEmpty:date]) {
-        return @"";
+
++(NSString *)getGMTDateFromFormulaDate:(NSString *)formulaDate isDateWithTime:(BOOL)isDateWithTime {
+    NSString *gmtDate = @"";
+    if (![StringUtil isStringEmpty:formulaDate]) {
+        NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+        NSString *dateFormat = (isDateWithTime)?kFormulaDateTimeForModule:kFormulaDateForModule;
+        [dateFormatter setDateFormat:dateFormat];
+        NSDate *date = [dateFormatter dateFromString:formulaDate];
+        if(date != nil) {
+            gmtDate = (isDateWithTime)?[DateUtil getSecZeroedDatabaseStringForDate:date]:[DateUtil stringFromDate:date inFormat:kDataBaseDate];
+        }
+        else {
+            if (!isDateWithTime) {
+                [dateFormatter setDateFormat:kFormulaDateTimeForModule];
+                date = [dateFormatter dateFromString:formulaDate];
+                if(date != nil) {
+                    gmtDate = (isDateWithTime)?[DateUtil getSecZeroedDatabaseStringForDate:date]:[DateUtil stringFromDate:date inFormat:kDataBaseDate];
+                }
+            }
+        }
     }
-    NSString *userdateString = @"";
-    NSDate * theDate = [DateUtil getDateFromDatabaseString:date];
-    if (date != nil) {
-        userdateString = [DateUtil stringFromDate:theDate inFormat:kDateFormatFormula];
-    }
-    return userdateString;
-    
+    return gmtDate;
+}
+
+
++ (NSDateComponents *)getDateComponents {
+    NSUInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit | NSTimeZoneCalendarUnit;
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents * dateComponents = [gregorian components:unitFlags fromDate:[NSDate date]];
+    return dateComponents;
 }
 
 

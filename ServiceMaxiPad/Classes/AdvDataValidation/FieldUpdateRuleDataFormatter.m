@@ -31,8 +31,7 @@
 
 @implementation FieldUpdateRuleDataFormatter
 
-- (id)initWithBusinessRuleProcesses:(NSArray *)bizRuleProcesses sfmPage:(SFMPage *)sfmPage{
-    
+-(id)initWithBusinessRuleProcesses:(NSArray *)bizRuleProcesses sfmPage:(SFMPage *)sfmPage {
     self = [super init];
     if (self) {
         self.bizRuleProcesses = bizRuleProcesses;
@@ -42,8 +41,7 @@
 }
 
 
-- (NSDictionary *) formtaBusinessRuleInfo{
-    
+-(NSDictionary *)formtaBusinessRuleInfo {
     NSMutableDictionary *bizRuleInfoDict = [[NSMutableDictionary alloc]init];
     [bizRuleInfoDict setValue:[self formatBusinessRuleMetaData] forKey:kBizRuleMetaData];
     NSDictionary *fieldsDict = [self formatBusinessRuleFields];
@@ -53,8 +51,7 @@
 }
 
 
-- (NSDictionary *) formatBusinessRuleMetaData{
-    
+-(NSDictionary *)formatBusinessRuleMetaData {
     NSMutableDictionary *mainRuleDict = [[NSMutableDictionary alloc] init];
     [self fillHeaderRuleInfo:mainRuleDict];
     [self fillDetailRuleInfo:mainRuleDict];
@@ -62,16 +59,14 @@
 }
 
 
-- (NSDictionary *) formatBusinessRuleFields{
-    
+-(NSDictionary *)formatBusinessRuleFields {
     NSMutableDictionary *mainFieldsDict = [[NSMutableDictionary alloc] init];
     [self fillHeaderFieldInfo:mainFieldsDict];
     return mainFieldsDict;
 }
 
 
-- (NSDictionary *) formatBusinessRuleDataForFields:(NSDictionary *)fieldsDict{
-    
+-(NSDictionary *)formatBusinessRuleDataForFields:(NSDictionary *)fieldsDict {
     NSMutableDictionary *mainDataDict = [[NSMutableDictionary alloc] init];
     [self fillHeaderDataInfo:mainDataDict forFields:fieldsDict];
     [self fillDetailDataInfo:mainDataDict forFields:fieldsDict];
@@ -82,7 +77,7 @@
 #pragma mark -
 #pragma mark Rules Meta Data Formatter Methods
 
-- (void)fillHeaderRuleInfo:(NSMutableDictionary *)mainRuleDict{
+-(void)fillHeaderRuleInfo:(NSMutableDictionary *)mainRuleDict {
     @autoreleasepool {
         NSMutableDictionary *headerRuleDict = [[NSMutableDictionary alloc] init];
         NSString *objectName = self.sfmPage.objectName;
@@ -104,10 +99,11 @@
 }
 
 
-- (void)fillDetailRuleInfo:(NSMutableDictionary *)mainRuleDict{
+-(void)fillDetailRuleInfo:(NSMutableDictionary *)mainRuleDict {
     @autoreleasepool {
         NSArray *detailLayouts = self.sfmPage.process.pageLayout.detailLayouts;
         NSDictionary *components = self.sfmPage.process.component;
+        
         for (SFMDetailLayout *detailLayout in detailLayouts) {
             SFProcessComponentModel *componentModel = [components objectForKey:detailLayout.processComponentId];
             NSMutableDictionary *detailRuleDict = [NSMutableDictionary dictionary];
@@ -131,8 +127,7 @@
 }
 
 
-- (NSMutableDictionary *)formatExpressionComponent:(SFExpressionComponentModel *)expComp{
-    
+-(NSMutableDictionary *)formatExpressionComponent:(SFExpressionComponentModel *)expComp {
     NSMutableDictionary *expCompDict = [[NSMutableDictionary alloc] init];
     [expCompDict setValue:expComp.componentLHS forKey:kExpressionCompFieldName];
     [expCompDict setValue:expComp.formula forKey:kExpressionCompFormula];
@@ -140,32 +135,30 @@
 }
 
 
-- (NSMutableDictionary *)formatBizRule:(BusinessRuleModel *)bizRule
-{
+-(NSMutableDictionary *)formatBizRule:(BusinessRuleModel *)bizRule {
     NSMutableDictionary *bizRuleDict = [[NSMutableDictionary alloc] init];
     if ([StringUtil isStringEmpty:bizRule.advancedExpression]) {
         bizRule.advancedExpression = @"";
     }
     [bizRuleDict setValue:bizRule.advancedExpression forKey:kBizRulesAdvExpression];
-    
     [bizRuleDict setValue:bizRule.messageType forKey:kBizRulesMsgType];
     [bizRuleDict setValue:bizRule.sourceObjectName forKey:kBizRulesSrcObjectName];
     return bizRuleDict;
 }
 
 
-- (void) fillRulesArray:(NSMutableArray *) rulesArray forBusinessRuleProcess:(ProcessBusinessRuleModel *)bizRuleProcess{
+-(void)fillRulesArray:(NSMutableArray *)rulesArray forBusinessRuleProcess:(ProcessBusinessRuleModel *)bizRuleProcess{
     @autoreleasepool{
         NSMutableDictionary *ruleDict = [[NSMutableDictionary alloc] init];
-        BusinessRuleModel *bizRule = bizRuleProcess.businessRuleModel;
-
         NSMutableDictionary *ruleInfoDict = [[NSMutableDictionary alloc]init];
-        
         NSMutableArray *bizRuleDetailsArray = [[NSMutableArray alloc] init];
+        BusinessRuleModel *bizRule = bizRuleProcess.businessRuleModel;
+        
         for (SFExpressionComponentModel *expComp in bizRule.expressionComponentsArray) {
             NSMutableDictionary *expDict = [self formatExpressionComponent:expComp];
             [bizRuleDetailsArray addObject:expDict];
         }
+        
         [ruleInfoDict setObject:bizRuleDetailsArray forKey:kBizRuleDetails];
         [ruleDict setObject:ruleInfoDict forKey:kBizRuleInfo];
         [ruleDict setObject:self.sfmPage.objectLabel forKey:@"aliasName"];
@@ -177,21 +170,23 @@
 #pragma mark -
 #pragma mark Fields Info Fromatter Methods
 
-- (void) fillHeaderFieldInfo:(NSMutableDictionary *)mainFieldDict{
-    
+-(void) fillHeaderFieldInfo:(NSMutableDictionary *)mainFieldDict {
     @autoreleasepool {
+        
         for (ProcessBusinessRuleModel *process in self.bizRuleProcesses) {
             BusinessRuleModel *bizrule = process.businessRuleModel;
             NSMutableDictionary *headerFieldDict = [mainFieldDict valueForKey:bizrule.sourceObjectName];
             if (nil == headerFieldDict) {
                 headerFieldDict = [[NSMutableDictionary alloc] init];
             }
+            
             for (SFExpressionComponentModel *expComp in bizrule.expressionComponentsArray) {
                 [headerFieldDict setValue:[expComp.fieldType lowercaseString]  forKey:expComp.componentLHS];
                 if ([expComp.parameterType isEqualToString:kExpComponentFieldValue]) {
                     [headerFieldDict setValue:[expComp.fieldType lowercaseString]  forKey:expComp.componentRHS];
                 }
             }
+            
             if (![StringUtil isStringEmpty:bizrule.sourceObjectName]) {
                 [mainFieldDict setValue:headerFieldDict forKey:bizrule.sourceObjectName];
             }
@@ -202,108 +197,73 @@
 
 #pragma mark -
 #pragma mark Data Info Fromatter Methods
-- (void) fillHeaderDataInfo:(NSMutableDictionary *)mainDataDict forFields:(NSDictionary *)fieldsDict{
-    
+-(void)fillHeaderDataInfo:(NSMutableDictionary *)mainDataDict forFields:(NSDictionary *)fieldsDict {
     @autoreleasepool {
-        
         NSMutableDictionary *headerRecords = self.sfmPage.headerRecord;
         NSArray *headerSections = self.sfmPage.process.pageLayout.headerLayout.sections;
         NSArray *headerFields = nil;
-            if ([headerSections count] > 0) {
-                for (SFMHeaderSection *headerSection in headerSections)
-                {
-                   headerFields = headerSection.sectionFields;
-                   for (SFMPageField *pageField in headerFields) {
-                   SFMRecordFieldData *recordField = [headerRecords objectForKey:pageField.fieldName];
-                       NSString *value = nil;
-                       if ([pageField.dataType isEqualToString:kSfDTDate])
-                       {
-                           
-                           value = recordField.internalValue;//Only for Date Time and Date fields
-                           value = [DateUtil getLocalDateForFormulaFromDateString:value];
-                           
-                       }
-                       else if([pageField.dataType isEqualToString:kSfDTDateTime])
-                       {
-                           value = recordField.internalValue;//Only for Date Time and Date fields
-                           value = [DateUtil getLocalDateTimeForFormulaFromDateString:value];
-                       }
-                       else
-                       {
-                           value = recordField.displayValue;//HS Fix for 018781,previously was internalValue
-
-                       }
-                   if ([StringUtil isStringEmpty:value]) {
-                    value = @"";
-                    if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger])
-                    {
-                        value = @"0";
-                    }
-                }
+        
+        for (SFMHeaderSection *headerSection in headerSections) {
+            headerFields = headerSection.sectionFields;
+            
+            for (SFMPageField *pageField in headerFields) {
+                SFMRecordFieldData *recordField = [headerRecords objectForKey:pageField.fieldName];
+                NSString *value = [self getValueFromRecordField:recordField andPageField:pageField];
                 [mainDataDict setValue:value forKey:pageField.fieldName];
-              }
             }
         }
     }
 }
 
 
-
-
-- (void) fillDetailDataInfo:(NSMutableDictionary *)mainDataDict forFields:(NSDictionary *)fieldsDict{
+- (void) fillDetailDataInfo:(NSMutableDictionary *)mainDataDict forFields:(NSDictionary *)fieldsDict {
     @autoreleasepool {
         NSMutableDictionary *detailRecords = self.sfmPage.detailsRecord;
         NSArray *pageLayouts = self.sfmPage.process.pageLayout.detailLayouts;
-        
         NSMutableDictionary *detailDict = [NSMutableDictionary dictionary];
         
         for (SFMDetailLayout *detailLayout in pageLayouts) {
             NSMutableDictionary *pagelayoutIdDict = [NSMutableDictionary dictionary];
             NSArray *detailSections = detailLayout.detailSectionFields;
             NSArray *recordsArray = [detailRecords objectForKey:detailLayout.processComponentId];
-            
             NSMutableArray *linesArray = [NSMutableArray array];
             
             for (NSDictionary *record in recordsArray) {
                 NSMutableDictionary *fieldsDict = [NSMutableDictionary dictionary];
+                
                 for (SFMPageField *pageField in detailSections) {
-                    NSString *fieldName = pageField.fieldName;
-                    SFMRecordFieldData *fieldData = [record objectForKey:fieldName];
-                    
-                    NSString *value = nil;
-                    if ([pageField.dataType isEqualToString:kSfDTDate])
-                    {
-                        
-                        value = fieldData.internalValue;//Only for Date Time and Date fields
-                        value = [DateUtil getLocalDateForFormulaFromDateString:value];
-                        
-                    }
-                    else if([pageField.dataType isEqualToString:kSfDTDateTime])
-                    {
-                        value = fieldData.internalValue;//Only for Date Time and Date fields
-                        value = [DateUtil getLocalDateTimeForFormulaFromDateString:value];
-                    }
-                    else
-                    {
-                        value = fieldData.displayValue;//HS Fix for 018781,previously was internalValue
-                        
-                    }
-                    if ([StringUtil isStringEmpty:value]) {
-                        value = @"";
-                        if ([pageField.dataType isEqualToString:kSfDTCurrency] || [pageField.dataType isEqualToString:kSfDTDouble] ||[pageField.dataType isEqualToString:kSfDTPercent] || [pageField.dataType isEqualToString:kSfDTInteger]) {
-                            value = @"0";
-                        }
-                    }
-                    [fieldsDict setValue:value forKey:fieldName];
+                    SFMRecordFieldData *fieldData = [record objectForKey:pageField.fieldName];
+                    NSString *value = [self getValueFromRecordField:fieldData andPageField:pageField];
+                    [fieldsDict setValue:value forKey:pageField.fieldName];
                 }
                 [linesArray addObject:fieldsDict];
             }
-            
             [pagelayoutIdDict setObject:linesArray forKey:@"lines"];
             [detailDict setObject:pagelayoutIdDict forKey:detailLayout.pageLayoutId];
         }
         [mainDataDict setObject:detailDict forKey:@"details"];
     }
+}
+
+
+-(BOOL)isFieldTypeNumeric:(NSString *)dataType {
+    return ([dataType isEqualToString:kSfDTCurrency] || [dataType isEqualToString:kSfDTDouble] ||[dataType isEqualToString:kSfDTPercent] || [dataType isEqualToString:kSfDTInteger]);
+}
+
+-(NSString *)getValueFromRecordField:(SFMRecordFieldData *)recordField andPageField:(SFMPageField *)pageField {
+    NSString *value = nil;
+    if ([pageField.dataType isEqualToString:kSfDTDate] || [pageField.dataType isEqualToString:kSfDTDateTime]) {
+        value = recordField.internalValue;
+        value = [DateUtil getFormulaDateFromGMTDate:value isDateWithTime:([pageField.dataType isEqualToString:kSfDTDateTime])];
+    }
+    else {
+        value = recordField.displayValue;
+    }
+    
+    if ([StringUtil isStringEmpty:value]) {
+        value = ([self isFieldTypeNumeric:pageField.dataType])?@"0":@"";
+    }
+    return value;
 }
 
 

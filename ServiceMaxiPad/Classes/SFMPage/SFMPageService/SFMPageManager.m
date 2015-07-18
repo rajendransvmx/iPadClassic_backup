@@ -574,53 +574,6 @@ PageManagerErrorType;
     return userdateString;
 }
 
-//For  Formulas Process
--(NSString *)getUserReadableDateTimeFromFormula:(NSString *)dateTime
-{
-   return [self getUserReadableDateTime:dateTime];
-}
-
--(NSString *)getUserReadableDateFromFormula:(NSString *)dateTime
-{
-    NSString *dateString = nil;
-    NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateFormatFormula];
-    if (date != nil) {
-        dateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
-    }
-    return dateString;
-}
-
-//For Settingback to internal Values
-
--(NSString *)getDBReadableDateTimeFromFormula:(NSString *)dateTime
-{
-   return [self getUserReadableDateTime:dateTime];
-}
-
--(NSString *)getDBDateFromFormula:(NSString *)dateTime
-{
-    NSString *dateString = nil;
-    NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateFormatFormula];
-    if (date != nil) {
-        dateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
-    }
-    return dateString;
-}
-
-
-
-
-//- (NSString *)getUserReadableDateForValueMapping:(NSString *)datetime
-//{
-//    NSString *userdateString = @"";
-//    NSDate * date = [DateUtil getDateFromDatabaseString:datetime];
-//    if (date != nil) {
-//        userdateString = [DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
-//    }
-//    return userdateString;
-//}
-
-//Ends here
 
 - (NSString *)getDateForValueMapping:(NSString *)datetime
 {

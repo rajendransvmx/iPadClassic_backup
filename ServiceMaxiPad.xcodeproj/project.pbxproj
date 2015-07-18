@@ -7598,8 +7598,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -7619,7 +7619,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "ff60d713-9d98-418b-96b7-466709bbf474";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -7629,8 +7629,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
@@ -7650,7 +7650,7 @@
 				);
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "ff60d713-9d98-418b-96b7-466709bbf474";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

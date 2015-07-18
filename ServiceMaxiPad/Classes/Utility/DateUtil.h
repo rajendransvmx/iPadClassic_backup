@@ -180,8 +180,6 @@
  **/
 
 #import <Foundation/Foundation.h>
-static NSString *kDateFormatFormula = @"%Y-%m-%d";
-static NSString *kDateTimeFormatFormula = @"%Y-%m-%d %H:%M:%S"; /*2015-07-15 */
 
 static NSString *kDateFormatDefault = @"%Y-%m-%dT%H:%M:%S%z";    /** 2014-05-18T16:36:20+0530 */
 static NSString *kDateFormatType1   = @"%Y-%m-%d %H:%M:%S";      /** 2014-05-18 16:36:20 */
@@ -208,6 +206,12 @@ static NSString *kDateAttachment = @"%m/%d/%Y";
 static NSString *kDateImagesAndVideosAttachment = @"%m-%d-%Y";
 
 static NSString *kDateFormatType24Hr  = @"%H:%M";
+
+static NSString *kFormulaDateTimeUserReadable24Hr = @"EEE MMM dd, yyyy HH:mm";
+static NSString *kFormulaDateTimeUserReadable12Hr = @"EEE MMM dd, yyyy hh:mm a";
+static NSString *kFormulaDateUserReadable = @"MMMM dd yyyy";
+static NSString *kFormulaDateTimeForModule = @"yyyy-MM-dd HH:mm:ss";
+static NSString *kFormulaDateForModule = @"yyyy-MM-dd";
 
 @interface DateUtil : NSObject
 
@@ -535,9 +539,13 @@ static NSString *kDateFormatType24Hr  = @"%H:%M";
 
 + (NSString*)getLocalDateForGetpriceFromDateString:(NSString*)date;
 
-+ (NSString*)getLocalDateForFormulaFromDateString:(NSString*)date;
-+ (NSString*)getLocalDateTimeForFormulaFromDateString:(NSString*)date;
 
+#pragma mark - GE formula related
+
++(NSString *)getFormulaDateFromGMTDate:(NSString *)dateInGMT isDateWithTime:(BOOL)isDateWithTime;
++(NSString *)getGMTDateFromFormulaDate:(NSString *)formulaDate isDateWithTime:(BOOL)isDateWithTime;
+
+#pragma mark - end
 
 @end
 

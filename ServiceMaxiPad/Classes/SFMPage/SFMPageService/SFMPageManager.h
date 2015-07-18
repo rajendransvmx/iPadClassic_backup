@@ -48,8 +48,6 @@
 - (NSString *)getUserReadableDate:(NSString *)dateTime;
 - (NSString *)getDateForValueMapping:(NSString *)datetime;
 - (NSString *)getUserReadableDateForValueMapping:(NSString *)datetime;
-- (NSString *)getUserReadableDateFromFormula:(NSString *)dateTime; //For Formula
--(NSString *)getUserReadableDateTimeFromFormula:(NSString *)dateTime;
 
 
 

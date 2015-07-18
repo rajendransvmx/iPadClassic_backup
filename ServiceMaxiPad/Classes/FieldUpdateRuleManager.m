@@ -63,7 +63,6 @@
 }
 
 - (void)eventOccured:(NSString *)eventName andParameter:(NSString *)jsonParameterString {
-    NSLog(@"fieldupdateruleresult = %@:%@", eventName, jsonParameterString);
     
     if ([eventName isEqualToString:kfieldUpdateRuleResult]) {
         if ([self.delegate respondsToSelector:@selector(refreshSFMPageWithFieldUpdateRuleResults:forEvent:)]) {

@@ -2622,150 +2622,109 @@
     return fieldUpdateRuleExists;
 }
 
-//Fix for 019057
+
 -(void)updateSFMPageWithFieldUpdateResponse:(NSString *)response andSFMPage:(SFMPage *)sfmPage {
     NSDictionary *tempDict = (NSDictionary *)[Utility objectFromJsonString:response];
     NSDictionary *responseDict = [tempDict objectForKey:@"response"];
+    
+    NSLog(@"FORMULA RESULT: %@", responseDict);
+    
     NSArray *allKeys = [responseDict allKeys];
-    NSDictionary *headerRecord = sfmPage.headerRecord;
-    NSArray *detailLayouts = sfmPage.process.pageLayout.detailLayouts;
-    SFMHeaderLayout *headerLayouts = sfmPage.process.pageLayout.headerLayout;
-    NSDictionary *detailRecordsDict = sfmPage.detailsRecord;
+    
     for (NSString *key in allKeys) {
         if ([key isEqualToString:@"details"]) {
-            NSDictionary *detailsDict = [responseDict objectForKey:@"details"];
-            NSArray *detailIds = [detailsDict allKeys];
-            for (NSString *detailId in detailIds) {
-                NSArray *pageLayoutArray = [detailLayouts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"pageLayoutId = [c] %@", detailId]];
-                if ([pageLayoutArray count] == 1) {
-                    SFMDetailLayout *detailLayout = [pageLayoutArray lastObject];
-                    NSString *processComponentId = detailLayout.processComponentId;
-                    NSArray *detailRecords = [detailRecordsDict objectForKey:processComponentId];
-                    NSDictionary *responseDetail = [detailsDict objectForKey:detailId];
-                    NSArray *responseLines = [responseDetail objectForKey:@"lines"];
-                    
-                    for (int i = 0; i < [responseLines count]; i++) {
-                        NSDictionary *lineRecord = [responseLines objectAtIndex:i];
-                        NSDictionary *sfmRecord = [detailRecords objectAtIndex:i];
-                            for (SFMPageField *pageField in [detailLayout detailSectionFields])
-                            {
-                                NSString *fieldName = pageField.fieldName;
-                            
-                            //key is SFMPageField
-                            SFMRecordFieldData *recordField = [sfmRecord objectForKey:fieldName];
-                                id internalValue = [lineRecord objectForKey:fieldName];
-                                id displayValue = [lineRecord objectForKey:fieldName];
-                            if (![displayValue isKindOfClass:[NSString class]])
-                            {
-                                internalValue = [NSString stringWithFormat:@"%@",internalValue];
-                                displayValue = [NSString stringWithFormat:@"%@",displayValue];
-                            }
-                                
-                                if ([pageField.dataType isEqualToString:kSfDTDate])
-                                {
-                                    if (![StringUtil isStringEmpty:displayValue])
-                                    {
-                                        NSDate * date = [DateUtil dateFromString:displayValue inFormat:kDateFormatFormula];
-
-                                        internalValue = [DateUtil getDatabaseStringForDate:date];
-                                       displayValue = [self getUserReadableDateFromFormula:displayValue];
-                                    }
-                                    recordField.internalValue = internalValue;
-                                    recordField.displayValue = displayValue;
-                                    
-                                }
-                                else if([pageField.dataType isEqualToString:kSfDTDateTime])
-                                {
-                                    if (![StringUtil isStringEmpty:displayValue])
-                                    {
-                                        NSDate * date = [DateUtil dateFromString:displayValue inFormat:kDateTimeFormatFormula];
-                                        
-                                        internalValue = [DateUtil getDatabaseStringForDate:date];
-                                        displayValue = [self getUserReadableDateTimeFromFormula:displayValue];
-
-                                    }
-                                    
-                                    recordField.internalValue = internalValue;
-                                    recordField.displayValue = displayValue;
-                                }
-                                else if([pageField.dataType isEqualToString:kSfDTReference])
-                                {
-                                    recordField.displayValue = displayValue;
-                                }
-                                else
-                                {
-                                    recordField.internalValue = internalValue;
-                                    recordField.displayValue = displayValue;
-                                }
-                         
-                           }
-                        
-                      }
-                }
-            }
+            [self udpateDetailRecords:responseDict inSFMPage:sfmPage forKey:key];
         }
         else {
-            
-            if (!([key isEqualToString:@"Id"] || [key isEqualToString:@"localId"])) {
-                
-                for (SFMHeaderSection *headerSection in headerLayouts.sections)
-                {
-                    for (SFMPageField *sfmPageField in headerSection.sectionFields)
-                    {
-                        NSString *fieldName = sfmPageField.fieldName;
-                        
-                            SFMRecordFieldData *recordField = [headerRecord objectForKey:fieldName];
+            [self updateHeaderRecord:responseDict inSFMPage:sfmPage forKey:key];
+        }
+    }
+}
 
-                            id internalValue = [responseDict objectForKey:fieldName];
-                            id displayValue = [responseDict objectForKey:fieldName];
-                            
-                            if (![displayValue isKindOfClass:[NSString class]])
-                            {
-                                internalValue = [NSString stringWithFormat:@"%@",internalValue];
-                                displayValue = [NSString stringWithFormat:@"%@",displayValue];
-                            }
-                            
-                            if ([sfmPageField.dataType isEqualToString:kSfDTDate])
-                            {
-                                if (![StringUtil isStringEmpty:displayValue])
-                                {
-                                    NSDate * date = [DateUtil dateFromString:displayValue inFormat:kDateFormatFormula];
-                                    
-                                    internalValue = [DateUtil getDatabaseStringForDate:date];
-                                   displayValue = [self getUserReadableDateFromFormula:displayValue];
-                                }
-                                recordField.internalValue = internalValue;
-                                recordField.displayValue = displayValue;
-                                
-                            }
-                            else if([sfmPageField.dataType isEqualToString:kSfDTDateTime])
-                            {
-                                if (![StringUtil isStringEmpty:displayValue])
-                                {
-                                    NSDate * date = [DateUtil dateFromString:displayValue inFormat:kDateTimeFormatFormula];
-                                    
-                                    internalValue = [DateUtil getDatabaseStringForDate:date];
-                                    displayValue = [self getUserReadableDateTimeFromFormula:displayValue];
-                                    
-                                }
-                                
-                                recordField.internalValue = internalValue;
-                                recordField.displayValue = displayValue;
-                            }
-                            else if([sfmPageField.dataType isEqualToString:kSfDTReference])
-                            {
-                                recordField.displayValue = displayValue;
-                            }
-                            else
-                            {
-                                recordField.internalValue = internalValue;
-                                recordField.displayValue = displayValue;
-                            }
+
+-(void)udpateDetailRecords:(NSDictionary *)responseDict inSFMPage:(SFMPage *)sfmPage forKey:(NSString *)key {
+    NSDictionary *detailsDict = [responseDict objectForKey:@"details"];
+    NSArray *detailIds = [detailsDict allKeys];
+    
+    NSArray *detailLayouts = sfmPage.process.pageLayout.detailLayouts;
+    NSDictionary *detailRecordsDict = sfmPage.detailsRecord;
+    
+    for (NSString *detailId in detailIds) {
+        
+        NSArray *pageLayoutArray = [detailLayouts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"pageLayoutId = [c] %@", detailId]];
+        
+        if ([pageLayoutArray count] == 1) {
+            SFMDetailLayout *detailLayout = [pageLayoutArray lastObject];
+            NSString *processComponentId = detailLayout.processComponentId;
+            NSArray *detailRecords = [detailRecordsDict objectForKey:processComponentId];
+            NSDictionary *responseDetail = [detailsDict objectForKey:detailId];
+            NSArray *responseLines = [responseDetail objectForKey:@"lines"];
+            NSArray *detailSections = [detailLayout detailSectionFields];
+            
+            for (int i = 0; i < [responseLines count]; i++) {
+                NSDictionary *lineRecord = [responseLines objectAtIndex:i];
+                NSDictionary *sfmRecord = [detailRecords objectAtIndex:i];
+                
+                for (NSString *fieldName in [lineRecord allKeys]) {
+                    
+                    NSArray *pageFieldArray = [detailSections filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"fieldName = [c] %@", fieldName]];
+                    if ([pageFieldArray count] == 1) {
+                        SFMPageField *pageField = [pageFieldArray lastObject];
+                        SFMRecordFieldData *recordField = [sfmRecord objectForKey:fieldName];
+                        id value = [lineRecord objectForKey:fieldName];
+                        [self updateValue:value inRecordField:recordField forPageField:pageField];
                     }
                 }
-                
             }
         }
+    }
+}
+
+
+-(void)updateHeaderRecord:(NSDictionary *)responseDict inSFMPage:(SFMPage *)sfmPage forKey:(NSString *)fieldName {
+    
+    NSDictionary *headerRecord = sfmPage.headerRecord;
+    SFMHeaderLayout *headerLayouts = sfmPage.process.pageLayout.headerLayout;
+    
+    if (!([fieldName isEqualToString:@"Id"] || [fieldName isEqualToString:@"localId"])) {
+        for (SFMHeaderSection *headerSection in headerLayouts.sections) {
+            NSArray *pageFieldArray = [headerSection.sectionFields filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"fieldName = [c] %@", fieldName]];
+            if ([pageFieldArray count] == 1) {
+                SFMPageField *sfmPageField = [pageFieldArray lastObject];
+                SFMRecordFieldData *recordField = [headerRecord objectForKey:fieldName];
+                id value = [responseDict objectForKey:fieldName];
+                [self updateValue:value inRecordField:recordField forPageField:sfmPageField];
+            }
+        }
+    }
+}
+
+-(void)updateValue:(id)value inRecordField:(SFMRecordFieldData *)recordField forPageField:(SFMPageField *)sfmPageField {
+    
+    if (![value isKindOfClass:[NSString class]]) {
+        value = [NSString stringWithFormat:@"%@",value];
+    }
+    
+    if ([sfmPageField.dataType isEqualToString:kSfDTDate] || [sfmPageField.dataType isEqualToString:kSfDTDateTime]) {
+        
+        NSString *internalValue = @"";
+        NSString *displayValue = @"";
+        
+        value = ([value isEqualToString:@"Invalid date"])?@"":value;
+        if (![StringUtil isStringEmpty:value]) {
+            BOOL isDateWithTime = ([sfmPageField.dataType isEqualToString:kSfDTDateTime]);
+            internalValue = [DateUtil getGMTDateFromFormulaDate:value isDateWithTime:isDateWithTime];
+            displayValue = (isDateWithTime)?[DateUtil getUserReadableDateForDateBaseDate:internalValue]:[DateUtil getUserReadableDateForDBDateTime:internalValue];
+        }
+        recordField.internalValue = internalValue;
+        recordField.displayValue = displayValue;
+    }
+    else if([sfmPageField.dataType isEqualToString:kSfDTReference]) {
+        recordField.displayValue = value;
+    }
+    else {
+        recordField.internalValue = value;
+        recordField.displayValue = value;
     }
 }
 
