@@ -115,7 +115,7 @@
 }
 
 - (NSArray *)fieldNamesToBeRemovedFromQuery {
-    return @[@"cannotSendToServer",@"jsonRecord", @"recordDictionary"];
+    return @[@"cannotSendToServer",@"jsonRecord", @"recordDictionary", @"overrideFlag"];
 }
 
 -(BOOL)deleteRecordsForRecordLocalIds:(NSArray *)recordsIds

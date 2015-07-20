@@ -29,6 +29,7 @@
 #import "SFChildRelationshipModel.h"
 #import "AttachmentHelper.h"
 #import "ModifiedRecordsService.h"
+#import "MobileDeviceSettingService.h"
 
 NSString *const kResolveConflictRetry                = @"retry";
 NSString *const kResolveConflictRemove               = @"remove";
@@ -260,10 +261,21 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
             // if overrideFlag = apply local changes or retry, then insert record to M.R table and delete from conflicts table..
             if([syncConflictModel.overrideFlag isEqualToString:kResolveConflictApplyLocalChanges] || [syncConflictModel.overrideFlag isEqualToString:kResolveConflictRetry]) {
                 
+                MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+                MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET016"];
+                BOOL isFieldMergeEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+                if (isFieldMergeEnabled) {
+                    [self addClientOverrideFlagToJSON:newSyncRecord];
+                }
                 id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
                 BOOL doesExist =   [modifiedRecordService doesRecordExistForId:newSyncRecord.recordLocalId andOperationType:newSyncRecord.operation];
                 if (!doesExist) {
                     [ResolveConflictsHelper insertRecordIntoModifiedRecords:newSyncRecord];
+                }
+                else {
+                    if (isFieldMergeEnabled && ![StringUtil isStringEmpty:newSyncRecord.fieldsModified]) {
+                        [modifiedRecordService updateFieldsModifed:newSyncRecord];
+                    }
                 }
                 [ResolveConflictsHelper deleteConflictRecord:syncConflictModel];
                 //conflictsResolved = TRUE;
@@ -387,6 +399,7 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     newSyncRecord.operation = syncConflictModel.operationType;
     newSyncRecord.recordType = recordType;
     newSyncRecord.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
+    newSyncRecord.fieldsModified = syncConflictModel.fieldsModified;
     
     return newSyncRecord;
 }
@@ -558,6 +571,31 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     
     id <SyncErrorConflictDAO> syncErrorService = [FactoryDAO serviceByServiceType:ServiceTypeSyncErrorConflict];
     [syncErrorService updateEachRecord:syncConflictModel withFields:fieldsArray withCriteria:[NSArray arrayWithObjects:criteria1, criteria2, criteria3, nil]];
+}
+
+
++(void)addClientOverrideFlagToJSON:(ModifiedRecordModel *)syncRecord {
+    NSString *fieldsModifiedJson = nil;
+    ModifiedRecordsService *modifiedRecordService = [[ModifiedRecordsService alloc]init];
+    fieldsModifiedJson = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:syncRecord.recordLocalId andSfId:syncRecord.sfId];
+    if ([StringUtil isStringEmpty:fieldsModifiedJson]) {
+        fieldsModifiedJson = syncRecord.fieldsModified;
+    }
+    
+    NSError *error = nil;
+    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:[fieldsModifiedJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&error];
+    NSMutableDictionary *finalDict = [NSMutableDictionary dictionaryWithDictionary:jsonDict];
+    [finalDict setObject:@"YES" forKey:@"CLIENT_OVERRIDE"];
+    
+    error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:finalDict options:NSJSONWritingPrettyPrinted error:&error];
+    
+    if (jsonData != nil) {
+        syncRecord.fieldsModified = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    }
+    else {
+        NSLog(@"field merging json creatn failed error :%@ ", error);
+    }
 }
 
 @end

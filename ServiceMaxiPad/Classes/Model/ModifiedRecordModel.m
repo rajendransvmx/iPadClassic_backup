@@ -44,6 +44,7 @@
 @synthesize requestId;
 @synthesize timeStamp;
 @synthesize fieldsModified;
+@synthesize overrideFlag;
 
 - (id)init
 {

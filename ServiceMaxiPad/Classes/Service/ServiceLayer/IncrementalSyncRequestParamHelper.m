@@ -17,6 +17,7 @@
 #import "PlistManager.h"
 #import "ModifiedRecordModel.h"
 #import "CacheManager.h"
+#import "StringUtil.h"
 
 @interface IncrementalSyncRequestParamHelper ()
 
@@ -221,7 +222,8 @@
                 }
                 
                 NSMutableDictionary *recordDict = [[NSMutableDictionary alloc] init];
-                [recordDict setObject:syncRecord.recordLocalId forKey:kSVMXRequestKey];
+                NSString *keyValue = ([StringUtil isStringEmpty:syncRecord.overrideFlag])?syncRecord.recordLocalId:syncRecord.overrideFlag;
+                [recordDict setObject:keyValue forKey:kSVMXRequestKey];
                 [recordDict setObject:(syncRecord.jsonRecord != nil)?syncRecord.jsonRecord:@""  forKey:kSVMXRequestValue];
                 
                 if ( [syncRecord.operation isEqualToString:@"UPDATE"] && syncRecord.jsonRecord.length <2) {

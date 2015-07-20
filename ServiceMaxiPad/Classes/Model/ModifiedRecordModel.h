@@ -50,6 +50,7 @@
 @property(nonatomic, strong) NSString *jsonRecord;
 
 @property(nonatomic, strong) NSMutableDictionary *recordDictionary;
+@property(nonatomic, strong) NSString *overrideFlag;
 
 - (id)init;
 

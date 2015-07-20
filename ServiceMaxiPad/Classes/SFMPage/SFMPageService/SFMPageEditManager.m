@@ -2402,7 +2402,7 @@
         if (hasConflictRecordFound)
         {
             // Found conflict mark on existing records. Lets consider conflict record as previous change
-            existingModifiedFields = [conflictService fetchExistingModifiedFieldsJsonFromConflictTableForRecordId:recordId];
+            existingModifiedFields = [conflictService fetchExistingModifiedFieldsJsonFromConflictTableForSfId:sfid andObjectName:objectName];
         }
     }
     
@@ -2536,7 +2536,7 @@
         if (hasConflictRecordFound)
         {
             // Found conflict mark on existing records. Lets consider conflict record as previous change
-            existingModifiedFields = [conflictService fetchExistingModifiedFieldsJsonFromConflictTableForRecordId:recordId];
+            existingModifiedFields = [conflictService fetchExistingModifiedFieldsJsonFromConflictTableForSfId:sfid andObjectName:objectName];
         }
     }
     

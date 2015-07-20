@@ -15,5 +15,5 @@
 - (BOOL)isConflictFoundForObjectWithOutType:(NSString*)objectName withSfId:(NSString*)sfId; //For Pulse app
 
 
-- (NSString *)fetchExistingModifiedFieldsJsonFromConflictTableForRecordId:(NSString*)recordId;
+- (NSString *)fetchExistingModifiedFieldsJsonFromConflictTableForSfId:(NSString*)sfId andObjectName:(NSString *)objectName;
 @end
