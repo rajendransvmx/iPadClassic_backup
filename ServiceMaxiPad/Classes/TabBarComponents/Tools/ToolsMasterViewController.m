@@ -153,10 +153,10 @@
     NSString *sectionTitle = @"";
     switch (section) {
         case 0:
-            sectionTitle = @"Sync";
+            sectionTitle = [[TagManager sharedInstance]tagByName:kTagIpadSyncLabel];
             break;
         case 1:
-            sectionTitle = @"Settings";
+            sectionTitle = [[TagManager sharedInstance]tagByName:KTagSettingsTitle];
             break;
         default:
             break;
