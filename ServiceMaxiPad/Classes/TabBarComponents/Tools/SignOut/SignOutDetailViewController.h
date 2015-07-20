@@ -18,6 +18,7 @@
     IBOutlet UIView *seperatorLine;
     IBOutlet UILabel *signOutLabel;
     IBOutlet UIButton *signOutBtn;
+    __weak IBOutlet UILabel *signOutTitle;
 }
 
 - (IBAction)signOutClicked:(id)sender;

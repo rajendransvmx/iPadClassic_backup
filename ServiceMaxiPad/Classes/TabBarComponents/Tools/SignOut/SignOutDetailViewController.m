@@ -106,8 +106,8 @@
 {
     BOOL isSyncInProgress = [self syncInProgress];
     [signOutBtn setTitle:[[TagManager sharedInstance]tagByName:kTagSignOut] forState:UIControlStateNormal];
-    signOutLabel.text = @"Sign out ends your session with ServiceMax Mobile. You will need to sign in again to regain access.";
-    
+    //signOutLabel.text = @"Sign out ends your session with ServiceMax Mobile. You will need to sign in again to regain access.";
+    signOutLabel.text = [[TagManager sharedInstance]tagByName:kTagsessionExpiredMsg];
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && !isSyncInProgress)
      {
          signOutBtn.userInteractionEnabled = YES;
@@ -126,6 +126,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    signOutTitle.text = [[TagManager sharedInstance]tagByName:kTagSignOut];
     [super viewDidAppear:animated];
         //code to be executed on the main queue after delay
     
@@ -174,6 +175,7 @@
     signOutBtn.layer.borderColor = [UIColor orangeColor].CGColor;
     signOutBtn.layer.borderWidth = 0.8;
     signOutBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    [signOutBtn setTitle:[[TagManager sharedInstance]tagByName:kTagSignOut] forState:UIControlStateNormal];
     [self.smPopover dismissPopoverAnimated:YES];
     CGRect theFrame = self.view.bounds;
 
