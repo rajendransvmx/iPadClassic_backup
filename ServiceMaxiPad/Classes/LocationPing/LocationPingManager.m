@@ -305,7 +305,7 @@
                  */
                 model = [self populateModelIfLocationServicesIsDisabled];
                 
-            } else if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized) {
+            } else if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorizedAlways && [CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorizedWhenInUse) {
                 
                 /**
                  * User clicked cancel on permission request.
