@@ -3,17 +3,20 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.114
+Version = 15.49.115
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-019903 - SVMX Formula: Not Working on Latest iPad build.
-
+019175 - SVMX Formulas : Date functions are not handled on iPad.
+019924 - Svmx Formula: Date and DateTime values are displayed in GMT format.
+019920 - Svmx Formula: Junk Date is displayed in Date or DateTime field when process with Formula invoked and the field value is Null.
+019268 - Get Price on the iPad not working.
+018047 - On selecting a date from date picker ,date is displayed in english rather than the device language
 ---------------------
 
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
-2. Third Party App integration with ServiceMaxApp
+2. Updated 'com.servicemax.client.sfmbizrules.zip' file - has fixes for (019921, 019922, 019927, 019536)from server.
