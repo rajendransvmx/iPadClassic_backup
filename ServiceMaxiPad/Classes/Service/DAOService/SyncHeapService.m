@@ -29,12 +29,12 @@
     if (parallelSyncType != nil && ![parallelSyncType isKindOfClass:[NSNull class]])
     {
         DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:@"parallelSyncType" operatorType:SQLOperatorEqual andFieldValue:parallelSyncType];
-        requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:[NSArray arrayWithObjects:@"sfId", nil] whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:@"1 AND 2"];
+        requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:[NSArray arrayWithObjects:@"sfId", nil] whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:nil];
     }
     else
     {
         DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:@"parallelSyncType" operatorType:SQLOperatorIsNull andFieldValue:nil];
-        requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:[NSArray arrayWithObjects:@"sfId", nil] whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:@"1 AND 2"];
+        requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:[NSArray arrayWithObjects:@"sfId", nil] whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:nil];
     }
     
     if(limit != 0)

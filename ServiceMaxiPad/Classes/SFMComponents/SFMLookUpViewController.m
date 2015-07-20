@@ -233,6 +233,8 @@
 }
 
 - (void)dealloc {
+    _barcodeScannerUtil.scannerDelegate = nil;
+    _barcodeScannerUtil = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillHideNotification
                                                   object:nil];

@@ -11,6 +11,8 @@
 
 @interface BarCodeScannerUtility ()
 
+@property(nonatomic, strong) ZBarReaderViewController *reader;
+
 @end
 
 @implementation BarCodeScannerUtility
@@ -36,11 +38,11 @@
     
     SXLogDebug(@"\n\n\n Loaded scanner");
     // ADD: present a barcode reader that scans from the camera feed
-    ZBarReaderViewController *reader = [ZBarReaderViewController new];
-    reader.readerDelegate = self;
-    reader.supportedOrientationsMask = ZBarOrientationMaskAll;
+    self.reader = [ZBarReaderViewController new];
+    self.reader.readerDelegate = self;
+    self.reader.supportedOrientationsMask = ZBarOrientationMaskAll;
     
-    ZBarImageScanner *scanner = reader.scanner;
+    ZBarImageScanner *scanner = self.reader.scanner;
     
     // DO: (optional) additional reader configuration can be done here
 
@@ -50,8 +52,10 @@
                        to: 0];
     
     // present and release the controller
-    [viewController presentViewController:reader animated:YES completion:^{
-        
+    [viewController presentViewController:self.reader animated:YES completion:^{
+        [self.reader.readerView stop];
+        [self.reader.readerView flushCache];
+        [self.reader.readerView start];
     }];
 
 }
@@ -80,7 +84,9 @@
     if (![reader isBeingDismissed] && ![reader isBeingPresented]) {
         SXLogDebug(@"\n\n Dismissed : Barcode being dismissed : %d, Barcode being Presented %d",[reader isBeingDismissed],[reader isBeingPresented]);
         [reader dismissViewControllerAnimated:YES completion:^{
-            
+            [self.reader.readerView stop];
+            [self.reader.readerView flushCache];
+            self.reader = nil;
         }];
     }
     SXLogDebug(@"\n\nBarcode being dismissed : %d, Barcode being Presented %d",[reader isBeingDismissed],[reader isBeingPresented]);
@@ -98,10 +104,19 @@
 
         SXLogDebug(@"\n\nDismissed : Barcode being dismissed : %d, Barcode being Presented %d",[picker isBeingDismissed],[picker isBeingPresented]);
         [picker dismissViewControllerAnimated:YES completion:^{
-            
+            [self.reader.readerView stop];
+            [self.reader.readerView flushCache];
+            self.reader = nil;
         }];
     }
     SXLogDebug(@"\n\nBarcode being dismissed : %d, Barcode being Presented %d",[picker isBeingDismissed],[picker isBeingPresented]);
 }
+
+- (void)dealloc
+{
+    _scannerDelegate = nil;
+    _reader = nil;
+}
+
 
 @end

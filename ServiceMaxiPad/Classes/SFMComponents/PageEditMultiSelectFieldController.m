@@ -544,4 +544,10 @@
     SXLogInfo(@"Barcode Cancelled");
 }
 
+- (void)dealloc
+{
+    _barCodeScanner.scannerDelegate = nil;
+    _barCodeScanner = nil;
+}
+
 @end

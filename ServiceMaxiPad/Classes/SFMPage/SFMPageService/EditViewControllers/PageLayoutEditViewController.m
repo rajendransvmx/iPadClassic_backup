@@ -232,6 +232,8 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
 #pragma mark End
 
 - (void)dealloc {
+    _barcodeScanner = nil;
+    _barcodeScanner.scannerDelegate = nil;
     SXLogDebug(@"PageLayoutEditViewController dealloc");
 }
 
@@ -512,9 +514,9 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
     {
         self.barcodeScanner = [[BarCodeScannerUtility alloc] init];
         self.barcodeScanner.scannerDelegate = self;
-        self.barcodeScanner.indexPath = indexPath;
     }
-    [ self.barcodeScanner loadScannerOnViewController:self];
+    self.barcodeScanner.indexPath = indexPath;
+    [self.barcodeScanner loadScannerOnViewController:self];
 }
 
 #pragma mark End
@@ -586,14 +588,12 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
 {
     SXLogInfo(@"DecodedData = %@", decodedData );
     [self updateBarCodeText:decodedData indexPath:self.barcodeScanner.indexPath];
-    
-    
 }
 - (void) barcodeCaptureCancelled
 {
     SXLogDebug(@"barcodeCaptureCancelled" );
-    self.barcodeScanner = nil;
 }
+
 #pragma mark - End
 
 #pragma mark - Update barcode code value
@@ -604,7 +604,6 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
         [self fieldValueChangedFor:indexPath andRecordFieldModel:record];
         [self reloadDataAsync];
     }
-    self.barcodeScanner = nil;
 }
 
 - (SFMRecordFieldData *)getRecordDataForValue:(NSString *)value indexPath:(NSIndexPath *)indexPath

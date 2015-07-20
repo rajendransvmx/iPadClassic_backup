@@ -933,7 +933,8 @@
 #pragma mark End
 
 - (void)dealloc {
-    
+    _barCodeScanner.scannerDelegate = nil;
+    _barCodeScanner = nil;
     _dodPopoverController = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNetworkConnectionChanged object:nil];
     [self deRegisterSyncStatusChangeNotification];
