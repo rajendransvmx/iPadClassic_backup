@@ -88,6 +88,7 @@
     resetAppBtn.layer.borderColor = [UIColor orangeColor].CGColor;
     //self.smSplitViewController.navigationItem.titleView = [UILabel navBarTitleLabel:[[TagManager sharedInstance]tagByName:kTagResetApp]];
     resetAppBtn.layer.borderWidth = 0.8;
+    [resetAppBtn setTitle:[[TagManager sharedInstance]tagByName:kTagResetApp] forState:UIControlStateNormal];
     [self.smPopover dismissPopoverAnimated:YES];
     resetAppBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     

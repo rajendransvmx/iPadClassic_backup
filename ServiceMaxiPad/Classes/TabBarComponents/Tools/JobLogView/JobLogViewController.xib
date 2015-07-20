@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="7702" systemVersion="14A389" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1096" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="JobLogViewController">
             <connections>
                 <outlet property="lastSyncLabel" destination="ijR-WO-6hw" id="Qnl-uk-PYV"/>
                 <outlet property="pushLog" destination="8fM-8X-s1B" id="9Eo-f1-zMk"/>
+                <outlet property="pushLogTitle" destination="W4f-Mm-myU" id="eg3-lI-m8t"/>
                 <outlet property="statusLabel" destination="3MC-Ai-sxA" id="Jsf-vB-j3p"/>
                 <outlet property="view" destination="wVu-az-PUa" id="3Us-9j-CpG"/>
             </connections>

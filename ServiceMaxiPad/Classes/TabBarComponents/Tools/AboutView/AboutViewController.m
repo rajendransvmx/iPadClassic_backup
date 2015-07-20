@@ -18,6 +18,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *customAttributedString;
 @property (strong, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (strong, nonatomic) IBOutlet UILabel *versionLabel;
+@property (strong, nonatomic) IBOutlet UILabel *aboutTitle;
 @end
 
 @implementation AboutViewController
@@ -37,6 +38,7 @@
     // Do any additional setup after loading the view from its nib.
     //self.smSplitViewController.navigationItem.titleView = [UILabel navBarTitleLabel:[[TagManager sharedInstance]tagByName:kTagAbout]];
     [self.smPopover dismissPopoverAnimated:YES];
+    self.aboutTitle.text = [[TagManager sharedInstance]tagByName:kTagAbout];
     [self updateAboutScreenData];
 }
 

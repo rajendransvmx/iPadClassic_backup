@@ -29,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UILabel *lastSyncLabel;
 @property (weak, nonatomic) IBOutlet UIButton *pushLog;
+@property (strong, nonatomic) IBOutlet UILabel *pushLogTitle;
 
 @end
 
@@ -55,6 +56,8 @@
     
     [self.smPopover dismissPopoverAnimated:YES];
     [self updateLastPushLogTimeAndStatusUI];
+    //self.pushLogTitle.text = [[TagManager sharedInstance] tagByName:kTagPushLogs];
+    //[self.pushLog setTitle:[[TagManager sharedInstance]tagByName:kTagResetApp] forState:UIControlStateNormal];
     self.pushLog.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 }
 - (void) handleAppEnterForeground {
