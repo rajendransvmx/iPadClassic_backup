@@ -127,6 +127,7 @@ extern NSString *const kTagMonthNineLabel;
 extern NSString *const kTagMonthTenLabel;
 extern NSString *const kTagMonthElevenLabel;
 extern NSString *const kTagMonthTwelveLabel;
+extern NSString *const KTagSettingsTitle;
 
 #define Tag_CAL_MON                            @"IPAD006_TAG029"
 #define Tag_CAL_TUE                            @"IPAD006_TAG030"
@@ -418,6 +419,7 @@ extern NSString *const kTagMonthTwelveLabel;
 #define kTag_SignedOut @"IPAD015_TAG023"
 #define kTag_YouHaveSignedOut @"IPAD015_TAG024" //You have been signed out.
 #define kTag_ThanksForUsingServiceMax @"IPAD015_TAG025" //Thanks for using ServiceMax Mobile!
+
 
 //HS 6 Jan
 
@@ -839,6 +841,7 @@ extern NSString *const kTagDeleteButtonTitle     ;
 // Smart docs
 extern NSString *const kTag_Customer_Sign_Off    ;
 extern NSString *const kTag_FINALIZE;
+extern NSString *const kTagsessionExpiredMsg     ;
 
 
 //calendar

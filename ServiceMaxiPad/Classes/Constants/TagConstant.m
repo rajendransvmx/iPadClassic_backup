@@ -550,6 +550,8 @@ NSString *const kTagSLAClocks                            = @"IPAD014_TAG042";
 //Smart Docs
 NSString *const kTag_Customer_Sign_Off      = @"IPAD004_TAG035";
 NSString *const kTag_FINALIZE               = @"SFM004_TAG006";
+NSString *const kTagsessionExpiredMsg       = @"IPAD012_TAG059";
+
 
 //HS added
 NSString *const kTagSignOut                 = @"IPAD012_TAG055";
@@ -562,7 +564,7 @@ NSString *const kTagLoading                 = @"IPAD018_TAG129";
 NSString *const kTagmore                    = @"IPAD014_TAG052";
 NSString *const kTagHostNotFound_CheckURL   = @"IPAD015_TAG014"; //A server with the specified hostname could not be found. Please check your custom host URL settings.
 NSString *const kTagHostNotFound            = @"IPAD015_TAG013";//A server with the specified hostname could not be found.
-
+NSString *const KTagSettingsTitle           = @"IPAD021-TAG003";
 
 
 
