@@ -3,19 +3,21 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.116
+Version = 15.49.117
 ===========================================
 
 -------------
 Fixed Defects
 -------------
 
-018538
-018601 
-019529
-020184
+20181:
 
 Additional Notes
 ---------------------
 1. Namespace set to SVMXC
+2. SOAP for Custom Action & Before Save/After Save.
+
+
+
+Note: Please Do not use the Rest Based Custom Action & Before Save/After Save Processes.
 
