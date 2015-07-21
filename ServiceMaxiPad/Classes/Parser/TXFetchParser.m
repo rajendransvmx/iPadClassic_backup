@@ -129,11 +129,11 @@
             NSMutableDictionary *objectListDictioanry = nil;
             if (self.categoryType == CategoryTypeGetPriceData)
             {
-               [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:kParallelGetPriceSync];
+           objectListDictioanry = [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:kParallelGetPriceSync];
             }
             else
             {
-               [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:nil];
+             objectListDictioanry =  [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:nil];
             }
             
             for (NSString *eachObjectName in [objectListDictioanry allKeys]) {
