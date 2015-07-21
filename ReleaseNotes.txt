@@ -3,21 +3,14 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.117
+Version = 15.49.118
 ===========================================
 
 -------------
 Fixed Defects
 -------------
 
-20181:
-
-Additional Notes
----------------------
-1. Namespace set to SVMXC
-2. SOAP for Custom Action & Before Save/After Save.
-
-
-
-Note: Please Do not use the Rest Based Custom Action & Before Save/After Save Processes.
+020261 - Fresh installation, Initial sync / reset app is not bringing cal events and related records.
+020223 - iPad Calendar WO Hardwired screen broken - displays Null Values.
+020244 - Unable to get updates from the Server during Data Sync.
 
