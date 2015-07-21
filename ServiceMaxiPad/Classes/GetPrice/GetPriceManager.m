@@ -12,6 +12,7 @@
 #import "TaskGenerator.h"
 #import "WebserviceResponseStatus.h"
 #import "RequestConstants.h"
+#import "TimeLogCacheManager.h"
 
 @interface GetPriceManager ()
 
@@ -65,9 +66,11 @@
             }
             else
             {
-                if (wsResponseStatus.requestType == RequestSyncTimeLogs
+                if (wsResponseStatus.requestType == RequestCleanUp//RequestSyncTimeLogs
                     || wsResponseStatus.syncStatus != SyncStatusSuccess)
                 {
+                    [[TimeLogCacheManager sharedInstance] clearAllFailureListforCategoryType:CategoryTypeGetPriceData];
+                    [[TimeLogCacheManager sharedInstance] clearAllLogEntryForCategoryType:CategoryTypeGetPriceData];
                     self.isGetPriceProgress = NO;
                     self.getPriceTaskId = nil;
                 }

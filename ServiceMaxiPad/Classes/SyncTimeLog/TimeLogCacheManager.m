@@ -82,6 +82,24 @@
     }
 }
 
+- (void) clearAllLogEntryForCategoryType:(CategoryType)categoryType
+{
+    if (categoryType == CategoryTypeGetPriceData)
+    {
+        [self.timeCacheDictionary removeAllObjects];
+        self.timeCacheDictionary = nil;
+        [self.logIdTimeCacheArray removeAllObjects];
+        self.logIdTimeCacheArray = nil;
+    }
+    else
+    {
+        [self.getPriceTimeCacheDictionary removeAllObjects];
+        self.getPriceTimeCacheDictionary = nil;
+        [self.logIdGetPriceTimeCacheArray removeAllObjects];
+        self.logIdGetPriceTimeCacheArray = nil;
+    }
+}
+
 #pragma mark - Cache method
 - (void) logEntryForSyncResponceTime:(TimeLogModel *)modelObject
                      forCategoryType:(CategoryType)categoryType {

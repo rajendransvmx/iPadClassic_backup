@@ -125,6 +125,7 @@
 - (NSArray *) getCompleteLogEntryforCategoryType:(CategoryType)categoryType;
 
 - (void) addEntryToFailureList:(NSString *)requestId forCategoryType:(CategoryType)categoryType;
-- (void) clearAllFailureListforCategoryType:(CategoryType)categoryType;;
+- (void) clearAllFailureListforCategoryType:(CategoryType)categoryType;
+- (void) clearAllLogEntryForCategoryType:(CategoryType)categoryType;
 
 @end

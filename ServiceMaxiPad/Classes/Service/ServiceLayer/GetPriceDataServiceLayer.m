@@ -17,6 +17,12 @@
 #import "TXFetchHelper.h"
 #import "TimeLogCacheManager.h"
 
+@interface GetPriceDataServiceLayer ()
+
+@property(nonatomic, copy) NSString *lastSyncTime;
+
+@end
+
 @implementation GetPriceDataServiceLayer
 
 
@@ -134,16 +140,21 @@
 {
     NSMutableDictionary *lastSyncTimeDict = [[NSMutableDictionary alloc] initWithCapacity:0];
     [lastSyncTimeDict setObject:kLastSyncTime forKey:kSVMXRequestKey];
-    NSString *lastSyncTime = [PlistManager getGetPriceSyncTime];
-    if (lastSyncTime == nil)
+    if (self.lastSyncTime != nil)
     {
-        lastSyncTime = [PlistManager getOneCallSyncTime];
+        [lastSyncTimeDict setObject:self.lastSyncTime forKey:kSVMXRequestValue];
+        return lastSyncTimeDict;
     }
-    if (lastSyncTime == nil)
+    self.lastSyncTime = [PlistManager getGetPriceSyncTime];
+    if (self.lastSyncTime == nil)
     {
-        lastSyncTime = @"";
+        self.lastSyncTime = [PlistManager getOneCallSyncTime];
     }
-    [lastSyncTimeDict setObject:lastSyncTime forKey:kSVMXRequestValue];
+    if (self.lastSyncTime == nil)
+    {
+        self.lastSyncTime = @"";
+    }
+    [lastSyncTimeDict setObject:self.lastSyncTime forKey:kSVMXRequestValue];
     return lastSyncTimeDict;
 }
 
