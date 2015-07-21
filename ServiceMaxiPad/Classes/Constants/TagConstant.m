@@ -564,7 +564,7 @@ NSString *const kTagLoading                 = @"IPAD018_TAG129";
 NSString *const kTagmore                    = @"IPAD014_TAG052";
 NSString *const kTagHostNotFound_CheckURL   = @"IPAD015_TAG014"; //A server with the specified hostname could not be found. Please check your custom host URL settings.
 NSString *const kTagHostNotFound            = @"IPAD015_TAG013";//A server with the specified hostname could not be found.
-NSString *const KTagSettingsTitle           = @"IPAD021-TAG003";
+NSString *const KTagSettingsTitle           = @"IPAD021_TAG003";
 
 
 
