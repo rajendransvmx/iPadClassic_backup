@@ -100,7 +100,7 @@
     UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"OPDocBackArrow.png"]];
     
     UILabel *backLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 180, arrow.frame.size.height)];
-    backLabel.text = [[TagManager sharedInstance]tagByName:kTag_WorkOrder];
+    backLabel.text = [[TagManager sharedInstance]tagByName:kTagtBackButtonTitle];
     backLabel.font = [UIFont systemFontOfSize:17];
     backLabel.textColor = [UIColor whiteColor];
     backLabel.backgroundColor = [UIColor clearColor];
