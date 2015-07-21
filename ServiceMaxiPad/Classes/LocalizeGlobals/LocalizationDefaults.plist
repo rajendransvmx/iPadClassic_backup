@@ -194,7 +194,7 @@
 	<string>Unable to connect to the internet. Please retry action once the connection is available.</string>
 	<key>SFM_ACTION_BUTTON_CANCEL_TITLE</key>
 	<string>Cancel</string>
-	<key>IPAD021-TAG003</key>
+	<key>IPAD021_TAG003</key>
 	<string>Settings</string>
 	<key>IPAD024_TAG001</key>
 	<string>Error in Upload</string>
