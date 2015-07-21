@@ -304,3 +304,4 @@ extern NSString *const kSFMSearchOperator;
 extern NSString *const kSFMSearchObjectId;
 extern NSString *const kSFMSearchRecordLimit;
 extern NSString *const kAfterSaveInsertCustomCallValueMap;
+extern NSString *const  kSoapUrlForWebservice;

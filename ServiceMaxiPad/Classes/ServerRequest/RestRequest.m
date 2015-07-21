@@ -22,6 +22,8 @@
 #import "SFMCustomActionWebServiceHelper.h"
 #import "CacheManager.h"
 #import "CacheConstants.h"
+#import "CustomActionAfterBeforeXMLRequestHelper.h"
+#import "CustomActionXMLRequestHelper.h"
 
 @implementation RestRequest
 @synthesize dataDictionary;
@@ -79,19 +81,8 @@
 	if (self != nil)
     {
         self.requestType  = requestType;
+        self.requestIdentifier =  [AppManager generateUniqueId];
         
-        NSString *requestIdentifierOfLastFailedRequest = [[NSUserDefaults standardUserDefaults] objectForKey:@"requestIdentifier"];
-
-        if (requestIdentifierOfLastFailedRequest && requestIdentifierOfLastFailedRequest.length && requestType == RequestOneCallDataSync)
-        {
-            self.requestIdentifier = requestIdentifierOfLastFailedRequest;
-
-        }
-        else
-        {
-            self.requestIdentifier =  [AppManager generateUniqueId];
-        }
-
         CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
         
         self.groupId     = [customerOrgInfoInstance userOrgId];
@@ -145,15 +136,6 @@
             [urlRequest setTimeoutInterval:timeOutForRequest];
             
             SXLogDebug(@"Request Time Out - %d", (int)timeOutForRequest);
-
-            /** Content type */
-            [urlRequest setValue:kContentType forHTTPHeaderField:@"content-type"];
-            [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Accept-Encoding"];
-            
-            
-            
-            
-
             
             /** Set Header properties  */
             NSDictionary *otherHttpHeaders = [self httpHeaderParameters];
@@ -163,48 +145,28 @@
                 [urlRequest setValue:eachValue forHTTPHeaderField:eachKey];
             }
             
-            if ([self.httpMethod isEqualToString:kHttpMethodGet]) {
-                
-                /** Content type */
-                [urlRequest setValue:@"JSON" forHTTPHeaderField:@"Accept"];
-            }
-            else {
-                /** Set body parameters */
-                NSDictionary *httpPostDictionary = [self httpPostBodyParameters];
-                
-                if (self.requestType != RequestLogs)
-                {
-                    //SXLogDebug(@"httpPostBodyParameters = %@",httpPostDictionary);
-                }
-                else
-                {
-                    //SXLogWarning(@"RequestLogs ; Push Logs Req, No Post body params");
-                }
-                
-                if (httpPostDictionary != nil) {
-                    
-                    //NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
-                    
-                    NSData *someData = [NSJSONSerialization dataWithJSONObject:httpPostDictionary options:0 error:nil];
-                    [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Content-Encoding"];
-                    
-                    NSData *compressedData = [someData gzipDeflate];
-                    
-                    [urlRequest setHTTPBody:compressedData];
-                }
-            }
-            
             NSDate *requestedTime = [NSDate date]; //calculating latency of request
-            AFHTTPRequestOperation *requestOp = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+            AFHTTPRequestOperation *requestOp;
             
-            //AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-            requestOp.responseSerializer = [AFJSONResponseSerializer serializer];
+            if (self.requestType ==    RequestTypeCustomActionWebService || self.requestType ==
+                RequestTypeCustomActionWebServiceAfterBefore) {
+        
+                [self soapRequest:urlRequest];
+                requestOp  = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+                requestOp.responseSerializer = [AFXMLParserResponseSerializer serializer];
+
+            }
+            else
+            {
+                [self restRequest:urlRequest];
+                requestOp  = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
+
+                requestOp.responseSerializer = [AFJSONResponseSerializer serializer];
+                requestOp.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:kContentType, @"application/octetstream", @"text/html",nil];
+
+            }
             
             //requestOp.requestSerializer = [AFgzipRequestSerializer serializerWithSerializer:[AFJSONRequestSerializer serializer]];
-            
-
-            
-            requestOp.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:kContentType, @"application/octetstream", @"text/html",nil];
             
             //PA
             NSString *contextValue = [[ServerRequestManager sharedInstance]getTheContextvalueForCategoryType:self.categoryType];
@@ -251,6 +213,105 @@
     }
 }
 
+-(void)soapRequest:(NSMutableURLRequest *)urlRequest
+{
+//    [urlRequest setValue:@"XML" forHTTPHeaderField:@"Accept"];
+    [urlRequest addValue: @"text/xml" forHTTPHeaderField:@"Content-Type"];
+    [urlRequest setValue:@"servicemax.com/Hello" forHTTPHeaderField:@"SOAPAction"];
+    //                [urlRequest setValue:@""      forHTTPHeaderField:@"Content-Encoding"];
+//    [urlRequest setValue:self.oAuthId forHTTPHeaderField:kOAuthSessionTokenKey];
+
+    NSString *methodName = @"";
+    NSString *className = @"";
+    NSString *requestBody = @"";
+    CustomActionWebserviceModel *customActionWebserviceLayer = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
+    if (customActionWebserviceLayer) {
+        
+        /* Adding class-name and method-name in web service URL, Before adding into URL checking for method name */
+        if ((![customActionWebserviceLayer.methodName isEqualToString:@""])) {
+            className = customActionWebserviceLayer.className;
+            methodName = customActionWebserviceLayer.methodName;
+            
+            CustomActionXMLRequestHelper *helper = [CustomActionXMLRequestHelper new];
+            requestBody =[helper getXmlBody];
+        }
+        else
+        {
+            NSArray *classNameMethodNameArray = [self seggregateClassNameAndMethodNameForCustomClass:customActionWebserviceLayer.className];
+            if (classNameMethodNameArray.count == 2) {
+                className = [classNameMethodNameArray objectAtIndex:0];
+                methodName = [classNameMethodNameArray objectAtIndex:1];
+                CustomActionAfterBeforeXMLRequestHelper *helper = [CustomActionAfterBeforeXMLRequestHelper new];
+                requestBody =[helper getXmlBody];
+            }
+        }
+    }
+    
+    NSString *xmlInitialData = @"<?xml version=\"1.0\" encoding=\"utf-8\"?>";
+    NSString *soapEnvelopeStart = [xmlInitialData stringByAppendingFormat:@"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tes=\"http://soap.sforce.com/schemas/class/%@\">", className];
+
+    NSString *soapHeader = [soapEnvelopeStart stringByAppendingFormat:@"<soapenv:Header><tes:SessionHeader><tes:sessionId>%@</tes:sessionId></tes:SessionHeader></soapenv:Header>", self.oAuthId];
+    NSString *soapBodyStart = [soapHeader stringByAppendingFormat:@"<soapenv:Body>"];
+    NSString*soapMethodStart = [soapBodyStart stringByAppendingFormat:@"<tes:%@>",methodName];
+    NSString*soapMethodReqStart = [soapMethodStart stringByAppendingFormat:@"<tes:req>"];
+
+    NSString*soapMethodParameter = [soapMethodReqStart stringByAppendingFormat:@"%@",requestBody];
+    NSString*soapMethodReqEnd = [soapMethodParameter stringByAppendingFormat:@"</tes:req>"];
+
+    NSString*soapMethodEnd = [soapMethodReqEnd stringByAppendingFormat:@"</tes:%@>",methodName];
+
+    NSString *soapBodyEnd = [soapMethodEnd stringByAppendingFormat:@"</soapenv:Body>"];
+    NSString *soapEnvelopeEnd = [soapBodyEnd stringByAppendingFormat:@"</soapenv:Envelope>"];
+//    NSString *sSOAPMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+//    "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tes=\"http://soap.sforce.com/schemas/class/TestWebServices1\">"
+//    "<soapenv:Header>"
+//                              "<tes:SessionHeader>"
+//                                "<tes:sessionId>%@</tes:sessionId>"
+//                              "</tes:SessionHeader>"
+//    "</soapenv:Header>"
+//    "<soapenv:Body>"
+//                              
+//                              "<tes:test_WS>"
+//                              "<strTest>something</strTest>"
+//                              "</tes:test_WS>"
+//
+//    "</soapenv:Body>"
+//    "</soapenv:Envelope>", self.oAuthId];
+    SXLogDebug(@"soapEnvelopeEnd:%@",soapEnvelopeEnd);
+    NSData* data = [soapEnvelopeEnd dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [urlRequest setHTTPBody:data];
+}
+
+-(void)restRequest:(NSMutableURLRequest *)urlRequest
+{
+    if ([self.httpMethod isEqualToString:kHttpMethodGet]) {
+        
+        /** Content type */
+        [urlRequest setValue:@"JSON" forHTTPHeaderField:@"Accept"];
+    }
+    else {
+        /** Set body parameters */
+        NSDictionary *httpPostDictionary = [self httpPostBodyParameters];
+        
+        if (httpPostDictionary != nil) {
+            
+            SXLogDebug(@"httpPostDictionary : %@", [httpPostDictionary description]);
+            
+            NSData *someData = [NSJSONSerialization dataWithJSONObject:httpPostDictionary options:0 error:nil];
+            [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Content-Encoding"];
+            
+            NSData *compressedData = [someData gzipDeflate];
+            [urlRequest setHTTPBody:compressedData];
+            
+        }
+    }
+    
+    /** Content type */
+    [urlRequest setValue:kContentType forHTTPHeaderField:@"content-type"];
+    [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Accept-Encoding"];
+    
+}
 #pragma mark - private methods
 /**
  * @name - (void)addParametersForRequestWithType:(RequestType)type
@@ -841,15 +902,24 @@
         case RequestTypeCustomActionWebServiceAfterBefore:
         case RequestTypeCustomActionWebService:
         {
-            kRestUrlString=kRestUrlForWebservice;
+            kRestUrlString=kSoapUrlForWebservice;
             CustomActionWebserviceModel *customActionWebserviceLayer = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
             if (customActionWebserviceLayer) {
                 
                 /* Adding class-name and method-name in web service URL, Before adding into URL checking for method name */
                 if ((![customActionWebserviceLayer.methodName isEqualToString:@""])) {
-                    stringToAppend = [NSString stringWithFormat:@"%@/%@",customActionWebserviceLayer.className,customActionWebserviceLayer.methodName];
-                }else{
                     stringToAppend = [NSString stringWithFormat:@"%@",customActionWebserviceLayer.className];
+                }else
+                {
+                    
+                    NSArray *methodNameArray = [self seggregateClassNameAndMethodNameForCustomClass:customActionWebserviceLayer.className];
+                    if(methodNameArray.count)
+                    {
+                        stringToAppend = [NSString stringWithFormat:@"%@",[methodNameArray objectAtIndex:0]];
+                    }
+                    else {
+                        stringToAppend = @"";
+                    }
                 }
             }
         }
@@ -857,12 +927,25 @@
         default:
             break;
     }
+
     CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
    // [customerOrgInfoInstance explainMe];
     
    return  [[NSString alloc] initWithFormat:@"%@%@%@",[customerOrgInfoInstance instanceURL],kRestUrlString,stringToAppend];
 }
 
+-(NSArray *)seggregateClassNameAndMethodNameForCustomClass:(NSString *)classNameMethodName
+{
+    NSRange range = [classNameMethodName rangeOfString:@"/"];
+    
+    NSString *className = @"";
+    NSString *methodName = @"";
+    if (range.location <classNameMethodName.length) {
+        className = [classNameMethodName substringToIndex:range.location];
+        methodName = [classNameMethodName substringFromIndex:range.location+1];
+    }
+    return @[className, methodName];
+}
 
 - (NSString*)getUrlWithStringForRestQuery:(NSString*)stringToAppend
 {

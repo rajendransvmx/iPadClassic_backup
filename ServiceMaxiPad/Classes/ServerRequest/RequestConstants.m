@@ -61,10 +61,6 @@ NSString *const kGetDeleteDCOptimized  = @"GET_DELETE_DC_OPTIMZED";
 NSString *const kGetUpdateDCOptimized  = @"GET_UPDATE_DC_OPTIMZED";
 NSString *const kLastInternalResponse  = @"lstInternal_Response";
 
-
-
-
-
 NSString *const kOAuthSessionTokenKey = @"Authorization";
 
 //dynamic value properties
@@ -96,6 +92,7 @@ NSString *const kJobLogCarrierContext   =  @"JOB LOG CARRIER";
 
 NSString *const  kRestUrl =  @"/services/apexrest/"ORG_NAME_SPACE@"/svmx/MobServiceIntf/";
 NSString *const  kRestUrlForWebservice =  @"/services/apexrest/";
+NSString *const  kSoapUrlForWebservice =  @"/services/Soap/class/";
 
 NSString *const  kRestUrlDPPicklist  =  @"/services/data/v25.0/sobjects/";
 

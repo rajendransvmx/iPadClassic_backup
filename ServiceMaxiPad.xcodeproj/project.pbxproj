@@ -869,6 +869,8 @@
 		6BF9D02A1AA9BEA30057D8AC /* NotificationTrackerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D0281AA9BEA30057D8AC /* NotificationTrackerVC.m */; };
 		6BF9D02F1AA9C0D50057D8AC /* NotificationDownloadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D02D1AA9C0D50057D8AC /* NotificationDownloadCell.m */; };
 		6BF9D0301AA9C0D50057D8AC /* NotificationDownloadCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */; };
+		8413F5061B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413F5031B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m */; };
+		8413F5071B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413F5051B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m */; };
 		84BEDC9919FA157800350B56 /* priority_Flag@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9619FA157800350B56 /* priority_Flag@2x.png */; };
 		84BEDC9A19FA157800350B56 /* sla_Indicator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9719FA157800350B56 /* sla_Indicator@2x.png */; };
 		84BEDC9B19FA157800350B56 /* sync_Error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9819FA157800350B56 /* sync_Error@2x.png */; };
@@ -2639,6 +2641,10 @@
 		6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationDownloadCell.xib; sourceTree = "<group>"; };
 		84026B021A9B5A4D0096C6B8 /* EventTransactionObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTransactionObjectModel.h; sourceTree = "<group>"; };
 		84026B031A9B5A4D0096C6B8 /* EventTransactionObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTransactionObjectModel.m; sourceTree = "<group>"; };
+		8413F5021B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionAfterBeforeXMLRequestHelper.h; sourceTree = "<group>"; };
+		8413F5031B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionAfterBeforeXMLRequestHelper.m; sourceTree = "<group>"; };
+		8413F5041B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionXMLRequestHelper.h; sourceTree = "<group>"; };
+		8413F5051B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionXMLRequestHelper.m; sourceTree = "<group>"; };
 		84BEDC9619FA157800350B56 /* priority_Flag@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "priority_Flag@2x.png"; sourceTree = "<group>"; };
 		84BEDC9719FA157800350B56 /* sla_Indicator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sla_Indicator@2x.png"; sourceTree = "<group>"; };
 		84BEDC9819FA157800350B56 /* sync_Error@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync_Error@2x.png"; sourceTree = "<group>"; };
@@ -4352,6 +4358,10 @@
 				1814AD201B2B04D2001167DE /* SFMCustomActionHelper.m */,
 				181A4DD01B383D3D00549C38 /* SFMCustomActionWebServiceHelper.h */,
 				181A4DD11B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m */,
+				8413F5021B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.h */,
+				8413F5031B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m */,
+				8413F5041B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.h */,
+				8413F5051B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m */,
 			);
 			path = Wizard;
 			sourceTree = "<group>";
@@ -7226,6 +7236,7 @@
 				183A9E9419E6A11800919345 /* ServerRequestManager.m in Sources */,
 				183A9FC419E6B18500919345 /* CalenderEventObjectService.m in Sources */,
 				407252F419FF52C700ACA729 /* DARequestParser.m in Sources */,
+				8413F5071B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m in Sources */,
 				184A8EFB19E7A535006DA6BE /* UICRouteOverlayMapView.m in Sources */,
 				183A9E3819E69DB000919345 /* SFAttachmentTrailerModel.m in Sources */,
 				9E1B50501A40631600C71983 /* CusTextField.m in Sources */,
@@ -7407,6 +7418,7 @@
 				184A8EFA19E7A535006DA6BE /* UICRouteAnnotation.m in Sources */,
 				183A9E3C19E69DB000919345 /* SFExpressionModel.m in Sources */,
 				183A9A8319E6949800919345 /* WhereClauseCreator.m in Sources */,
+				8413F5061B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m in Sources */,
 				183AA03B19E6BDB300919345 /* TXFetchParser.m in Sources */,
 				18DE885A19E58A130011E9EE /* PlistManager.m in Sources */,
 				407252F619FF52C700ACA729 /* HTMLJSWrapper.m in Sources */,

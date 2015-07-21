@@ -51,6 +51,10 @@
 }
 - (NSArray*)getRequestParametersWithRequestCount:(NSInteger)requestCount
 {
+    return @[];
+}
+- (NSArray*)getRequestParametersWithRequestCountRestBody:(NSInteger)requestCount
+{
     RequestParamModel *reqParModel = [[RequestParamModel alloc]init];
     NSMutableArray *requestArray =[[NSMutableArray alloc] init];
 
