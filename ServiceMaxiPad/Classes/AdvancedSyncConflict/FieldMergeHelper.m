@@ -43,12 +43,37 @@
     self.dataDictionaryAfterModification = [[NSMutableDictionary alloc]init];
     for (NSString *newKey in fields)
     {
+        /* HS */
+        /*
         SFMRecordFieldData *recordFieldData = [dataAfterModification objectForKey:newKey];
         NSString *oldValue = [self.dataDictionaryBeforeModification objectForKey:newKey];
         NSString *newValue = recordFieldData.internalValue;
         if(newValue == nil){
             continue;
         }
+         */
+        id value = [dataAfterModification objectForKey:newKey];
+        NSString *oldValue = nil;
+        NSString *newValue = nil;
+        if ([value isKindOfClass:[SFMRecordFieldData class]])
+        {
+            SFMRecordFieldData *recordFieldData = value;
+            oldValue = [self.dataDictionaryBeforeModification objectForKey:newKey];
+            newValue = recordFieldData.internalValue;
+ 
+        }
+        else
+        {
+            
+            oldValue = [self.dataDictionaryBeforeModification objectForKey:newKey];
+            newValue = value;
+         
+        }
+      
+        if(newValue == nil){
+            continue;
+        }
+
         [self.dataDictionaryAfterModification setObject:newValue forKey:newKey];
         
         //If  split day events or isMultiday or timezone remove those fields
@@ -61,7 +86,6 @@
         
         if ([oldValue isEqualToString:newValue])
         {
-            
             if ([self isRemovableField:newKey
                   andOldDataDictionary:conflictDictionary])
             {
@@ -96,7 +120,7 @@
     
     NSString *modifiedFieldAsJsonString;
     
-    if (   (self.dataDictionaryBeforeModification != nil)
+    if ((self.dataDictionaryBeforeModification != nil)
         && ([self.dataDictionaryBeforeModification count] > 1)
         && (self.dataDictionaryAfterModification != nil)
         && ([self.dataDictionaryAfterModification count] > 1)

@@ -86,7 +86,8 @@
         if (c) {
             NSString *s = [NSString stringWithUTF8String:c];
             
-            [object setValue:s forKey:[NSString stringWithUTF8String:sqlite3_column_name([_statement statement], columnIdx)]];
+            NSString *key = [NSString stringWithUTF8String:sqlite3_column_name([_statement statement], columnIdx)];
+            [object setValue:s forKey:key];
         }
     }
 }

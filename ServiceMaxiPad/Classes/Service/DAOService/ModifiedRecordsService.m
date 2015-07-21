@@ -13,6 +13,7 @@
 #import "SQLResultSet.h"
 #import "ModifiedRecordModel.h"
 #import "DatabaseConstant.h"
+#import "ParserUtility.h"
 
 
 @implementation ModifiedRecordsService
@@ -299,7 +300,8 @@
             
             SQLResultSet * resultSet = [db executeQuery:query];
             
-            while ([resultSet next]) {
+            while ([resultSet next])
+            {
                 ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
 
                 [resultSet kvcMagic:model];
@@ -332,8 +334,12 @@
             
             while ([resultSet next]) {
                 ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
-                
+                /*
                 [resultSet kvcMagic:model];
+                [records addObject:model];
+                 */
+                NSDictionary *dict = [resultSet resultDictionary];
+                [ParserUtility parseJSON:dict toModelObject:model withMappingDict:nil];
                 [records addObject:model];
             }
             [resultSet close];

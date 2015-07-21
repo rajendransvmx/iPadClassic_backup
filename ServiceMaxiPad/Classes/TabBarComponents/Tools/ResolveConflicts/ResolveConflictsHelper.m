@@ -583,12 +583,17 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     }
     
     NSError *error = nil;
-    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:[fieldsModifiedJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&error];
-    NSMutableDictionary *finalDict = [NSMutableDictionary dictionaryWithDictionary:jsonDict];
-    [finalDict setObject:@"YES" forKey:@"CLIENT_OVERRIDE"];
-    
-    error = nil;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:finalDict options:NSJSONWritingPrettyPrinted error:&error];
+    NSData *jsonData;
+    if (fieldsModifiedJson !=nil)
+    {
+        NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:[fieldsModifiedJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&error];
+        NSMutableDictionary *finalDict = [NSMutableDictionary dictionaryWithDictionary:jsonDict];
+        [finalDict setObject:@"YES" forKey:@"CLIENT_OVERRIDE"];
+        
+        error = nil;
+        jsonData = [NSJSONSerialization dataWithJSONObject:finalDict options:NSJSONWritingPrettyPrinted error:&error];
+    }
+  
     
     if (jsonData != nil) {
         syncRecord.fieldsModified = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
