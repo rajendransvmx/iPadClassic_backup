@@ -3,14 +3,15 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.118
+Version = 15.49.119
 ===========================================
 
 -------------
 Fixed Defects
 -------------
 
-020261 - Fresh installation, Initial sync / reset app is not bringing cal events and related records.
-020223 - iPad Calendar WO Hardwired screen broken - displays Null Values.
-020244 - Unable to get updates from the Server during Data Sync.
+020244 - Unable to get updates from the Server during Data Sync
+020269 - App is crashing switching to online mode and performing data sync.
+018597 - App is crashing on tapping on Save.
+020185 - Duplicate child lines are being created on iPad
 
