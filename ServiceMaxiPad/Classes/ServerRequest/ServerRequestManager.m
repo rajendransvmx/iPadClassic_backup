@@ -769,7 +769,7 @@
             nextRequestType = RequestCleanUp;
             break;
         case RequestCleanUp:
-            nextRequestType = RequestTypeNone;//RequestSyncTimeLogs;
+            nextRequestType = RequestSyncTimeLogs;
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
