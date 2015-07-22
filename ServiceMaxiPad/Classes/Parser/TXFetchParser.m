@@ -111,6 +111,10 @@
     {
         NSInteger currentCount = 0;
         
+        if (globalObjectDictionary == nil) {
+            globalObjectDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+        }
+        
         NSArray *allObjectKeys = [globalObjectDictionary allKeys];
         for (NSString *objectnName in allObjectKeys) {
             
@@ -129,11 +133,11 @@
             NSMutableDictionary *objectListDictioanry = nil;
             if (self.categoryType == CategoryTypeGetPriceData)
             {
-           objectListDictioanry = [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:kParallelGetPriceSync];
+                objectListDictioanry = [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:kParallelGetPriceSync];
             }
             else
             {
-             objectListDictioanry =  [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:nil];
+                objectListDictioanry =  [self.helper getIdListFromSyncHeapTableWithLimit:(kOverallIdLimit - currentCount) forParallelSyncType:nil];
             }
             
             for (NSString *eachObjectName in [objectListDictioanry allKeys]) {

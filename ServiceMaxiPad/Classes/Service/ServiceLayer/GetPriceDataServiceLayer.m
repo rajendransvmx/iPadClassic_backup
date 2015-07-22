@@ -47,6 +47,7 @@
     if ([parserObj conformsToProtocol:@protocol(WebServiceParserProtocol)]) {
         
         parserObj.clientRequestIdentifier = self.requestIdentifier;
+        parserObj.categoryType = self.categoryType;
         callBack = [parserObj parseResponseWithRequestParam:requestParamModel
                                                responseData:responseData];
         
