@@ -906,7 +906,7 @@ static SyncManager *_instance;
                 
                 NSLog(@"Successsive sync: initiated");
                 
-                [self performSelectorInBackground:@selector(performDataSync) withObject:nil];
+                [self performSelectorInBackground:@selector(initiateSyncInBackGround) withObject:nil];
                 return doesExist;
             }
             else {
@@ -1832,7 +1832,6 @@ static SyncManager *_instance;
                     [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap];
 
                     self.isDataSyncRunning = NO;
-
                     [self checkNetworkReachabilityAndInitiateDataSync];
                 }
                 else {
@@ -1848,19 +1847,12 @@ static SyncManager *_instance;
                 self.isBeforeUpdate = YES;
                 self.isAfterInsert = NO;
                 self.isAfterUpdate = NO;
-//                if (self.notSyncedDataArrayForCustomeCall) {
-//                    for (NSString *recordLocalID in self.notSyncedDataArrayForCustomeCall) {
-//                        if ([recordLocalID isEqualToString:model.recordLocalId]) {
-//                            self.isBeforeUpdate = NO;
-//                            continue;
-//                        }
-//                    }
-//                   
-//                }
+
 
                BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
                 if (!status) {
                     self.isBeforeUpdate = NO;
+                    self.isDataSyncRunning = NO;
                     [self checkNetworkReachabilityAndInitiateDataSync];
                 }
                 
@@ -1875,7 +1867,15 @@ static SyncManager *_instance;
                 self.isAfterUpdate = YES;
 //                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
                 
-                [self checkNetworkReachabilityAndInitiateDataSync];
+                if ([self isThereAnyRecordForUpdation])
+                {
+                    self.isDataSyncRunning = NO;
+                    [self checkNetworkReachabilityAndInitiateDataSync];
+                }
+                else
+                {
+                    BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:3];
+                }
                 break;
 
             }
@@ -1889,7 +1889,6 @@ static SyncManager *_instance;
 
 -(void)checkNetworkReachabilityAndInitiateDataSync
 {
-    [self resetTheDataSyncStatus];
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]) {
         [self initiateDataSync];
 
@@ -1898,27 +1897,20 @@ static SyncManager *_instance;
 
 -(BOOL)customAPICallwithModifiedRecordModelRequestData:(NSString *)requestData andRequestType:(int)requestType
 {
-    
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && [self continueDataSyncIfConflictsResolved] && [self doesTheRecordStillExist])
     {
         SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPageRequestData:requestData requestType:requestType];
 
         if (webserviceHelper) {
             
-//                if (self.notSyncedDataArrayForCustomeCall) {
-//                    [self.notSyncedDataArrayForCustomeCall addObject:self.cCustomCallRecordModel.recordLocalId];
-//                    [self initiateCustomDataSync];
-//                    return NO; // do not proceed with custom call if the header record has no sfid. it means the record is not synced yet.
-//                }
             if (![self isDataSyncInProgress]) {
                 [self setTheDataSyncStatus];
-
             }
             [webserviceHelper initiateCustomWebServiceForAfterBeforeWithDelegate:self];
             return YES;
         }
     }
-    return NO;
+        return NO;
 }
 
 - (void)PerformSYncBasedOnFlags
@@ -1931,8 +1923,7 @@ static SyncManager *_instance;
     {
         /* call custom Api */
         
-
-            [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+        [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
         
        status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:1];
     }
@@ -2007,11 +1998,6 @@ static SyncManager *_instance;
     [PlistManager storeLastDataSyncStatus:kInProgress];
 }
 
--(void)resetTheDataSyncStatus
-{
-    self.isDataSyncRunning = NO;
-}
-
 -(NSArray *)theModifiedRecords
 {
     id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
@@ -2038,5 +2024,12 @@ static SyncManager *_instance;
     return (insertedRecords.count?YES:NO);
 }
 
-
+-(BOOL)isThereAnyRecordForUpdation
+{
+    id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    
+    NSDictionary *insertedRecords = [modifiedRecordService getUpdatedRecords];
+    
+    return (insertedRecords.count?YES:NO);
+}
 @end
