@@ -28,6 +28,7 @@
 #import "ThirdPartyApp.h"
 #import "ThirdPartyAppActivity.h"
 #import "SFMPageHelper.h"
+#import "UIBarButtonItem+TKCategory.h"
 
 static NSInteger const kDeleteButton = 321;
 
@@ -284,8 +285,13 @@ static NSInteger const kDeleteButton = 321;
     
     self.navigationController.navigationBar.titleTextAttributes = textAttributes;
     self.navigationItem.title = _attachmentTXModel.name;
+    self.navigationItem.leftBarButtonItem  = [UIBarButtonItem  customNavigationBackButtonWithTitle:kTagtBackButtonTitle forTarget:self forSelector:@selector(backButtonClicked:)];
 }
 
+- (void)backButtonClicked:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error;
 {
     [_activity stopAnimating];
