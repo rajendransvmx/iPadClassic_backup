@@ -222,13 +222,17 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
    CGFloat height = [self getHeightForSection:indexPath.section];
+    if(height<50)
+    {
+        return 50;
+    }
     return height;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height = [self getHeightForSection:indexPath.section];
-    return height;
+       return height;
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -361,6 +365,11 @@
 {
     SFMPageChildLayoutViewController* testVC = [self getDebriefView:section];
     CGFloat height = [testVC contentViewHeight];
+    if(height< 50)
+    {
+        return 50;
+    }
+    
     SXLogInfo(@"cVHeight %f ection %d",height,section);
     return height;
 }
@@ -493,7 +502,16 @@
         if([self isSectionExpanded:i])
         {
             SFMPageChildLayoutViewController * childview = [self getDebriefView:i];
-            totalHeight  = [childview contentViewHeight] + totalHeight;
+            if([childview contentViewHeight] != 0)
+            {
+                totalHeight  = [childview contentViewHeight] + totalHeight;
+
+            }
+            else
+            {
+                totalHeight  = 50 + totalHeight;
+   
+            }
         }
     }
     
