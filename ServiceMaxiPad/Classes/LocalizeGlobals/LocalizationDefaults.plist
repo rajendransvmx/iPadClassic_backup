@@ -1112,8 +1112,14 @@
 	<string>Please login with same org ID used for Pulse App</string>
 	<key>IPAD015_TAG024</key>
 	<string>You have been signed out.</string>
+	<key>IPAD018_TAG198</key>
+	<string>Purge Data Now</string>
+	<key>IPAD018_TAG195</key>
+	<string>Purge Data Status</string>
 	<key>IPAD018_TAG058</key>
 	<string>Push Log Status</string>
+	<key>IPAD018_TAG142</key>
+	<string>Push Logs Now</string>
 	<key>IPAD013_TAG006</key>
 	<string>Driving Directions</string>
 	<key>IPAD006_TAG004</key>
@@ -1258,5 +1264,7 @@
 	<string>Smart Documents</string>
 	<key>IPAD018_TAG208</key>
 	<string>service report(s) are in queue for sync</string>
+	<key>IPAD012_TAG059</key>
+	<string>Sign out ends your session with ServiceMax Mobile. You will need to sign in again to regain access.</string>
 </dict>
 </plist>
