@@ -256,7 +256,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 
 - (BOOL) isWebServiceConfiguredForIsBillable {
     
-    if ([self.detailLayout.pageEvents count] > 0) {
+    if ([self.detailLayout.pageEvents count]) {
         
         for (PageEventModel *eventModel in self.detailLayout.pageEvents) {
             
