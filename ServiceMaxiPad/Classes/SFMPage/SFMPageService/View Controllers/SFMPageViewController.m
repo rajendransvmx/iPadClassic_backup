@@ -885,14 +885,15 @@
     }
     else
     {
-        if ([string rangeOfString:@"http"].location == NSNotFound)
+        /* This check for, If url starting with http then invoke url if not then attach http:// then try to launch */
+        if ([string hasPrefix:@"http"])
         {
-            string = [NSString stringWithFormat:@"http://%@",string];
-            [ourApplication openURL:[NSURL URLWithString:string]];
+            [ourApplication openURL:ourURL];
         }
         else
         {
-            [ourApplication openURL:ourURL];
+            string = [NSString stringWithFormat:@"http://%@",string];
+            [ourApplication openURL:[NSURL URLWithString:string]];
         }
     }
 }

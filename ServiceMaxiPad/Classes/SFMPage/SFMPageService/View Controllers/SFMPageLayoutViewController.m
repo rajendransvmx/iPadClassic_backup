@@ -334,14 +334,15 @@ NSString *const kReferenceCellIdentifier = @"ReferenceCellIdentifier";
     }
     else
     {
-        if ([string rangeOfString:@"http"].location == NSNotFound)
+        /* This check for, If url starting with http then invoke url if not then attach http:// then try to launch */
+        if ([string hasPrefix:@"http"])
         {
-            string = [NSString stringWithFormat:@"http://%@",string];
             [ourApplication openURL:[NSURL URLWithString:string]];
         }
         else
         {
-            [ourApplication openURL:[NSURL URLWithString:cell.fieldValue.text]];
+            string = [NSString stringWithFormat:@"http://%@",string];
+            [ourApplication openURL:[NSURL URLWithString:string]];
         }
     }
 }
