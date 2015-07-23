@@ -501,13 +501,15 @@ PageManagerErrorType;
 -(NSString *)checkAllDayAndReturnDateTime:(SFMPageField *)aPageField andInternalValue:(NSString *)internalValue
 {
     NSString *isAlldayEventKey = ([self.objectName isEqualToString:kEventObject]?kIsAlldayEvent:kSVMXIsAlldayEvent);
+    NSDictionary *dataDict =  nil;
     
-    NSDictionary *dataDict = [SFMPageHelper getSlAInFo:self.objectName localId:self.recordId fieldNames:@[isAlldayEventKey]];
+    if([self.objectName isEqualToString:kEventObject] || [self.objectName isEqualToString:kSVMXTableName])
+         dataDict = [SFMPageHelper getSlAInFo:self.objectName localId:self.recordId fieldNames:@[isAlldayEventKey]];
 
     NSString *dateTime = @"";
     
     if (isAlldayEventKey !=nil) {
-        if ([[dataDict objectForKey:isAlldayEventKey] caseInsensitiveCompare:@"true"] == NSOrderedSame)
+        if ([[[dataDict objectForKey:isAlldayEventKey] uppercaseString] isEqualToString:@"TRUE"])
         {
             if (([aPageField.fieldName isEqualToString:kStartDateTime] && [self.objectName isEqualToString:kEventObject]) || ([aPageField.fieldName isEqualToString:kSVMXStartDateTime] && [self.objectName isEqualToString:kSVMXTableName]))
             {

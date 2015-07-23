@@ -999,13 +999,15 @@
                         [modifiedRecordService updateFieldsModifed:syncRecord];;
                     }
                 }
+                
+                [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:sfmPage];
+
            }
             //else {
 //                //delete the existing entry form modified record
 //                    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
 //                    [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:syncRecord.recordLocalId];
 //            }
-            [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:sfmPage];
             [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:eachDetailDict];
         }
         //delete record
