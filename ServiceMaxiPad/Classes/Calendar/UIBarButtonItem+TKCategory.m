@@ -31,6 +31,7 @@
 
 #import "UIBarButtonItem+TKCategory.h"
 #import "UIButton+TKCategory.h"
+#import "TagManager.h"
 
 @implementation UIBarButtonItem (TKCategory)
 
@@ -50,5 +51,30 @@
 	
 }
 
++ (UIBarButtonItem *) customNavigationBackButtonWithTitle:(NSString *)title forTarget:(id)target forSelector:(SEL)selector{
+    
+    UIImageView *backArrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"OPDocBackArrow.png"]];
+    
+    UILabel *backLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 180, backArrow.frame.size.height)];
+    backLabel.text = [[TagManager sharedInstance]tagByName:title];
+    backLabel.font = [UIFont systemFontOfSize:17];
+    backLabel.textColor = [UIColor whiteColor];
+    backLabel.backgroundColor = [UIColor clearColor];
+    backLabel.textAlignment = NSTextAlignmentLeft;
+    backLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    
+    UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, (backArrow.frame.size.width + backLabel.frame.size.width), backArrow.frame.size.height)];
+    backView.backgroundColor = [UIColor clearColor];
+    [backView addSubview:backArrow];
+    [backView addSubview:backLabel];
+    backView.userInteractionEnabled = YES;
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:target action:selector];
+    [backView addGestureRecognizer:tap];
+    
+    UIBarButtonItem *barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backView];
+    return barButtonItem;
+    
+}
 
 @end

@@ -46,5 +46,6 @@
  @return The `UIBarButtonItem` object.
  */
 + (UIBarButtonItem*) barButtonItemWithImage:(UIImage*)image highlightedImage:(UIImage*)highlighedImage target:(id)target selector:(SEL)selector;
++ (UIBarButtonItem *) customNavigationBackButtonWithTitle:(NSString *)title forTarget:(id)target forSelector:(SEL)selector;
 
 @end

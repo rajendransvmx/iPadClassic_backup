@@ -31,6 +31,7 @@
 #import "FileManager.h"
 #import "TroubleshootDataModel.h"
 #import "SNetworkReachabilityManager.h"
+#import "UIBarButtonItem+TKCategory.h"
 
 @interface TroubleshootingViewController ()
 <SMActionSideBarViewControllerDelegate,ActionMenuDelegate>
@@ -67,6 +68,10 @@
     [self addNavigationBarButtonItem];
 }
 
+- (void)backButtonClicked:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 - (void)addNavigationBarButtonItem
 {
     UIBarButtonItem *productManual = [[UIBarButtonItem alloc] initWithTitle:[[TagManager sharedInstance] tagByName:kTagActions]
@@ -81,6 +86,8 @@
                                                                     [UIFont fontWithName:kHelveticaNeueLight
                                                                                     size:kFontSize18], NSFontAttributeName, nil]
                                                           forState:UIControlStateNormal];
+    
+    self.navigationItem.leftBarButtonItem  = [UIBarButtonItem  customNavigationBackButtonWithTitle:kTag_WorkOrder forTarget:self forSelector:@selector(backButtonClicked:)];
     
 }
 

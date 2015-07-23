@@ -682,8 +682,11 @@
     controller.productName = [self getProductNameFromSFmPage];
     controller.productId = [self getProductIdFromSFmPage];
     
-    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTag_WorkOrder] style:UIBarButtonItemStyleBordered target:nil action:nil];
-    self.navigationItem.backBarButtonItem = backButton;
+    /* defect:020264, TroubleshootingViewController VC will add the custom back button */
+   // UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTag_WorkOrder] style:UIBarButtonItemStyleBordered target:nil action:nil];
+    //self.navigationItem.backBarButtonItem = backButton;
+    
+    
     [self.navigationController pushViewController:controller animated:YES];
 }
 
