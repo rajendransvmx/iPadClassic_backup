@@ -13,6 +13,7 @@
 #import "SFObjectFieldService.h"
 #import "DatabaseConstant.h"
 #import "CommonServices.h"
+#import "StringUtil.h"
 
 @interface FieldMergeHelper ()
 
@@ -312,24 +313,39 @@
                  withNewValue:(NSString*)newValue
                  forFieldName:(NSString*)fieldName
 {
+ 
+    //020267
+    oldValue = [oldValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    newValue = [newValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    double newValueNumber = [newValue doubleValue];
-    double oldValueNumber = [oldValue doubleValue];
-    
-    
-    if (newValueNumber == oldValueNumber)
-    {
-        // Luckily both value matching.. no change found, lets remove from change list items
-        [self.dataDictionaryBeforeModification removeObjectForKey:fieldName];
-        [self.dataDictionaryAfterModification removeObjectForKey:fieldName];
-    }
-    else
-    {
+    if (![oldValue isEqualToString:newValue] && ([StringUtil isStringEmpty:oldValue] || [StringUtil isStringEmpty:newValue])) {
         if(newValue != nil){
             [self.dataDictionaryAfterModification setObject:newValue forKey:fieldName];
         }
         if(oldValue != nil){
             [self.dataDictionaryBeforeModification setObject:oldValue forKey:fieldName];
+        }
+    }
+    else {
+        
+        double newValueNumber = [newValue doubleValue];
+        double oldValueNumber = [oldValue doubleValue];
+        
+        
+        if (newValueNumber == oldValueNumber)
+        {
+            // Luckily both value matching.. no change found, lets remove from change list items
+            [self.dataDictionaryBeforeModification removeObjectForKey:fieldName];
+            [self.dataDictionaryAfterModification removeObjectForKey:fieldName];
+        }
+        else
+        {
+            if(newValue != nil){
+                [self.dataDictionaryAfterModification setObject:newValue forKey:fieldName];
+            }
+            if(oldValue != nil){
+                [self.dataDictionaryBeforeModification setObject:oldValue forKey:fieldName];
+            }
         }
     }
 }

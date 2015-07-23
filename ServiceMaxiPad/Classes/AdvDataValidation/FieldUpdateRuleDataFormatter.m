@@ -261,7 +261,7 @@
     }
     
     if ([StringUtil isStringEmpty:value]) {
-        value = ([self isFieldTypeNumeric:pageField.dataType])?@"0":@"";
+        value = @""; // 020267
     }
     return value;
 }
