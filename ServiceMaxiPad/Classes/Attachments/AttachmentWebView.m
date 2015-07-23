@@ -35,6 +35,7 @@ static NSInteger const kDeleteButton = 321;
 @interface AttachmentWebView ()
 
 @property(nonatomic, strong) UIPopoverController *sharePopOver;
+@property(nonatomic, strong) NSURLRequest* request;
 
 - (void)loadwebview;
 - (void)populateNavigationBar;
@@ -55,8 +56,6 @@ static NSInteger const kDeleteButton = 321;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-//    self.webView.backgroundColor = [UIColor navBarBG];
-//    self.view.backgroundColor = [UIColor navBarBG];
     [self populateNavigationBar];
     [self loadwebview];
     [self registerForPopOverDismissNotification];
@@ -94,9 +93,12 @@ static NSInteger const kDeleteButton = 321;
     }
     
     self.url = [AttachmentUtility getUrlForAttachment:_attachmentTXModel];
-    NSLog(@"URL : %@",self.url);
-    NSURLRequest *requestObj = [NSURLRequest requestWithURL:self.url];
-    [self.webView loadRequest:requestObj];
+    self.request = [NSURLRequest requestWithURL:self.url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60.0f];
+    [self.webView loadRequest:self.request];
+   
+    //NSURLRequest *requestObj = [NSURLRequest requestWithURL:self.url];
+    //[self.webView loadRequest:requestObj];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -184,9 +186,7 @@ static NSInteger const kDeleteButton = 321;
          
          */
         app.urlParameters = filePath;
-        
         [thirdPartyApps addObject:app];
-        NSLog(@"app description : %@",app.parameterValueDict);
     }
     
     return thirdPartyApps;
@@ -204,7 +204,6 @@ static NSInteger const kDeleteButton = 321;
     if (jsonData != nil) {
         NSError *error1;
          json = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&error1];
-        NSLog(@"err %@",error1.debugDescription);
     }
     
     NSArray *thirdPartyApps = [self thirdPartyAppListFor:json];
@@ -258,7 +257,6 @@ static NSInteger const kDeleteButton = 321;
 */
     [sharingView setCompletionHandler:^(NSString *activityType, BOOL completed) {
         SXLogDebug (@"Activity Type = %@ Completed = %d", activityType, completed);
-        NSLog(@"Activity Type = %@ Completed = %d", activityType, completed);
         if (activityType == UIActivityTypeMail)
         {
             if (![MFMailComposeViewController canSendMail])
@@ -290,8 +288,15 @@ static NSInteger const kDeleteButton = 321;
 
 - (void)backButtonClicked:(id)sender
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.request){
+            [self.webView removeFromSuperview];
+            [[NSURLCache sharedURLCache] removeCachedResponseForRequest:self.request];
+        }
+        [self.navigationController popViewControllerAnimated:YES];
+    });
 }
+
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error;
 {
     [_activity stopAnimating];

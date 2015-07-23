@@ -126,7 +126,7 @@ static NSMutableDictionary *eventPlace;
     eventStartDateSortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"isMultidayEvent" ascending:NO];
     arrayEvents = (NSMutableArray *)[arrayEvents sortedArrayUsingDescriptors:[NSArray arrayWithObjects:eventStartDateSortDescriptor, nil]];
     
-    NSLog(@"arrayEvents count: %lu withDate: %@",(unsigned long)[arrayEvents count],cellDate);
+    //NSLog(@"arrayEvents count: %lu withDate: %@",(unsigned long)[arrayEvents count],cellDate);
     //mutiday event
     //arrayEvents = _array;
    // NSLog(@"number of event %lu on %@",(unsigned long)arrayEvents.count,cellDate);

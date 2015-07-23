@@ -43,18 +43,15 @@
 
 - (BOOL)canPerformWithActivityItems:(NSArray *)activityItems
 {
-    NSLog(@"%s", __FUNCTION__);
     return YES;
 }
 
 - (void)prepareWithActivityItems:(NSArray *)activityItems
 {
-    NSLog(@"%s",__FUNCTION__);
 }
 
 - (UIViewController *)activityViewController
 {
-    NSLog(@"%s",__FUNCTION__);
     return nil;
 }
 

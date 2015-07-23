@@ -613,12 +613,10 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             
             if(self.saveflow == SaveFlowOnSaveTapped)
             {
-                NSLog(@"PushNotification:On save tapped");
                 [self performSelectorOnMainThread:@selector(dismissUI) withObject:self waitUntilDone:NO];
             }
             else if (self.saveflow == SaveFlowFromPushNotification)
             {
-                NSLog(@"PushNotification: Save from PushNotification");
                 [self notifyNotificationManager:NotificationEditSaveStatusSuccess];
                 [self performSelectorOnMainThread:@selector(dismissUIPushNotification) withObject:self waitUntilDone:NO];
             }

@@ -124,8 +124,6 @@
         [[AppManager sharedInstance] loadScreen];
         
         [[AutoLockManager sharedManager] enableAutoLockSettingFor:initialSyncAL]; // Enable the user controlled device lock. 26-May-2015 BSP
-        
-        NSLog(@"AutoLockManager enable called for initial sync");
         //[(SMAppDelegate*)[[UIApplication sharedApplication] delegate] loadHomeScreen];
     }
 }

@@ -91,7 +91,9 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 
     Reachability* noteObject = (__bridge Reachability *)info;
     // Post a notification to notify the client that the network reachability changed.
-    [[NSNotificationCenter defaultCenter] postNotificationName: kReachabilityChangedNotification object: noteObject];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName: kReachabilityChangedNotification object: noteObject];
+    });
 }
 
 

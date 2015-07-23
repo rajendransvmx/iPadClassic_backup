@@ -162,8 +162,6 @@
     NSMutableArray *objectRecordsArray = [[NSMutableArray alloc]init];
     for(jsonDict in jsonArray)
     {
-        NSLog(@"dict is %@",jsonDict);
-        
         TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
         [model setFieldValueDictionaryForFields:jsonDict];
         [objectRecordsArray addObject:model];

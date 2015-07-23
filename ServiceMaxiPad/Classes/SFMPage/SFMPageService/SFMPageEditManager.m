@@ -1863,7 +1863,6 @@
     if (technicianId == nil) {
         technicianId = [[SFMRecordFieldData alloc] initWithFieldName:ORG_NAME_SPACE@"__Technician__c" value:nil andDisplayValue:nil];
         technicianId.internalValue =  [PlistManager getTechnicianId];
-        NSLog(@"technician Id : %@ ",[SFMPageHelper getTechnicianIdForOwnerId:[SFMPageHelper getUserId]]);//[SFMPageHelper getTechnicianIdForOwnerId:[SFMPageHelper getUserId]];
         [recordDictionary setObject:technicianId forKey:ORG_NAME_SPACE@"__Technician__c"];
     }
     

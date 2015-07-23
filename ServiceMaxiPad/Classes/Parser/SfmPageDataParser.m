@@ -634,8 +634,6 @@
     {
         NSDictionary * eventDetail = [pageLevelEvents objectAtIndex:i];
         
-        NSLog(@"eventDetail: %@", eventDetail);
-        
         NSString * headerName = [eventDetail objectForKey:kPageHeaderName];
         headerName = (headerName != nil)?headerName:@"";
         

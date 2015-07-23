@@ -573,8 +573,6 @@
         
         [self.notificationViewController dismissViewControllerAnimated:YES completion:^{
             
-            NSLog(@"Completion state");
-            
             if(action == NotificationUSerActionSaveAndView)
             {
                 self.finalModel = model;

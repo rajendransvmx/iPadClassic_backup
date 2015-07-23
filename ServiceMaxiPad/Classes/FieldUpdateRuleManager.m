@@ -90,8 +90,6 @@
     NSDictionary *paramsDict = [NSDictionary dictionaryWithObjects:@[[bizRuleDict valueForKey:kBizRuleMetaData], [bizRuleDict valueForKey:KBizRuleData], [NSDictionary dictionary]] forKeys:@[@"rules", @"data", @"userInfo"]];
     NSString *paramsStr = [Utility jsonStringFromObject:paramsDict];
     
-    NSLog(@"paramsDict: %@", paramsDict);
-    
     NSString *param = [NSString stringWithFormat:@"var params = %@", paramsStr];
     
     NSString *htmlFilePath = [[NSBundle mainBundle] pathForResource:@"mobile-fieldupdaterules-app" ofType:@"html"];
