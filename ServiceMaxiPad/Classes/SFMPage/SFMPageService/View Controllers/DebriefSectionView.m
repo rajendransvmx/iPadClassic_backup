@@ -171,10 +171,15 @@
 {
     if (!self.sectionRecords) {
         
+        /*
         NSMutableString *attrSignedIntoString = [[NSMutableString alloc] initWithString:@"No"];
         [attrSignedIntoString appendFormat:@" %@ ",lineItem];
         [attrSignedIntoString appendFormat:@" %@ ",@"Entered"];
         self.noDataLabel.text = attrSignedIntoString;
+         */
+        
+        /* HS issue Fix:019913 */
+        self.noDataLabel.text = [[TagManager sharedInstance]tagByName:kTag_NoItemsEntered];
     }
 }
 

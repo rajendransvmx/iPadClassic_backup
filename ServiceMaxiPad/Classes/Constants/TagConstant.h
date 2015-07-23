@@ -276,6 +276,8 @@ extern NSString *const KTagSettingsTitle;
 #define kTag_Initial_Sync @"IPAD018_TAG155"
 #define kTag_Initiating_Sync @"IPAD018_TAG154"
 
+#define kTag_NoItemsEntered @"IPAD014_TAG139"
+
 
 #define kTag_Downloading_translations @"IPAD018_TAG084"
 #define kTag_Downloading_ProcessDefinition_ProfileSettings @"IPAD018_TAG085"

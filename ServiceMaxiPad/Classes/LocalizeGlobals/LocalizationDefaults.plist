@@ -1266,5 +1266,7 @@
 	<string>service report(s) are in queue for sync</string>
 	<key>IPAD012_TAG059</key>
 	<string>Sign out ends your session with ServiceMax Mobile. You will need to sign in again to regain access.</string>
+	<key>IPAD014_TAG139</key>
+	<string>No items entered</string>
 </dict>
 </plist>
