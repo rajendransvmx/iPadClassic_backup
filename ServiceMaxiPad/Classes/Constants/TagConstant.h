@@ -54,6 +54,10 @@ extern NSString *const kTagHomeCreateNew;
 extern NSString *const kTagHomeCreateNewText;
 extern NSString *const kTagHomeCalendarText;
 extern NSString *const kTagTools;
+extern NSString *const kTagPurgeDataStatus;
+extern NSString *const kTagPurgeDataNow;
+extern NSString *const kTagPushLogsNow;
+extern NSString *const kTagPushLogsStatus;
 
 extern NSString *const kTagWeek;
 extern NSString *const kTagDay;

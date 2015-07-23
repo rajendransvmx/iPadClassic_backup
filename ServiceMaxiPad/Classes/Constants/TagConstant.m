@@ -148,7 +148,10 @@ NSString *const kTagDecember                  = @"IPAD006_TAG027";
 
 
 NSString *const kTagTools                   = @"IPAD006_TAG082";
-
+NSString *const kTagPurgeDataStatus         = @"IPAD018_TAG195";
+NSString *const kTagPurgeDataNow            = @"IPAD018_TAG198";
+NSString *const kTagPushLogsNow             = @"IPAD018_TAG142";
+NSString *const kTagPushLogsStatus          = @"IPAD018_TAG058";
 
 
 
