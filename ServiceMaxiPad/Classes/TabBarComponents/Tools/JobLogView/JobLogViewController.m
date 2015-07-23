@@ -57,8 +57,9 @@
     [self.smPopover dismissPopoverAnimated:YES];
     [self updateLastPushLogTimeAndStatusUI];
     //self.pushLogTitle.text = [[TagManager sharedInstance] tagByName:kTagPushLogs];
-    //[self.pushLog setTitle:[[TagManager sharedInstance]tagByName:kTagResetApp] forState:UIControlStateNormal];
+    [self.pushLog setTitle:[[TagManager sharedInstance]tagByName:kTagPushLogsNow] forState:UIControlStateNormal];
     self.pushLog.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    self.pushLogTitle.text = [[TagManager sharedInstance]tagByName:kTagPushLogsStatus];
 }
 - (void) handleAppEnterForeground {
     [self updateLastPushLogTimeAndStatusUI];

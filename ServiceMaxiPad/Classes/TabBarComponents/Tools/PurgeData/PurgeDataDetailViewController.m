@@ -153,6 +153,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     //self.smSplitViewController.navigationItem.titleView = [UILabel navBarTitleLabel:[[TagManager sharedInstance]tagByName:kTagPurgeData]];
+    [self.purgeDataNowButton setTitle:[[TagManager sharedInstance]tagByName:kTagPurgeDataNow] forState:UIControlStateNormal];
+    self.purgeDataStatusTitleLabel.text = [[TagManager sharedInstance]tagByName:kTagPurgeDataStatus];
     [self setupUIElements];
     [self.smPopover dismissPopoverAnimated:YES];
     [self registerNetworkChangeNotification];
