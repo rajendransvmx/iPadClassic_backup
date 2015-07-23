@@ -584,7 +584,7 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     
     NSError *error = nil;
     NSData *jsonData;
-    if (fieldsModifiedJson !=nil)
+    if ([StringUtil isStringEmpty:fieldsModifiedJson])
     {
         NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:[fieldsModifiedJson dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableContainers error:&error];
         NSMutableDictionary *finalDict = [NSMutableDictionary dictionaryWithDictionary:jsonDict];
