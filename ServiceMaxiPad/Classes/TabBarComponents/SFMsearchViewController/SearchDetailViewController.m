@@ -501,8 +501,6 @@
 {
     static NSString *CellIdentifier = @"CellIdentifier";
 
-    
-    NSLog(@"indexPath:%ld", (long)indexPath.row);
     SFMSearchCell *cell = (SFMSearchCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {

@@ -315,7 +315,7 @@
         }
         
         for (SMXEvent *event in arrayEvents) {
-            NSLog(@"event : %@, dateTimeBegin: %@, dateTimeEnd: %@", event.stringCustomerName, event.dateTimeBegin, event.dateTimeEnd);
+//            NSLog(@"event : %@, dateTimeBegin: %@, dateTimeEnd: %@", event.stringCustomerName, event.dateTimeBegin, event.dateTimeEnd);
             CGFloat yTimeBegin = 0.;
             CGFloat yTimeEnd = 0.;
             float lHeight = 0.;
