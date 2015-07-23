@@ -182,13 +182,15 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     NSArray * detailRecords = [detailDict objectForKey:self.detailLayout.processComponentId];
     
     SFMPageField * field  = nil;
-    if([detailFields count] > 0)
+//    if([detailFields count])
+//    {
+//        field  = [detailFields objectAtIndex:0];
+//    }
+    
+    if(([detailRecords count] > indexPath.section) && [detailFields count])
     {
         field  = [detailFields objectAtIndex:0];
-    }
-    
-    if([detailRecords count] > indexPath.section)
-    {
+
         NSDictionary * recordDict = [detailRecords objectAtIndex:indexPath.section];
         SFMRecordFieldData * fieldData = [recordDict objectForKey:field.fieldName];
         
@@ -1333,7 +1335,8 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     NSArray * detailFields = self.detailLayout.detailSectionFields;
     
     SFMPageField * field  = nil;
-    if([detailFields count] > 0 && detailFields.count>fieldIndex)
+//    if([detailFields count] > 0 && detailFields.count>fieldIndex)
+    if(detailFields.count>fieldIndex)
     {
         field  = [detailFields objectAtIndex:fieldIndex];
     }

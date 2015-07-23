@@ -1953,7 +1953,7 @@ static SyncManager *_instance;
 - (void)makeNextCallForCustomDataSyncWithResponse:(WebserviceResponseStatus *)responseStatus
 {
     self.initialSyncStatus = responseStatus.syncStatus;
-    
+
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"custom call Finished");
@@ -1970,6 +1970,7 @@ static SyncManager *_instance;
         if(self.isAfterUpdate)
         {
             if ([[self theModifiedRecords] count]) {
+                self.isDataSyncRunning = NO;
                 [self initiateCustomDataSync];
 
             }
@@ -1980,6 +1981,7 @@ static SyncManager *_instance;
         }
         else
         {
+            self.isDataSyncRunning = NO;
             [self initiateCustomDataSync];
         }
     }

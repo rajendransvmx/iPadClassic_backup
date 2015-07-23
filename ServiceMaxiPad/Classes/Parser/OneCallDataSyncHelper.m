@@ -256,9 +256,8 @@
         
         NSArray *criteriaArray = @[aCriteria1,aCriteria2];
         
-        DBRequestDelete *deleteRequest = [[DBRequestDelete alloc] initWithTableName:@"Sync_Records_Heap" whereCriteria:criteriaArray andAdvanceExpression:@"1 AND 2 OR 3)"];
+        DBRequestDelete *deleteRequest = [[DBRequestDelete alloc] initWithTableName:@"Sync_Records_Heap" whereCriteria:criteriaArray andAdvanceExpression:@"1 AND 2"];
         [self.commonServices executeStatement:[deleteRequest query]];
-        
         
         deleteRequest = [[DBRequestDelete alloc] initWithTableName:kModifiedRecords whereCriteria:criteriaArray andAdvanceExpression:nil];
         [self.commonServices executeStatement:[deleteRequest query]];

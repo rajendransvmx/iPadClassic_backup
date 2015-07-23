@@ -291,21 +291,15 @@
         NSString *label = [objectFieldService getFieldLabelFromFieldName:[fieldModel getDisplayField] andObjectName:fieldModel.objectName];
         NSString *value = [self getDisplayStringForValue:fldValue.displayValue withType:fieldModel.displayType];
         
-        
         if ((label !=nil) && (value != nil))
         {
             NSMutableDictionary *fieldValueDict = [NSMutableDictionary dictionaryWithCapacity:1];
-
             [fieldValueDict setObject:value forKey:label];
             [dataArray addObject:fieldValueDict];
-
         }
-        
     }
-    
      return dataArray;
 }
-
 
 - (NSString *) getDisplayStringForValue:(NSString *)value withType:(NSString *)displayType {
     if ([Utility isStringEmpty:value] && ![value isKindOfClass:[NSNumber class]]) {
@@ -508,7 +502,7 @@
     static NSString *CellIdentifier = @"CellIdentifier";
 
     
-    
+    NSLog(@"indexPath:%ld", (long)indexPath.row);
     SFMSearchCell *cell = (SFMSearchCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
@@ -521,6 +515,12 @@
         
     }
     
+    if (![self isCellExpandedForSection:indexPath.section]) {
+        cell.hidden = YES;
+        return cell;
+
+    }
+
     BOOL isOnlineRecord = [SFMOnlineSearchManager isOnlineRecord:[self getTransactionModelForIndexPath:indexPath]];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
@@ -558,7 +558,7 @@
         if (index == 0)
         {
             keyArray = [[displayData objectAtIndex:index]allKeys];
-            if ([keyArray count]>0)
+            if ([keyArray count])
             {
                 key = [keyArray objectAtIndex:0];
                 if ([StringUtil isStringEmpty:[[displayData objectAtIndex:index]objectForKey:key]])
@@ -573,7 +573,7 @@
         else
         {
             keyArray = [[displayData objectAtIndex:index] allKeys];
-            if ([keyArray count]>0)
+            if ([keyArray count])
             {
                 key = [keyArray objectAtIndex:0];
                 if ([StringUtil isStringEmpty:key])
@@ -654,7 +654,7 @@
     
     /**/
     
-    if ([sectionView.titleLabel respondsToSelector:@selector(setAttributedText:)])
+//    if ([sectionView.titleLabel respondsToSelector:@selector(setAttributedText:)])
     {
         // iOS6 and above : Use NSAttributedStrings
         UIFont *boldFont = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
