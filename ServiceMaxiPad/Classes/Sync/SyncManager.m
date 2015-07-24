@@ -294,11 +294,15 @@ static SyncManager *_instance;
             
         case SyncTypeData:{
             
-                [self performDataSync];
-                if (self.isGetPriceCallEnabled)
+                if (![self isDataSyncInProgress])
                 {
-                    self.isGetPriceCallEnabled = NO;
-                    [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
+                    [self performDataSync];
+                
+                    if (self.isGetPriceCallEnabled)
+                    {
+                        self.isGetPriceCallEnabled = NO;
+                        [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
+                    }
                 }
             }
             break;
@@ -1923,7 +1927,7 @@ static SyncManager *_instance;
     {
         /* call custom Api */
         
-        [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+//        [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
         
        status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:1];
     }
