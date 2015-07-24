@@ -43,6 +43,7 @@
 #import "GetPriceManager.h"
 #import "SFMPageHelper.h"
 #import "CacheConstants.h"
+#import "StringUtil.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -1811,7 +1812,7 @@ static SyncManager *_instance;
     
     NSArray *operationArray = [self theModifiedRecords];
     
-    if(operationArray.count)
+    if(operationArray.count && [self allConflictsResolved])
     {
     NSArray *afterInsertFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERINSERT"]];
     NSArray *beforeFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"BEFOREUPDATE"]];
@@ -1870,8 +1871,9 @@ static SyncManager *_instance;
                 self.isAfterInsert = NO;
                 self.isAfterUpdate = YES;
 //                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
-                
-                if ([self isThereAnyRecordForUpdation])
+                NSInteger conflictsCount = [ResolveConflictsHelper getConflictsCount];
+
+                if ([self isThereAnyRecordForUpdation] || conflictsCount)
                 {
                     self.isDataSyncRunning = NO;
                     [self checkNetworkReachabilityAndInitiateDataSync];
@@ -1891,6 +1893,24 @@ static SyncManager *_instance;
     }
 }
 
+-(BOOL)allConflictsResolved
+{
+    NSArray * conflictRecords = [ResolveConflictsHelper getConflictsRecords];
+    
+    BOOL conflictsResolved = YES;
+    if (conflictRecords.count) {
+        for (SyncErrorConflictModel *syncConflictModel in conflictRecords) {
+            
+            if([StringUtil isStringEmpty:syncConflictModel.overrideFlag]) {
+                
+                conflictsResolved = FALSE;
+                break;
+            }
+            
+        }
+    }
+    return conflictsResolved;
+}
 -(void)checkNetworkReachabilityAndInitiateDataSync
 {
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]) {
