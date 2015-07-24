@@ -133,6 +133,8 @@
             case ApplicationStatusInAuthorizationPage:
             case ApplicationStatusFailedWithUnknownError:
             {
+                NSLog(@"authorization failed 1");
+
                 [self setApplicationStatus:ApplicationStatusInLaunchScreen];
             }
             break;
@@ -141,6 +143,7 @@
             case ApplicationStatusTokenRevoked:
             case ApplicationStatusAuthorizationFailedWithError:
             {
+                NSLog(@"authoizaton verification");
                 [self setApplicationStatus:ApplicationStatusInLaunchScreen];
             }
             break;
@@ -309,6 +312,7 @@
 - (void)setApplicationStatus:(ApplicationStatus)status
 {
     NSLog(@"App status  %d", (int)status);
+    NSLog(@"authorization failed 2");
 
     if (status == ApplicationStatusInitialSyncFailed)
     {
@@ -321,6 +325,8 @@
         ||(status == ApplicationStatusInitialSyncCompleted))
     {
         NSLog(@"App previous sync status %d", (int)status);
+        NSLog(@"authorization failed 3");
+
        [PlistManager storeApplicationPreviousSyncStatus:status];
     }
     
@@ -522,6 +528,7 @@
     }
     else if (status == ApplicationStatusAuthorizationFailedWithError)
     {
+        NSLog(@"failed changes");
        [self setApplicationStatus:ApplicationStatusInLaunchScreen];
        [self loadScreen];
     }

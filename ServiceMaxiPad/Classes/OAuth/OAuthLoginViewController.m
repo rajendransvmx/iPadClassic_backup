@@ -354,6 +354,8 @@ NSInteger webViewLoadCounter;
         /** Loading Authorization web page now - user expect to press Allow or Deny */
         
         [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInAuthorizationPage];
+        NSLog(@"authorization failed 45");
+
         [self removeServiceMaxLogo];
 	}
     else if ([StringUtil containsString:@"oauth_error_code=1800" inString:[request.URL absoluteString]])

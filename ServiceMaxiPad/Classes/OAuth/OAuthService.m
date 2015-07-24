@@ -604,6 +604,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
                                                         error:&error];
 	if (error != nil)
 	{
+        NSLog(@"Failed when request");
         [[AppManager sharedInstance] setErrorMessage:[error debugDescription]];
         [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
 	}
@@ -626,6 +627,8 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
             else
             {
                 [[self class] explainRequest:request andResponseData:responseData];
+                NSLog(@"Failed when request1");
+
                 [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
                 
                 // Vipin :  TODO whether to display error message or not ?
