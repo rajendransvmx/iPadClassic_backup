@@ -46,9 +46,11 @@
  var temp_month = Date.getMonth() + 1;
  var temp_year = Date.getFullYear();
  
- var tempDateString =  temp_year + "-" + temp_month + "-" + temp_date;
- //8584: changed to yyyy-MM-dd format from temp_date + "/" + temp_month + "/" + temp_year;
-
+ var tempDateString =  temp_year + "/" + temp_month + "/" + temp_date;
+ 
+//019534: changed to yyyy/MM/dd format from  var tempDateString =  temp_year + "-" + temp_month + "-" + temp_date;
+ 
+//8584: changed to yyyy-MM-dd format from temp_date + "/" + temp_month + "/" + temp_year;
  return tempDateString;
  
  }
@@ -66,7 +68,10 @@
  var temp_month = d.getMonth() + 1;
  var temp_year = d.getFullYear();
  
- var tempDateString = temp_year + "-" + temp_month + "-" + temp_date;
+ var tempDateString = temp_year + "/" + temp_month + "/" + temp_date;
+ 
+ //019534: changed to yyyy/MM/dd format from  var tempDateString = temp_year + "-" + temp_month + "-" + temp_date;
+ 
  //8584: changed to yyyy-MM-dd format from temp_date + "/" + temp_month + "/" + temp_year;
 
  return tempDateString;
@@ -85,7 +90,10 @@
  var temp_month = d.getMonth() + 1;
  var temp_year = d.getFullYear();
  
- var tempDateString =  temp_year + "-" + temp_month + "-" + temp_date;
+ var tempDateString =  temp_year + "/" + temp_month + "/" + temp_date;
+ 
+ //019534: changed to yyyy/MM/dd from var tempDateString =  temp_year + "-" + temp_month + "-" + temp_date;
+ 
   //8584: changed to yyyy-MM-dd format from temp_date + "/" + temp_month + "/" + temp_year;
  
  return tempDateString;
@@ -167,13 +175,13 @@ $UTILITY.dateWithTimeStringForDate = function (Date) {
  //hours = hours ? hours : 12; // the hour '0' should be '12'
  minutes = minutes < 10 ? "0"+minutes : minutes;
  
- var todayDate =  curr_year + "-" + curr_month + "-" + curr_date + " " + hours + ":" + minutes +" " + ampm;
-  //8584: changed to yyyy-MM-dd hh:mm a format from curr_date + "/" + curr_month + "/" + curr_year + " " + hours + ":" + minutes + " " + ampm;
+ var todayDate =  curr_year + "/" + curr_month + "/" + curr_date + " " + hours + ":" + minutes;
+ 
+ //019534: changed to yyyy/MM/dd HH:mm var todayDate =  curr_year + "-" + curr_month + "-" + curr_date + " " + hours + ":" + minutes +" " + ampm;
+ 
+//8584: changed to yyyy-MM-dd hh:mm a format from curr_date + "/" + curr_month + "/" + curr_year + " " + hours + ":" + minutes + " " + ampm;
  
  return todayDate;
  }
  
  })();
-
-
-
