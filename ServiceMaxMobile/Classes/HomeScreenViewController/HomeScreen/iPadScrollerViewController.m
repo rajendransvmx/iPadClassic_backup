@@ -37,6 +37,12 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 
 AppDelegate *appDelegate;
 
+@interface iPadScrollerViewController ()
+
+@property (nonatomic, assign) BOOL isNetworkAlertViewAppeard;
+
+@end
+
 @implementation iPadScrollerViewController
 @synthesize Sync_status;
 @synthesize internet_alertView;
@@ -529,6 +535,29 @@ const NSUInteger kNumImages = 7;
     [customerLogoImageView setAlpha:0.0];
     [self performSelector:@selector(fadeInLogoWithImageView:) withObject:customerLogoImageView afterDelay:1];
     [self performSelector:@selector(fadeInLogo) withObject:nil afterDelay:1];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
+    self.isNetworkAlertViewAppeard = NO;
+
+}
+- (void) reachabilityChanged: (NSNotification* )notification
+{
+    @autoreleasepool {
+        
+        SMLog(kLogLevelVerbose,@"Notification :-%@",[notification name]);
+        AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+        if(![appDelegate isInternetConnectionAvailable])
+        {
+            SMLog(kLogLevelVerbose,@"Internet Connection Lost");
+            if (self.isNetworkAlertViewAppeard == NO) {
+                self.isNetworkAlertViewAppeard = YES;
+                [self RefreshProgressBarNativeMethod:META_SYNC_];
+                [self showAlertForInternetUnAvailability];
+
+            }
+        }
+        
+    }
 }
 
 /*Accessibility Changes*/
@@ -2586,6 +2615,7 @@ const float progress_ = 0.07;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;
 {
+    self.isNetworkAlertViewAppeard = NO; // reset the alert view flag once it disappears.
     if(buttonIndex == 0)
     {
        SMLog(kLogLevelVerbose,@"index 0");
