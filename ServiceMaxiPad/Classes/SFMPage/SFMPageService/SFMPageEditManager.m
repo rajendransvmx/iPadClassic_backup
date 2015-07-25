@@ -2702,6 +2702,10 @@
 
 -(void)updateValue:(id)value inRecordField:(SFMRecordFieldData *)recordField forPageField:(SFMPageField *)sfmPageField {
     
+    if ([value isKindOfClass:[NSNull class]]) {
+        value = @"";
+    }
+    
     if (![value isKindOfClass:[NSString class]]) {
         value = [NSString stringWithFormat:@"%@",value];
     }
