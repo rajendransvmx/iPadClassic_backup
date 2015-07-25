@@ -474,7 +474,7 @@ typedef enum {
 
 - (void)updateBadge
 {
-    NSUInteger count = [[ResolveConflictsHelper getConflictsRecords] count];
+    NSUInteger count = [ResolveConflictsHelper getConflictsCount];
     
     SXLogWarning(@"Conflicts count %lu",(unsigned long)count);
     

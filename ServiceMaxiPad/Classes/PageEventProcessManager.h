@@ -29,8 +29,6 @@
 -(BOOL)isBeforeSaveEnabled;
 -(BOOL)isAfterSaveInsertEnabled;
 -(BOOL)isAfterSaveUpdateEnabled;
--(void)initiateAfterSaveInsertCall;
--(void)initiateBeforeSaveUpdateCall;
--(void)initiateAfterSaveUpdateCall;
+
 
 @end
