@@ -3,27 +3,18 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.120
+Version = 15.49.121
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-
-18451 - iPAD:Duplicate record get created when network connection fails/disconnected during aggressive sync is in progress
-19548 - App Response is slow in Explore screen
-20245 - Screen freezes for a few seconds in Explore
-019913 - Translatability issue with the message displayed in lines sections when there are no records
+020308
+020344
+019896
 
 Note:
-1. Updated "com.servicemax.bizrules.zip" lib having fix for "Equal"/"lessthanEqual" "Morethanequal" for numbers.
-2. Tags have been updated for below text ,will be available in next server package.
-
-Push Logs Status
-Push Logs Now
-Purge Data Now
-Purge Data Status
-Sign out ends your session with ServiceMax Mobile. You will need to sign in again to regain access.
+SVMXC namespace.
 
 
 
