@@ -83,7 +83,8 @@
         NSString *objectName = self.sfmPage.objectName;
         NSMutableArray *rulesArray = [[NSMutableArray alloc] init];
         
-        [headerRuleDict setObject:self.sfmPage.objectLabel forKey:@"id"];
+        SFProcessComponentModel *model = [self.sfmPage.process getProcessComponentOfType:kTarget];
+        [headerRuleDict setObject:model.targetObjectLabel forKey:@"id"];
         [headerRuleDict setObject:self.sfmPage.process.pageLayout.headerLayout.hdrLayoutId forKey:@"key"];
         
         for (ProcessBusinessRuleModel *process in self.bizRuleProcesses) {
@@ -161,7 +162,8 @@
         
         [ruleInfoDict setObject:bizRuleDetailsArray forKey:kBizRuleDetails];
         [ruleDict setObject:ruleInfoDict forKey:kBizRuleInfo];
-        [ruleDict setObject:self.sfmPage.objectLabel forKey:@"aliasName"];
+        SFProcessComponentModel *model =  [self.sfmPage.process getProcessComponentOfType:kTarget];
+        [ruleDict setObject:model.targetObjectLabel forKey:@"aliasName"];
         [rulesArray addObject:ruleDict];
     }
 }
