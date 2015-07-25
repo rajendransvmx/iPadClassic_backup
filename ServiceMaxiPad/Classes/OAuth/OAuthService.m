@@ -129,7 +129,10 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
 
     if (orgURL == nil)
     {
-        orgURL =  [NSString stringWithFormat:@"%@/%@", [PlistManager baseURLString], serviceURI];
+        orgURL =  [NSString stringWithFormat:@"%@%@", [PlistManager baseURLString], serviceURI];
+        //orgURL = @"https://onlineteam.force.com/CustomerCommunity/services/oauth2/token";
+        
+        // orgURL =  [NSString stringWithFormat:@"%@/%@", [PlistManager baseURLString], serviceURI]; removing slash from url  :chinna
     }
     
 	NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
