@@ -75,10 +75,9 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
     NSString *headerId = [lSFMPage getHeaderSalesForceId];
     BOOL childSFIDPresent = [lSFMPage areChildRecordsSynced];
     
-   BOOL conflictStatus = [SFMPageHelper conflictExistForObjectName:lSFMPage.objectName
-                                     recordId:lSFMPage.recordId];
+//   BOOL conflictStatus = [SFMPageHelper conflictExistForObjectName:lSFMPage.objectName recordId:lSFMPage.recordId];
     
-    if (!theClassNameMethodName || !theClassNameMethodName.length || !headerId || headerId.length!=18 || !childSFIDPresent || conflictStatus) {
+    if (!theClassNameMethodName || !theClassNameMethodName.length || !headerId || headerId.length!=18 || !childSFIDPresent) {
         return nil;
     }
     

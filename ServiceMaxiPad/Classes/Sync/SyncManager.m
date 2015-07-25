@@ -1841,8 +1841,12 @@ static SyncManager *_instance;
                 }
                 else {
                     
-                    [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:1];
+                   BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:1];
+                    if (!status) {
+                      
+                        [self customCallDidNotInitiateDuetoSomeRaeason];
 
+                    }
                 }
                 
                 break;
@@ -1853,12 +1857,9 @@ static SyncManager *_instance;
                 self.isAfterInsert = NO;
                 self.isAfterUpdate = NO;
 
-
                BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
                 if (!status) {
-                    self.isBeforeUpdate = NO;
-                    self.isDataSyncRunning = NO;
-                    [self checkNetworkReachabilityAndInitiateDataSync];
+                    [self customCallDidNotInitiateDuetoSomeRaeason];
                 }
                 
                 break;
@@ -1873,7 +1874,7 @@ static SyncManager *_instance;
 //                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
                 NSInteger conflictsCount = [ResolveConflictsHelper getConflictsCount];
 
-                if ([self isThereAnyRecordForUpdation] || conflictsCount)
+                if ([self isThereAnyRecordForUpdationOrInsertion] || conflictsCount)
                 {
                     self.isDataSyncRunning = NO;
                     [self checkNetworkReachabilityAndInitiateDataSync];
@@ -1881,6 +1882,13 @@ static SyncManager *_instance;
                 else
                 {
                     BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:3];
+                    
+                    if (!status) {
+                        
+                        [self customCallDidNotInitiateDuetoSomeRaeason];
+
+                    }
+                    
                 }
                 break;
 
@@ -1891,6 +1899,16 @@ static SyncManager *_instance;
     {
         [self checkNetworkReachabilityAndInitiateDataSync];
     }
+}
+
+-(void)customCallDidNotInitiateDuetoSomeRaeason
+{
+    self.isBeforeUpdate = NO;
+    self.isAfterInsert = NO;
+    self.isAfterUpdate = NO;
+
+    [self currentDataSyncFailedWithError:nil];
+
 }
 
 -(BOOL)allConflictsResolved
@@ -1921,7 +1939,7 @@ static SyncManager *_instance;
 
 -(BOOL)customAPICallwithModifiedRecordModelRequestData:(NSString *)requestData andRequestType:(int)requestType
 {
-    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && [self continueDataSyncIfConflictsResolved] && [self doesTheRecordStillExist])
+    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && [self doesTheRecordStillExist])
     {
         SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPageRequestData:requestData requestType:requestType];
 
@@ -2050,8 +2068,12 @@ static SyncManager *_instance;
     return (insertedRecords.count?YES:NO);
 }
 
--(BOOL)isThereAnyRecordForUpdation
+-(BOOL)isThereAnyRecordForUpdationOrInsertion
 {
+    if ([self isThereAnyRecordForInsertion]) {
+        return YES;
+    }
+    
     id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
     
     NSDictionary *insertedRecords = [modifiedRecordService getUpdatedRecords];
