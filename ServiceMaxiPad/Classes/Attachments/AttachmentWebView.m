@@ -382,7 +382,7 @@ static NSInteger const kDeleteButton = 321;
     _webView = nil;
     _toolbar = nil;//D-00003728
     _url = nil;
-    
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
     [self deregisterForPopOverDismissNotification];
 }
 
