@@ -39,7 +39,6 @@ AppDelegate *appDelegate;
 
 @interface iPadScrollerViewController ()
 
-@property (nonatomic, assign) BOOL isNetworkAlertViewAppeard;
 
 @end
 
@@ -537,7 +536,6 @@ const NSUInteger kNumImages = 7;
     [self performSelector:@selector(fadeInLogo) withObject:nil afterDelay:1];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];
-    self.isNetworkAlertViewAppeard = NO;
 
 }
 - (void) reachabilityChanged: (NSNotification* )notification
@@ -549,8 +547,7 @@ const NSUInteger kNumImages = 7;
         if(![appDelegate isInternetConnectionAvailable])
         {
             SMLog(kLogLevelVerbose,@"Internet Connection Lost");
-            if (self.isNetworkAlertViewAppeard == NO) {
-                self.isNetworkAlertViewAppeard = YES;
+            if (![internet_alertView isVisible]) {
                 [self RefreshProgressBarNativeMethod:META_SYNC_];
                 [self showAlertForInternetUnAvailability];
 
@@ -1913,12 +1910,16 @@ const float progress_ = 0.07;
     NSString * ll_try_later = [appDelegate.wsInterface.tagsDictionary objectForKey:sync_progress_i_ll_try];
 
     // SMLog(kLogLevelVerbose,@"2nd-later will come to showalertview");
+    
+    if (internet_alertView != nil) {
+        [internet_alertView release];
+        internet_alertView = nil;
+    }
+    
     if(internet_alertView == nil)
     {
         internet_alertView = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:retry otherButtonTitles:ll_try_later, nil];
         [internet_alertView show];
-        [internet_alertView release];
-        internet_alertView = nil;
     }
 }
 
@@ -2615,7 +2616,6 @@ const float progress_ = 0.07;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;
 {
-    self.isNetworkAlertViewAppeard = NO; // reset the alert view flag once it disappears.
     if(buttonIndex == 0)
     {
        SMLog(kLogLevelVerbose,@"index 0");
