@@ -66,12 +66,10 @@
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        NSLog(@" in enableAutoLockSetting initialSync: %d, configSync:%d, resetApp:%d, manualDataSync:%d, dataPurge:%d, pushLogs:%d", self.initialSync, self.configSync, self.resetApp, self.manualDataSync, self.dataPurge, self.pushLogs);
         if (!self.initialSync && !self.configSync && !self.resetApp && !self.manualDataSync && !self.dataPurge && !self.pushLogs)
         {
             [self killTimer];
             [self performSelector:@selector(autoLockEnable) withObject:nil afterDelay:10.0f];
-            //self.enableAutoLockTimer = [NSTimer scheduledTimerWithTimeInterval:10.0f target:self selector:@selector(autoLockEnable) userInfo:nil repeats:NO];
         }
         
     });
@@ -117,7 +115,6 @@
 
 -(void)disableAutoLockSetting
 {
-    NSLog(@"Auto-lock DISABLED");
     [self killTimer];
     [UIApplication sharedApplication].idleTimerDisabled = YES;
 }

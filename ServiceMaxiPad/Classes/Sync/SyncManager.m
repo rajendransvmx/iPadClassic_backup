@@ -1948,7 +1948,7 @@ static SyncManager *_instance;
             if (![self isDataSyncInProgress]) {
                 [self setTheDataSyncStatus];
             }
-            [webserviceHelper initiateCustomWebServiceForAfterBeforeWithDelegate:self];
+            [webserviceHelper performSelectorInBackground:@selector(initiateCustomWebServiceForAfterBeforeWithDelegate:) withObject:self];
             return YES;
         }
     }
