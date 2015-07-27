@@ -353,7 +353,13 @@ static NSInteger const kDeleteButton = 321;
                 }
             }
             
-            [self.navigationController popViewControllerAnimated:YES];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.request){
+                    [self.webView removeFromSuperview];
+                    [[NSURLCache sharedURLCache] removeCachedResponseForRequest:self.request];
+                }
+                [self.navigationController popViewControllerAnimated:YES];
+            });
         }
     }
 }
