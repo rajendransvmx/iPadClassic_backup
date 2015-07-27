@@ -288,8 +288,15 @@ static NSInteger const kDeleteButton = 321;
 
 - (void)backButtonClicked:(id)sender
 {
+    [self popUpWebview];
+}
+
+- (void)popUpWebview
+{
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.request){
+        if (self.request)
+        {
+            [self.webView stopLoading];
             [self.webView removeFromSuperview];
             [[NSURLCache sharedURLCache] removeCachedResponseForRequest:self.request];
         }
@@ -353,13 +360,7 @@ static NSInteger const kDeleteButton = 321;
                 }
             }
             
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (self.request){
-                    [self.webView removeFromSuperview];
-                    [[NSURLCache sharedURLCache] removeCachedResponseForRequest:self.request];
-                }
-                [self.navigationController popViewControllerAnimated:YES];
-            });
+            [self popUpWebview];
         }
     }
 }
@@ -382,6 +383,7 @@ static NSInteger const kDeleteButton = 321;
     _webView = nil;
     _toolbar = nil;//D-00003728
     _url = nil;
+    _request = nil;
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
     [self deregisterForPopOverDismissNotification];
 }
