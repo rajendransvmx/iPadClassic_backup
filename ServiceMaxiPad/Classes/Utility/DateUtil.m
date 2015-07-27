@@ -832,9 +832,14 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
             if (!isDateWithTime) {
                 [dateFormatter setDateFormat:kFormulaDateTimeForModule];
                 date = [dateFormatter dateFromString:formulaDate];
-                if(date != nil) {
-                    gmtDate = (isDateWithTime)?[DateUtil getSecZeroedDatabaseStringForDate:date]:[DateUtil stringFromDate:date inFormat:kDataBaseDate];
-                }
+            }
+            else {
+                [dateFormatter setDateFormat:kFormulaDateForModule];
+                date = [dateFormatter dateFromString:formulaDate];
+            }
+            
+            if(date != nil) {
+                gmtDate = (isDateWithTime)?[DateUtil getSecZeroedDatabaseStringForDate:date]:[DateUtil stringFromDate:date inFormat:kDataBaseDate];
             }
         }
     }
