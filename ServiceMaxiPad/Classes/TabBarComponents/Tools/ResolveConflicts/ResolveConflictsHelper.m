@@ -292,6 +292,11 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
                     [objectIdsDictionary setObject:idsDict forKey:newSyncRecord.objectName];
                 }
                 [idsDict  setObject:newSyncRecord.sfId forKey:newSyncRecord.sfId];
+                
+                if ([syncConflictModel.operationType isEqualToString:kModificationTypeUpdate]) {
+                    [ResolveConflictsHelper deleteRecordWithFieldName:kSyncRecordSFId forRecord:newSyncRecord.sfId fromObjectName:kModifiedRecords];
+                }
+                
                 [ResolveConflictsHelper deleteConflictRecord:syncConflictModel];
                 // conflictsResolved = TRUE;
             }
