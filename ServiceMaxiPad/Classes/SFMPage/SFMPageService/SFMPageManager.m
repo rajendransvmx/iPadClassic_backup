@@ -665,6 +665,7 @@ PageManagerErrorType;
             record.parentColumnName = componemtModel.parentColumnName;
             record.objectName = componemtModel.objectName;
             record.sortingData = componemtModel.sortingOrder;
+            record.sourceToTargetType = sfmPage.process.processInfo.processType;
             
             if (![StringUtil isStringEmpty:componemtModel.expressionId]) {
                 SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:componemtModel.expressionId
@@ -1066,6 +1067,7 @@ PageManagerErrorType;
             record.parentColumnName = componemtModel.parentColumnName;
             record.objectName = componemtModel.objectName;
             record.sortingData = componemtModel.sortingOrder;
+            record.sourceToTargetType = sfmPage.process.processInfo.processType;
             
             if (![StringUtil isStringEmpty:componemtModel.expressionId]) {
                 SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:componemtModel.expressionId

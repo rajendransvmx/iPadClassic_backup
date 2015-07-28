@@ -38,8 +38,9 @@
 - (void)updateEntryCriteriaObjects
 {
     NSMutableArray * criteriaObjects = [[NSMutableArray alloc] initWithCapacity:0];
-    // Anoop : SRC to Target not showing child lines detail data if we use following criteria
-    if ([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll]) {
+    // Anoop : SRC to Target All and Child only fixed duplicate line issues
+    if ([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll] ||
+        [self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetChild]) {
         
         if (![StringUtil isStringEmpty:self.parentLocalId]) {
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kLocalId
@@ -48,13 +49,11 @@
             [criteriaObjects addObject:criteria];
         }
         if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentSfID]) {
-            // NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
             [criteriaObjects addObject:criteria];
         }
         if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentLocalId]) {
-            //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
@@ -62,13 +61,11 @@
     }
     else {
         if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentSfID]) {
-            // NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
             [criteriaObjects addObject:criteria];
         }
         if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentLocalId]) {
-            //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
