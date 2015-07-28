@@ -376,22 +376,18 @@
            
             
             NSString *displayValue = mappingModel.mappingValue;
-            NSString *internalValue = mappingModel.mappingValue;
+
             
             if(sfmPage.process.processInfo.processType != nil && [sfmPage.process.processInfo.processType isEqualToString:kProcessTypeStandAloneCreate])
             {
                 NSString *pickListDisplayValue;
                 
                 id <SFPicklistDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
-              
-                    pickListDisplayValue = [picklistService getDisplayValueFromPicklistForObjectName:sfmPage.objectName withMappingCompenent:mappingModel];
+                
+                pickListDisplayValue =  [picklistService getDisplayValueFromPicklistForObjectName:sfmPage.objectName forFiledName:mappingModel.targetFieldName forValue:mappingModel.mappingValue];
+                
                 if(pickListDisplayValue){
-                    
-                    /* update same value for both display and internal value */
-                    
                     displayValue = pickListDisplayValue;
-                    internalValue = pickListDisplayValue;
-                    
                 }
                 
             }
@@ -399,7 +395,7 @@
             /*  ===================================================  */
                      /* END */
             /*  ===================================================    */
-            SFMRecordFieldData * recordField = [[SFMRecordFieldData alloc] initWithFieldName: mappingModel.targetFieldName value:internalValue andDisplayValue:displayValue];
+            SFMRecordFieldData * recordField = [[SFMRecordFieldData alloc] initWithFieldName: mappingModel.targetFieldName value:mappingModel.mappingValue andDisplayValue:displayValue];
             
             if(mappingModel.targetFieldName != nil){
                 
@@ -553,7 +549,7 @@
             displayValue = [SFMPageHelper  valueOfLiteral:recordfield.internalValue dataType:@""];
             if(displayValue == nil)
             {
-                displayValue = mappingValue;
+                displayValue = recordfield.displayValue;
             }
         }
         
@@ -1212,7 +1208,23 @@
             }
             else{
                 recordData.internalValue = fieldValue;
-                recordData.displayValue = fieldValue;
+                
+                NSString *pickListDisplayValue;
+                
+                id <SFPicklistDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
+                
+                pickListDisplayValue = [picklistService getDisplayValueFromPicklistForObjectName:objectName forFiledName:recordData.name forValue:fieldValue];
+                
+                
+                if(pickListDisplayValue)
+                {
+                    recordData.displayValue = pickListDisplayValue;
+                }else
+                {
+                    recordData.displayValue = fieldValue;
+                }
+                
+                
             }
         }
     }

@@ -27,7 +27,8 @@
 
 -(void)updateSFPicklistTable:(NSArray *)sfPickListTables;
 - (NSArray *)getListOfLaborActivityType;
--(NSString *) getDisplayValueFromPicklistForObjectName:(NSString *)objectName withMappingCompenent:(SFObjectMappingComponentModel *)mappingCompenent;
+-(NSString *) getDisplayValueFromPicklistForObjectName:(NSString *)objectName forFiledName:(NSString *)fieldName forValue:(NSString *)value;
+
 
 
 @end

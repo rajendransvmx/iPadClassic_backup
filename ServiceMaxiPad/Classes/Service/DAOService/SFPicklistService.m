@@ -163,21 +163,20 @@
     return resultSet;
 
 }
-
--(NSString *) getDisplayValueFromPicklistForObjectName:(NSString *)objectName withMappingCompenent:(SFObjectMappingComponentModel *)mappingCompenent
+-(NSString *) getDisplayValueFromPicklistForObjectName:(NSString *)objectName forFiledName:(NSString *)fieldName forValue:(NSString *)value
 {
- 
+    
     NSString *displayValue = nil;
-
-    DBCriteria * criteriaObjectName1 = [[DBCriteria alloc] initWithFieldName:kfieldname operatorType:SQLOperatorEqual andFieldValue:mappingCompenent.targetFieldName];
     
-    DBCriteria * criteriaObjectName2 = [[DBCriteria alloc] initWithFieldName:kvalue operatorType:SQLOperatorEqual andFieldValue:mappingCompenent.mappingValue];
+    DBCriteria * criteriaObjectName1 = [[DBCriteria alloc] initWithFieldName:kfieldname operatorType:SQLOperatorEqual andFieldValue:fieldName];
     
-     DBCriteria * criteriaObjectName3 = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:objectName];
+    DBCriteria * criteriaObjectName2 = [[DBCriteria alloc] initWithFieldName:kvalue operatorType:SQLOperatorEqual andFieldValue:value];
+    
+    DBCriteria * criteriaObjectName3 = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:objectName];
     
     
     NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaObjectName1, criteriaObjectName2,criteriaObjectName3,
-                                  nil];
+                                 nil];
     NSArray * fieldNames = [[NSArray alloc] initWithObjects:@"label", nil];
     
     
