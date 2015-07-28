@@ -264,6 +264,13 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     synchronized_sqlite3_finalize(labelstmt);
     
     NSString *processId =nil;
+   if (![Utility isStringEmpty:localId])
+   {
+            NSString *local_id = [data objectForKey:@"local_id"];
+            if (![Utility isStringEmpty:local_id]) {
+                localId = local_id;
+            }
+    }
     
     for (int v = 0; v < [appDelegate.view_layout_array count]; v++)
     {
