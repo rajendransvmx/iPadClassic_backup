@@ -306,7 +306,7 @@
     NSString *message2 = [[TagManager sharedInstance]tagByName:kTag_ThanksForUsingServiceMax];
     
     NSString *titleCancel = nil;
-    NSString *otherButtonTittle = @"Sign In";
+    NSString *otherButtonTittle = [[TagManager sharedInstance]tagByName:kSignIn];
     
     NSArray *messages = [NSArray arrayWithObjects:message1, message2, nil];
     

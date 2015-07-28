@@ -417,13 +417,13 @@
         NSString *message = nil;
         if ([workOrders count] > 1) {
             message = [workOrders componentsJoinedByString:@", "];
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:KMapNoValidAddresses message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:[[TagManager sharedInstance] tagByName:kTagAlertErrorOk], nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance] tagByName:kValidAddressMsgRecords] message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:[[TagManager sharedInstance] tagByName:kTagAlertErrorOk], nil];
             [alertView show];
             alertView = nil;
         }
         else {
             message = [workOrders lastObject];
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:KMapNoValidAddress message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:[[TagManager sharedInstance] tagByName:kTagAlertErrorOk], nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance] tagByName:kValidAddressMsg] message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:[[TagManager sharedInstance] tagByName:kTagAlertErrorOk], nil];
             [alertView show];
             alertView = nil;
         }

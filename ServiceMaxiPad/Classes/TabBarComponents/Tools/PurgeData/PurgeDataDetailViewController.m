@@ -108,14 +108,14 @@
     
     self.purgeDataMainTitleLabel.text         = [[TagManager sharedInstance]tagByName:kTagPurgeData];
     self.purgeDataDescriptionLabel.text       = [NSString stringWithFormat:@"%@ \n%@",[[TagManager sharedInstance]tagByName:kTag_PurgingDataRemovesOldAppmt],[[TagManager sharedInstance]tagByName:kTag_InternetRequiredToPurgeData]];
-   
     
-    self.purgeDataStatusTitleLabel.text       = @"Purge Data Status";
-    self.lastPurgeDataTimeTitleLabel.text     = @"last purge";
-        self.nextPurgeDataTimeTitleLabel.text = @"next purge";
-    self.lastPurgeDataStatusTitleLabel.text   = [[TagManager sharedInstance]tagByName:kTag_status];
     
-    [self.purgeDataNowButton setTitle:@"Purge Data Now" forState:UIControlStateNormal];
+    self.purgeDataStatusTitleLabel.text       = [[TagManager sharedInstance] tagByName:kTagPurgeDataStatus];
+    self.lastPurgeDataTimeTitleLabel.text     = [[TagManager sharedInstance] tagByName: kLastPurge];
+    self.nextPurgeDataTimeTitleLabel.text = [[TagManager sharedInstance] tagByName: kNextPurge];
+    self.lastPurgeDataStatusTitleLabel.text   = [[TagManager sharedInstance]tagByName:kStatus];
+    
+    [self.purgeDataNowButton setTitle:[[TagManager sharedInstance] tagByName:kTagPurgeDataNow] forState:UIControlStateNormal];
     [self updateLastPurgeDataTimeAndStatusUI];
     [self updateNextPurgeDataTimeUI];
 }
@@ -206,9 +206,9 @@
 
 - (void)displayDataPurgeProgressView
 {
-    NSString *title    = @"Purge Data Progress";
-    NSString *message1 = @"Purge in Progress. Please wait for this action to complete.";
-    NSString *message2 = @"Do not press the home button during this action or the purge will be cancelled.";
+    NSString *title    = [[TagManager sharedInstance] tagByName:kPurgeDataProgress];
+    NSString *message1 = [[TagManager sharedInstance] tagByName:kPurgeProgressMessage];
+    NSString *message2 = [[TagManager sharedInstance] tagByName:kPurgeWarningMessage];
     
     NSString *titleCancel = [[TagManager sharedInstance]tagByName:kTagCancelButton];
     
