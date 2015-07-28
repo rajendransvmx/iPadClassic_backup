@@ -3,19 +3,22 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.123
+Version = 15.49.124
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-016805
-020293
-020288
+20364
+020389
+020396
+019534
 
 
 Note:
 SVMXC namespace.
+1) SOAP call, request changed from "req" to "request".
+2) If technician is having permission to download static resources disable it and test, Because we are not sure whether latest files have got updated in server.
 
 
 
