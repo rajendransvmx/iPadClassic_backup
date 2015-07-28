@@ -2731,7 +2731,9 @@
         if (![StringUtil isStringEmpty:value]) {
             BOOL isDateWithTime = ([sfmPageField.dataType isEqualToString:kSfDTDateTime]);
             internalValue = [DateUtil getGMTDateFromFormulaDate:value isDateWithTime:isDateWithTime];
-            displayValue = (isDateWithTime)?[DateUtil getUserReadableDateForDateBaseDate:internalValue]:[DateUtil getUserReadableDateForDBDateTime:internalValue];
+            if (![StringUtil isStringEmpty:internalValue]) {
+                displayValue = (isDateWithTime)?[DateUtil getUserReadableDateForDateBaseDate:internalValue]:[DateUtil getUserReadableDateForDBDateTime:internalValue];
+            }
         }
         recordField.internalValue = internalValue;
         recordField.displayValue = displayValue;
