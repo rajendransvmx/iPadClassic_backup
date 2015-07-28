@@ -834,6 +834,10 @@
 
 -(void)theModifiedRecordsUpdateForCustomWebservice:(ModifiedRecordModel *) syncRecord andSFMPage:(SFMPage *)sfmpage
 {
+
+    syncRecord.recordLocalId = [NSString stringWithFormat:@"%@%@", syncRecord.recordLocalId, kChangedLocalIDForCustomCall];  // This is being done to avoid the confusion wrt normal records and customcall records in Modified records. Also, if the recordid is same as normal data records then successivesync will create problems in - (void) doSuccessiveSync method in SuccessiveSyncManager. Method is getting called is===>     [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync]; from - (void)PerformSYncBasedOnFlags from SyncManager class.
+
+
     if (sfmpage.customWebserviceOptionsArray.count) {
         NSString *requestData = [NSString stringWithFormat:@"%@,%@,%@", sfmpage.objectName, sfmpage.recordId, sfmpage.process.processInfo.sfID];
         syncRecord.requestData = requestData;

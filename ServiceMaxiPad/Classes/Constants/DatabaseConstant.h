@@ -424,3 +424,4 @@ extern NSString * const kAfterSaveInsertKey;
 extern NSString * const kWebserviceProcessKey;
 
 extern NSString *const kCodeSnippetID;
+extern NSString * const kChangedLocalIDForCustomCall;

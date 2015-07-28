@@ -21,9 +21,10 @@
  **/
 #import "SVMXServerRequest.h"
 #import "RequestParamModel.h"
+#import "CustomXMLParser.h"
 
 
-@interface RestRequest : SVMXServerRequest
+@interface RestRequest : SVMXServerRequest <xmlParserProtocolDelegate>
 
 @property (nonatomic, strong) NSMutableDictionary *dataDictionary;
 @property(nonatomic,copy) NSString *contentType;

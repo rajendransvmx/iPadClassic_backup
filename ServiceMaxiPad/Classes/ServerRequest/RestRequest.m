@@ -148,8 +148,7 @@
             NSDate *requestedTime = [NSDate date]; //calculating latency of request
             AFHTTPRequestOperation *requestOp;
             
-            if (self.requestType ==    RequestTypeCustomActionWebService || self.requestType ==
-                RequestTypeCustomActionWebServiceAfterBefore) {
+            if (self.requestType ==    RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore) {
         
                 [self soapRequest:urlRequest];
                 requestOp  = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
@@ -192,25 +191,68 @@
                     SXLogWarning(@"%@ req-f latency : %f sec", self.eventName, [[NSDate date] timeIntervalSinceDate:requestedTime]);
                  
                  //PA
-                    [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
+                 [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
                  
-                    [self displayRequest:operation];
+                 [self displayRequest:operation];
+                 
+                 
+                 if (self.requestType ==    RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
+                 {
+                 
+                     CustomXMLParser *parser = [[CustomXMLParser alloc] initwithNSXMLParserObject:(NSXMLParser *)operation.responseObject andError:error andOperation:(id)operation];
+                     parser.customDelegate = self;
+                     [parser parse];
+                 }
+                 else{
 
-                    NSInteger code = error.code;
-                    NSHTTPURLResponse *response =  [error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey];
-
-                    if (response != nil)
-                    {
-                        code = response.statusCode;
-                    }
-
-                    [self didRequestFailedWithError:[NSError errorWithDomain:error.domain code:code userInfo:error.userInfo]
-                                        andResponse:operation.responseObject];
+                     NSInteger code = error.code;
+                     NSHTTPURLResponse *response =  [error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey];
+                     
+                     if (response != nil)
+                     {
+                         code = response.statusCode;
+                     }
+                     
+                     [self didRequestFailedWithError:[NSError errorWithDomain:error.domain code:code userInfo:error.userInfo]
+                                         andResponse:operation.responseObject];
+                 }
                 }];
             
                 [requestOp start];
            }
     }
+}
+
+-(void)customErrorResponse:(NSMutableDictionary *)theErrorMessageDictionary andError:(NSError *)error andOperation:(id)operation;
+{
+    
+    NSMutableString *message = [[NSMutableString alloc] init];
+    for (NSString *key in theErrorMessageDictionary.allKeys) {
+        if (message.length==0) {
+            [message  appendFormat:@"%@",[theErrorMessageDictionary objectForKey:key]];
+
+        }
+        else
+        {
+            [message  appendFormat:@"--%@",[theErrorMessageDictionary objectForKey:key]];
+        }
+    }
+    
+    NSMutableDictionary *lUserError = [[NSMutableDictionary alloc] initWithDictionary:error.userInfo];
+    [lUserError setObject:message forKey:SMErrorUserMessageKey];
+    [lUserError setObject:message forKey:NSLocalizedDescriptionKey];
+
+    NSInteger code = error.code;
+    NSHTTPURLResponse *response =  [error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey];
+    
+    if (response != nil)
+    {
+        code = response.statusCode;
+    }
+    
+    AFHTTPRequestOperation *lOperation = operation;
+    [self didRequestFailedWithError:[NSError errorWithDomain:error.domain code:code userInfo:lUserError]
+                        andResponse:lOperation.responseObject];
 }
 
 -(void)soapRequest:(NSMutableURLRequest *)urlRequest
