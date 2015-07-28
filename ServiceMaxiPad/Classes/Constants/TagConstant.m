@@ -494,7 +494,27 @@ NSString *const kTagSLAClocks                            = @"IPAD014_TAG042";
  NSString *const kTagCalendarDaySixLabel        = @"IPAD006_TAG014";
  NSString *const kTagCalendarDaySevenLabel      = @"IPAD006_TAG015";
 
+//adding missing tag
 
+NSString *const kValidAddressMsg                = @"IPAD013_TAG014";
+NSString *const kValidAddressMsgRecords         = @"IPAD013_TAG013";
+NSString *const kStatus                         = @"IPAD018_TAG169";
+NSString *const kLastPurge                      = @"IPAD018_TAG196";
+NSString *const kNextPurge                      = @"IPAD018_TAG197";
+NSString *const kPurgeProgressMessage           = @"IPAD018_TAG200";
+NSString *const kPurgeWarningMessage            = @"IPAD018_TAG201";
+NSString *const kSignIn                         = @"IPAD015_TAG026";
+NSString *const kPurgeDataProgress              = @"IPAD018_TAG199";
+
+/* - Service location is not shown because valid address does not exist for this record:
+ - Service locations are not shown because valid address does not exist for these records:
+ - status
+ - last purge
+- next purge
+ - Purge in Progress. Please wait for this action to complete.
+	- Do not press the home button during this action or the purge will be cancelled
+IPAD015_TAG026	- Sign In
+*/
 
 
 

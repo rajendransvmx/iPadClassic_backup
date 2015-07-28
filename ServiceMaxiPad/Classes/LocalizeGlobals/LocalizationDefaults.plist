@@ -1237,7 +1237,7 @@
 	<key>IPAD018_TAG159</key>
 	<string>Download complete.</string>
 	<key>IPAD012_TAG036</key>
-	<string></string>
+	<string>Now downloading SFM Search details</string>
 	<key>IPAD024_TAG021</key>
 	<string>Unauthorized Access. You do not have permission to perform this action</string>
 	<key>IPAD015_TAG003</key>
@@ -1268,5 +1268,21 @@
 	<string>Sign out ends your session with ServiceMax Mobile. You will need to sign in again to regain access.</string>
 	<key>IPAD014_TAG139</key>
 	<string>No items entered</string>
+	<key>IPAD018_TAG200</key>
+	<string>Please wait for this action to complete. </string>
+	<key>IPAD013_TAG014</key>
+	<string>Service location is not shown because valid address does not exist for this record: </string>
+	<key>IPAD013_TAG013</key>
+	<string>Service locations are not shown because valid address does not exist for these records: </string>
+	<key>IPAD018_TAG196</key>
+	<string>last purge </string>
+	<key>IPAD018_TAG197</key>
+	<string>next purge </string>
+	<key>IPAD018_TAG201</key>
+	<string>Do not press the home button during this action or the purge will be cancelled </string>
+	<key>IPAD015_TAG026</key>
+	<string>Sign In</string>
+	<key>IPAD018_TAG199</key>
+	<string>Purge Data Progress</string>
 </dict>
 </plist>

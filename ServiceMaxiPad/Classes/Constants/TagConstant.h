@@ -58,6 +58,7 @@ extern NSString *const kTagPurgeDataStatus;
 extern NSString *const kTagPurgeDataNow;
 extern NSString *const kTagPushLogsNow;
 extern NSString *const kTagPushLogsStatus;
+extern NSString *const kPurgeDataProgress;
 
 extern NSString *const kTagWeek;
 extern NSString *const kTagDay;
@@ -865,5 +866,16 @@ extern NSString *const KTagInProgess;
 extern NSString *const KTagSuccess;
 extern NSString *const KTagFailed;
 extern NSString *const KTagConflicts;
+
+//adding missing tag
+extern NSString *const kValidAddressMsg ;
+extern NSString *const kValidAddressMsgRecords ;
+extern NSString *const kStatus ;
+extern NSString *const kLastPurge ;
+extern NSString *const kNextPurge ;
+extern NSString *const kPurgeProgressMessage ;
+extern NSString *const kPurgeWarningMessage ;
+extern NSString *const kSignIn ;
+
 
 //@end
