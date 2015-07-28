@@ -594,7 +594,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
         if ([status isEqualToString:kSuccess]) {
             configSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagSuccess];
         } else {
-            configSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagSuccess];
+            configSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagFailed];
         }
     }
     
@@ -630,10 +630,11 @@ const NSInteger alertViewTagForConfigSync   = 888889;
         [reportSyncStatusLabel setTextColor:[UIColor colorWithHexString:@"#FF6633"]];
         enabledReportsButton = YES;
     } else {
-        reportSyncStatusLabel.text = status;
+        reportSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagSuccess];
+;
     }
     
-    if (enabledReportsButton) {
+    if (enabledReportsButton ) {
         reportsButton.layer.borderColor = [UIColor orangeColor].CGColor;
         reportsButton.layer.borderWidth = 0.8;
         [reportsButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
