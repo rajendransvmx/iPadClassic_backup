@@ -91,6 +91,11 @@ const NSUInteger kNumImages = 7;
     [accessIdentifiersHomeScreen release]; /*UIAutomation-Shra*/
     
     [backgroundView release];
+    if (internet_alertView !=nil) {
+        [internet_alertView release];
+        internet_alertView = nil;
+
+    }
     [super dealloc];
 }
 
@@ -494,7 +499,7 @@ const NSUInteger kNumImages = 7;
 {
     [super viewDidLoad];
        //Shrinivas : OAuth
-	appDelegate.logoutFlag = FALSE;  
+	appDelegate.logoutFlag = FALSE;
     if(appDelegate.IsLogedIn == ISLOGEDIN_TRUE)
     {
         if(appDelegate.do_meta_data_sync != ALLOW_META_AND_DATA_SYNC)
@@ -542,18 +547,23 @@ const NSUInteger kNumImages = 7;
 {
     @autoreleasepool {
         
-        SMLog(kLogLevelVerbose,@"Notification :-%@",[notification name]);
-        AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        if(![appDelegate isInternetConnectionAvailable])
-        {
-            SMLog(kLogLevelVerbose,@"Internet Connection Lost");
-            if (![internet_alertView isVisible]) {
-                [self RefreshProgressBarNativeMethod:META_SYNC_];
-                [self showAlertForInternetUnAvailability];
-
+        if (appDelegate.isInitialMetaSyncInProgress == YES) {
+            SMLog(kLogLevelVerbose,@"Notification :-%@",[notification name]);
+            AppDelegate * appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            if(![appDelegate isInternetConnectionAvailable])
+            {
+                SMLog(kLogLevelVerbose,@"Internet Connection Lost");
+                if (![internet_alertView isVisible]) {
+                    [self RefreshProgressBarNativeMethod:META_SYNC_];
+                    [self showAlertForInternetUnAvailability];
+                    
+                }
+            }
+        } else {
+            if (internet_alertView != nil && [internet_alertView isVisible]) {
+                [internet_alertView dismissWithClickedButtonIndex:0 animated:NO];
             }
         }
-        
     }
 }
 
@@ -1595,6 +1605,7 @@ const NSUInteger kNumImages = 7;
 
     appDelegate.do_meta_data_sync = DONT_ALLOW_META_DATA_SYNC;
     appDelegate.IsLogedIn = ISLOGEDIN_FALSE;
+    appDelegate.isInitialMetaSyncInProgress = NO;
     [self enableControls];
     
     
@@ -1911,10 +1922,7 @@ const float progress_ = 0.07;
 
     // SMLog(kLogLevelVerbose,@"2nd-later will come to showalertview");
     
-    if (internet_alertView != nil) {
-        [internet_alertView release];
-        internet_alertView = nil;
-    }
+    
     
     if(internet_alertView == nil)
     {
@@ -2616,6 +2624,10 @@ const float progress_ = 0.07;
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex;
 {
+    if (internet_alertView != nil) {
+        [internet_alertView release];
+        internet_alertView = nil;
+    }
     if(buttonIndex == 0)
     {
        SMLog(kLogLevelVerbose,@"index 0");
