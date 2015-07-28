@@ -592,7 +592,6 @@ static SyncManager *_instance;
     {
         SXLogDebug(@"Data Sync Finished");
         [self PerformSYncBasedOnFlags];
-
         
         //[self currentDataSyncfinished];
     }
@@ -1877,6 +1876,7 @@ static SyncManager *_instance;
                 if ([self isThereAnyRecordForUpdationOrInsertion] || conflictsCount)
                 {
                     self.isDataSyncRunning = NO;
+                    self.isAfterUpdate = NO;
                     [self checkNetworkReachabilityAndInitiateDataSync];
                 }
                 else
@@ -1884,11 +1884,8 @@ static SyncManager *_instance;
                     BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:3];
                     
                     if (!status) {
-                        
                         [self customCallDidNotInitiateDuetoSomeRaeason];
-
                     }
-                    
                 }
                 break;
 
@@ -1960,13 +1957,30 @@ static SyncManager *_instance;
     [[CacheManager sharedInstance] clearCacheByKey:kAfterSaveInsertCustomCallValueMap]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
 
     [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
-    BOOL status = NO;
+
+    [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+
+    ModifiedRecordsService *modifiedRecordService = [[ModifiedRecordsService alloc] init];
+    BOOL doesExist = NO;
+    
+    if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
+        
+        doesExist =  [modifiedRecordService doesRecordExistInTheTable];
+    }
+    if(doesExist)
+    {
+        self.isDataSyncRunning = NO;
+        [self initiateCustomDataSync];
+    }
+    else {
+        [self currentDataSyncfinished];
+        
+    }
+    
+    /*
     if(self.isAfterInsert)
     {
-        /* call custom Api */
-        
-//        [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
-        
+
        status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:1];
     }
     else if(self.isBeforeUpdate)
@@ -1977,7 +1991,6 @@ static SyncManager *_instance;
     }
     else if(self.isAfterUpdate)
     {
-        /*call Custom APi */
       status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:3];
     }
 
@@ -1985,6 +1998,7 @@ static SyncManager *_instance;
         [self currentDataSyncfinished];
 
     }
+     */
 }
 
 - (void)customCallResponse
@@ -2009,28 +2023,35 @@ static SyncManager *_instance;
             self.cCustomCallRecordModel = nil;
         }
         
-        if(self.isAfterUpdate)
-        {
-            if ([[self theModifiedRecords] count]) {
-                self.isDataSyncRunning = NO;
-                [self initiateCustomDataSync];
+        [self nextFlow];
 
-            }
-            else{
-                self.isAfterUpdate = NO;
-                [self currentDataSyncfinished];
-            }
-        }
-        else
-        {
-            self.isDataSyncRunning = NO;
-            [self initiateCustomDataSync];
-        }
     }
     else  if ( (responseStatus.syncStatus == SyncStatusFailed) ||  (responseStatus.syncStatus == SyncStatusNetworkError))
     {
         SXLogDebug(@"Initial Sync failed");
         [self currentDataSyncFailedWithError:responseStatus.syncError];
+    }
+}
+
+-(void)nextFlow
+{
+    [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+    
+    ModifiedRecordsService *modifiedRecordService = [[ModifiedRecordsService alloc] init];
+    BOOL doesExist = NO;
+    
+    if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
+        
+        doesExist =  [modifiedRecordService doesRecordExistInTheTable];
+    }
+    if(doesExist)
+    {
+        self.isDataSyncRunning = NO;
+        [self initiateCustomDataSync];
+    }
+    else {
+        [self currentDataSyncfinished];
+        
     }
 }
 
