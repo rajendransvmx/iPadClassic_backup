@@ -466,7 +466,7 @@
     }
     
     NSError *error = nil;
-    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId error:&error];
+    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
     if (isValidProcess) {
         pageViewController.sfmPageView = [pageManager sfmPageView];
         if (self.addEventBtn)
@@ -504,7 +504,7 @@
         pageManager = [[SFMPageViewManager alloc] initWithObjectName:[model objectAPIName] recordId:[[model getFieldValueDictionary] objectForKey:@"localId"]];
     }
     NSError *error = nil;
-    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId error:&error];
+    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
     if (isValidProcess) {
         pageViewController.sfmPageView = [pageManager sfmPageView];
         if (self.addEventBtn)
@@ -1921,7 +1921,7 @@
     else
     {
         NSError *error = nil;
-        BOOL isValidProcess = [viewPageManager isValidProcess:processId error:&error];
+        BOOL isValidProcess = [viewPageManager isValidProcess:processId objectName:nil recordId:nil error:&error];
         if (isValidProcess) {
             
             NSString *processType = [viewPageManager getProcessTypeForProcessId:processId];
@@ -2080,7 +2080,7 @@
     SFMPageViewController *pageViewController = [[SFMPageViewController alloc]init];
     SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:objectModel.objectName recordId:recordId processSFId:sfProcess.sfID];
                                            NSError *error = nil;
-        BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId error:&error];
+        BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
     if (isValidProcess) {
         pageViewController.sfmPageView = [pageManager sfmPageView];
         //UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:pageViewController];
@@ -2190,7 +2190,7 @@
     
     NSError *error;
     
-    BOOL isValidProcess = [viewPageManager isValidProcess:process.processId error:&error];
+    BOOL isValidProcess = [viewPageManager isValidProcess:process.processId objectName:nil recordId:nil error:&error];
     
     if (!isValidProcess) {
         if (error) {
@@ -2352,7 +2352,7 @@
     SFMPageViewManager *viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:objectModel.objectName recordId:recordId];
     SFMPage *sfmPage = viewPageManager.sfmPageView.sfmPage;
     NSError *error = nil;
-    BOOL isValidProcess = [viewPageManager isValidProcess:viewPageManager.processId error:&error];
+    BOOL isValidProcess = [viewPageManager isValidProcess:viewPageManager.processId objectName:nil recordId:nil error:&error];
     if (isValidProcess)
     {
         return sfmPage;

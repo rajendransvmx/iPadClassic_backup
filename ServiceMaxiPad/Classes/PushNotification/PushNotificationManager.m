@@ -643,7 +643,7 @@
     
     SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:self.finalModel.objectName recordId:localId];
     NSError *error = nil;
-    viewProcessAvailable = [pageManager isValidProcess:pageManager.processId error:&error];
+    viewProcessAvailable = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
     
     //popToRootViewControllerAnimated
     if(viewProcessAvailable){

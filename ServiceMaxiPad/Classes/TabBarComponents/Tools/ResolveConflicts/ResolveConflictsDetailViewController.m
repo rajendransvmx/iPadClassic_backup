@@ -263,8 +263,7 @@ static NSString *kConflictCellIdentifier = @"ConflictCellIdentifier";
                                                                             recordId:conflict.localId];
     
     NSError *error = nil;
-    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId
-                                                error:&error];
+    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
     if (isValidProcess) {
         pageViewController.sfmPageView = [pageManager sfmPageView];
         [self.smSplitViewController.navigationController pushViewController:pageViewController

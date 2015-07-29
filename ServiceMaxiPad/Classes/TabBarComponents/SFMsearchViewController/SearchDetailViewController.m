@@ -705,7 +705,7 @@
     SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:objectName recordId:localID];
     
     NSError *error = nil;
-    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId error:&error];
+    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];;
     if (isValidProcess) {
         pageViewController.sfmPageView = [pageManager sfmPageView];
         pageViewController.invokedFromSearch = YES;

@@ -114,7 +114,7 @@
     SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:recentModel.objectName recordId:recentModel.localId];
     
     NSError *error = nil;
-    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId error:&error];
+    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
     if (isValidProcess) {
         pageViewController.sfmPageView = [pageManager sfmPageView];
         [self.navigationController pushViewController:pageViewController animated:YES];

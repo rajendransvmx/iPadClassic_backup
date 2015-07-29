@@ -67,14 +67,30 @@ PageManagerErrorType;
 }
 
 
-- (BOOL)isEntryCriteraMatchingForProcess:(NSString *)processId error:(NSError **)error
+- (BOOL)isEntryCriteraMatchingForProcess:(NSString *)processId objectName:(NSString *)objectName recordId:(NSString *)sfmId error:(NSError **)error
 {
+    if(objectName == nil){
+        objectName = self.objectName;
+    }
+    
+    NSString *recordId;
+    
+    if(sfmId == nil)
+    {
+        recordId = self.recordId;
+      
+    }else
+    {
+        
+       recordId = [self getLocalIdForSFID:sfmId objectName:objectName];
+    }
+    
     BOOL isEntryCriteraMatching = NO;
     if (![StringUtil isStringEmpty:processId]) {
         NSString *expId = [SFMPageHelper expressionIdForProcess:processId];
         if (![StringUtil isStringEmpty:expId]) {
-            SFExpressionParser *parser = [[SFExpressionParser alloc]initWithExpressionId:expId objectName:self.objectName];
-            isEntryCriteraMatching = [parser isEntryCriteriaMatchingForRecordId:self.recordId];
+            SFExpressionParser *parser = [[SFExpressionParser alloc]initWithExpressionId:expId objectName:objectName];
+            isEntryCriteraMatching = [parser isEntryCriteriaMatchingForRecordId:recordId];
             if (!isEntryCriteraMatching) {
                 [self fillError:error
                     withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria
@@ -797,7 +813,7 @@ PageManagerErrorType;
     return [SFMPageHelper getLocalIdForSFID:sfID objectName:objectName];
 }
 
-- (BOOL)isValidProcess:(NSString *)processId error:(NSError **)error
+- (BOOL)isValidProcess:(NSString *)processId objectName:(NSString *)objectName recordId:(NSString *)sfId error:(NSError **)error
 {
     BOOL isValidProcess = NO;
     SFProcessModel *processModel = [SFMPageHelper getProcessInfoForSFID:processId];
@@ -805,7 +821,7 @@ PageManagerErrorType;
         NSError *internalError = nil;
         NSDictionary *pageLayout = [SFMPageHelper getPageLayoutForProcess:processId];
         if ([pageLayout count]>0) {
-            if ([self isEntryCriteraMatchingForProcess:processId error:&internalError])
+            if ([self isEntryCriteraMatchingForProcess:processId objectName:objectName recordId:sfId error:&internalError])
             {
                 isValidProcess = YES;
             }
@@ -842,7 +858,7 @@ PageManagerErrorType;
     if (![StringUtil isStringEmpty:processModel.sfID])
     {
         NSError *internalError = nil;
-        if ([self isEntryCriteraMatchingForProcess:processId error:&internalError])
+        if ([self isEntryCriteraMatchingForProcess:processId objectName:nil recordId:nil error:&internalError])
         {
             isValidProcess = YES;
         }

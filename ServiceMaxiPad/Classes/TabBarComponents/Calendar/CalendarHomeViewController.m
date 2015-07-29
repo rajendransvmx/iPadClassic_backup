@@ -53,7 +53,7 @@
     self.navigationController.navigationBar.translucent = NO;
     
     [self setNavigationBackButton];
-    [self loadSfmPageView];
+
 }
 
 
@@ -76,26 +76,6 @@
 
 }
 
-- (void)loadSfmPageView
-{
-    SFMPageViewController *pageViewController = [[SFMPageViewController alloc] init];
-    SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:@"SVMXC__Service_Order__c" recordId:@"44172435-EC64-4692-94FA-EC25C7381393"];
-    NSError *error = nil;
-    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId error:&error];
-    if (isValidProcess) {
-        pageViewController.sfmPageView = [pageManager sfmPageView];
-        [self.navigationController pushViewController:pageViewController animated:YES];
-    }
-    else
-    {
-        if (error) {
-            AlertMessageHandler *alertHandler = [AlertMessageHandler sharedInstance];
-            NSString * button = [[TagManager sharedInstance] tagByName:kTagAlertErrorOk];
-
-            [alertHandler showCustomMessage:[error localizedDescription] withDelegate:nil title:[[TagManager sharedInstance] tagByName:kTagAlertIpadError] cancelButtonTitle:nil andOtherButtonTitles:[[NSArray alloc] initWithObjects:button, nil]];
-        }
-    }
-}
 
 
 /*

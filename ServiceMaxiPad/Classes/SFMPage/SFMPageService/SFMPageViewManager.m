@@ -65,14 +65,15 @@
 - (NSString *) processIdForViewProcess
 {
     NSString *processId = [PlistManager getLastUsedViewProcessForObjectName:self.objectName];
-    if ((![StringUtil isStringEmpty:processId]) && ([self isValidProcess:processId error:NULL])) {
+    if ((![StringUtil isStringEmpty:processId]) && ([self isValidProcess:processId objectName:nil recordId:nil error:NULL])) {
         SXLogDebug(@"Valid process in switch layout");
     }
     else
     {
         NSArray *processArray = [SFMPageHelper getAllProcessForType:kProcessTypeView name:self.objectName];
         for (SFMProcess *process in processArray) {
-            if ([self isValidProcess:process.processInfo.sfID error:NULL]) {
+           
+            if([self isValidProcess:process.processInfo.sfID objectName:process.processInfo.objectApiName recordId:self.recordId error:NULL]){
                 processId = process.processInfo.sfID;
                 break;
             }
@@ -142,7 +143,7 @@
         viewRecordExists = NO;
         NSArray *processArray = [SFMPageHelper getAllProcessForType:kProcessTypeView name:objectName];
         for (SFMProcess *process in processArray) {
-            if ([self isValidProcess:process.processInfo.sfID error:NULL]) {
+            if ([self isValidProcess:process.processInfo.sfID objectName:objectName recordId:sfId error:NULL]) {
                 viewRecordExists = YES;
                 break;
             }

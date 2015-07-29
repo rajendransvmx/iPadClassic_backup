@@ -25,7 +25,7 @@
                processSFId:(NSString *)processId;
 
 
-- (BOOL) isValidProcess:(NSString *)processId error:(NSError **)error;
+- (BOOL) isValidProcess:(NSString *)processId objectName:(NSString *)objectName recordId:(NSString *)sfId error:(NSError **)error;
 - (BOOL)isValidOPDocProcess:(NSString *)processId error:(NSError **)error;
 - (NSString *)getLocalIdForSFID:(NSString *)sfID objectName:(NSString *)objectName;
 

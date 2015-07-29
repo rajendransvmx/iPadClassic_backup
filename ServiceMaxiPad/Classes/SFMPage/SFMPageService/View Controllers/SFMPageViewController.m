@@ -432,7 +432,7 @@
     SFMPageViewManager *viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:sfProcess.objectApiName recordId:self.sfmPageView.sfmPage.recordId processSFId:sfProcess.sfID];
     
     NSError *error = nil;
-    BOOL isValidProcess = [viewPageManager isValidProcess:viewPageManager.processId error:&error];
+        BOOL isValidProcess = [viewPageManager isValidProcess:viewPageManager.processId objectName:nil recordId:nil error:&error];
     if (isValidProcess) {
         self.sfmPageView.sfmPage = [viewPageManager sfmPage];
         SFMPageMasterViewController *tempMasterViewController = (SFMPageMasterViewController*)self.masterViewController;
@@ -500,7 +500,7 @@
     else
     {
         NSError *error = nil;
-        BOOL isValidProcess = [viewPageManager isValidProcess:processId error:&error];
+         BOOL isValidProcess = [viewPageManager isValidProcess:processId objectName:nil recordId:nil error:&error];
         if (isValidProcess) {
             
             [self loadViewControllerForProcessId:processId andProcessType:processType];
@@ -697,7 +697,7 @@
     SFProcessModel *sfProcess = self.sfmPageView.sfmPage.process.processInfo;
     SFMPageViewManager *viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:sfProcess.objectApiName recordId:self.sfmPageView.sfmPage.recordId processSFId:sfProcess.sfID];
     NSError *error = nil;
-    if ([viewPageManager isValidProcess:sfProcess.sfID error:&error]) {
+    if ([viewPageManager isValidProcess:sfProcess.sfID objectName:nil recordId:nil error:&error]) {
         self.sfmPageView = [viewPageManager sfmPageView];
         if ([detailViewController respondsToSelector:@selector(refreshSFmPageData:)]) {
             [detailViewController refreshSFmPageData:self.sfmPageView];
@@ -772,7 +772,7 @@
         pageManager.recordId = recordId;
     }
     NSError *error = nil;
-    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId error:&error];
+    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
     if (isValidProcess) {
         pageViewController.sfmPageView = [pageManager sfmPageView];
         [self.navigationController pushViewController:pageViewController animated:YES];
@@ -830,7 +830,7 @@
     
     NSError *error;
     
-    BOOL isValidProcess = [viewPageManager isValidProcess:process.processId error:&error];
+    BOOL isValidProcess = [viewPageManager isValidProcess:process.processId objectName:nil recordId:nil error:&error];
     
     if (!isValidProcess) {
         if (error) {
