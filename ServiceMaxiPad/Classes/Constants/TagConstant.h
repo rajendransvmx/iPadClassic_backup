@@ -876,6 +876,7 @@ extern NSString *const kNextPurge ;
 extern NSString *const kPurgeProgressMessage ;
 extern NSString *const kPurgeWarningMessage ;
 extern NSString *const kSignIn ;
+extern NSString *const kPurgeDataLogs;
 
 
 //@end
