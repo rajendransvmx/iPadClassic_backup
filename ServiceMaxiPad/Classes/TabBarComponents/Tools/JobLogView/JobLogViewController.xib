@@ -7,10 +7,12 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="JobLogViewController">
             <connections>
+                <outlet property="lastPushLogs" destination="yyP-bZ-Lyc" id="DhV-9I-XzS"/>
                 <outlet property="lastSyncLabel" destination="ijR-WO-6hw" id="Qnl-uk-PYV"/>
                 <outlet property="pushLog" destination="8fM-8X-s1B" id="9Eo-f1-zMk"/>
                 <outlet property="pushLogTitle" destination="W4f-Mm-myU" id="eg3-lI-m8t"/>
                 <outlet property="statusLabel" destination="3MC-Ai-sxA" id="Jsf-vB-j3p"/>
+                <outlet property="statuslbl" destination="bJt-oL-2hV" id="FEZ-5t-c4z"/>
                 <outlet property="view" destination="wVu-az-PUa" id="3Us-9j-CpG"/>
             </connections>
         </placeholder>

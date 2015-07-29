@@ -116,6 +116,7 @@
     self.lastPurgeDataStatusTitleLabel.text   = [[TagManager sharedInstance]tagByName:kStatus];
     
     [self.purgeDataNowButton setTitle:[[TagManager sharedInstance] tagByName:kTagPurgeDataNow] forState:UIControlStateNormal];
+    self.purgeDataNowButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     [self updateLastPurgeDataTimeAndStatusUI];
     [self updateNextPurgeDataTimeUI];
 }

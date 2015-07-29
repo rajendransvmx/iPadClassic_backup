@@ -239,7 +239,7 @@
     NSString *message2 = [[TagManager sharedInstance]tagByName:kTag_DoingWillCancelProfileValidation];
      */
     
-    NSString *message2 = @"Doing so will cancel or interrupt profile validation.";
+    NSString *message2 = [[TagManager sharedInstance]tagByName:kTag_DoingWillCancelProfileValidation];//@"Doing so will cancel or interrupt profile validation.";
     NSArray *messages = [NSArray arrayWithObjects:message1, message2, nil];
     
     
@@ -253,9 +253,8 @@
     /*[progressAlertView updateProgressBarWithValue:0.4
                                        andMessage:[[TagManager sharedInstance]tagByName:kTag_ValidatingProfile]]; */
    
-    
     [progressAlertView updateProgressBarWithValue:0.4
-                                       andMessage:@"Validating Profile..."];
+                                       andMessage:[[TagManager sharedInstance]tagByName:kTag_ValidatingProfile]];
    
     alertView = nil;
 }
