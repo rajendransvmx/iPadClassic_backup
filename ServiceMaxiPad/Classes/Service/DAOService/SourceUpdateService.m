@@ -22,6 +22,8 @@
 #import "StringUtil.h"
 #import "DateUtil.h"
 #import "SVMXSystemConstant.h"
+#import "SuccessiveSyncManager.h"
+#import "SFMRecordFieldData.h"
 
 @implementation SourceUpdateService
 
@@ -90,6 +92,8 @@
     else
         srcUpdtList = [[srcUpdts allValues] objectAtIndex:0];
     
+    NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+    
     for (SFSourceUpdateModel *model in srcUpdtList)
     {
         NSString *srcFieldName = model.sourceFieldName;
@@ -148,7 +152,7 @@
         }
         
         NSString *escapedValue = [newDisplayValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-
+        
         id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
         
         DBCriteria *crit = [[DBCriteria alloc] initWithFieldName:@"localId" operatorType:SQLOperatorEqual andFieldValue:localId];
@@ -157,6 +161,7 @@
                                                   withCriteria:[NSArray arrayWithObject:crit]
                                                  withTableName:objectName];
         
+        [recordDictionary setObject:escapedValue?escapedValue:kEmptyString forKey:srcFieldName];
     }
     
     // Modify inserted records into modified table
@@ -165,21 +170,21 @@
     {
         id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
         BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localId];
-        if (!doesExist)
-        {
-            ModifiedRecordModel * syncRecord = [[ModifiedRecordModel alloc] init];
-            syncRecord.recordLocalId = localId;
-            syncRecord.objectName = objectName;
-            syncRecord.recordType = kRecordTypeMaster;
-            syncRecord.operation = kModificationTypeUpdate;
-            syncRecord.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
-            
-            syncRecord.sfId = [SFMPageEditHelper getSfIdForLocalId:localId objectName:objectName];
-            
+        
+        ModifiedRecordModel * syncRecord = [[ModifiedRecordModel alloc] init];
+        syncRecord.recordLocalId = localId;
+        syncRecord.objectName = objectName;
+        syncRecord.recordType = kRecordTypeMaster;
+        syncRecord.operation = kModificationTypeUpdate;
+        syncRecord.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
+        
+        syncRecord.sfId = [SFMPageEditHelper getSfIdForLocalId:localId objectName:objectName];
+        
+        if (!doesExist) {
             [modifiedRecordService saveRecordModel:syncRecord];
         }
+        [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:recordDictionary];
     }
-
 }
 
 - (NSString *)getValueForField:(NSString *)fieldName objectName:(NSString *)objectName recordId:(NSString *)localId

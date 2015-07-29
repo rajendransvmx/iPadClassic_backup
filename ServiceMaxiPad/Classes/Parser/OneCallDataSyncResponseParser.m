@@ -252,25 +252,24 @@ typedef enum {
         }
         
         
-
+        
         NSDictionary * responseDict = [internalResponse objectAtIndex:0];
         NSArray * valueMap = [responseDict objectForKey:kSVMXRequestSVMXMap];
         
         NSMutableDictionary * objectMapIds = [[NSMutableDictionary alloc] init];
         NSMutableDictionary * deleteObjectMapIds = [[NSMutableDictionary alloc] init];
-        
-        NSMutableDictionary * conflictObjectMapIds = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary * deleteConflictObjMapIds = [[NSMutableDictionary alloc] init];
         
         for(NSDictionary * eachValueMap in valueMap)
         {
             NSString * responseKey = [eachValueMap objectForKey:kSVMXRequestKey];
             responseKey = (![StringUtil isStringEmpty:responseKey])?responseKey:@"";
             NSArray * internalValueMapArray = [eachValueMap objectForKey:kSVMXRequestSVMXMap];
-           
+            
             
             if([responseKey isEqualToString:kObjectName] || [responseKey isEqualToString:kParentObject] || [responseKey isEqualToString:kChildObject] )
             {
-                    NSString * objectName = [eachValueMap objectForKey:kSVMXRequestValue];
+                NSString * objectName = [eachValueMap objectForKey:kSVMXRequestValue];
                 
                 [self prepareDeleteStringFor:objectName deleteObjectMapIds:deleteObjectMapIds valuemapArray:internalValueMapArray operationType:operationType];
                 
@@ -291,15 +290,15 @@ typedef enum {
                     
                     if([operationType isEqualToString:kModificationTypeInsert])
                     {
-                      [self.oneCallSyncHelper updateSfId:recordSfId withLocalId:finalId andObjectName:objectName];
+                        [self.oneCallSyncHelper updateSfId:recordSfId withLocalId:finalId andObjectName:objectName];
                     }
                 }
             }
-           else if([responseKey isEqualToString:@"DELETED_IDS"])
+            else if([responseKey isEqualToString:@"DELETED_IDS"])
             {
                 [self handleDeletedIds:internalValueMapArray];
                 
-               
+                
             }
             else if([responseKey isEqualToString:kConflict] || [responseKey isEqualToString:kError])
             {
@@ -309,10 +308,10 @@ typedef enum {
                     NSString * objectName = [eachDict objectForKey:kSVMXRequestKey];
                     
                     NSArray * tempvalueMapArray = [eachDict objectForKey:kSVMXRequestSVMXMap];
-
-                    [self prepareDeleteStringFor:objectName deleteObjectMapIds:conflictObjectMapIds valuemapArray:tempvalueMapArray operationType:operationType];
+                    
+                    [self prepareDeleteStringFor:objectName deleteObjectMapIds:deleteConflictObjMapIds valuemapArray:tempvalueMapArray operationType:operationType];
                 }
-
+                
             }
         }
         
@@ -337,20 +336,15 @@ typedef enum {
                                                                     withModificationType:operationType];
         }
         
-        /* delete Ids From syncTrailer Table*/
-        if([conflictObjectMapIds count] >0)
-        {
-            
-            [self.oneCallSyncHelper  deleteSyncRecordsFromSyncModificationTableWithIndex:conflictObjectMapIds
+        if ([deleteConflictObjMapIds count] > 0) {
+            [self.oneCallSyncHelper  deleteSyncRecordsFromSyncModificationTableWithIndex:deleteConflictObjMapIds
                                                                     withModificationType:operationType];
-            
-            [self.oneCallSyncHelper deleteConflictRecordsFromSuccessiveSyncEntry:conflictObjectMapIds
+            [self.oneCallSyncHelper deleteConflictRecordsFromSuccessiveSyncEntry:deleteConflictObjMapIds
                                                             withModificationType:operationType];
-            
         }
         
         /* Insert conflict records into syncConflict table*/
-      
+        
         if([operationType isEqualToString:kModificationTypeDelete] )
         {
             for (NSString * objectName in [deleteObjectMapIds allKeys]) {
