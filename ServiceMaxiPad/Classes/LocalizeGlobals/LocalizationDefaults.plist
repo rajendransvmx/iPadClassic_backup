@@ -1284,5 +1284,7 @@
 	<string>Sign In</string>
 	<key>IPAD018_TAG199</key>
 	<string>Purge Data Progress</string>
+	<key>IPAD018_TAG215</key>
+	<string>last push logs</string>
 </dict>
 </plist>
