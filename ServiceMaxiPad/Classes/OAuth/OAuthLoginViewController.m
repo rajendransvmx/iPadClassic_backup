@@ -277,7 +277,8 @@ NSInteger webViewLoadCounter;
                 [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeCannotFindHost
                                                                    andDelegate:nil];
             }
-            
+            NSLog(@"Test loging 1");
+            NSLog(@" OAuth didFailLoadWithError : %@  fail reasion \n %@",failingURLString,failureReason);
             [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
         }
 	}
