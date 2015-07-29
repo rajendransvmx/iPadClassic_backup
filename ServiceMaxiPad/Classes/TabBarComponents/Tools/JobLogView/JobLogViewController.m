@@ -30,6 +30,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *lastSyncLabel;
 @property (weak, nonatomic) IBOutlet UIButton *pushLog;
 @property (strong, nonatomic) IBOutlet UILabel *pushLogTitle;
+@property (strong, nonatomic) IBOutlet UILabel* lastPushLogs;
+@property (strong, nonatomic) IBOutlet UILabel* statuslbl;
 
 @end
 
@@ -60,6 +62,9 @@
     [self.pushLog setTitle:[[TagManager sharedInstance]tagByName:kTagPushLogsNow] forState:UIControlStateNormal];
     self.pushLog.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     self.pushLogTitle.text = [[TagManager sharedInstance]tagByName:kTagPushLogsStatus];
+    self.statuslbl.text = [[TagManager sharedInstance]tagByName:kStatus];
+    self.lastPushLogs.text = [[TagManager sharedInstance]tagByName:kPurgeDataLogs];
+    self.pushLog.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 }
 - (void) handleAppEnterForeground {
     [self updateLastPushLogTimeAndStatusUI];
@@ -159,7 +164,7 @@
     NSString *lastTime = [PlistManager getLastPushLogGMTTime];
     if (status && lastTime) {
         
-        self.statusLabel.text = status;
+        self.statusLabel.text = status;//[[TagManager sharedInstance]tagByName:KTagFailed];
 //        self.lastSyncLabel.text = [DateUtil getLiteralSupportedDateStringForDate:[DateUtil getDateFromDatabaseString:lastTime]];
 
         self.lastSyncLabel.text =[DateUtil getUserReadableDateForSyncStatus:[DateUtil getDateFromDatabaseString:lastTime]];
