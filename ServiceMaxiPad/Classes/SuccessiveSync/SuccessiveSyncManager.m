@@ -92,34 +92,14 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
         if (existingSyncRecord == nil) {
             
             ModifiedRecordModel *successiveSyncModel = [[ModifiedRecordModel alloc] init];
-            successiveSyncModel.localId = syncRecord.localId;
-            successiveSyncModel.recordLocalId = syncRecord.recordLocalId;
-            successiveSyncModel.sfId = syncRecord.sfId;
-            successiveSyncModel.recordType = syncRecord.recordType;
-            successiveSyncModel.operation = syncRecord.operation;
-            successiveSyncModel.objectName = syncRecord.objectName;
-            successiveSyncModel.parentObjectName = syncRecord.parentObjectName;
-            successiveSyncModel.parentLocalId = syncRecord.parentLocalId;
-            successiveSyncModel.recordSent = syncRecord.recordSent;
-            successiveSyncModel.webserviceName = syncRecord.webserviceName;
-            successiveSyncModel.className = syncRecord.className;
-            successiveSyncModel.headerLocalId = syncRecord.headerLocalId;
-            successiveSyncModel.requestData = syncRecord.requestData;
-            successiveSyncModel.requestId = syncRecord.requestId;
-            successiveSyncModel.timeStamp = syncRecord.timeStamp;
-            successiveSyncModel.fieldsModified = syncRecord.fieldsModified;
-            successiveSyncModel.cannotSendToServer = syncRecord.cannotSendToServer;
-            successiveSyncModel.jsonRecord = syncRecord.jsonRecord;
-            successiveSyncModel.recordDictionary = syncRecord.recordDictionary;
-            successiveSyncModel.overrideFlag = syncRecord.overrideFlag;
             
+            [self copyModifiedRecordDataFrom:syncRecord toModel:successiveSyncModel];
             [self.succSyncRecords setObject:successiveSyncModel forKey:syncRecord.recordLocalId];
         }
         else{
+            [self copyModifiedRecordDataFrom:syncRecord toModel:existingSyncRecord];
             NSArray *allKeys = [syncRecord.recordDictionary allKeys];
             for (NSString *key in allKeys) {
-                
-                
                 [existingSyncRecord.recordDictionary setObject:syncRecord.recordDictionary[key] forKey:key];
             }
         }
@@ -296,6 +276,30 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
     
     id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
     return [transObjectService updateEachRecord:eachRecord withFields:allFields withCriteria:@[criteria] withTableName:objectName];
+}
+
+
+-(void)copyModifiedRecordDataFrom:(ModifiedRecordModel *)syncRecord toModel:(ModifiedRecordModel *)successiveSyncModel {
+    successiveSyncModel.localId = syncRecord.localId;
+    successiveSyncModel.recordLocalId = syncRecord.recordLocalId;
+    successiveSyncModel.sfId = syncRecord.sfId;
+    successiveSyncModel.recordType = syncRecord.recordType;
+    successiveSyncModel.operation = syncRecord.operation;
+    successiveSyncModel.objectName = syncRecord.objectName;
+    successiveSyncModel.parentObjectName = syncRecord.parentObjectName;
+    successiveSyncModel.parentLocalId = syncRecord.parentLocalId;
+    successiveSyncModel.recordSent = syncRecord.recordSent;
+    successiveSyncModel.webserviceName = syncRecord.webserviceName;
+    successiveSyncModel.className = syncRecord.className;
+    successiveSyncModel.headerLocalId = syncRecord.headerLocalId;
+    successiveSyncModel.requestData = syncRecord.requestData;
+    successiveSyncModel.requestId = syncRecord.requestId;
+    successiveSyncModel.timeStamp = syncRecord.timeStamp;
+    successiveSyncModel.fieldsModified = syncRecord.fieldsModified;
+    successiveSyncModel.cannotSendToServer = syncRecord.cannotSendToServer;
+    successiveSyncModel.jsonRecord = syncRecord.jsonRecord;
+    successiveSyncModel.recordDictionary = syncRecord.recordDictionary;
+    successiveSyncModel.overrideFlag = syncRecord.overrideFlag;
 }
 
 
