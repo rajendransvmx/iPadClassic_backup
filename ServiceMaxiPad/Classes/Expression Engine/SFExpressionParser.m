@@ -22,9 +22,8 @@
 #import "SFObjectFieldModel.h"
 #import "SFObjectFieldDAO.h"
 #import "DataTypeUtility.h"
-
-
 #import "SFMSearchFilterCriteriaModel.h"
+
 @interface SFExpressionParser ()
 
 @property(nonatomic, strong) SFExpressionModel *expression;

@@ -731,18 +731,12 @@ static SyncManager *_instance;
     NSMutableDictionary *notificationDict = [[NSMutableDictionary alloc] init];
     [notificationDict setValue:notificationName forKey:@"NotoficationName"];
     [notificationDict setValue:userInfo forKey:@"UserInfo"];
-    [self performSelectorOnMainThread:@selector(postNotification:) withObject:notificationDict waitUntilDone:YES];
-    //[[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
+    });
 }
 
-- (void)postNotification:(NSDictionary *)notificationDict
-{
-    
-    NSString *notificationName = [notificationDict objectForKey:@"NotoficationName"];
-    NSDictionary *userInfo = [notificationDict objectForKey:@"UserInfo"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:self userInfo:userInfo];
-
-}
 #pragma mark - RESET DATABASE BEFORE INITIAL SYNC
 
 - (void)prepareDatabaseForInitialSync
@@ -800,44 +794,41 @@ static SyncManager *_instance;
 
 - (void)currentDataSyncfinished {
     
-    @synchronized([self class]) {
-        
+    dispatch_async(dispatch_get_main_queue(), ^{
         [AppManager updateTabBarBadges];
+    });
+    [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+    [self updateLastSyncTime];
+    
+    // if conflicts not resolved, then stop data sync..
+    BOOL conflictsResolved = [self continueDataSyncIfConflictsResolved];
+    
+    BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
+    
+    if (!didRestart) {
         
-        [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
-        [self updateLastSyncTime];
+        [self updateSyncStatus];
         
-        // if conflicts not resolved, then stop data sync..
-        BOOL conflictsResolved = [self continueDataSyncIfConflictsResolved];
+        self.isDataSyncRunning = NO;
+        self.dataSyncStatus = SyncStatusSuccess;
         
-        BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
+        [[SMDataPurgeManager sharedInstance] restartDataPurge];
+        [PlistManager removeLastDataSyncStartGMTTime];
+        [PlistManager removeLastLocalIdFromDefaults];
         
-        if (!didRestart) {
+        //[self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
+        /* Send data sync Success notification */
+        [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
+        
+        if (conflictsResolved) {
+            /* Clear user deafults utility */
             
-            [self updateSyncStatus];
-            
-            self.isDataSyncRunning = NO;
-            self.dataSyncStatus = SyncStatusSuccess;
-            
-            [[SMDataPurgeManager sharedInstance] restartDataPurge];
-            [PlistManager removeLastDataSyncStartGMTTime];
-            
-            [PlistManager removeLastLocalIdFromDefaults];
-            
-            //[self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
-            /* Send data sync Success notification */
-            [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
-            
-            if (conflictsResolved) {
-                /* Clear user deafults utility */
-                
-                [PlistManager clearAllWhatIdObjectInformation];
-                [[OpDocHelper sharedManager] initiateFileSync];
-                [[OpDocHelper sharedManager] setCustomDelegate:self];
-            }
-            
-            [self manageSyncQueueProcess];
+            [PlistManager clearAllWhatIdObjectInformation];
+            [[OpDocHelper sharedManager] initiateFileSync];
+            [[OpDocHelper sharedManager] setCustomDelegate:self];
         }
+        
+        [self manageSyncQueueProcess];
     }
 }
 
@@ -1805,6 +1796,8 @@ static SyncManager *_instance;
 
 - (void)initiateCustomDataSync
 {
+  @synchronized([self class]) {
+      
     self.isAfterInsert = NO;
     self.isBeforeUpdate = NO;
     self.isAfterUpdate = NO;
@@ -1896,6 +1889,7 @@ static SyncManager *_instance;
     {
         [self checkNetworkReachabilityAndInitiateDataSync];
     }
+  }
 }
 
 -(void)customCallDidNotInitiateDuetoSomeRaeason
@@ -1954,6 +1948,8 @@ static SyncManager *_instance;
 
 - (void)PerformSYncBasedOnFlags
 {
+  @synchronized([self class]) {
+      
     [[CacheManager sharedInstance] clearCacheByKey:kAfterSaveInsertCustomCallValueMap]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
 
     [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
@@ -1999,6 +1995,8 @@ static SyncManager *_instance;
 
     }
      */
+      
+  }
 }
 
 - (void)customCallResponse
