@@ -34,6 +34,7 @@
 #import "StringUtil.h"
 #import "TagManager.h"
 #import "DataTypeUtility.h"
+#import "NSDate+SMXDaysCount.h"
 
 @interface SFMPageLookUpHelper ()
 
@@ -255,7 +256,10 @@
     NSString *dateString = nil;
     NSDate * date = [DateUtil dateFromString:dateTime inFormat:kDateFormatDefault];
     if (date != nil) {
-        dateString = [DateUtil stringFromDate:date inFormat:kDateFormatType5];
+        //dateString = [DateUtil stringFromDate:date inFormat:kDateFormatType5];
+        //Madhusudhan HK: 020516,
+        dateString = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatType5];
+        
     }
     return dateString;
 }
