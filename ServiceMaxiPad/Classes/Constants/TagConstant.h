@@ -439,14 +439,14 @@ extern NSString *const KTagSettingsTitle;
 #define kTag_NetworkUnavailable @"IPAD025_TAG004"  //Network unavailable to complete action
 #define kTag_WouldLikeViewCancel @"IPAD025_TAG005" //Would you like to View/Cancel the selected Record?
 #define kTag_SaveAndView @"IPAD025_TAG006"
-#define kTag_View @"View"
+#define kTag_View @"IPAD025_TAG012"
 #define kTag_AbandonAndView @"IPAD025_TAG007"
 #define kTag_NoViewLayoutForObject @"IPAD025_TAG008"
 
 #define kTag_ThisRecordDeletedFromServer @"IPAD025_TAG009"
 #define kTag_Downloads @"IPAD025_TAG010" //Downloads
 #define kTag_Completed @"IPAD022_TAG004"
-#define kTag_Started @"Started"
+#define kTag_Started @"IPAD025_TAG013"
 #define kTag_InProgress @"IPAD018_TAG059"
 
 

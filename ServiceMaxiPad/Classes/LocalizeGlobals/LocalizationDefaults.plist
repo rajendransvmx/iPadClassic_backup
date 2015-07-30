@@ -214,7 +214,7 @@
 	<string>No view process available for the logged in user</string>
 	<key>IPAD012_TAG005</key>
 	<string>Calendar</string>
-	<key>Started</key>
+	<key>IPAD025_TAG013</key>
 	<string>Started</string>
 	<key>IPAD007_TAG010</key>
 	<string>Notification History</string>
@@ -1012,7 +1012,7 @@
 	<string>Please login with same user ID used for Pulse App</string>
 	<key>IPAD015_TAG023</key>
 	<string>Signed Out</string>
-	<key>View</key>
+	<key>IPAD025_TAG012</key>
 	<string>View</string>
 	<key>IPAD018_TAG057</key>
 	<string>Push Logs</string>
