@@ -1,19 +1,20 @@
 *******************************************
-Release Notes Starts For Version 14.50.016
+Release Notes Starts For Version 14.50.017
 ===========================================
 --------------------------------------------------------------------------------------------
-ServiceMax iPad Sum 14 SP Release
+ServiceMax iPad Sum14SP Release
 
 *******************************************
-Version = 14.50.016
+Version = 14.50.017
 ===========================================
 
-Merged Spr 14 SP branch to Sum 14 SP
 
 -------------
 Fixed Defects
 -------------
-None
+018587
+018611
+019313
 
 ------------
 Known Issues
