@@ -823,8 +823,8 @@
         
        // NSLog(@"database path: %@",[[DatabaseManager sharedInstance]primaryDatabasePath]);
         
-        [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:page];
         [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:page.headerRecord];
+        [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:page];
         
        // NSString *abc = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:page.recordId];
 
@@ -1000,6 +1000,7 @@
                     }
                 }
                 
+                [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:eachDetailDict];
                 [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:sfmPage];
 
            }
@@ -1008,7 +1009,6 @@
 //                    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
 //                    [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:syncRecord.recordLocalId];
 //            }
-            [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:eachDetailDict];
         }
         //delete record
         if([deletedRecordIds count] > 0 )

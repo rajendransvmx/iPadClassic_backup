@@ -90,7 +90,30 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
         ModifiedRecordModel *existingSyncRecord = self.succSyncRecords[syncRecord.recordLocalId];
         /*Update the field values with the new values*/
         if (existingSyncRecord == nil) {
-            [self.succSyncRecords setObject:syncRecord forKey:syncRecord.recordLocalId];
+            
+            ModifiedRecordModel *successiveSyncModel = [[ModifiedRecordModel alloc] init];
+            successiveSyncModel.localId = syncRecord.localId;
+            successiveSyncModel.recordLocalId = syncRecord.recordLocalId;
+            successiveSyncModel.sfId = syncRecord.sfId;
+            successiveSyncModel.recordType = syncRecord.recordType;
+            successiveSyncModel.operation = syncRecord.operation;
+            successiveSyncModel.objectName = syncRecord.objectName;
+            successiveSyncModel.parentObjectName = syncRecord.parentObjectName;
+            successiveSyncModel.parentLocalId = syncRecord.parentLocalId;
+            successiveSyncModel.recordSent = syncRecord.recordSent;
+            successiveSyncModel.webserviceName = syncRecord.webserviceName;
+            successiveSyncModel.className = syncRecord.className;
+            successiveSyncModel.headerLocalId = syncRecord.headerLocalId;
+            successiveSyncModel.requestData = syncRecord.requestData;
+            successiveSyncModel.requestId = syncRecord.requestId;
+            successiveSyncModel.timeStamp = syncRecord.timeStamp;
+            successiveSyncModel.fieldsModified = syncRecord.fieldsModified;
+            successiveSyncModel.cannotSendToServer = syncRecord.cannotSendToServer;
+            successiveSyncModel.jsonRecord = syncRecord.jsonRecord;
+            successiveSyncModel.recordDictionary = syncRecord.recordDictionary;
+            successiveSyncModel.overrideFlag = syncRecord.overrideFlag;
+            
+            [self.succSyncRecords setObject:successiveSyncModel forKey:syncRecord.recordLocalId];
         }
         else{
             NSArray *allKeys = [syncRecord.recordDictionary allKeys];
@@ -156,7 +179,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
     
     @synchronized([self class]){
         //SFMPageEditHelper *editHelper = [[SFMPageEditHelper alloc] init];
-
+        
         NSArray *allLocalIds = [self.succSyncRecords allKeys];
        
         for (NSString *localId in allLocalIds) {
