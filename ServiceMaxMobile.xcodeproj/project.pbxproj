@@ -8135,7 +8135,7 @@
 				ORGANIZATIONNAME = SivaManne;
 				TargetAttributes = {
 					A83956A717CC7B59007DD3ED = {
-						DevelopmentTeam = UZ47KHA3AB;
+						DevelopmentTeam = 4B24F56ULW;
 					};
 					A83956C817CC7B59007DD3ED = {
 						TestTargetID = A83956A717CC7B59007DD3ED;
@@ -10028,7 +10028,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_ARC = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -10038,7 +10038,7 @@
 					/usr/lib,
 				);
 				INFOPLIST_FILE = "ServiceMaxMobile/ServiceMaxMobile-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"./**",
 					"$(PROJECT_DIR)/ServiceMaxMobile/Classes/SFMPage/ZBarSDK",
@@ -10050,8 +10050,8 @@
 					"-lxml2",
 				);
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "6f0f2b65-ebcb-4be4-a763-8c0ae81574dd";
-				VALID_ARCHS = armv7;
+				PROVISIONING_PROFILE = "64f14fb3-c81c-406b-9e46-3e48d3626b1c";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -10072,7 +10072,7 @@
 					/usr/lib,
 				);
 				INFOPLIST_FILE = "ServiceMaxMobile/ServiceMaxMobile-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"./**",
 					"$(PROJECT_DIR)/ServiceMaxMobile/Classes/SFMPage/ZBarSDK",
@@ -10083,8 +10083,8 @@
 					"-lxml2",
 				);
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "6f0f2b65-ebcb-4be4-a763-8c0ae81574dd";
-				VALID_ARCHS = armv7;
+				PROVISIONING_PROFILE = "64f14fb3-c81c-406b-9e46-3e48d3626b1c";
+				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
