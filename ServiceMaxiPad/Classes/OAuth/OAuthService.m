@@ -607,9 +607,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
                                                         error:&error];
 	if (error != nil)
 	{
-        NSLog(@"Failed when request");
         [[AppManager sharedInstance] setErrorMessage:[error debugDescription]];
-        NSLog(@"Test loging 2");
         [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
 	}
     else
@@ -626,16 +624,11 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
             {
                 [self parseAndSaveCustomerOrgInfoFromResponse:responseDictionary];
                 [PlistManager loadCustomerOrgInfo];
-                NSLog(@"Test loging 3");
-                NSLog(@"Sign in 1 Response Body %@",responseData);
                 [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusInAuthorizationVerificationCompleted];
             }
             else
             {
                 [[self class] explainRequest:request andResponseData:responseData];
-                NSLog(@"Test loging 4");
-                NSLog(@"Sign in 2 Response Body %@",responseData);
-                NSLog(@"Failed when request1");
                 [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
                 
                 // Vipin :  TODO whether to display error message or not ?
@@ -645,8 +638,6 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
         else
         {
             [[self class] explainRequest:request andResponseData:responseData];
-            NSLog(@"Test loging 5");
-            NSLog(@"Sign in 3 Response Body %@",responseData);
             [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
         }
     }
@@ -676,8 +667,6 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
 	{
 		SXLogDebug(@"END USER DENIED AUTHORIZATION");
 		[[self class] deleteSalesForceCookies];
-        NSLog(@"Test loging 5");
-        NSLog(@"Sign in 5 Response Body %@",callBackURLString);
         [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
 	}
 	else
