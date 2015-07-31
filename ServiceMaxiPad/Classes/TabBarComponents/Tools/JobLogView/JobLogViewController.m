@@ -22,6 +22,7 @@
 #import "SNetworkReachabilityManager.h"
 #import "TagConstant.h"
 #import "AutoLockManager.h"
+#import "NonTagConstant.h"
 
 
 @interface JobLogViewController ()<FlowDelegate>
@@ -163,10 +164,15 @@
     NSString *status = [PlistManager getLastPushLogStatus];
     NSString *lastTime = [PlistManager getLastPushLogGMTTime];
     if (status && lastTime) {
+        if ([[status uppercaseString] isEqualToString:[kSuccess uppercaseString]])
+        {
+            self.statusLabel.text = [[TagManager sharedInstance] tagByName:kTagPushLogStatusSuccess];
+        }
+        else
+        {
+            self.statusLabel.text = [[TagManager sharedInstance] tagByName:kTagPushLogStatusFailed];
+        }
         
-        self.statusLabel.text = status;//[[TagManager sharedInstance]tagByName:KTagFailed];
-//        self.lastSyncLabel.text = [DateUtil getLiteralSupportedDateStringForDate:[DateUtil getDateFromDatabaseString:lastTime]];
-
         self.lastSyncLabel.text =[DateUtil getUserReadableDateForSyncStatus:[DateUtil getDateFromDatabaseString:lastTime]];
         
     } else {
@@ -202,7 +208,8 @@
     {
         WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
         if (st.syncStatus == SyncStatusSuccess) {
-            [PlistManager storeLastPushLogStatus:[[TagManager sharedInstance] tagByName:kTagPushLogStatusSuccess]];
+            //[PlistManager storeLastPushLogStatus:[[TagManager sharedInstance] tagByName:kTagPushLogStatusSuccess]];
+            [PlistManager storeLastPushLogStatus:kSuccess];
             [PlistManager storeLastPushLogGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
             [self updateLastPushLogTimeAndStatusUI];
             [self hideAnimator];
@@ -216,7 +223,8 @@
                                                   cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                                andOtherButtonTitles:nil];
             
-            [PlistManager storeLastPushLogStatus:[[TagManager sharedInstance] tagByName:kTagPushLogStatusFailed]];
+            //[PlistManager storeLastPushLogStatus:[[TagManager sharedInstance] tagByName:kTagPushLogStatusFailed]];
+            [PlistManager storeLastPushLogStatus:kFailed];
             [PlistManager storeLastPushLogGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
             [self updateLastPushLogTimeAndStatusUI];
             [self hideAnimator];

@@ -24,6 +24,7 @@
 #import "DateUtil.h"
 #import "SMLocalNotificationManager.h"
 #import "AlertMessageHandler.h"
+#import "NonTagConstant.h"
 
 const int percentage = 5;
 const float progress = 0.05;
@@ -337,11 +338,13 @@ const float progress = 0.05;
         
         if (!failed)
         {
-            [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusSuccess]];
+            //[SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusSuccess]];
+            [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kSuccess];
         }
         else
         {
-            [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusFailed]];
+            //[SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusFailed]];
+            [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kFailed];
         }
         
         self.purgeStatus = DataPurgeStatusCompleted;
@@ -451,8 +454,9 @@ const float progress = 0.05;
 
 - (void)stopDataPurge
 {
-    [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusCancelled]];
-
+    //[SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusCancelled]];
+    
+    [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kCancel];
     [[TaskManager sharedInstance] cancelFlowNodeWithId:self.dataPurgeTaskID];
     
     self.purgeStatus = DataPurgeStatusCancelled;
@@ -629,7 +633,7 @@ const float progress = 0.05;
 
 - (BOOL)isdataPurgeSuccess
 {
-    NSString * value = [[TagManager sharedInstance] tagByName:kTagDataPurgeStatusSuccess];
+    NSString * value = kSuccess;//[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusSuccess];
 
     if ([[SMDataPurgeHelper lastDataPurgeStatus] isEqualToString:value])
     {
@@ -1677,7 +1681,8 @@ const float progress = 0.05;
                         {
                             self.purgeStatus = DataPurgeStatusRequiredConfigUpdate;
                         }
-                        [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance]tagByName:kTagDataPurgeStatusFailed]];
+                        //[SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance]tagByName:kTagDataPurgeStatusFailed]];
+                        [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kFailed];
                         [self manageDataPurge];
                     }
                     else
@@ -1723,7 +1728,8 @@ const float progress = 0.05;
         self.purgeStatus = DataPurgeStatusFailed;
     }
     
-    [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance]tagByName:kTagDataPurgeStatusFailed]];
+//    [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance]tagByName:kTagDataPurgeStatusFailed]];
+    [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kFailed];
     double delayInSeconds = 0.5;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){

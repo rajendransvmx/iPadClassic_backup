@@ -19,7 +19,7 @@
 #import "AppManager.h"
 #import "AlertMessageHandler.h"
 #import "AutoLockManager.h"
-
+#import "NonTagConstant.h"
 
 @interface PurgeDataDetailViewController ()
 @property (nonatomic, strong)SMProgressAlertView *progressAlertView;
@@ -100,9 +100,6 @@
 }
 
 - (void)setupUIElements {
-    
-    
-    
     self.purgeDataNowButton.layer.borderColor = [UIColor orangeColor].CGColor;
     self.purgeDataNowButton.layer.borderWidth = 0.8;
     
@@ -126,8 +123,17 @@
     NSString *status = [[SMDataPurgeManager sharedInstance] getLastDataPurgeStatus];
     NSString *lastTime = [[SMDataPurgeManager sharedInstance] getLastDataPurgeTime];
     if (status && lastTime) {
-        
-        self.purgeDataStatusLabel.text   = status;
+        if ([[status uppercaseString] isEqualToString:[kSuccess uppercaseString]]) {
+            self.purgeDataStatusLabel.text = [[TagManager sharedInstance] tagByName:kTagDataPurgeStatusSuccess];
+        }
+        else if([[status uppercaseString] isEqualToString:[kCancel uppercaseString]])
+        {
+            self.purgeDataStatusLabel.text = [[TagManager sharedInstance] tagByName:kTagDataPurgeStatusCancelled];
+        }
+        else{
+            self.purgeDataStatusLabel.text = [[TagManager sharedInstance] tagByName:kTagDataPurgeStatusFailed];
+        }
+            
         self.lastPurgeDataTimeLabel.text = lastTime;
         
     } else {
