@@ -855,10 +855,11 @@ static SyncManager *_instance;
     
     @synchronized([self class]) {
         
-        [AppManager updateTabBarBadges];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [AppManager updateTabBarBadges];
+        });
         
         [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
-        
          self.isDataSyncRunning = NO;
          [PlistManager removeLastDataSyncStartGMTTime];
         [[SMDataPurgeManager sharedInstance] restartDataPurge];
