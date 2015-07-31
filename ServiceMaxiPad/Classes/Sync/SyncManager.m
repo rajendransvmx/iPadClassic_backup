@@ -1802,9 +1802,10 @@ static SyncManager *_instance;
     self.isBeforeUpdate = NO;
     self.isAfterUpdate = NO;
     
+    BOOL isConflictResolved = [self allConflictsResolved];
     NSArray *operationArray = [self theModifiedRecords];
     
-    if(operationArray.count && [self allConflictsResolved])
+    if(operationArray.count && isConflictResolved)
     {
     NSArray *afterInsertFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERINSERT"]];
     NSArray *beforeFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"BEFOREUPDATE"]];
@@ -1885,9 +1886,15 @@ static SyncManager *_instance;
             }
         }
     }
+    else if(isConflictResolved)
+    {
+        SXLogDebug(@"ELSE if IN initiateCustomDataSync");
+        [self checkNetworkReachabilityAndInitiateDataSync];
+    }
     else
     {
-        [self checkNetworkReachabilityAndInitiateDataSync];
+        SXLogDebug(@"Conflicts Present so failure Case");
+       [self currentDataSyncFailedWithError:nil];
     }
   }
 }
