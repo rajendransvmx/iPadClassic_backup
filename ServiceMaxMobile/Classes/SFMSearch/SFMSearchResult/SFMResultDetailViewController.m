@@ -1506,7 +1506,7 @@ enum  {
     }
      synchronized_sqlite3_finalize(labelstmt);    
     NSString *processId = @"";
-    if (![Utility isStringEmpty:localId])
+    if ([Utility isStringEmpty:localId])
     {
         NSString *local_id = [dataDict objectForKey:@"local_id"];
         if (![Utility isStringEmpty:local_id]) {
