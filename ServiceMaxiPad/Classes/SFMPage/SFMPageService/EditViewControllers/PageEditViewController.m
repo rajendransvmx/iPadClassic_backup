@@ -151,7 +151,11 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onLoad"];
+    BOOL formulaExists = [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onLoad"];
+    if (formulaExists) {
+        [self disableUI];
+        [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
+    }
 }
 
 
@@ -1337,6 +1341,12 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 -(void)refreshSFMPageWithFieldUpdateRuleResults:(NSString *)responseString forEvent:(NSString *)event {
     [self.sfmEditPageManager updateSFMPageWithFieldUpdateResponse:responseString andSFMPage:self.sfmPage];
+    
+    if ([event isEqualToString:@"onLoad"]) {
+        [self enableUI];
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+    }
+    
     [self performSelectorOnMainThread:@selector(reloadDataToFirstSection) withObject:nil waitUntilDone:NO];
 
     if ([event isEqualToString:@"onSave"]) {
