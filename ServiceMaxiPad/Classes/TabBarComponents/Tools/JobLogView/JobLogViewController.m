@@ -208,7 +208,7 @@
     {
         WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
         if (st.syncStatus == SyncStatusSuccess) {
-            //[PlistManager storeLastPushLogStatus:[[TagManager sharedInstance] tagByName:kTagPushLogStatusSuccess]];
+            /* Using constant value for push log status */
             [PlistManager storeLastPushLogStatus:kSuccess];
             [PlistManager storeLastPushLogGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
             [self updateLastPushLogTimeAndStatusUI];
@@ -223,7 +223,7 @@
                                                   cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                                andOtherButtonTitles:nil];
             
-            //[PlistManager storeLastPushLogStatus:[[TagManager sharedInstance] tagByName:kTagPushLogStatusFailed]];
+            /* Using constant value for push log status */
             [PlistManager storeLastPushLogStatus:kFailed];
             [PlistManager storeLastPushLogGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
             [self updateLastPushLogTimeAndStatusUI];

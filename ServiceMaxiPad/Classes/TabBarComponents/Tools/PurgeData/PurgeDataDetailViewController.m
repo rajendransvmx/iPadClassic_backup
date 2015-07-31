@@ -123,7 +123,8 @@
     NSString *status = [[SMDataPurgeManager sharedInstance] getLastDataPurgeStatus];
     NSString *lastTime = [[SMDataPurgeManager sharedInstance] getLastDataPurgeTime];
     if (status && lastTime) {
-        if ([[status uppercaseString] isEqualToString:[kSuccess uppercaseString]]) {
+        if ([[status uppercaseString] isEqualToString:[kSuccess uppercaseString]])
+        {
             self.purgeDataStatusLabel.text = [[TagManager sharedInstance] tagByName:kTagDataPurgeStatusSuccess];
         }
         else if([[status uppercaseString] isEqualToString:[kCancel uppercaseString]])

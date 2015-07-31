@@ -338,12 +338,12 @@ const float progress = 0.05;
         
         if (!failed)
         {
-            //[SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusSuccess]];
+            /* here using constant value, not tag value for success display value */
             [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kSuccess];
         }
         else
         {
-            //[SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusFailed]];
+             /* here using constant value, not tag value for failure display value */
             [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kFailed];
         }
         
@@ -633,7 +633,8 @@ const float progress = 0.05;
 
 - (BOOL)isdataPurgeSuccess
 {
-    NSString * value = kSuccess;//[[TagManager sharedInstance] tagByName:kTagDataPurgeStatusSuccess];
+     /* here using constant value, not tag value for success display value */
+    NSString * value = kSuccess;
 
     if ([[SMDataPurgeHelper lastDataPurgeStatus] isEqualToString:value])
     {
@@ -1681,7 +1682,7 @@ const float progress = 0.05;
                         {
                             self.purgeStatus = DataPurgeStatusRequiredConfigUpdate;
                         }
-                        //[SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance]tagByName:kTagDataPurgeStatusFailed]];
+                        /* using consatnt value for Data purge status */
                         [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kFailed];
                         [self manageDataPurge];
                     }
@@ -1728,7 +1729,7 @@ const float progress = 0.05;
         self.purgeStatus = DataPurgeStatusFailed;
     }
     
-//    [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:[[TagManager sharedInstance]tagByName:kTagDataPurgeStatusFailed]];
+    /* using consatnt value for Data purge status */
     [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kFailed];
     double delayInSeconds = 0.5;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
