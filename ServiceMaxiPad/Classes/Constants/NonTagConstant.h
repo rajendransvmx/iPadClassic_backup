@@ -124,6 +124,7 @@ extern NSString *const kTextIsReminderSet ;
 extern NSString *const kTextLocation    ;
 extern NSString *const kTextStartDateTime ;
 extern NSString *const kTextSubject  ;
+extern NSString *const kCancel;
 extern NSString *const kTextType    ;
 extern NSString *const kTextWhatId  ;
 extern NSString *const kTextEventId ;

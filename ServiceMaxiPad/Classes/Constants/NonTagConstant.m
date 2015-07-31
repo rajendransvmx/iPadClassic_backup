@@ -35,6 +35,7 @@ NSString *const kTextFailedToGetLocation             = @"Failed to get the locat
 NSString *const kSuccess            = @"Success";
 NSString *const kInProgress         = @"In Progress";
 NSString *const kFailed             = @"Failed";
+NSString *const kCancel             = @"Cancel";
 
 
 // FOR OBJECTS VALUES IN DICTIONARY FOR
