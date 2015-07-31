@@ -3,20 +3,20 @@
 ServiceMax iPad Sum15Build
 
 *******************************************
-Version = 15.49.126
+Version = 15.49.127
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-18076, 
-018694, 
-018955,
-020507
+020540
+020288
+020516
 
 
 Note:
-SVMXC namespace.
+1. Latest static libraries updated
+2. SVMXC namespace.
 
 
 
