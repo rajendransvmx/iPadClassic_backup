@@ -2745,6 +2745,9 @@
     else if([sfmPageField.dataType isEqualToString:kSfDTReference]) {
         recordField.displayValue = value;
     }
+    else if([sfmPageField.dataType isEqualToString:kSfDTPicklist] || [sfmPageField.dataType isEqualToString:kSfDTMultiPicklist]) {
+        recordField.displayValue = value;
+    }
     else {
         recordField.internalValue = value;
         recordField.displayValue = value;
