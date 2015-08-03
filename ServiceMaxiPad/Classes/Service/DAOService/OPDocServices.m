@@ -296,7 +296,11 @@
                     [columnDictionary setObject:[resultSet stringForColumnIndex:1] forKey:kLocalId];
 
                 }
-                [workOrderNamesArray addObject:columnDictionary];
+                if([columnDictionary count] > 0)
+                {
+                    [workOrderNamesArray addObject:columnDictionary];
+
+                }
             }
             [resultSet close];
         }];
