@@ -277,6 +277,8 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
                         [modifiedRecordService updateFieldsModifed:newSyncRecord];
                     }
                 }
+                [self handleCustomCallRecordToUpdateTheRecordSentToREMOVEHold:syncConflictModel]; // To enable the record to participate in Data Sync.
+
                 [ResolveConflictsHelper deleteConflictRecord:syncConflictModel];
                 //conflictsResolved = TRUE;
             }
@@ -307,7 +309,11 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
                 
                 NSString * fieldName = ([syncConflictModel.operationType isEqualToString:kModificationTypeUpdate])? kSyncRecordSFId:kSyncRecordLocalId;
                 [ResolveConflictsHelper deleteRecordWithFieldName:fieldName forRecord:deleteId fromObjectName:kModifiedRecords];
-                
+                if ([fieldName isEqualToString:kSyncRecordLocalId]) {
+                    //For deleting record which is scheduled to be synced for Custom Webservice BeforeSave/AfterSave.
+                    NSString *lTempDeletedID = [NSString stringWithFormat:@"%@%@", deleteId, kChangedLocalIDForCustomCall];
+                    [ResolveConflictsHelper deleteRecordWithFieldName:fieldName forRecord:lTempDeletedID fromObjectName:kModifiedRecords];
+                }
                 fieldName = ([syncConflictModel.operationType isEqualToString:kModificationTypeUpdate])? kId:kLocalId;
                 [ResolveConflictsHelper deleteRecordWithFieldName:fieldName forRecord:deleteId fromObjectName:syncConflictModel.objectName];
                 
@@ -432,7 +438,6 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     [[NSNotificationCenter defaultCenter] postNotificationName:kSyncConflictChangeNotification object:object];
 }
 
-
 +(NSArray *)fetchSfIdsFromConflictRecords {
     NSArray *conflictsRecords = nil;
     id service = [FactoryDAO serviceByServiceType:ServiceTypeSyncErrorConflict];
@@ -550,11 +555,51 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
 
 +(void)deleteDecideLaterConflictsFromModifiedRecordsTable:(SyncErrorConflictModel *)syncConflictModel
 {
+//    Manage decide later for custom webservice calls related record.
     //retriedve decide later records
     //delete decide later records from modified records table
+    [self handleCustomCallRecordToUpdateTheRecordSentToINSERTHold:syncConflictModel];
+    
     NSString * deleteId = ([syncConflictModel.operationType isEqualToString:kModificationTypeUpdate])? syncConflictModel.sfId:syncConflictModel.localId;
     NSString * fieldName = ([syncConflictModel.operationType isEqualToString:kModificationTypeUpdate])? kSyncRecordSFId:kSyncRecordLocalId;
     [ResolveConflictsHelper deleteRecordWithFieldName:fieldName forRecord:deleteId fromObjectName:kModifiedRecords];
+}
+
++(void)handleCustomCallRecordToUpdateTheRecordSentToINSERTHold:(SyncErrorConflictModel *)syncConflictModel
+{
+    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+
+    NSString * deleteId = [NSString stringWithFormat:@"%@%@", syncConflictModel.localId, kChangedLocalIDForCustomCall];
+    
+    NSArray *customCallPendingRecords = [modifiedRecordService recordForRecordId:deleteId];
+    if (customCallPendingRecords.count) {
+
+        for (ModifiedRecordModel *newSyncRecord in customCallPendingRecords) {
+            newSyncRecord.recordSent = kResolveConflictHold;
+            [modifiedRecordService updateRecordsSent:newSyncRecord];
+        }
+    }
+}
+
++(void)handleCustomCallRecordToUpdateTheRecordSentToREMOVEHold:(SyncErrorConflictModel *)syncConflictModel
+{
+    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    
+    
+    NSString * deleteId = [NSString stringWithFormat:@"%@%@", syncConflictModel.localId, kChangedLocalIDForCustomCall];
+    
+    NSArray *customCallPendingRecords = [modifiedRecordService recordForRecordId:deleteId];
+    if (customCallPendingRecords.count) {
+        
+        for (ModifiedRecordModel *newSyncRecord in customCallPendingRecords) {
+            newSyncRecord.recordSent = @"";
+            [modifiedRecordService updateRecordsSent:newSyncRecord];
+            
+        }
+        
+    }
+    
+    
 }
 
 + (void)deleteConflictRecordFromRecents:(SyncErrorConflictModel *)syncConflictModel

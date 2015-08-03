@@ -98,6 +98,8 @@ static SyncManager *_instance;
 @property (nonatomic) BOOL isAfterUpdate;
 
 @property(nonatomic, assign) BOOL isDataSyncRunning;
+@property (nonatomic) BOOL isDataSyncInLoop;
+
 
 - (void)performInitialSync;
 - (void)performConfigSync;
@@ -808,7 +810,7 @@ static SyncManager *_instance;
     if (!didRestart) {
         
         [self updateSyncStatus];
-        
+        self.isDataSyncInLoop = NO;
         self.isDataSyncRunning = NO;
         self.dataSyncStatus = SyncStatusSuccess;
         
@@ -896,7 +898,7 @@ static SyncManager *_instance;
         
         if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
         
-            BOOL doesExist =  [modifiedRecordService doesRecordExistInTheTable];
+            BOOL doesExist =  [modifiedRecordService doesAnyRecordExistForSyncing];
             
             if (doesExist) {
                 
@@ -1803,9 +1805,12 @@ static SyncManager *_instance;
     self.isBeforeUpdate = NO;
     self.isAfterUpdate = NO;
     
-    BOOL isConflictResolved = [self allConflictsResolved];
+//    BOOL isConflictResolved = [self allConflictsResolved];
+    BOOL isConflictResolved = [self continueDataSyncIfConflictsResolved];
     NSArray *operationArray = [self theModifiedRecords];
     
+//      Manage decide later for custom webservice calls related record.
+
     if(operationArray.count && isConflictResolved)
     {
     NSArray *afterInsertFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERINSERT"]];
@@ -1883,7 +1888,6 @@ static SyncManager *_instance;
                     }
                 }
                 break;
-
             }
         }
     }
@@ -1902,11 +1906,36 @@ static SyncManager *_instance;
 
 -(void)customCallDidNotInitiateDuetoSomeRaeason
 {
+
+
+    if (self.isAfterUpdate) {
+        [self currentDataSyncFailedWithError:nil];
+
+    }
+    else
+    {
+        /*
+       TODO: manage infinite call loop. SHould use counter for atleast 1 complete data Sync cycle.
+            If for some reason, the custom call fails in afterinsert call, then data sync gets intiated, when tat finishes, again it is checked if a cvustom call has to be initiated. When the custom call is tired to be invoked, again it fails and after that again the data sync call starts. So infiite loop. Manage this.
+           */
+                if (!self.isDataSyncInLoop) {
+                    self.isDataSyncInLoop = YES;
+                    [self checkNetworkReachabilityAndInitiateDataSync];
+
+                }
+                else
+                {
+                    self.isDataSyncInLoop = NO;
+                    [self currentDataSyncFailedWithError:nil];
+
+                }
+        
+
+    }
+    
     self.isBeforeUpdate = NO;
     self.isAfterInsert = NO;
     self.isAfterUpdate = NO;
-
-    [self currentDataSyncFailedWithError:nil];
 
 }
 
@@ -1969,7 +1998,7 @@ static SyncManager *_instance;
     
     if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
         
-        doesExist =  [modifiedRecordService doesRecordExistInTheTable];
+        doesExist =  [modifiedRecordService doesAnyRecordExistForSyncing];
     }
     if(doesExist)
     {

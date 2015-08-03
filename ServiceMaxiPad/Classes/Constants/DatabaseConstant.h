@@ -150,6 +150,7 @@ extern NSString *const kSyncRecordOperation;
 extern NSString *const kSyncRecordObjectname;
 
 extern NSString *const kModifiedRecords;
+extern NSString *const kSyncRecordSent;
 
 /* Lookup constants */
 extern NSString *const kSearchObjectFields;

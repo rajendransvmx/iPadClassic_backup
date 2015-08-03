@@ -229,6 +229,36 @@
     return flag;
 }
 
+-(NSArray *)recordForRecordId:(NSString *)someRecordId
+{
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:someRecordId];
+    
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:someRecordId];
+    
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteria1,criteria2] andAdvanceExpression:@"(1 OR 2)"];
+    
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
+                NSDictionary *dict = [resultSet resultDictionary];
+                [ParserUtility parseJSON:dict toModelObject:model withMappingDict:nil];
+                [records addObject:model];
+            }
+            [resultSet close];
+        }];
+    }
+    return records;
+
+}
 
 // if modified record has operation type 'Update' but no sfid, fetch sfid using localid and continue sync..
 -(void)updateModifiedRecord:(ModifiedRecordModel *)model {
@@ -239,6 +269,12 @@
 
 -(void)updateFieldsModifed:(ModifiedRecordModel *)model {
     NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"fieldsModified", nil];
+    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:model.recordLocalId];
+    [self updateEachRecord:model withFields:fieldsArray withCriteria:[NSArray arrayWithObject:criteria1]];
+}
+
+-(void)updateRecordsSent:(ModifiedRecordModel *)model {
+    NSArray * fieldsArray = [[NSArray alloc] initWithObjects:kSyncRecordSent, nil];
     DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:model.recordLocalId];
     [self updateEachRecord:model withFields:fieldsArray withCriteria:[NSArray arrayWithObject:criteria1]];
 }
@@ -281,14 +317,40 @@
     return flag;
 }
 
+- (BOOL)doesRecordExistForId:(NSString *)recordId andOperationType:(NSString *)operationType andparentID:(NSString *)parentID{
+    
+    recordId = [NSString stringWithFormat:@"%@%@",recordId,kChangedLocalIDForCustomCall];
+    parentID = [NSString stringWithFormat:@"%@%@",parentID,kChangedLocalIDForCustomCall];
+
+    BOOL flag = NO;
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:recordId];
+    
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"parentLocalId" operatorType:SQLOperatorEqual andFieldValue:parentID];
+    
+    DBCriteria *criteria3 = [[DBCriteria alloc]initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:operationType];
+    
+    DBCriteria *criteria4 = [[DBCriteria alloc]initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:parentID];
+
+    NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria1,criteria2,criteria3,criteria4] andAdvancedExpression:@"((1 or 2 or 4) and 3)"];
+    
+    if(totalCount > 0)
+    {
+        flag = YES;
+    }
+    
+    return flag;
+}
+
 - (NSArray *)getTheOperationValue
 {
 
     DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"AFTERINSERT"];
     DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"BEFOREUPDATE"];
     DBCriteria *criteria3 = [[DBCriteria alloc] initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"AFTERUPDATE"];
+    DBCriteria *criteria4 = [[DBCriteria alloc] initWithFieldName:kSyncRecordSent operatorType:SQLOperatorNotEqual andFieldValue:@"hold"];
+    DBCriteria *criteria5 = [[DBCriteria alloc] initWithFieldName:kSyncRecordSent operatorType:SQLOperatorIsNull andFieldValue:nil];
 
-    DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:@[@"operation", @"requestData", @"recordLocalId", kLocalId] whereCriterias:@[criteria1, criteria2, criteria3] andAdvanceExpression:@"(1 OR 2 OR 3)"];
+    DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:@[@"operation", @"requestData", @"recordLocalId", kLocalId] whereCriterias:@[criteria1, criteria2, criteria3, criteria4,criteria5] andAdvanceExpression:@"((1 OR 2 OR 3) AND (4 OR 5))"];
     
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     
@@ -349,4 +411,17 @@
 
 }
 
+- (BOOL)doesAnyRecordExistForSyncing {
+    BOOL flag = NO;
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kSyncRecordSent operatorType:SQLOperatorNotEqual andFieldValue:@"hold"];
+    
+    NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria1] andAdvancedExpression:nil];
+    
+    if(totalCount > 0)
+    {
+        flag = YES;
+    }
+    
+    return flag;
+}
 @end

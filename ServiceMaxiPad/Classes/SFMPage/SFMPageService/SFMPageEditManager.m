@@ -835,10 +835,11 @@
 -(void)theModifiedRecordsUpdateForCustomWebservice:(ModifiedRecordModel *) syncRecord andSFMPage:(SFMPage *)sfmpage
 {
 
-    syncRecord.recordLocalId = [NSString stringWithFormat:@"%@%@", syncRecord.recordLocalId, kChangedLocalIDForCustomCall];  // This is being done to avoid the confusion wrt normal records and customcall records in Modified records. Also, if the recordid is same as normal data records then successivesync will create problems in - (void) doSuccessiveSync method in SuccessiveSyncManager. Method is getting called is===>     [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync]; from - (void)PerformSYncBasedOnFlags from SyncManager class.
-
-
     if (sfmpage.customWebserviceOptionsArray.count) {
+        syncRecord.recordLocalId = [NSString stringWithFormat:@"%@%@", syncRecord.recordLocalId, kChangedLocalIDForCustomCall];
+        syncRecord.sfId = [NSString stringWithFormat:@"%@%@", syncRecord.sfId, kChangedLocalIDForCustomCall];
+        // This is being done to avoid the confusion wrt normal records and customcall records in Modified records. Also, if the recordid is same as normal data records then successivesync will create problems in - (void) doSuccessiveSync method in SuccessiveSyncManager. Method is getting called is===>     [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync]; from - (void)PerformSYncBasedOnFlags from SyncManager class.
+
         NSString *requestData = [NSString stringWithFormat:@"%@,%@,%@", sfmpage.objectName, sfmpage.recordId, sfmpage.process.processInfo.sfID];
         syncRecord.requestData = requestData;
         id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
@@ -848,7 +849,7 @@
             if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeAfterInsert]) {
                 syncRecord.operation = kModificationTypeAfterInsert;
                 
-                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterInsert] ) {
+                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterInsert andparentID:syncRecord.parentLocalId] ) {
                     [modifiedRecordService saveRecordModel:syncRecord];
 
                 }
@@ -858,13 +859,13 @@
             
             if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeAfterUpdate]) {
                     syncRecord.operation = kModificationTypeAfterUpdate;
-                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterUpdate] ) {
+                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterUpdate andparentID:syncRecord.parentLocalId] ) {
                     [modifiedRecordService saveRecordModel:syncRecord];
                 }
             }
             if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeBeforeUpdate]) {
                 syncRecord.operation = kModificationTypeBeforeUpdate;
-                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeBeforeUpdate] ) {
+                if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeBeforeUpdate andparentID:syncRecord.parentLocalId] ) {
                     [modifiedRecordService saveRecordModel:syncRecord];
                     
                 }
@@ -897,6 +898,9 @@
         
         NSString * parentColumnName = processComponent.parentColumnName;
         NSString * parentSfId =  [sfmPage  getHeaderSalesForceId ];
+        
+        ModifiedRecordModel *lTempSyncRecordForCustomWebservice= nil;
+        BOOL shouldRecordBeSavedForCustomWebService=NO;
         for (NSMutableDictionary * eachDetailDict in detailRecordsArray)
         {
             
@@ -1000,8 +1004,9 @@
                     }
                 }
                 
+                lTempSyncRecordForCustomWebservice = syncRecord;
+                shouldRecordBeSavedForCustomWebService = YES;
                 [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:eachDetailDict];
-                [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:sfmPage];
 
            }
             //else {
@@ -1010,6 +1015,11 @@
 //                    [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:syncRecord.recordLocalId];
 //            }
         }
+        
+        if (shouldRecordBeSavedForCustomWebService) {
+            [self theModifiedRecordsUpdateForCustomWebservice:lTempSyncRecordForCustomWebservice andSFMPage:sfmPage];
+        }
+
         //delete record
         if([deletedRecordIds count] > 0 )
         {
