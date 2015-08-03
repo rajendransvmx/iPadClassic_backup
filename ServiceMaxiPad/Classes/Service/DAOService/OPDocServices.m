@@ -287,13 +287,13 @@
                 
                 if(![StringUtil isStringEmpty:indexString])
                 {
-                    [columnDictionary setObject:[resultSet stringForColumnIndex:0] forKey:kWorkOrderName];
+                    [columnDictionary setObject:indexString forKey:kWorkOrderName];
 
                 }
                 indexString = [resultSet stringForColumnIndex:1];
                 if(![StringUtil isStringEmpty:indexString])
                 {
-                    [columnDictionary setObject:[resultSet stringForColumnIndex:1] forKey:kLocalId];
+                    [columnDictionary setObject:indexString forKey:kLocalId];
 
                 }
                 if([columnDictionary count] > 0)
