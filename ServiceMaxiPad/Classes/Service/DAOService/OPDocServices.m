@@ -13,6 +13,7 @@
 #import "DBCriteria.h"
 #import "DBRequestDelete.h"
 #import "DatabaseConstant.h"
+#import "StringUtil.h"
 
 @implementation OPDocServices
 
@@ -281,8 +282,20 @@
             
             while ([resultSet next]) {
                 NSMutableDictionary *columnDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
-                [columnDictionary setObject:[resultSet stringForColumnIndex:0] forKey:kWorkOrderName];
-                [columnDictionary setObject:[resultSet stringForColumnIndex:1] forKey:kLocalId];
+                
+                NSString *indexString = [resultSet stringForColumnIndex:0];
+                
+                if(![StringUtil isStringEmpty:indexString])
+                {
+                    [columnDictionary setObject:[resultSet stringForColumnIndex:0] forKey:kWorkOrderName];
+
+                }
+                indexString = [resultSet stringForColumnIndex:1];
+                if(![StringUtil isStringEmpty:indexString])
+                {
+                    [columnDictionary setObject:[resultSet stringForColumnIndex:1] forKey:kLocalId];
+
+                }
                 [workOrderNamesArray addObject:columnDictionary];
             }
             [resultSet close];
