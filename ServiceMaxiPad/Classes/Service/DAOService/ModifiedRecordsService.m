@@ -414,8 +414,9 @@
 - (BOOL)doesAnyRecordExistForSyncing {
     BOOL flag = NO;
     DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kSyncRecordSent operatorType:SQLOperatorNotEqual andFieldValue:@"hold"];
-    
-    NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria1] andAdvancedExpression:nil];
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:kSyncRecordSent operatorType:SQLOperatorIsNull andFieldValue:nil];
+
+    NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria1,criteria2] andAdvancedExpression:@"(1 OR 2)"];
     
     if(totalCount > 0)
     {
