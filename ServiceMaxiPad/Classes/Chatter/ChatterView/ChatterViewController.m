@@ -26,7 +26,8 @@
 #import "AlertMessageHandler.h"
 #import "AsyncImageLoader.h"
 
-#define TIMERINTERVAL   60
+/* This value is in second, Every given time interval we are fetching data from server and refreshing chatter screen */
+#define TIMERINTERVAL   15
 
 @interface ChatterViewController () <UITableViewDataSource, UITableViewDelegate, ChatterTextFieldDelegate>
 
