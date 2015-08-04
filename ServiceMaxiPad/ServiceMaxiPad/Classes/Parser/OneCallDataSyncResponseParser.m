@@ -332,6 +332,7 @@ typedef enum {
         /* delete Ids From syncTrailer Table*/
         if([deleteObjectMapIds count] >0)
         {
+            SXLogDebug(@"SS:: deleted from MR after response");
             [self.oneCallSyncHelper  deleteSyncRecordsFromSyncModificationTableWithIndex:deleteObjectMapIds
                                                                     withModificationType:operationType];
         }

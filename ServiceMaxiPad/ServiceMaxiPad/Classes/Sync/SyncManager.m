@@ -749,6 +749,8 @@ static SyncManager *_instance;
 
         BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
         
+        SXLogDebug(@"SS: didRestartSuccessiveSync: %d", didRestart);
+        
         if (!didRestart) {
             
             [self updateSyncStatus];

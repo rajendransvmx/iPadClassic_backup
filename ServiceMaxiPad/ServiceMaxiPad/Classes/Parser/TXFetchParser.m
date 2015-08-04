@@ -81,6 +81,7 @@
                         [objectrecords addObject:model];
                     }
                     if ([objectrecords count] > 0) {
+                        SXLogDebug(@"SS: update response to DB");
                        [self.helper insertObjects:objectrecords withObjectName:objectName];
                     }
                 }
