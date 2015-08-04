@@ -3,17 +3,14 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.021
+Version = 15.40.023
 ===========================================
 -------------
 Fixed Defects
 -------------
-018047: 
-On selecting a date from date picker ,date is displayed in english rather than the device language
+018695: 
 
-019268:
-Get Price Feature not working issue fixed. 
-
+The Total Days section of the Output Doc is calculating the sum incorrectly.
 -------------
 Known Issues
 -------------
@@ -32,9 +29,7 @@ None
 ---------------------
 Additional Notes
 ---------------------
-Changes Made :
-Local date format in all date time display fields.
- 
+svmxc 
 
 
 

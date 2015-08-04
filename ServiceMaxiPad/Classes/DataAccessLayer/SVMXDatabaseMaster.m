@@ -688,7 +688,7 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
         
         id <SFObjectFieldDAO> objectFieldDao =  [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
         DBCriteria *objectFieldcriteria = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:objectName];
-        NSArray *resultObjFieldsArray = [objectFieldDao fetchSFObjectFieldsInfoByFields:@[@"fieldName",@"label",@"type",@"referenceTo",@"isNillable",@"dependentPicklist",@"controlerField",@"precision"] andCriteriaArray:@[objectFieldcriteria] advanceExpression:nil];
+        NSArray *resultObjFieldsArray = [objectFieldDao fetchSFObjectFieldsInfoByFields:@[@"fieldName",@"label",@"type",@"referenceTo",@"isNillable",@"dependentPicklist",@"controlerField",@"precision",@"scale"] andCriteriaArray:@[objectFieldcriteria] advanceExpression:nil];
         
         for (SFObjectFieldModel *sfobjectFldModelObject in resultObjFieldsArray) {
             
@@ -699,6 +699,12 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
             
             NSString *precision = [NSString stringWithFormat:@"%d",(int)sfobjectFldModelObject.precision];
             [fieldInfo setObject:precision forKey:@"precision"];
+            
+            NSString *scale = [NSString stringWithFormat:@"%d",(int)sfobjectFldModelObject.scale];
+            [fieldInfo setObject:scale forKey:@"scale"];
+
+            
+            
             NSString *referenceTo = sfobjectFldModelObject.referenceTo ? sfobjectFldModelObject.referenceTo : @"";
             [fieldInfo setObject:referenceTo forKey:@"referenceTo"];
             

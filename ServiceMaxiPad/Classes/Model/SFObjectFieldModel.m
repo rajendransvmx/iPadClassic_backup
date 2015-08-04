@@ -41,6 +41,7 @@
 @synthesize precision;
 @synthesize length;
 @synthesize isNillable;
+@synthesize scale;
 
 - (id)init
 {
