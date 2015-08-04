@@ -3,15 +3,14 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.030
+Version = 15.20.031
 ===========================================
 -------------
 Fixed Defects
 -------------
-Successive sync fixes: (Defects - 018694, 018076, 018955)
 
-1. Fixed issue - was deleting entry from successive sync records while deleting from ModifiedRecords table after data sync.
-2. Triggering successive sync after OP Doc target object update implemented.
+1. 018076 - Completed/Invoiced Jobs in iPad going back to assigned status.
+2. 018694 - SFM 'SFM Arjohuntleigh Engineer Work Order Service Report UK' not performing consistently
 
 -------------
 Known Issues
