@@ -476,11 +476,11 @@ typedef enum {
 {
     NSInteger count = [ResolveConflictsHelper getConflictsCount];
     
-    SXLogWarning(@"CustomTabBar: Conflicts count %lu",(unsigned long)count);
+    SXLogWarning(@"CustomTabBar: Conflicts count %ld",(long)count);
     
     CustomBadge *toolsBadge = (CustomBadge*)[self.btn7 viewWithTag:BADGE_TAG];
     CustomBadge *homeBadge = (CustomBadge*)[self.btn1 viewWithTag:BADGE_TAG];
-    
+
     if(count == 0) {
         toolsBadge.hidden = YES;
         homeBadge.hidden = YES;

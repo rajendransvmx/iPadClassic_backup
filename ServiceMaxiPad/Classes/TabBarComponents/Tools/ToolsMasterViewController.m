@@ -42,6 +42,9 @@
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"leftPanelBG.png"]];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.scrollEnabled = NO;
+    
+    [self updateTheTabBarBadges];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateSelectedRow) name:UIApplicationDidBecomeActiveNotification object:[UIApplication sharedApplication]];
    
 }
@@ -76,11 +79,15 @@
     //            (progressObject.syncStatus == SyncStatusConflict))
     //        {
     [self reloadTableView];
+    [self updateTheTabBarBadges];
+
     //        }
     //    }
 }
 - (void)receivedSyncConflictChangeNotification:(NSNotification *)notification {
     [self reloadTableView];
+    [self updateTheTabBarBadges];
+
 }
 
 - (void)dealloc {
@@ -139,12 +146,16 @@
             recordCount = 0;
         }
         cell.badgeNumber = recordCount;
-        [AppManager updateTabBarBadges];
+//      [AppManager updateTabBarBadges];
     }
     
     return cell;
 }
 
+-(void)updateTheTabBarBadges
+{
+    [AppManager updateTabBarBadges];
+}
 
 #pragma mark - Table view delegate
 
@@ -271,8 +282,6 @@
             break;
     }
 }
-
-
 
 -(void)syncStatusTapped {
     SyncStatusDetailViewController *syncStatusVC = [ViewControllerFactory createViewControllerByContext:ViewControllerSyncStatusDetail];
