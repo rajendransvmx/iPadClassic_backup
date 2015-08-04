@@ -530,7 +530,7 @@
 	if ( dict && [dict valueForKey:@"access_token"] )
 	{
 		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-		appDelegate.userOrg = [userDefaults valueForKey:@"preference_identifier"]; //Capture user org if Success :
+        appDelegate.userOrg = [userDefaults valueForKey:@"preference_identifier"]; //Capture user org if Success :
 		appDelegate.session_Id = [dict valueForKey:@"access_token"];
 		
 		//Replace the session Id in the user defaults :
