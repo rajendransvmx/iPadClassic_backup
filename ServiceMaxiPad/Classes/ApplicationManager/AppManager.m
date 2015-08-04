@@ -1057,10 +1057,15 @@
 }
 
 + (void)updateTabBarBadges {
-    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication] delegate];
-    CustomTabBar *customBar = (CustomTabBar*)appDelegate.window.rootViewController;
-    [customBar updateBadge];
+    
+
+        dispatch_async(dispatch_get_main_queue(), ^(void){
+            SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication] delegate];
+            CustomTabBar *customBar = (CustomTabBar*)appDelegate.window.rootViewController;
+            [customBar updateBadge];
+        });
 }
+
 
 @end
 

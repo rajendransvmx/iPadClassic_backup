@@ -474,7 +474,7 @@ typedef enum {
 
 - (void)updateBadge
 {
-    NSUInteger count = [ResolveConflictsHelper getConflictsCount];
+    NSInteger count = [ResolveConflictsHelper getConflictsCount];
     
     SXLogWarning(@"CustomTabBar: Conflicts count %lu",(unsigned long)count);
     
@@ -490,7 +490,7 @@ typedef enum {
         toolsBadge.hidden = NO;
         homeBadge.hidden = NO;
         
-        NSString *counterStr = [NSString stringWithFormat:@"%lu",(unsigned long)count];
+        NSString *counterStr = [NSString stringWithFormat:@"%ld",(long)count];
         
         if(toolsBadge != nil) {
             [toolsBadge autoBadgeSizeWithString:counterStr];
