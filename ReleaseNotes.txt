@@ -4,7 +4,7 @@ ServiceMax iPad Sum15Build
 
 *******************************************
 
-Version = 15.49.131
+Version = 15.49.132
 
 
 ===========================================
@@ -14,9 +14,7 @@ Version = 15.49.131
 Fixed Defects
 
 -------------
-
-
-020602
+Aggressive sync changes
 
 Note:
 1. SVMXC namespace.
