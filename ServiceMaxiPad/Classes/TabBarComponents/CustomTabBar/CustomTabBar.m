@@ -476,7 +476,7 @@ typedef enum {
 {
     NSUInteger count = [ResolveConflictsHelper getConflictsCount];
     
-    SXLogWarning(@"Conflicts count %lu",(unsigned long)count);
+    SXLogWarning(@"CustomTabBar: Conflicts count %lu",(unsigned long)count);
     
     CustomBadge *toolsBadge = (CustomBadge*)[self.btn7 viewWithTag:BADGE_TAG];
     CustomBadge *homeBadge = (CustomBadge*)[self.btn1 viewWithTag:BADGE_TAG];
@@ -484,24 +484,22 @@ typedef enum {
     if(count == 0) {
         toolsBadge.hidden = YES;
         homeBadge.hidden = YES;
-        return;
     }
-    
-    toolsBadge.hidden = NO;
-    homeBadge.hidden = NO;
-    
-    NSString *counterStr = [NSString stringWithFormat:@"%lu",(unsigned long)count];
-    
-    if(toolsBadge != nil) {
+    else
+    {
+        toolsBadge.hidden = NO;
+        homeBadge.hidden = NO;
         
-        [toolsBadge autoBadgeSizeWithString:counterStr];
+        NSString *counterStr = [NSString stringWithFormat:@"%lu",(unsigned long)count];
+        
+        if(toolsBadge != nil) {
+            [toolsBadge autoBadgeSizeWithString:counterStr];
+        }
+        
+        if(homeBadge != nil) {
+            [homeBadge autoBadgeSizeWithString:counterStr];
+        }
     }
-    
-    if(homeBadge != nil) {
-        [homeBadge autoBadgeSizeWithString:counterStr];
-    }
-    
-    
 }
 
 #pragma mark - TapGesture
