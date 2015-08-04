@@ -54,4 +54,7 @@
 - (BOOL)updateRecord:(NSDictionary *)record inObjectName:(NSString *)objectName andLocalId:(NSString *)localId;
 - (ModifiedRecordModel *) successiveSyncRecordForSfId:(NSString *)sfId;
 
+- (ModifiedRecordModel *)getSyncRecordModelFromSuccessiveSyncRecords:(NSString *)localId;
+
+
 @end

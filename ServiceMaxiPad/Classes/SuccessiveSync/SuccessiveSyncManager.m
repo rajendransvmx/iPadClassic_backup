@@ -86,13 +86,10 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
 - (void) updateSuccessiveSyncRecord:(ModifiedRecordModel *)syncRecord{
     
     @synchronized([self class]){
-        
         ModifiedRecordModel *existingSyncRecord = self.succSyncRecords[syncRecord.recordLocalId];
         /*Update the field values with the new values*/
         if (existingSyncRecord == nil) {
-            
             ModifiedRecordModel *successiveSyncModel = [[ModifiedRecordModel alloc] init];
-            
             [self copyModifiedRecordDataFrom:syncRecord toModel:successiveSyncModel];
             [self.succSyncRecords setObject:successiveSyncModel forKey:syncRecord.recordLocalId];
         }
@@ -173,6 +170,9 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
                 BOOL isRecordExist =  [transObjectService isRecordExistsForObject:syncRecord.objectName
                                                                  forRecordLocalId:syncRecord.recordLocalId];
                 
+                NSLog(@"isRecordExist: %d", isRecordExist);
+                
+                
                 if (isRecordExist) {
                     
                     [self updateRecord:syncRecord.recordDictionary
@@ -217,10 +217,12 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
 {
     @synchronized([self class]){
         
+        NSLog(@"shouldPerformSyccessiveSync");
+        
         if ([self shouldPerformSyccessiveSync:syncRecord.recordLocalId]) {
             
             if ([record isKindOfClass:[NSDictionary class]]) {
-                //NSLog(@"Successive sync call");
+                NSLog(@"Successive sync call");
                 
                 syncRecord.recordDictionary  = [[NSMutableDictionary alloc]initWithDictionary:record];
             }
@@ -298,8 +300,12 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
     successiveSyncModel.fieldsModified = syncRecord.fieldsModified;
     successiveSyncModel.cannotSendToServer = syncRecord.cannotSendToServer;
     successiveSyncModel.jsonRecord = syncRecord.jsonRecord;
-    successiveSyncModel.recordDictionary = syncRecord.recordDictionary;
     successiveSyncModel.overrideFlag = syncRecord.overrideFlag;
+}
+
+-(ModifiedRecordModel *)getSyncRecordModelFromSuccessiveSyncRecords:(NSString *)localId {
+    ModifiedRecordModel *syncRecord = self.succSyncRecords[localId];
+    return syncRecord;
 }
 
 
