@@ -129,7 +129,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
 
     if (orgURL == nil)
     {
-        orgURL =  [NSString stringWithFormat:@"%@/%@", [PlistManager baseURLString], serviceURI];
+        orgURL =  [NSString stringWithFormat:@"%@%@", [PlistManager baseURLString], serviceURI];
     }
     
 	NSString *postLength = [NSString stringWithFormat:@"%lu", (unsigned long)[postData length]];
