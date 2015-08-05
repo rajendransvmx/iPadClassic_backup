@@ -301,6 +301,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
     successiveSyncModel.cannotSendToServer = syncRecord.cannotSendToServer;
     successiveSyncModel.jsonRecord = syncRecord.jsonRecord;
     successiveSyncModel.overrideFlag = syncRecord.overrideFlag;
+    successiveSyncModel.recordDictionary = syncRecord.recordDictionary;
 }
 
 -(ModifiedRecordModel *)getSyncRecordModelFromSuccessiveSyncRecords:(NSString *)localId {
