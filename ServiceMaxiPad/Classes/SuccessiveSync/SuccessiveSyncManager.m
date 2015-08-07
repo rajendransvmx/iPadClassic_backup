@@ -93,10 +93,9 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
             [self.succSyncRecords setObject:syncRecord forKey:syncRecord.recordLocalId];
         }
         else{
+            [self copyModifiedRecordDataFrom:syncRecord toModel:existingSyncRecord];
             NSArray *allKeys = [syncRecord.recordDictionary allKeys];
             for (NSString *key in allKeys) {
-                
-                
                 [existingSyncRecord.recordDictionary setObject:syncRecord.recordDictionary[key] forKey:key];
             }
         }
@@ -270,5 +269,31 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
     return [transObjectService updateEachRecord:eachRecord withFields:allFields withCriteria:@[criteria] withTableName:objectName];
 }
 
+-(void)copyModifiedRecordDataFrom:(ModifiedRecordModel *)syncRecord toModel:(ModifiedRecordModel *)successiveSyncModel {
+    successiveSyncModel.localId = syncRecord.localId;
+    successiveSyncModel.recordLocalId = syncRecord.recordLocalId;
+    successiveSyncModel.sfId = syncRecord.sfId;
+    successiveSyncModel.recordType = syncRecord.recordType;
+    successiveSyncModel.operation = syncRecord.operation;
+    successiveSyncModel.objectName = syncRecord.objectName;
+    successiveSyncModel.parentObjectName = syncRecord.parentObjectName;
+    successiveSyncModel.parentLocalId = syncRecord.parentLocalId;
+    successiveSyncModel.recordSent = syncRecord.recordSent;
+    successiveSyncModel.webserviceName = syncRecord.webserviceName;
+    successiveSyncModel.className = syncRecord.className;
+    successiveSyncModel.headerLocalId = syncRecord.headerLocalId;
+    successiveSyncModel.requestData = syncRecord.requestData;
+    successiveSyncModel.requestId = syncRecord.requestId;
+    successiveSyncModel.timeStamp = syncRecord.timeStamp;
+    successiveSyncModel.fieldsModified = syncRecord.fieldsModified;
+    successiveSyncModel.cannotSendToServer = syncRecord.cannotSendToServer;
+    successiveSyncModel.jsonRecord = syncRecord.jsonRecord;
+}
+
+
+-(ModifiedRecordModel *)getSyncRecordModelFromSuccessiveSyncRecords:(NSString *)localId {
+    ModifiedRecordModel *syncRecord = self.succSyncRecords[localId];
+    return syncRecord;
+}
 
 @end

@@ -2307,6 +2307,13 @@
     // If there are earlier changes in trailor table fetch them also.. will use for merging
     NSString *existingModifiedFields = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:recordId andSfId:sfid];
     
+    if ([StringUtil isStringEmpty:existingModifiedFields]) {
+        ModifiedRecordModel *syncRecordModel = [[SuccessiveSyncManager sharedSuccessiveSyncManager] getSyncRecordModelFromSuccessiveSyncRecords:recordId];
+        if (syncRecordModel != nil) {
+            existingModifiedFields = syncRecordModel.fieldsModified;
+        }
+    }
+    
     SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc]init];
     
     BOOL hasConflictRecordFound = NO;
