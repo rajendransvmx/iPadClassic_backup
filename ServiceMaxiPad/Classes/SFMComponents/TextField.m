@@ -290,17 +290,19 @@
     NSString *testString = textField.text;
     if(testString.length > 0)
     {
-        CGRect frame = textField.frame;
+        // 017637 :  popover required for all the textfield irrespective of text length.
+        /*CGRect frame = textField.frame;
         CGFloat lengthOfString = [self getTheWidthForTheString:testString withTheHeight:frame.size.height];
         
         if(lengthOfString>frame.size.width)
-        {
+        {*/
+        
             MorePopOverViewController *morePopoverController = [[MorePopOverViewController alloc]init];
             self.popOver = [[UIPopoverController alloc] initWithContentViewController:morePopoverController];
             [self.popOver presentPopoverFromRect:self.frame inView:self.superview permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
             morePopoverController.fieldValueTextView.text = textField.text;
             morePopoverController.fieldNameLabel.text = self.fieldName;
-        }
+        //}
     }
 }
 

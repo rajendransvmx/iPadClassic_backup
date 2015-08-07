@@ -46,6 +46,9 @@
         textView.layer.borderColor = [[UIColor colorWithHexString:kSeperatorLineColor] CGColor];
         textView.layer.cornerRadius = 4;
         textView.layer.borderWidth = 1;
+        textView.editable = NO;
+        textView.selectable = YES;
+        
         
         self.valueField  = textView;
         [self addSubview:self.valueField];
