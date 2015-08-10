@@ -1870,9 +1870,15 @@ static SyncManager *_instance;
                 self.isAfterInsert = NO;
                 self.isAfterUpdate = YES;
 //                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
-                NSInteger conflictsCount = [ResolveConflictsHelper getConflictsCount];
-
-                if ([self isThereAnyRecordForUpdationOrInsertion] || conflictsCount)
+//                NSInteger conflictsCount = [ResolveConflictsHelper getConflictsCount];
+                NSArray *conflictArray = [ResolveConflictsHelper getConflictsRecords];
+                NSInteger holdConflictCount = 0;
+                for (SyncErrorConflictModel *syncConflictModel in conflictArray) {
+                    if ([syncConflictModel.overrideFlag isEqualToString:@"hold"]) {
+                        holdConflictCount++;
+                    }
+                }
+                if ([self isThereAnyRecordForUpdationOrInsertion] || (conflictArray.count != holdConflictCount) )
                 {
                     self.isDataSyncRunning = NO;
                     self.isAfterUpdate = NO;
@@ -1917,6 +1923,10 @@ static SyncManager *_instance;
        TODO: manage infinite call loop. SHould use counter for atleast 1 complete data Sync cycle.
             If for some reason, the custom call fails in afterinsert call, then data sync gets intiated, when tat finishes, again it is checked if a cvustom call has to be initiated. When the custom call is tired to be invoked, again it fails and after that again the data sync call starts. So infiite loop. Manage this.
            */
+            SXLogDebug(@"IN customCallDidNotInitiateDuetoSomeRaeason for Record model");
+
+            [self.cCustomCallRecordModel explainMe];
+        
                 if (!self.isDataSyncInLoop) {
                     self.isDataSyncInLoop = YES;
                     [self checkNetworkReachabilityAndInitiateDataSync];
@@ -1961,6 +1971,10 @@ static SyncManager *_instance;
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]) {
         [self initiateDataSync];
 
+    }
+    else
+    {
+        [self currentDataSyncFailedWithError:nil];
     }
 }
 
