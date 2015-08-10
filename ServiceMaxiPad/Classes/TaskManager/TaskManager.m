@@ -139,7 +139,9 @@
 }
 
 - (void)removeFlowNodeWithId:(NSString *)flowNodeId {
-    [self.flowNodeDictionary removeObjectForKey:flowNodeId];
+    if (flowNodeId != nil) {
+        [self.flowNodeDictionary removeObjectForKey:flowNodeId];
+    }
 }
 - (void)cancelFlowNodeWithId:(NSString *)flowNodeId {
     if (flowNodeId != nil) {
