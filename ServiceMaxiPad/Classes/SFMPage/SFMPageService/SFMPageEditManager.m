@@ -809,7 +809,8 @@
             }
         }
         else {
-            if (self.isfieldMergeEnabled && modifiedFieldAsJsonString != nil) {
+            if ( ![StringUtil isStringEmpty:headerSfid] && self.isfieldMergeEnabled && modifiedFieldAsJsonString != nil) {
+                
                 [modifiedRecordService updateFieldsModifed:syncRecord];
             }
             

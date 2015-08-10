@@ -242,7 +242,9 @@
                                                                                      error:&error];
                     [beforeSaveDict setObject:@"BEFORE_SAVE" forKey:kSVMXRequestKey];
                     NSError * err;
-                    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:[jsonDictionary objectForKey:@"BEFORE_SAVE"] options:0 error:&err];
+                    NSMutableDictionary *beforeSaveTempDict = [NSMutableDictionary dictionaryWithDictionary:[jsonDictionary objectForKey:@"BEFORE_SAVE"]];
+                    [beforeSaveTempDict setObject:syncRecord.sfId forKey:@"Id"];
+                    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:beforeSaveTempDict options:0 error:&err];
                     NSString * jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
                     [beforeSaveArray addObject:jsonString];
                     

@@ -153,12 +153,13 @@
                 }
                 NSError *error;
                 
-                if (aRecord.fieldsModified != nil && ![StringUtil isStringEmpty:aRecord.fieldsModified]) {
+                if (aRecord.fieldsModified != nil && ![StringUtil isStringEmpty:aRecord.fieldsModified] && [aRecord.operation isEqualToString:kModificationTypeUpdate]) {
                     
                     NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:[aRecord.fieldsModified dataUsingEncoding:NSUTF8StringEncoding]
                                                                                    options:NSJSONReadingMutableContainers
                                                                                      error:&error];
                     recordDictionary = [jsonDictionary objectForKey:@"AFTER_SAVE"];
+                    [recordDictionary setObject:aRecord.sfId forKey:@"Id"];
                     
                     if([[jsonDictionary allKeys] containsObject:@"CLIENT_OVERRIDE"]) {
                         aRecord.overrideFlag = @"CLIENT_OVERRIDE";
