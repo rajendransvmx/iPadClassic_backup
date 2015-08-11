@@ -45,6 +45,7 @@
 /* Reverts with the OPDocHTML model list for which sfid is nil*/
 
 -(NSMutableArray *)getHTMLModelListForFileUpload;
+-(NSMutableArray *)getLocalHTMLModelList;
 
 -(NSArray *)getLocallySavedHTMLListForId:(NSString*)recordId;
 

@@ -450,6 +450,13 @@
     return htmlListArray;
 }
 
+- (NSArray*)getAllHTMLFileList {
+    OPDocServices *lOPDocHTMLService = [[OPDocServices alloc] init];
+    NSArray *htmlListArray = [lOPDocHTMLService getLocalHTMLModelList];
+    return htmlListArray;
+
+}
+
 
 -(NSArray *)getSignatureListForHtmlModel:(OPDocHTML *)htmlModel
 
@@ -668,7 +675,7 @@
         
         OPDocServices *lOPDocHTMLService = [[OPDocServices alloc] init];
         
-        NSArray *opDocFiles = [self getHTMLFileList];
+        NSArray *opDocFiles = [self getAllHTMLFileList];
         
         NSArray *fileds =[ [NSArray alloc] initWithObjects:@"objectName", nil];
         

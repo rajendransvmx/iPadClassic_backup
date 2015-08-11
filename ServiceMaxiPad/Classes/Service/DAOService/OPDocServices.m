@@ -108,6 +108,35 @@
     
 }
 
+-(NSMutableArray *)getLocalHTMLModelList
+{
+    
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriteria:nil];
+    
+    NSMutableArray *lTheDataArray = [[NSMutableArray alloc] init];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                
+                OPDocHTML * model = [[OPDocHTML alloc] init];
+                [resultSet kvcMagic:model];
+                [lTheDataArray addObject:model];
+            }
+            [resultSet close];
+        }];
+    }
+    return lTheDataArray;
+    
+}
+
 
 -(NSArray *)getHTMLListToSubmitForHtmlFile:(NSString *)htmlFile
 {
