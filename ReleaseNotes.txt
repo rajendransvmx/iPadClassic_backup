@@ -4,11 +4,12 @@ ServiceMax iPad Sum15Build
 
 *******************************************
 
-Version = 15.50.002
+Version = 15.50.003
 
 
 ===========================================
 
+Icon images reverted as per Doug
 -------------
 Fixed Defects
 
