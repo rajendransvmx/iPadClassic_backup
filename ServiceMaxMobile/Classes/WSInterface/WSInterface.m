@@ -1002,6 +1002,9 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     NSString * current_gmt_time=@"";
     NSDate * localDate;
     NSTimeInterval secondsPerDay;
+    NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian] autorelease];
+    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    [format setTimeZone:[NSTimeZone localTimeZone]];
     
     @try{
         if([time isEqualToString:START_TIME])
@@ -1019,7 +1022,9 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
         }
         
         secondsPerDay = no_of_days * 24 * 60 * 60;
-        [format setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"IST"]];
+//        [format setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"IST"]];
+        [format setCalendar:calendar];
+        [format setLocale:locale];
         [format setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         NSString * date_ = [format stringFromDate:today];
         date_ = [date_ stringByReplacingCharactersInRange:NSMakeRange(11, 8) withString:@"00:00:00"];
