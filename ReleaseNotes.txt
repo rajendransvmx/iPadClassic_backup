@@ -3,13 +3,12 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.025
+Version = 15.40.026
 ===========================================
 -------------
 Fixed Defects
 -------------
-018076
-018694
+019284 It has been found that customer is not able to simultaneously create a master and detail record while offline
 
 -------------
 Known Issues
