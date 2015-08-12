@@ -4,17 +4,15 @@ ServiceMax iPad Sum15Build
 
 *******************************************
 
-Version = 15.50.003
-
+Version = 15.50.004
 
 ===========================================
 
-Icon images reverted as per Doug
 -------------
 Fixed Defects
 
 -------------
-
+021312 - Unable to view Event/WorkOrder details,when notification is invoked from pulse app
 -------------
 
 Note:
