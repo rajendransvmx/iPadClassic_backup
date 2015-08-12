@@ -5,14 +5,14 @@ Release Notes Starts For Version 14.50.019
 ServiceMax iPad Sum14SPiPadBuild
 
 *******************************************
-Version = 14.50.019
+Version = 14.50.020
 ===========================================
 
 
 -------------
 Fixed Defects
 -------------
-019313
+020844
 
 ------------
 Known Issues
