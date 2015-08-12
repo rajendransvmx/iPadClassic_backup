@@ -68,6 +68,7 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     [dateFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
     //To Test need to remove
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
     [dateFormatter setCalendar:cal];
     [cal release];
     [dateFormatter  setDateFormat:@"yyyy-MM-dd HH:mm:ss"];

@@ -214,6 +214,12 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     
     NSDateFormatter * format = [[NSDateFormatter alloc] init];
     [format setDateFormat:@"HH:mm:ss"];
+    NSCalendar *calendar = [[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian] autorelease];
+    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    [format setCalendar:calendar];
+    [format setLocale:locale];
+    [format setTimeZone:[NSTimeZone localTimeZone]];
+
     NSDate * date = [format dateFromString:startTime];
     
     NSTimeInterval timeZoneOffset = duration/2*60*60;

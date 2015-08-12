@@ -429,7 +429,11 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 {
     NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    [dateFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
+    NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian] autorelease];
+    NSLocale *locale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+    [dateFormatter setTimeZone:[NSTimeZone localTimeZone]];
+    [dateFormatter setCalendar:cal];
+    [dateFormatter setLocale:locale];
     NSString *dateString = [dateFormatter stringFromDate:date];
     return  dateString;
 }
