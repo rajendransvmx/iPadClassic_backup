@@ -18,11 +18,6 @@
 #import "TagManager.h"
 #import "StringUtil.h"
 #import "SyncErrorConflictService.h"
-#import "TransactionObjectModel.h"
-#import "TransactionObjectDAO.h"
-#import "SFObjectDAO.h"
-#import "SFObjectModel.h"
-#import "FactoryDAO.h"
 
 
 #define PushNotificationProcessRequest     @"PushNotificationProcessRequest"
@@ -647,36 +642,11 @@
     }
     
     SFMPageViewController *pageViewController = [[SFMPageViewController alloc] init];
-   // SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:@"SVMXC__Service_Order__c" recordId:@"97EBA23E-0862-442E-8F8E-83BB40670AF0"];
+    // SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:@"SVMXC__Service_Order__c" recordId:@"97EBA23E-0862-442E-8F8E-83BB40670AF0"];
     
-    SFMPageViewManager *pageManager;
-    //HS 29Jul = [[SFMPageViewManager alloc] initWithObjectName:self.finalModel.objectName recordId:localId];//HS 29Jul
+    SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:self.finalModel.objectName recordId:localId]; 
     
-    /* HS
-     
-     TransactionObjectModel *model = [CalenderHelper getRecordForEvent:eventData];
-     pageManager = [[SFMPageViewManager alloc] initWithObjectName:[model objectAPIName] recordId:[[model getFieldValueDictionary] objectForKey:@"localId"]];
-     */
-    
-    //SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:self.finalModel.objectName recordId:localId];
 
-    
-    //TransactionObjectModel *model = [self getTransactionModelForLocalId:localId withObjectName:self.finalModel.objectName andWhatId:self.finalModel.sfId];
-    NSMutableArray * fieldArray = [[NSMutableArray alloc] init];
-    [fieldArray addObject:kWhatId];
-    
-    id <TransactionObjectDAO> transactionObject = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-    
-    
-//TransactionObjectModel * model = [transactionObject getDataForObject:@"Event" fields:fieldArray recordId:self.finalModel.sfId];
-    DBCriteria * criteria = [[DBCriteria alloc]initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:self.finalModel.sfId];
-    NSArray *criteriaArr = [NSArray arrayWithObject:criteria];
-    
-    TransactionObjectModel *model = [transactionObject getDataForObject:@"Event" fields:fieldArray expression:nil criteria:criteriaArr];
-    NSString *relatedObjectName = [self getTheObjectName:[[model getFieldValueDictionary] objectForKey:@"WhatId"]];
-    
-    pageManager = [[SFMPageViewManager alloc] initWithObjectName:relatedObjectName recordId:[[model getFieldValueDictionary] objectForKey:@"WhatId"]];
-    
     NSError *error = nil;
     viewProcessAvailable = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
     
@@ -718,39 +688,6 @@
 
 }
 
-
--(TransactionObjectModel*)getTransactionModelForLocalId:(NSString *)localId withObjectName:(NSString *)objectName andWhatId:(NSString *)whatId
-{
-    TransactionObjectModel *model;
-    if (objectName != nil) {
-        id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-        
-        DBCriteria * innerCriteria = [[DBCriteria alloc] initWithFieldName:localId operatorType:SQLOperatorEqual andFieldValue:whatId];
-        
-        NSArray *objects =   [transObjectService fetchDataForObject:objectName fields:nil expression:nil criteria:@[innerCriteria]];
-        if ([objects count] > 0) {
-            TransactionObjectModel *record =  [objects objectAtIndex:0];
-            [record setObjectName:objectName];
-            return record;
-        }
-    }
-    
-    return model;
-}
-
-
--(NSString *)getTheObjectName:(NSString *)lSFID
-{
-    NSString *keyPrefix = [lSFID substringToIndex:3];
-    
-    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"keyPrefix" operatorType:SQLOperatorEqual andFieldValue:keyPrefix];
-    
-    id <SFObjectDAO> objectService = [FactoryDAO serviceByServiceType:ServiceTypeSFObject];
-    
-    SFObjectModel *model = [objectService getSFObjectInfo:criteria fieldName:@[@"objectName"]];
-    
-    return model.objectName;
-}
 
 -(void)noViewProcessAvaibleAlert
 {
