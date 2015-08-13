@@ -37,7 +37,7 @@
 
 #define MAX_RETRY_COUNT 3
 NSString *cocoaErrorString = @"3840";
-NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APEX_ERROR","message":"System.LimitException: Apex heap size too large:
+NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_ERROR","message":"System.LimitException: Apex heap size too large:
 @interface FlowNode()
 {
     
@@ -449,10 +449,9 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
     
     
     //---------------------------------------------
- 
 
-    BOOL isHeapSizeError = [StringUtil containsString:heapSizeErrorString inString:[error description]];
-    BOOL isCocoaError = [StringUtil containsString:cocoaErrorString inString:[error description]];
+    BOOL isHeapSizeError = [StringUtil containsStringinErrorMsg:heapSizeErrorString inString:[error description]];
+    BOOL isCocoaError = [StringUtil containsStringinErrorMsg:cocoaErrorString inString:[error description]];
     
     if (requestObject.requestType == RequestObjectDefinition && isHeapSizeError && requestObject.requestParameter.heapSizeRetryCount > 0 && requestObject.requestParameter.heapSizeRetryCount <= MAX_RETRY_COUNT) {
         
