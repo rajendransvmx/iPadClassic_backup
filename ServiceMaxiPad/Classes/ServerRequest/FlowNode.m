@@ -37,7 +37,7 @@
 
 #define MAX_RETRY_COUNT 3
 NSString *cocoaErrorString = @"3840";
-NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APEX_ERROR","message":"System.LimitException: Apex heap size too large:
+NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_ERROR","message":"System.LimitException: Apex heap size too large:
 @interface FlowNode()
 {
     
@@ -142,18 +142,18 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
                     [self sendProgressStatusFor:RequestTypeNone
                                      syncStatus:SyncStatusFailed
                                       withError:storedError];
-
-               }
+                    
+                }
                 else{
                     
                     [self sendProgressStatusFor:RequestTypeRefresTokenFailed
                                      syncStatus:SyncStatusFailed
                                       withError:storedError];
                 }
-               
+                
                 
                 [self flowCompleted];
-               
+                
             }
         }
     }
@@ -163,14 +163,14 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 {
     @synchronized([self class])
     {
-         [self cancelRequestsFromOperationQueue];
-         [self cancelAllRequest];
+        [self cancelRequestsFromOperationQueue];
+        [self cancelAllRequest];
         
         /* Send progress as cancelled */
-         [self sendProgressStatusFor:RequestTypeNone syncStatus:SyncStatusInCancelled];
+        [self sendProgressStatusFor:RequestTypeNone syncStatus:SyncStatusInCancelled];
         self.callerDelegate = nil;
         [self flowCompleted];
-     }
+    }
 }
 
 
@@ -185,12 +185,12 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 {
     @synchronized([self class])
     {
-       // [self getRequestFromRequestManagerWithPrevious:previousRequest withRequestParam:requestParam callBackStatus:callBackStatus];
+        // [self getRequestFromRequestManagerWithPrevious:previousRequest withRequestParam:requestParam callBackStatus:callBackStatus];
         
         SVMXServerRequest * request = [self getRequestFromRequestManagerWithPrevious:previousRequest
                                                                     withRequestParam:requestParam
                                                                      withRequestType:requestType];
-     
+        
         [request addClientRequestIdentifier:self.flowId];
         request.shouldIncludeTimeLogs = [[ServerRequestManager sharedInstance]isTimeLogEnabledForCategoryType:self.nodecategoryType];
         request.categoryType = self.nodecategoryType;
@@ -216,13 +216,13 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
     BOOL isReqParamsMandatory = NO;
     
     if (!isFirstCall && isReqParamsMandatory && [requestparams count] <= 0 ) {
-      
+        
         [self sendProgressStatusFor:nextRequestType syncStatus:SyncStatusInProgress];
-            
+        
         SVMXServerRequest * req =  [[ServerRequestManager sharedInstance] requestForType:nextRequestType withCategory:self.nodecategoryType andPreviousRequest:previousRequest];
         
         [self sendProgressStatusFor:req.requestType syncStatus:SyncStatusInProgress];
-
+        
         BOOL returnFlag = [self makeNextRequesttWithPrevious:req firstCall:NO];
         return returnFlag;
     }
@@ -242,10 +242,10 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
     }
     else  // For BOth non concurrent calls and no Request Parameter calls
     {
-         RequestParamModel * requestParam = nil;
+        RequestParamModel * requestParam = nil;
         if([requestparams count] > 0)
         {
-           requestParam =  [requestparams objectAtIndex:0];
+            requestParam =  [requestparams objectAtIndex:0];
         }
         
         [self makeRequestWithPrevious:previousRequest
@@ -258,12 +258,12 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 
 -(NSArray *)getRequestParamsForNextRequestType:(RequestType)nxtRequestType forConcurrencyCount:(NSInteger)concurrencyCount
 {
-   NSArray * requestParams = nil;
+    NSArray * requestParams = nil;
     
     // call Service layer to get reuest params
-   BaseServiceLayer *serviceLayer = (BaseServiceLayer *)[ServiceFactory serviceLayerWithCategoryType:_nodecategoryType requestType:nxtRequestType];
+    BaseServiceLayer *serviceLayer = (BaseServiceLayer *)[ServiceFactory serviceLayerWithCategoryType:_nodecategoryType requestType:nxtRequestType];
     serviceLayer.requestIdentifier = self.flowId;
-   requestParams =  [serviceLayer getRequestParametersWithRequestCount:concurrencyCount];
+    requestParams =  [serviceLayer getRequestParametersWithRequestCount:concurrencyCount];
     
     return requestParams;
     
@@ -280,13 +280,13 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 -(RequestType)nextRequestTypeWithPreviousRequest:(SVMXServerRequest *)prevRequest
 {
     RequestType nextRequestType = [[ServerRequestManager sharedInstance] getNextRequestTypeForCategoryType:self.nodecategoryType withPreviousRequest:prevRequest];
-
+    
     return nextRequestType;
 }
 
 -(SVMXServerRequest *)getRequestFromRequestManagerWithPrevious:(SVMXServerRequest *)previousRequest
-                    withRequestParam:(RequestParamModel *)requestParam
-                    withRequestType:(RequestType)requestType
+                                              withRequestParam:(RequestParamModel *)requestParam
+                                               withRequestType:(RequestType)requestType
 {
     @synchronized([self class]){
         
@@ -305,7 +305,7 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 
 -(void)addRequestToRequestArray:(SVMXServerRequest *)request
 {
-     @synchronized([self class]){
+    @synchronized([self class]){
         if(request != nil)
         {
             if(self.requestDict == nil){
@@ -350,15 +350,15 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
     NSString *subContextValue = @"";
     
     if (![requestObject.apiType isEqualToString:@"ZKS"]) {
-    
+        
         RestRequest *request = (RestRequest *)requestObject;
         contextValue = [[ServerRequestManager sharedInstance]getTheContextvalueForCategoryType:self.nodecategoryType];
         subContextValue = [[PerformanceAnalyser sharedInstance] getSubContextNameForContext:contextValue SubContext:request.eventName forOperationTYpe:PAOperationTypeParsing];
         
         [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeParsing andRecordCount:1];
-
+        
     }
-
+    
     [self removeRequestFromRequestArray:requestObject];
     
     TimeLogParser *parser = [[TimeLogParser alloc] init];
@@ -374,16 +374,16 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
             //[DateUtil stringFromDate:[NSDate date] inFormat:kDateFormatType1];
             model.syncRequestStatus = kTimeLogSucess;
         }
-
+        
     }
     
     BaseServiceLayer *serviceLayer = (BaseServiceLayer *)[ServiceFactory serviceLayerWithCategoryType:self.nodecategoryType
-                                                               requestType:requestObject.requestType];
+                                                                                          requestType:requestObject.requestType];
     serviceLayer.requestIdentifier = self.flowId;
     if ([serviceLayer conformsToProtocol:@protocol(ServiceLayerProtocol)])
     {
         ResponseCallback *callBackObject = [serviceLayer processResponseWithRequestParam:requestObject.requestParameter
-                                                                  responseData:responseObject];
+                                                                            responseData:responseObject];
         if (requestObject.requestType == RequestSyncTimeLogs) {
             [parser parseAndDeleteLogIdFromCache:responseObject];
         }
@@ -409,16 +409,16 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
         }
         else if( [self.requestDict count] <= 0)
         {
-           BOOL continueFlow = [self  makeNextRequesttWithPrevious:requestObject firstCall:NO];
+            BOOL continueFlow = [self  makeNextRequesttWithPrevious:requestObject firstCall:NO];
             if(!continueFlow){
                 [self sendProgressStatusFor:requestObject.requestType syncStatus:SyncStatusSuccess];
-
+                
                 [self flowCompleted];
             }
             else
             {
                 [self sendProgressStatusFor:requestObject.requestType syncStatus:SyncStatusInProgress];
-
+                
             }
         }
     }
@@ -441,7 +441,7 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 - (BOOL)isCocoaErrorRetryCompletedForRequest:(SVMXServerRequest *)requestObject withError:(NSError *)error
 {
     [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
-
+    
     BOOL returnValue = YES;
     
     //check retry count > 0 and < max retry count.
@@ -449,10 +449,9 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
     
     
     //---------------------------------------------
- 
-
-    BOOL isHeapSizeError = [StringUtil containsString:heapSizeErrorString inString:[error description]];
-    BOOL isCocoaError = [StringUtil containsString:cocoaErrorString inString:[error description]];
+    
+    BOOL isHeapSizeError = [StringUtil containsStringinErrorMsg:heapSizeErrorString inString:[error description]];
+    BOOL isCocoaError = [StringUtil containsStringinErrorMsg:cocoaErrorString inString:[error description]];
     
     if (requestObject.requestType == RequestObjectDefinition && isHeapSizeError && requestObject.requestParameter.heapSizeRetryCount > 0 && requestObject.requestParameter.heapSizeRetryCount <= MAX_RETRY_COUNT) {
         
@@ -575,14 +574,14 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
 {
     [self sendProgressStatusFor:requestType syncStatus:status withError:nil];
 }
-                 
+
 - (void)sendProgressStatusFor:(RequestType)requestType syncStatus:(SyncStatus)status withError:(NSError *)error
 {
     WebserviceResponseStatus * responseStatus = [[WebserviceResponseStatus alloc] init];
     
     if (status == SyncStatusSuccess)
     {
-       responseStatus.syncProgressState = SyncStatusCompleted;
+        responseStatus.syncProgressState = SyncStatusCompleted;
     }
     else if(status == SyncStatusFailed)
     {
@@ -627,16 +626,16 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
     //PA
     NSString *contextValue = [[ServerRequestManager sharedInstance]getTheContextvalueForCategoryType:self.nodecategoryType];
     [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:contextValue operationType:PAOperationTypeTotalTimeLatency andRecordCount:0];
-     
+    
     [[SVMXSystemUtility sharedInstance] performSelectorOnMainThread:@selector(stopNetworkActivity)
                                                          withObject:nil
                                                       waitUntilDone:NO];
     
     [[TaskManager sharedInstance] removeFlowNodeWithId:self.flowId];
     
-   /***** Pulse app changes: once flow is completed trigger notification *******/
+    /***** Pulse app changes: once flow is completed trigger notification *******/
     CategoryType categoryType = self.nodecategoryType;
-
+    
     if([PushNotificationUtility shouldInitiatePushNotification:categoryType])
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:PushNotificationProcessRequest  object:nil];
@@ -679,14 +678,14 @@ NSString *heapSizeErrorString = @"Apex heap size too large"; //{"errorCode":"APE
         /**
          * No error wow, we are good to continue parsing.
          */
-         [self callServiceLayerWithRequestObject:request withResponseObject:responseObject];
+        [self callServiceLayerWithRequestObject:request withResponseObject:responseObject];
     }
 }
 
 - (void)didRequestFailedWithError:(NSError *)error Response:(id)responseObject andRequestObject:(id)request
 {
     [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
-
+    
     NSLog(@"Request failed with error %@ %@ Request : %@",[error description],[responseObject description],[request description]);
     NSError *serverError = [SMInternalErrorUtility checkForErrorInResponse:responseObject withStatusCode:-999 andError:error];
     if (serverError != nil)
