@@ -26,5 +26,4 @@
 +(NSString *)appendOrgNameSpaceToString:(NSString *)toString;
 
 + (BOOL)isStringNumber:(NSString *)string;
-+ (BOOL)containsStringinErrorMsg:(NSString *)subString inString:(NSString *)metaString;
 @end

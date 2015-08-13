@@ -39,8 +39,7 @@
 {
     NSMutableArray * criteriaObjects = [[NSMutableArray alloc] initWithCapacity:0];
     // Anoop : SRC to Target All only fixed duplicate line issues
-    if ([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll] ||
-        [self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetChild]) {
+    if ([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll]) {
         
         if (![StringUtil isStringEmpty:self.parentLocalId]) {
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kLocalId

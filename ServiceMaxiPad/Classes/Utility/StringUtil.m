@@ -195,26 +195,4 @@ const NSString *utility_org_namespace = ORG_NAME_SPACE;
     
     return isNumeric;
 }
-
-
-+ (BOOL)containsStringinErrorMsg:(NSString *)subString inString:(NSString *)metaString
-{
-    BOOL containString = YES;
-    
-    if ((subString == nil) || (metaString == nil) )
-    {
-        containString = NO;
-    }
-    else
-    {
-        NSRange range = [metaString rangeOfString:subString options:NSCaseInsensitiveSearch];
-        if (NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
-        {
-            containString = NO;
-        }
-    }
-    
-    return containString;
-}
-
 @end
