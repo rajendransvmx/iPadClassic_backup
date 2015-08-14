@@ -205,11 +205,13 @@
 
 - (void)reloadTableView
 {
-    NSArray *indexPaths = [self.tableView indexPathsForSelectedRows];
-    [self.tableView reloadData];
-    for (NSIndexPath *path in indexPaths) {
-        [self.tableView selectRowAtIndexPath:path animated:NO scrollPosition:UITableViewScrollPositionNone];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray *indexPaths = [self.tableView indexPathsForSelectedRows];
+        [self.tableView reloadData];
+        for (NSIndexPath *path in indexPaths) {
+            [self.tableView selectRowAtIndexPath:path animated:NO scrollPosition:UITableViewScrollPositionNone];
+        }
+    });
 }
 
 -(void)setUpMasterData {

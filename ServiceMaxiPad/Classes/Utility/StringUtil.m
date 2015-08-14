@@ -196,6 +196,7 @@ const NSString *utility_org_namespace = ORG_NAME_SPACE;
     return isNumeric;
 }
 
+
 + (BOOL)containsStringinErrorMsg:(NSString *)subString inString:(NSString *)metaString
 {
     BOOL containString = YES;
@@ -215,6 +216,5 @@ const NSString *utility_org_namespace = ORG_NAME_SPACE;
     
     return containString;
 }
-
 
 @end
