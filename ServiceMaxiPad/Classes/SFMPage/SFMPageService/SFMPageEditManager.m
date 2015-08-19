@@ -764,7 +764,7 @@
         }
     }
     
-    syncRecord.recordType = kRecordTypeMaster;
+    syncRecord.recordType = (page.sourceObjectName == nil) ? kRecordTypeMaster : kRecordTypeDetail;
     syncRecord.sfId = headerSfid;
  
     if ([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {

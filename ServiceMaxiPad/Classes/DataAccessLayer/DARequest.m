@@ -16,6 +16,7 @@
 #define kDAOrderbyVal       @"orderBy"
 #define kDAResponse         @"response"
 #define kSOQLJson           @"jsonSoql"
+
 @implementation DARequest
 
 - (id)initWithDictionary:(NSDictionary *)dataDictionary {

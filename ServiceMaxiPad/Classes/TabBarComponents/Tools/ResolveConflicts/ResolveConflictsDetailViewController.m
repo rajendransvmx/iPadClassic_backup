@@ -92,13 +92,16 @@ static NSString *kConflictCellIdentifier = @"ConflictCellIdentifier";
 
 - (void)reloadResolveConflictScreenOnNotification {
     
-    if (self.resolveConflictActionVC) {
-        [self.resolveConflictActionVC dismissViewControllerAnimated:YES completion:nil];
-        self.resolveConflictActionVC = nil;
-    }
-    [self loadConfictsList];
-    [self.conflictsListView reloadData];
+    dispatch_async(dispatch_get_main_queue(), ^{
 
+        if (self.resolveConflictActionVC) {
+            [self.resolveConflictActionVC dismissViewControllerAnimated:YES completion:nil];
+            self.resolveConflictActionVC = nil;
+        }
+        [self loadConfictsList];
+        [self.conflictsListView reloadData];
+    });
+    
 }
 
 - (void)dealloc {
