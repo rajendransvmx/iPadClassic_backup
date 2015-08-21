@@ -16,6 +16,8 @@
 #import "PlistManager.h"
 #import "TXFetchHelper.h"
 #import "TimeLogCacheManager.h"
+#import "SyncHeapDAO.h"
+#import "SyncConstants.h"
 
 @interface GetPriceDataServiceLayer ()
 
@@ -116,6 +118,26 @@
                 [valueMaps addObject:currencyDict];
             }
             
+            NSArray *pricebookIds = [self getPricebookIds];
+            if (pricebookIds == nil) {
+                pricebookIds = @[];
+            }
+            
+            NSArray *servicepricebookIds = [self getServicePricebookIds];
+            if (servicepricebookIds == nil) {
+                servicepricebookIds = @[];
+            }
+            
+            if ([pricebookIds count]) {
+                NSDictionary *pricebookIdsDict = [NSDictionary dictionaryWithObjectsAndKeys:@"PRICEBOOK_IDs",kSVMXRequestKey,pricebookIds, kSVMXRequestValues, nil];
+                [valueMaps addObject:pricebookIdsDict];
+            }
+            
+            if ([servicepricebookIds count]) {
+                NSDictionary *servicepricebookIdsDict = [NSDictionary dictionaryWithObjectsAndKeys:@"SERVICE_PRICEBOOK_IDs",kSVMXRequestKey,servicepricebookIds, kSVMXRequestValues, nil];
+                [valueMaps addObject:servicepricebookIdsDict];
+            }
+            
             [valueMaps addObject:[NSDictionary dictionaryWithObjectsAndKeys:kGetPriceDataLastIndex,kSVMXKey,@2,kSVMXValue, nil]];
             paramObj.valueMap = [NSArray arrayWithArray:valueMaps];
             
@@ -194,6 +216,27 @@
     return values;
 }
 
+-(NSArray*)getPricebookIds
+{
+    NSArray *sfidsArray = [[NSArray alloc] init];
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
+        sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"PRICEBOOK_IDs"
+                                                            forLimit:0 forParallelSyncType:kParallelGetPriceSync];
+    }
+    return sfidsArray;
+}
+
+-(NSArray*)getServicePricebookIds
+{
+    NSArray *sfidsArray = [[NSArray alloc] init];
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
+        sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"SERVICE_PRICEBOOK_IDs"
+                                                            forLimit:0 forParallelSyncType:kParallelGetPriceSync];
+    }
+    return sfidsArray;
+}
 
 - (NSArray *)getTxFetcRequestParamsForRequestCount:(NSInteger )requestCount {
     @autoreleasepool

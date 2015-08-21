@@ -746,10 +746,13 @@
 {
     RequestType nextRequestType = 0;
     if (currentRequest == nil) {
-        nextRequestType = RequestGetPriceDataTypeZero;
+        nextRequestType = RequestDownloadCriteria;
     }
     
     switch (currentRequest.requestType) {
+        case RequestDownloadCriteria:
+            nextRequestType = RequestGetPriceDataTypeZero;
+            break;
         case RequestGetPriceDataTypeZero:
             nextRequestType = RequestGetPriceDataTypeOne;
             break;
