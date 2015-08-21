@@ -68,9 +68,9 @@
 /* Upload Files */
 -(void)initiateFileSync
 {
-    if (_OpDocSyncInProgress) {
+    if (_OpDocSyncInProgress)
         return;
-    }
+    
     _OpDocSyncInProgress = YES;
     
     if (cHtmlListArray) {

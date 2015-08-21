@@ -9,7 +9,7 @@ Version = 15.20.032
 Fixed Defects
 -------------
 
-1. 17934-Signatures coming up as a Tree image on the online server, after the user generates the Smart Docs in iPad
+1. 17934-Signatures coming up as a Tree image on the online server, after the user generates the Smart Docs in iPad.
 
 -------------
 Known Issues
@@ -29,3 +29,4 @@ None
 ---------------------
 Additional Notes
 ---------------------
+None
