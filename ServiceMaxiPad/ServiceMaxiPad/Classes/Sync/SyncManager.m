@@ -771,8 +771,12 @@ static SyncManager *_instance;
                 /* Clear user deafults utility */
                 
                 [PlistManager clearAllWhatIdObjectInformation];
-                [[OpDocHelper sharedManager] initiateFileSync];
-                [[OpDocHelper sharedManager] setCustomDelegate:self];
+                
+                if (![[OpDocHelper sharedManager] isTheOpDocSyncInProgress]) {
+                
+                    [[OpDocHelper sharedManager] initiateFileSync];
+                    [[OpDocHelper sharedManager] setCustomDelegate:self];
+                }
             }
             
             [self manageSyncQueueProcess];

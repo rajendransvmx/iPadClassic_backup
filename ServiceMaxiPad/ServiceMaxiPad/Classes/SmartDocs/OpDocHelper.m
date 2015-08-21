@@ -27,6 +27,8 @@
 @property (nonatomic, strong) NSDictionary *cSignatureAndHTMLSubmitListDictionary;
 @property (nonatomic, strong) NSMutableArray *cFailedInPreviousProcessHTMLListArray;
 
+@property (nonatomic, assign) BOOL OpDocSyncInProgress;
+@property (nonatomic, assign) BOOL resetTheQueueAsOneMoreSyncIsTriggered;
 
 @end
 
@@ -50,10 +52,26 @@
     return sharedOpDocHelper;
 }
 
+-(BOOL)isTheOpDocSyncInProgress
+{
+    if (_OpDocSyncInProgress) {
+        // Sync already is in progress. so when the next HTML is going to be taken for syncing then get all the items again from the table.
+        _resetTheQueueAsOneMoreSyncIsTriggered = YES;
+    }
+    else{
+        //FirstTime. Opdoc Sync Not started yet.
+        _resetTheQueueAsOneMoreSyncIsTriggered = NO;
+    }
+    return _OpDocSyncInProgress;
+}
 
 /* Upload Files */
 -(void)initiateFileSync
 {
+    if (_OpDocSyncInProgress) {
+        return;
+    }
+    _OpDocSyncInProgress = YES;
     
     if (cHtmlListArray) {
         cHtmlListArray = nil;
@@ -101,10 +119,10 @@
 
 -(void)checkIfTheFileIsAlreadyUploaded
 {
+    SXLogDebug(@"checkIfTheFileIsAlreadyUploaded");
     [[OpDocSyncDataManager sharedManager] setCOpDocObjectForSync:[cSingleHtmlAndAssociatedSignatureListArray objectAtIndex:0]];
     [OPDocFileUploader requestTocheckIfOPDocFileIsUploadedBeforewithTheCallerDelegate:self];
 }
-
 
 -(void)uploadTheOPDOCFile
 {
@@ -135,7 +153,7 @@
 
 -(void)initiateDocumentSubmissionProcess
 {
-    
+    SXLogDebug(@"initiateDocumentSubmissionProcess");
     if (cHtmlListArray.count) {
         cSignatureAndHTMLSubmitListDictionary = [self getSignatureAndHTMLSFIDListForHtmlFile:[cHtmlListArray objectAtIndex:0]];
     }
@@ -143,6 +161,8 @@
     else{
         // For failed Cases in the previous cycles.
         
+        SXLogDebug(@"DOC SUB for previously failed cases.");
+
         if (!cFailedInPreviousProcessHTMLListArray) {
             cFailedInPreviousProcessHTMLListArray = [[NSMutableArray alloc] initWithArray:[self getHTMLListForDocSubmission]];
         }
@@ -174,7 +194,9 @@
     }
     else
     {
-        // if nothing to do here then cal the delegate
+        _OpDocSyncInProgress = NO;
+
+        // if nothing to do here then call the delegate
         if([self.customDelegate conformsToProtocol:@protocol(OPDocCustomDelegate)])
         {
             [self.customDelegate OpdocStatus:YES forCategory:CategoryTypeGeneratePDF];
@@ -218,9 +240,7 @@
         }
         else
         {
-            
             [self gettingReadyToSyncTheNextSetOfData];
-            
         }
     }
     else {
@@ -270,6 +290,10 @@
     if (cHtmlListArray.count) {
         [cHtmlListArray removeObjectAtIndex:0];
 
+        if (_resetTheQueueAsOneMoreSyncIsTriggered) {
+            cHtmlListArray = [[NSMutableArray alloc] initWithArray:[self getHTMLFileList]];
+            _resetTheQueueAsOneMoreSyncIsTriggered = NO;
+        }
     }
     
     if (cHtmlListArray.count) {

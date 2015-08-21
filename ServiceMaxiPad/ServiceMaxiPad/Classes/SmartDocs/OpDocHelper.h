@@ -22,6 +22,7 @@
 
 + (id)sharedManager;
 
+-(BOOL)isTheOpDocSyncInProgress;
 -(void)initiateFileSync;
 -(void)initiateDocumentSubmissionProcess;
 -(void)initiateGeneratePDFProcess;
