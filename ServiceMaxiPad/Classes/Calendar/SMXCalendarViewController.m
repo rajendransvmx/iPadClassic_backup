@@ -72,6 +72,9 @@
 #import "WebserviceResponseStatus.h"
 #import "SNetworkReachabilityManager.h"
 
+#import "ProductIQHomeViewController.h"
+//#import "FileManager.h"
+//#import "UnzipUtility.h"
 
 #define kLongFormat @"yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 #define kLongFormatZulu @"yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
@@ -721,6 +724,28 @@
     }
 
     
+    //TODO:Testing The ProductIQ START.
+    
+    SFWizardModel *wizardModelProductIQ = [[SFWizardModel alloc]init];
+    wizardModelProductIQ.wizardName = @"PRODUCTIQ";
+    
+    WizardComponentModel *wizardCompModelProductIQ = [[WizardComponentModel alloc]init];
+    wizardCompModelProductIQ.actionType = @"ProductIQ";
+    wizardCompModelProductIQ.actionName = @"ProductIQActionName";
+    wizardCompModelProductIQ.isEntryCriteriaMatching = YES;
+    if (wizardModelProductIQ.wizardComponents == nil)
+    {
+        wizardModelProductIQ.wizardComponents = [[NSMutableArray alloc]init];
+    }
+    [wizardModelProductIQ.wizardComponents addObject:wizardCompModelProductIQ];
+    
+    if ([wizardModelProductIQ.wizardComponents count] >0)
+    {
+        [allWizards insertObject:wizardModelProductIQ atIndex:1];
+    }
+    
+    //TODO:Testing The ProductIQ END.
+
 }
 
 //HS 23 Jan15 code ends here
@@ -2457,6 +2482,22 @@
     if (self.tempViewController != nil) {
         [self.tempViewController reloadTableView];
     }
+}
+
+#pragma mark -
+#pragma mark PRODUCTIQ
+
+-(void)displayProductIQViewController;
+{
+    
+    ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
+    navController.delegate = lProductIQcontroller;
+    navController.modalPresentationStyle = UIModalPresentationFullScreen;
+    navController.navigationBar.hidden = NO;
+    navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
+    navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 
 

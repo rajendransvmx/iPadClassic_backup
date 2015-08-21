@@ -27,6 +27,7 @@
 #import "CustomTabBar.h"
 #import "SMDataPurgeManager.h"
 #import "SyncManager.h"
+#import "UnzipUtility.h"
 
 //#import "PushNotificationWebServiceHelper.h"
 
@@ -211,10 +212,30 @@
     // Load Existing customer org info
     [PlistManager loadCustomerOrgInfo];
     
+    //TODO:ForTesting purposes only. Remove IT
+    [self installJSForProductIQForTestingPurposesOnly];
+    
     [self verifyUserAndApplicationStatus];
+
 }
 
-
+-(void)installJSForProductIQForTestingPurposesOnly
+{
+    NSString *pathToCheck = [FileManager getCoreLibSubDirectoryPath];
+    pathToCheck = [pathToCheck stringByAppendingPathComponent:@"PRODUCTJS"];
+    
+    if(![[NSFileManager defaultManager] fileExistsAtPath:pathToCheck]) // If core library already exists then DONOT unzip
+    {
+        //        [UnzipUtility unzipBundledStaticResourceAtPath:[FileManager getCoreLibSubDirectoryPath]];
+        NSString *filepath = [[NSBundle mainBundle] pathForResource:@"js" ofType:@"zip"];
+        [UnzipUtility unzipFileAtPath:filepath toFolder:pathToCheck];
+        
+    }
+    else
+    {
+        NSLog(@"ProductIQ JS exists!");
+    }
+}
 #pragma mark - User status management
 
 /**
