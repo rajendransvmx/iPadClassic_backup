@@ -73,6 +73,8 @@
 #import "SNetworkReachabilityManager.h"
 
 #import "ProductIQHomeViewController.h"
+#import "ProductIQPOCHomeViewController.h"
+
 //#import "FileManager.h"
 //#import "UnzipUtility.h"
 
@@ -2489,7 +2491,7 @@
 
 -(void)displayProductIQViewController;
 {
-    
+    /*
     ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
     navController.delegate = lProductIQcontroller;
@@ -2498,6 +2500,17 @@
     navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
+    */
+    
+    ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
+    navController.delegate = lProductIQcontroller;
+    navController.modalPresentationStyle = UIModalPresentationFullScreen;
+    navController.navigationBar.hidden = NO;
+    navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
+    navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+    
 }
 
 
