@@ -18,6 +18,7 @@
 #import "TimeLogCacheManager.h"
 #import "SyncHeapDAO.h"
 #import "SyncConstants.h"
+#import "SVMXGetPriceList.h"
 
 @interface GetPriceDataServiceLayer ()
 
@@ -123,14 +124,15 @@
                 pricebookIds = @[];
             }
             
-            NSArray *servicepricebookIds = [self getServicePricebookIds];
-            if (servicepricebookIds == nil) {
-                servicepricebookIds = @[];
-            }
             
             if ([pricebookIds count]) {
                 NSDictionary *pricebookIdsDict = [NSDictionary dictionaryWithObjectsAndKeys:@"PRICEBOOK_IDs",kSVMXRequestKey,pricebookIds, kSVMXRequestValues, nil];
                 [valueMaps addObject:pricebookIdsDict];
+            }
+            
+            NSArray *servicepricebookIds = [self getServicePricebookIds];
+            if (servicepricebookIds == nil) {
+                servicepricebookIds = @[];
             }
             
             if ([servicepricebookIds count]) {
@@ -219,6 +221,8 @@
 -(NSArray*)getPricebookIds
 {
     NSArray *sfidsArray = [[NSArray alloc] init];
+    SVMXGetPriceList *list = [[SVMXGetPriceList alloc] init];
+    [list getDistinctProductIds];
     id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
     if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
         sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"PRICEBOOK_IDs"

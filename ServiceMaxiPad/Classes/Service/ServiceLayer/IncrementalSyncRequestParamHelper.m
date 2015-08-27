@@ -18,6 +18,9 @@
 #import "ModifiedRecordModel.h"
 #import "CacheManager.h"
 #import "StringUtil.h"
+#import "SyncConstants.h"
+#import "SyncHeapService.h"
+#import "SVMXGetPriceList.h"
 
 @interface IncrementalSyncRequestParamHelper ()
 
@@ -90,6 +93,26 @@
             
             if (lastModifiedTime != nil) {
                 subParamDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:kLastSyncTime,kSVMXRequestKey,lastModifiedTime,kSVMXRequestValue,nil];
+                [parameterArray addObject:subParamDictionary];
+            }
+            
+            /* Get price change */
+            NSArray *pricebookIds = [self getPricebookIds];
+            if (pricebookIds == nil) {
+                pricebookIds = @[];
+            }
+            
+            if (true) {
+                subParamDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"PRICEBOOK_IDs",kSVMXRequestKey,pricebookIds,kSVMXRequestValues,nil];
+                [parameterArray addObject:subParamDictionary];
+            }
+            
+            NSArray *servicepricebookIds = [self getServicePricebookIds];
+            if (servicepricebookIds == nil) {
+                servicepricebookIds = @[];
+            }
+            if (true) {
+                subParamDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"SERVICE_PRICEBOOK_IDs",kSVMXRequestKey,servicepricebookIds,kSVMXRequestValues,nil];
                 [parameterArray addObject:subParamDictionary];
             }
             
@@ -439,6 +462,31 @@
 
     [PlistManager storeLastLocalIdnDefaults:[[NSString alloc] initWithFormat:@"%ld",(long)localId]];
     
+}
+-(NSArray*)getPricebookIds
+{
+    NSArray *sfidsArray = [[NSArray alloc] init];
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    SVMXGetPriceList *list = [[SVMXGetPriceList alloc] init];
+    [list getDistinctProductIds];
+    if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
+        sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"PRICEBOOK_IDs"
+                                                            forLimit:0 forParallelSyncType:kParallelGetPriceSync];
+    }
+    return sfidsArray;
+}
+
+-(NSArray*)getServicePricebookIds
+{
+    NSArray *sfidsArray = [[NSArray alloc] init];
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    SVMXGetPriceList *list = [[SVMXGetPriceList alloc] init];
+    [list getDistinctDataCustomPriceBookIds];
+    if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
+        sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"SERVICE_PRICEBOOK_IDs"
+                                                            forLimit:0 forParallelSyncType:kParallelGetPriceSync];
+    }
+    return sfidsArray;
 }
 
 @end

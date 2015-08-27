@@ -744,15 +744,14 @@
 - (RequestType)getNextRequestForGetPriceData:(SVMXServerRequest *)currentRequest
                           andPreviousRequest:(SVMXServerRequest *)previousRequest
 {
+    
+    /* get price call for new change */
     RequestType nextRequestType = 0;
     if (currentRequest == nil) {
-        nextRequestType = RequestDownloadCriteria;
+        nextRequestType = RequestGetPriceDataTypeZero;
     }
     
     switch (currentRequest.requestType) {
-        case RequestDownloadCriteria:
-            nextRequestType = RequestGetPriceDataTypeZero;
-            break;
         case RequestGetPriceDataTypeZero:
             nextRequestType = RequestGetPriceDataTypeOne;
             break;
