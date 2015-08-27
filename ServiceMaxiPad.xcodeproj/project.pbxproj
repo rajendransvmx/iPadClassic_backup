@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		111B22151B8F12B900EDDDBE /* ProductIQDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 111B22141B8F12B900EDDDBE /* ProductIQDataLoader.m */; };
+		111B221D1B8F28D700EDDDBE /* Configuration.csv in Resources */ = {isa = PBXBuildFile; fileRef = 111B22171B8F28D700EDDDBE /* Configuration.csv */; };
+		111B221E1B8F28D700EDDDBE /* DummyDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 111B22191B8F28D700EDDDBE /* DummyDataLoader.m */; };
+		111B221F1B8F28D700EDDDBE /* ObjectDescribe.csv in Resources */ = {isa = PBXBuildFile; fileRef = 111B221A1B8F28D700EDDDBE /* ObjectDescribe.csv */; };
+		111B22201B8F28D700EDDDBE /* RecordName.csv in Resources */ = {isa = PBXBuildFile; fileRef = 111B221B1B8F28D700EDDDBE /* RecordName.csv */; };
+		111B22211B8F28D700EDDDBE /* Translations.csv in Resources */ = {isa = PBXBuildFile; fileRef = 111B221C1B8F28D700EDDDBE /* Translations.csv */; };
 		117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D41B3928A200BA0B63 /* selectEmpty@.png */; };
 		117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D51B3928A200BA0B63 /* selectEmpty@2x.png */; };
 		117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D61B3928A200BA0B63 /* selectFilled@.png */; };
@@ -869,6 +875,15 @@
 		6BF9D02A1AA9BEA30057D8AC /* NotificationTrackerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D0281AA9BEA30057D8AC /* NotificationTrackerVC.m */; };
 		6BF9D02F1AA9C0D50057D8AC /* NotificationDownloadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D02D1AA9C0D50057D8AC /* NotificationDownloadCell.m */; };
 		6BF9D0301AA9C0D50057D8AC /* NotificationDownloadCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */; };
+		84127A9B1B8C8C1300CF8D61 /* Bridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A8F1B8C8C1300CF8D61 /* Bridge.m */; };
+		84127A9C1B8C8C1300CF8D61 /* Console.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A911B8C8C1300CF8D61 /* Console.m */; };
+		84127A9D1B8C8C1300CF8D61 /* DB.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A931B8C8C1300CF8D61 /* DB.m */; };
+		84127A9E1B8C8C1300CF8D61 /* DBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A951B8C8C1300CF8D61 /* DBManager.m */; };
+		84127A9F1B8C8C1300CF8D61 /* HTTP.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A971B8C8C1300CF8D61 /* HTTP.m */; };
+		84127AA11B8C8C1300CF8D61 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A9A1B8C8C1300CF8D61 /* Utils.m */; };
+		8412850F1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8412850D1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m */; };
+		841285101B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */; };
+		841285121B8C970100CF8D61 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 841285111B8C970100CF8D61 /* www */; };
 		8413F5061B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413F5031B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m */; };
 		8413F5071B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413F5051B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m */; };
 		8416A6EC1B660E64000D5FE9 /* CustomXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8416A6EB1B660E64000D5FE9 /* CustomXMLParser.m */; };
@@ -1050,6 +1065,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		111B22131B8F12B900EDDDBE /* ProductIQDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductIQDataLoader.h; sourceTree = "<group>"; };
+		111B22141B8F12B900EDDDBE /* ProductIQDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductIQDataLoader.m; sourceTree = "<group>"; };
+		111B22171B8F28D700EDDDBE /* Configuration.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Configuration.csv; sourceTree = "<group>"; };
+		111B22181B8F28D700EDDDBE /* DummyDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyDataLoader.h; sourceTree = "<group>"; };
+		111B22191B8F28D700EDDDBE /* DummyDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DummyDataLoader.m; sourceTree = "<group>"; };
+		111B221A1B8F28D700EDDDBE /* ObjectDescribe.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ObjectDescribe.csv; sourceTree = "<group>"; };
+		111B221B1B8F28D700EDDDBE /* RecordName.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RecordName.csv; sourceTree = "<group>"; };
+		111B221C1B8F28D700EDDDBE /* Translations.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Translations.csv; sourceTree = "<group>"; };
 		117656D41B3928A200BA0B63 /* selectEmpty@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@.png"; sourceTree = "<group>"; };
 		117656D51B3928A200BA0B63 /* selectEmpty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@2x.png"; sourceTree = "<group>"; };
 		117656D61B3928A200BA0B63 /* selectFilled@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@.png"; sourceTree = "<group>"; };
@@ -2645,6 +2668,22 @@
 		6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationDownloadCell.xib; sourceTree = "<group>"; };
 		84026B021A9B5A4D0096C6B8 /* EventTransactionObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTransactionObjectModel.h; sourceTree = "<group>"; };
 		84026B031A9B5A4D0096C6B8 /* EventTransactionObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTransactionObjectModel.m; sourceTree = "<group>"; };
+		84127A8E1B8C8C1300CF8D61 /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
+		84127A8F1B8C8C1300CF8D61 /* Bridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bridge.m; sourceTree = "<group>"; };
+		84127A901B8C8C1300CF8D61 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
+		84127A911B8C8C1300CF8D61 /* Console.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Console.m; sourceTree = "<group>"; };
+		84127A921B8C8C1300CF8D61 /* DB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DB.h; sourceTree = "<group>"; };
+		84127A931B8C8C1300CF8D61 /* DB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DB.m; sourceTree = "<group>"; };
+		84127A941B8C8C1300CF8D61 /* DBManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBManager.h; sourceTree = "<group>"; };
+		84127A951B8C8C1300CF8D61 /* DBManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBManager.m; sourceTree = "<group>"; };
+		84127A961B8C8C1300CF8D61 /* HTTP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTP.h; sourceTree = "<group>"; };
+		84127A971B8C8C1300CF8D61 /* HTTP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTP.m; sourceTree = "<group>"; };
+		84127A991B8C8C1300CF8D61 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		84127A9A1B8C8C1300CF8D61 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
+		8412850C1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductIQPOCHomeViewController.h; sourceTree = "<group>"; };
+		8412850D1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductIQPOCHomeViewController.m; sourceTree = "<group>"; };
+		8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductIQPOCHomeViewController.xib; sourceTree = "<group>"; };
+		841285111B8C970100CF8D61 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ServiceMaxiPad/Classes/ProductIQ/POC/www; sourceTree = "<group>"; };
 		8413F5021B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionAfterBeforeXMLRequestHelper.h; sourceTree = "<group>"; };
 		8413F5031B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionAfterBeforeXMLRequestHelper.m; sourceTree = "<group>"; };
 		8413F5041B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionXMLRequestHelper.h; sourceTree = "<group>"; };
@@ -2972,6 +3011,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		111B22161B8F28C700EDDDBE /* DummyDataLoader */ = {
+			isa = PBXGroup;
+			children = (
+				111B22171B8F28D700EDDDBE /* Configuration.csv */,
+				111B22181B8F28D700EDDDBE /* DummyDataLoader.h */,
+				111B22191B8F28D700EDDDBE /* DummyDataLoader.m */,
+				111B221A1B8F28D700EDDDBE /* ObjectDescribe.csv */,
+				111B221B1B8F28D700EDDDBE /* RecordName.csv */,
+				111B221C1B8F28D700EDDDBE /* Translations.csv */,
+			);
+			path = DummyDataLoader;
+			sourceTree = "<group>";
+		};
 		11B972A71B3EB6B9007596A6 /* OpDoctFilesTablesViewControoler */ = {
 			isa = PBXGroup;
 			children = (
@@ -5357,6 +5409,7 @@
 		18A2171019E57C5A00F22EA6 = {
 			isa = PBXGroup;
 			children = (
+				841285111B8C970100CF8D61 /* www */,
 				18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */,
 				18A2174119E57C5A00F22EA6 /* ServiceMaxiPadTests */,
 				18A2171B19E57C5A00F22EA6 /* Frameworks */,
@@ -6028,13 +6081,39 @@
 			path = PushNotification;
 			sourceTree = "<group>";
 		};
+		84127A8D1B8C8C1300CF8D61 /* POC */ = {
+			isa = PBXGroup;
+			children = (
+				84127A8E1B8C8C1300CF8D61 /* Bridge.h */,
+				84127A8F1B8C8C1300CF8D61 /* Bridge.m */,
+				84127A901B8C8C1300CF8D61 /* Console.h */,
+				84127A911B8C8C1300CF8D61 /* Console.m */,
+				84127A921B8C8C1300CF8D61 /* DB.h */,
+				84127A931B8C8C1300CF8D61 /* DB.m */,
+				84127A941B8C8C1300CF8D61 /* DBManager.h */,
+				84127A951B8C8C1300CF8D61 /* DBManager.m */,
+				84127A961B8C8C1300CF8D61 /* HTTP.h */,
+				84127A971B8C8C1300CF8D61 /* HTTP.m */,
+				84127A991B8C8C1300CF8D61 /* Utils.h */,
+				84127A9A1B8C8C1300CF8D61 /* Utils.m */,
+			);
+			path = POC;
+			sourceTree = "<group>";
+		};
 		844F00B91B848BE3008BC652 /* ProductIQ */ = {
 			isa = PBXGroup;
 			children = (
+				111B22161B8F28C700EDDDBE /* DummyDataLoader */,
+				84127A8D1B8C8C1300CF8D61 /* POC */,
 				844F0B411B84A4B6008BC652 /* js.zip */,
+				111B22131B8F12B900EDDDBE /* ProductIQDataLoader.h */,
+				111B22141B8F12B900EDDDBE /* ProductIQDataLoader.m */,
 				844F00BD1B848CC4008BC652 /* ProductIQHomeViewController.h */,
 				844F00BE1B848CC4008BC652 /* ProductIQHomeViewController.m */,
 				844F00BF1B848CC4008BC652 /* ProductIQHomeViewController.xib */,
+				8412850C1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.h */,
+				8412850D1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m */,
+				8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */,
 			);
 			path = ProductIQ;
 			sourceTree = "<group>";
@@ -6477,6 +6556,7 @@
 				C34A17FA19EBE50A009E9EA8 /* map_reload@2x.png in Resources */,
 				40A06F221B06033100218162 /* NavBarTasks@1x.png in Resources */,
 				42B1EECC19ECF96C00E3511D /* sfm_down_arrow.png in Resources */,
+				841285121B8C970100CF8D61 /* www in Resources */,
 				117656DB1B3928A200BA0B63 /* selectFilled@2x.png in Resources */,
 				4072530B19FF6C2900ACA729 /* com.servicemax.client.lib.zip in Resources */,
 				577003F91A1B50A2002537FB /* ActionDisplayTableViewController.xib in Resources */,
@@ -6509,6 +6589,7 @@
 				184A9CB219E7D591006DA6BE /* ObjectHighlightBar.png in Resources */,
 				18EFFC581B3D1C4200BE15A0 /* wizardComponentIcon@2x.png in Resources */,
 				184A9E0F19E7D592006DA6BE /* map_chat@2x.png in Resources */,
+				111B22201B8F28D700EDDDBE /* RecordName.csv in Resources */,
 				8B2F4BF71A0C8D0100D2A346 /* u259.png in Resources */,
 				40CA1A0619FE4E9C0097F5A1 /* recapture.png in Resources */,
 				18FE08FD19EE827800CB8925 /* checkbox-disabled-checked@2x.png in Resources */,
@@ -6525,6 +6606,7 @@
 				40A06F3A1B06041400218162 /* STasks@1x.png in Resources */,
 				18779DC519EBEF200086A9B7 /* info.png in Resources */,
 				184A9D9219E7D592006DA6BE /* FormCheckBoxUnFilled@2x.png in Resources */,
+				841285101B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib in Resources */,
 				18EFFC591B3D1C4200BE15A0 /* wizardComponentIcon@3x.png in Resources */,
 				18A2173519E57C5A00F22EA6 /* Images.xcassets in Resources */,
 				184F1C3B1A1369DF00A2B985 /* BizRuleTableViewCell.xib in Resources */,
@@ -6561,6 +6643,7 @@
 				C3EF97A01A036D7300476293 /* Attachment-Excel@2x.png in Resources */,
 				117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */,
 				184A9E1019E7D592006DA6BE /* map_CurrentLocation@2x.png in Resources */,
+				111B221D1B8F28D700EDDDBE /* Configuration.csv in Resources */,
 				C3E890801A0CC52000A0653B /* Attachment-SelectionCheckempty@2x.png in Resources */,
 				184A9E1519E7D592006DA6BE /* map_priorityflag@2x.png in Resources */,
 				184A9DEA19E7D592006DA6BE /* login-servicemax-logo@2x.png in Resources */,
@@ -6694,12 +6777,14 @@
 				183A9E9219E6A11800919345 /* RuleBook.plist in Resources */,
 				4072530C19FF6C2900ACA729 /* com.servicemax.client.mvc.zip in Resources */,
 				18E522B51A6916C000FD9295 /* Sync_Error_White@2x.png in Resources */,
+				111B221F1B8F28D700EDDDBE /* ObjectDescribe.csv in Resources */,
 				184A9C0E19E7D591006DA6BE /* iOSMap-Retina-Orange@2x.png in Resources */,
 				4072530E19FF6C2900ACA729 /* com.servicemax.client.sal.sfmconsole.model.zip in Resources */,
 				407252FA19FF52C700ACA729 /* OutputDocs.js in Resources */,
 				40CA1A0419FE4B340097F5A1 /* OPDocViewController.xib in Resources */,
 				8B932E691A1098960002BBB2 /* Attachment-plus@2x.png in Resources */,
 				183AA37919E6DAFE00919345 /* LaunchViewController.xib in Resources */,
+				111B22211B8F28D700EDDDBE /* Translations.csv in Resources */,
 				183AA1D719E6D26400919345 /* SFMPageShowAllViewController.xib in Resources */,
 				184A9CC119E7D591006DA6BE /* calendar@2x.png in Resources */,
 				183AA1B219E6D26400919345 /* PageEditMasterViewController.xib in Resources */,
@@ -6927,6 +7012,7 @@
 				184A8EA019E7A0BE006DA6BE /* UIViewController+TKCategory.m in Sources */,
 				183A9F0319E6A15600919345 /* ZKDescribeLayoutResult.m in Sources */,
 				183A9E2F19E69DB000919345 /* ProcessBusinessRuleModel.m in Sources */,
+				84127A9F1B8C8C1300CF8D61 /* HTTP.m in Sources */,
 				184A8E8D19E7A0BE006DA6BE /* TKNetworkQueue.m in Sources */,
 				189430521A48127800357320 /* SMObjectRelationModel.m in Sources */,
 				4083C3FB1A011EBC0029188D /* OPDocSignatureService.m in Sources */,
@@ -7074,6 +7160,7 @@
 				183A9F0019E6A15600919345 /* ZKDescribeLayoutButtonSection.m in Sources */,
 				183A9A1319E68D9400919345 /* ParserFactory.m in Sources */,
 				D752643419EB9112006AAC4C /* PageEditChildLayoutViewController.m in Sources */,
+				84127AA11B8C8C1300CF8D61 /* Utils.m in Sources */,
 				183A9FDB19E6B18500919345 /* SFObjectMappingService.m in Sources */,
 				1814AD1A1B2AA775001167DE /* CustomActionURLModel.m in Sources */,
 				183A9FD719E6B18500919345 /* SFNamedSearchComponentService.m in Sources */,
@@ -7167,6 +7254,7 @@
 				184A8EAC19E7A0BE006DA6BE /* SMXButtonWithDatePopover.m in Sources */,
 				183AA1A119E6D26400919345 /* SFMPage.m in Sources */,
 				183A9E9519E6A11800919345 /* SVMXOperationQueue.m in Sources */,
+				8412850F1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m in Sources */,
 				183AA1CD19E6D26400919345 /* SFMPageHistoryHeaderSectionView.m in Sources */,
 				183A9F1719E6A15600919345 /* ZKRelatedListSort.m in Sources */,
 				183A9E2919E69DB000919345 /* MetaSyncStatusModel.m in Sources */,
@@ -7198,6 +7286,7 @@
 				C31E66D11AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m in Sources */,
 				183A9F1F19E6A15700919345 /* ZKURLConnection.m in Sources */,
 				183A9F0F19E6A15600919345 /* ZKPicklistEntry.m in Sources */,
+				111B22151B8F12B900EDDDBE /* ProductIQDataLoader.m in Sources */,
 				6A1BCAFD1AA85DAB0074AB7D /* EventTransactionObjectModel.m in Sources */,
 				183AA1EB19E6D36C00919345 /* WizardViewController.m in Sources */,
 				183AA21019E6D3C200919345 /* CheckBox.m in Sources */,
@@ -7279,6 +7368,7 @@
 				11FF9E451B5657E5000FE90C /* ThirdPartyAppActivity.m in Sources */,
 				183A9FC219E6B18500919345 /* AttachmentsService.m in Sources */,
 				183A9FEB19E6B18500919345 /* AttachmentServiceLayer.m in Sources */,
+				111B221E1B8F28D700EDDDBE /* DummyDataLoader.m in Sources */,
 				18A2FE9019F6A412002BDA6D /* LocationPingManager.m in Sources */,
 				5BD8BA1F1A91F77E008899D5 /* SMXMultiDayCalculation.m in Sources */,
 				183AA1A519E6D26400919345 /* SFMPageViewModel.m in Sources */,
@@ -7408,6 +7498,7 @@
 				183A9F1019E6A15600919345 /* ZKPicklistForRecordType.m in Sources */,
 				183A9E2D19E69DB000919345 /* ObjectNameFieldValueModel.m in Sources */,
 				D752644719EB9278006AAC4C /* PageEditDateTimeFieldController.m in Sources */,
+				84127A9C1B8C8C1300CF8D61 /* Console.m in Sources */,
 				18800CEE1A08D14400930FF9 /* ResolveConflictsDetailViewController.m in Sources */,
 				184A8E7C19E7A0BE006DA6BE /* TKCalendarDayTimelineView.m in Sources */,
 				184A8E9519E7A0BE006DA6BE /* TKTextViewCell.m in Sources */,
@@ -7418,6 +7509,7 @@
 				6BB4C24619EE942C002A1D88 /* SFMSearchQueryCreator.m in Sources */,
 				184A8EEB19E7A535006DA6BE /* EventAnnotation.m in Sources */,
 				183AA1AE19E6D26400919345 /* PageEditDetailViewController.m in Sources */,
+				84127A9B1B8C8C1300CF8D61 /* Bridge.m in Sources */,
 				184A8E6719E7A0BE006DA6BE /* SMXDayScrollView.m in Sources */,
 				C8DB64F31B2ED88000886A02 /* EditMenuLabel.m in Sources */,
 				183AA21219E6D3C200919345 /* PageEditLongTexFieldController.m in Sources */,
@@ -7467,6 +7559,7 @@
 				183A9E1919E69DB000919345 /* AttachmentErrorModel.m in Sources */,
 				183A9A0319E68BC700919345 /* SMProgressAlertView.m in Sources */,
 				183A9E3519E69DB000919345 /* ServiceReportLogoModel.m in Sources */,
+				84127A9D1B8C8C1300CF8D61 /* DB.m in Sources */,
 				5B8286721A01FDB100C91854 /* RecentsPlistUtility.m in Sources */,
 				183A9E4E19E69DB000919345 /* SFRecordTypeModel.m in Sources */,
 				9EA9703E1A484B3F00ECB5F7 /* ZKSQueryRequest.m in Sources */,
@@ -7483,6 +7576,7 @@
 				9E0C8A6D1A0E63E500C51B76 /* LinkedProcess.m in Sources */,
 				183A9FF519E6B18500919345 /* InitialSyncServiceLayer.m in Sources */,
 				184A8E8419E7A0BE006DA6BE /* TKGlobal.m in Sources */,
+				84127A9E1B8C8C1300CF8D61 /* DBManager.m in Sources */,
 				183A9FD919E6B18500919345 /* SFObjectFieldService.m in Sources */,
 				183A9FC319E6B18500919345 /* BusinessRuleService.m in Sources */,
 				183A9F1E19E6A15700919345 /* ZKSObject.m in Sources */,
