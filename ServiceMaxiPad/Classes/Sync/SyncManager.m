@@ -44,6 +44,7 @@
 #import "SFMPageHelper.h"
 #import "CacheConstants.h"
 #import "StringUtil.h"
+#import "DummyDataLoader.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -1254,6 +1255,10 @@ static SyncManager *_instance;
 {
     [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncCompleted];
     
+    [self loadDummyData];
+    
+
+
     [self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
     [self updatePlistWithLastConfigSyncTimeAndStatus:kSuccess];
     [[SMDataPurgeManager sharedInstance] initiateAllDataPurgeProcess];
@@ -1269,6 +1274,17 @@ static SyncManager *_instance;
     }
     
     [self manageSyncQueueProcess];
+}
+
+
+-(void)loadDummyData
+
+{
+    
+    DummyDataLoader *ldummyDataLoader = [[DummyDataLoader alloc] init];
+    
+    [ldummyDataLoader loadDataIntables];
+    
 }
 
 - (void)currentInitialSyncFailedWithError:(NSError *)error
