@@ -1,0 +1,91 @@
+{   "id" : "com.servicemax.client.installigence" ,
+    "name" : "ServiceMax Installigence",
+    "description" : "ServiceMax Installigence",
+    "version" : "1.0.0",
+    "module-activator" : "com.servicemax.client.installigence.impl.Module",
+
+    "depends" : [
+        { "id" : "com.servicemax.client.runtime", "version" : "1.0.0" }
+    ],
+
+    "declares" : [
+
+    ],
+
+    "defines" : [
+        {   "type" : "com.servicemax.client.runtime.application",
+            "config" : {
+                "application" : { "id" : "installigence", "class-name" : "com.servicemax.client.installigence.app.Application" }
+            }
+        },
+        {
+            "type" : "com.servicemax.client.runtime.namedinstance",
+            "config" : {
+                "configure" : { "name" : "CONTROLLER", "data" : [
+                    {"event" : "INSTALLIGENCE.GET_METADATA", "command" : "com.servicemax.client.installigence.commands.GetMetadata"},
+                    {"event" : "INSTALLIGENCE.FIND_BY_IB", "command" : "com.servicemax.client.installigence.commands.FindByIB"},
+                    {"event" : "INSTALLIGENCE.GET_TOP_LEVEL_IBS", "command" : "com.servicemax.client.installigence.commands.GetTopLevelIBs"},
+                    {"event" : "INSTALLIGENCE.GET_PAGELAYOUT", "command" : "com.servicemax.client.installigence.commands.GetPageLayout"},
+                    {"event" : "INSTALLIGENCE.GET_PAGEDATA", "command" : "com.servicemax.client.installigence.commands.GetPageData"},
+                    {"event" : "INSTALLIGENCE.GET_LOC_ACC_DETAILS", "command" : "com.servicemax.client.installigence.commands.GetLocAccDetails"},
+                    {"event" : "INSTALLIGENCE.GET_MORE_IBS", "command" : "com.servicemax.client.installigence.commands.GetMoreIBs"},
+                    {"event" : "INSTALLIGENCE.FIND_PRODUCTS", "command" : "com.servicemax.client.installigence.commands.FindProducts"},
+                    {"event" : "INSTALLIGENCE.GET_RECORDS", "command" : "com.servicemax.client.installigence.commands.GetRecords"},
+                    {"event" : "INSTALLIGENCE.GET_LOCATIONS", "command" : "com.servicemax.client.installigence.commands.GetLocations"},
+                    {"event" : "INSTALLIGENCE.CREATE_RECORDS", "command" : "com.servicemax.client.installigence.commands.CreateRecords"},
+                    {"event" : "INSTALLIGENCE.DELETE_RECORDS", "command" : "com.servicemax.client.installigence.commands.DeleteRecords"},
+                    {"event" : "INSTALLIGENCE.UPDATE_IB_HIERARCHY", "command" : "com.servicemax.client.installigence.commands.UpdateIBHierarchy"},
+                    {"event" : "INSTALLIGENCE.APPLY_FIELD_UPDATE", "command" : "com.servicemax.client.installigence.commands.ApplyFieldUpdate"},
+                    {"event" : "INSTALLIGENCE.GET_LM_TOP_LEVEL_IBS", "command" : "com.servicemax.client.installigence.commands.GetLMTopLevelIBs"},
+                    {"event" : "INSTALLIGENCE.GET_LM_ACCOUNTS_LOCATIONS", "command" : "com.servicemax.client.installigence.commands.GetLMAccountsLocations"},
+                    {"event" : "INSTALLIGENCE.GET_LM_PRODUCTS", "command" : "com.servicemax.client.installigence.commands.GetLMProducts"},
+		    		{"event" : "INSTALLIGENCE.GET_ALL_PARENT_IBS", "command" : "com.servicemax.client.installigence.commands.GetAllParentIBs"},
+                    {"event" : "INSTALLIGENCE.SAVE_RECORD", "command" : "com.servicemax.client.installigence.commands.SaveRecord"},
+					{"event" : "INSTALLIGENCE.SAVE_RECORD_CONFIRM", "command" : "com.servicemax.client.installigence.commands.SaveRecordConfirm"},
+                    {"event" : "INSTALLIGENCE.CLONE_RECORD", "command" : "com.servicemax.client.installigence.commands.CloneRecord"},
+                    {"event" : "INSTALLIGENCE.SAVE_STATE", "command" : "com.servicemax.client.installigence.commands.SaveState"},
+                    {"event" : "INSTALLIGENCE.GET_SYNC_CONFLICTS", "command" : "com.servicemax.client.installigence.commands.GetSyncConflicts"},
+                    {"event" : "INSTALLIGENCE.UPDATE_SYNC_CONFLICTS", "command" : "com.servicemax.client.installigence.commands.UpdateSyncConflicts"},
+                    {"event" : "INSTALLIGENCE.SEND_EXTERNAL_MSG", "command" : "com.servicemax.client.installigence.commands.SendExternalMessage"},
+                    {"event" : "INSTALLIGENCE.EXECUTE_API", "command" : "com.servicemax.client.installigence.commands.ExecuteAPI"},
+                    {"event" : "INSTALLIGENCE.GET_APP_FOCUS", "command" : "com.servicemax.client.installigence.commands.GetApplicationFocus"},
+                    {"event" : "INSTALLIGENCE.GET_LOOKUPCONFIG", "command" : "com.servicemax.client.installigence.commands.GetLookupConfig"}
+						
+                ]}
+            }
+        }
+    ],
+
+    "services" : [
+
+    ],
+
+    "scripts" : [
+        "impl.js",
+        "app.js",
+        "ui/actions.js",
+        "ui/configuration.js",
+        "ui/conflict.js",
+        "ui/contentarea.js",
+        "ui/documents.js",
+        "ui/filters.js",
+        "ui/record.js",
+        "ui/root.js",
+        "ui/topography.js",
+        "ui/ibtree.js",
+        "ui/findandget.js",
+        "ui/home.js",
+        "ui/comps.js",
+        "ui/progress.js",
+        "ui/objectsearch.js",
+        "ui/loadselectedib.js",
+        "ui/lookup.js",
+        "ui/utils.js",
+        "commands.js",
+        "metamodel.js"
+    ],
+
+    "tests" : [
+        "externalrequest.js"
+    ]
+}

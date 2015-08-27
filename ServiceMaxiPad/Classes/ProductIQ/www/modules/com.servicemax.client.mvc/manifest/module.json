@@ -1,0 +1,47 @@
+
+{	"id" : "com.servicemax.client.mvc" ,
+	"name" : "ServiceMax Client MVC",
+	"description" : "Provides the core runtime capabilities MVC implementation",
+	"version" : "1.0.0",
+	"module-activator" : "com.servicemax.client.mvc.impl.Module",
+
+	"depends" : [
+		{ "id" : "com.servicemax.client.runtime", "version" : "1.0.0" }
+	],
+
+	"declares" : [
+
+	],
+
+	"defines" : [
+		{
+			"type" : "com.servicemax.client.runtime.namedinstance",
+			"config" : {
+				"define" : { "name" : "CONTROLLER", "type" : "com.servicemax.client.mvc.impl.Controller" }
+			}
+		},
+
+		{
+			"type" : "com.servicemax.client.runtime.namedinstance",
+			"config" : {
+				"define" : { "name" : "MODEL", "type" : "com.servicemax.client.mvc.impl.Model" }
+			}
+		},
+
+		{
+			"type" : "com.servicemax.client.runtime.namedinstance",
+			"config" : {
+				"define" : { "name" : "VIEW", "type" : "com.servicemax.client.mvc.impl.View" }
+			}
+		}
+	],
+
+	"services" : [
+
+	],
+
+	"scripts" : [
+		"api.js",
+		"impl.js"
+	]
+}
