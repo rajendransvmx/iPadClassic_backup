@@ -1,0 +1,46 @@
+{
+    "title" : "Installigence", "version" : "1.0.0",
+
+    "modules" : [
+        { "id" : "com.servicemax.client.mvc",                           "version" : "1.0.0" , "codebase" : "modules" },
+        { "id" : "com.servicemax.client.runtime",                       "version" : "1.0.0" , "codebase" : "modules" },
+        { "id" : "com.servicemax.client.installigence",                 "version" : "1.0.0" , "codebase" : "modules" },
+        { "id" : "com.servicemax.client.installigence.ui.components",   "version" : "1.0.0" , "codebase" : "modules" },
+        { "id" : "com.servicemax.client.installigence.offline.model",   "version" : "1.0.0" , "codebase" : "modules" },
+        { "id" : "com.servicemax.client.installigence.native",          "version" : "1.0.0" , "codebase" : "modules" },
+        { "id" : "com.servicemax.client.installigence.sync",            "version" : "1.0.0" , "codebase" : "modules" },
+        { "id" : "com.servicemax.client.installigence.utils",            "version" : "1.0.0" , "codebase" : "modules" }
+    ],
+
+    "app-config" : {
+        "application-id"   : "installigence",
+        "org-name-space"   : "SVMXC",
+        "sfdc-api-version" : "32.0",
+        "app-type" : "integrated",
+        "enable-cache" : true,
+        "enable-log" : true,
+        "svmx-logging-preferences": {
+            "targets": {
+                "Browser": {
+                    "class-name": "com.servicemax.client.lib.services.BrowserConsoleLogTarget",
+                    "options": {}
+                }
+            },
+            "loggers": {
+                "DEFAULT": {
+                    "Browser": "INFO"
+                },
+                "SVMXCONSOLECORE": {
+                    "Browser": "INFO"
+                },
+                "MODULE-LOADER": {
+                    "Browser": "INFO"
+                }
+            }
+        }
+    },
+
+    "platform-config" : {
+
+    }
+}
