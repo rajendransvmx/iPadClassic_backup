@@ -1,0 +1,62 @@
+{
+    "id": "com.servicemax.client.installigence.ui.components",
+    "name": "Installigence UI Components",
+    "description": "Installigence UI Components",
+    "version": "1.0.0",
+    "module-activator": "com.servicemax.client.installigence.ui.components.impl.Module",
+
+    "depends": [
+        { "id" : "com.servicemax.client.runtime", "version" : "1.0.0" }
+    ],
+
+    "declares": [
+
+    ],
+
+    "defines": [{
+        "type": "com.servicemax.client.runtime.uitheme",
+        "config": {
+            "theme-defs": [{
+                "type": "CLASSIC2",
+                "path": "css/common.css"
+            }, {
+                "type": "CLASSIC2",
+                "path": "extjsthemes/installigence/Installigence-all.css"
+            }, {
+                "type": "CLASSIC",
+                "path": "slick/slick.css"
+            	}]
+        	}
+    	},
+    	{
+			"type" : "com.servicemax.client.runtime.namedinstance",
+			"config" : {
+				"configure" : { "name" : "CONTROLLER", "data" : [
+						{"event" : "UICOMPONENTS.GET_LOOKUP_DATA", "command" : "com.servicemax.client.installigence.ui.components.commands.GetLookupData"}
+					]
+				}
+			}
+		},
+		{
+			"type" : "com.servicemax.client.runtime.namedinstance",
+			"config" : {
+				"configure" : { "name" : "MODEL", "data" : [
+						{"operationId" : "UICOMPONENTS.GET_LOOKUP_DATA", "operation" : "com.servicemax.client.installigence.ui.components.operations.GetLookupData"}
+					]
+				}
+			}
+		}],
+
+    "services": [
+
+    ],
+
+    "scripts": [
+        "impl.js",
+		"components.js",
+		"commands.js",
+		"uicomponentsoperations.js",
+		"utils.js",
+		"slick/slick.min.js"
+    ]
+}
