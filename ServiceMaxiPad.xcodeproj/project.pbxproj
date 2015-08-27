@@ -600,6 +600,7 @@
 		184F1C451A137A5F00A2B985 /* arrow_down.png in Resources */ = {isa = PBXBuildFile; fileRef = 184F1C441A137A5F00A2B985 /* arrow_down.png */; };
 		18536E621A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.m in Sources */ = {isa = PBXBuildFile; fileRef = 18536E611A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.m */; };
 		185656AC1A78DE5200DA5C12 /* json2.js in Resources */ = {isa = PBXBuildFile; fileRef = 184A8EC719E7A535006DA6BE /* json2.js */; };
+		185C71661B8DC26000046759 /* SVMXGetPriceList.m in Sources */ = {isa = PBXBuildFile; fileRef = 185C71651B8DC26000046759 /* SVMXGetPriceList.m */; };
 		18619BCD1AA7217500C77276 /* PushNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18619BCC1AA7217500C77276 /* PushNotificationManager.m */; };
 		18619BD01AA72CCD00C77276 /* PushNotificationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 18619BCF1AA72CCD00C77276 /* PushNotificationQueue.m */; };
 		186CDD7E1A023FE400DC93DA /* SMLocalNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 186CDD7D1A023FE400DC93DA /* SMLocalNotificationManager.m */; };
@@ -2203,6 +2204,8 @@
 		184F1C441A137A5F00A2B985 /* arrow_down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow_down.png; sourceTree = "<group>"; };
 		18536E601A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+UniqueNotif.h"; sourceTree = "<group>"; };
 		18536E611A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+UniqueNotif.m"; sourceTree = "<group>"; };
+		185C71641B8DC26000046759 /* SVMXGetPriceList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXGetPriceList.h; sourceTree = "<group>"; };
+		185C71651B8DC26000046759 /* SVMXGetPriceList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXGetPriceList.m; sourceTree = "<group>"; };
 		18619BCB1AA7217500C77276 /* PushNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationManager.h; sourceTree = "<group>"; };
 		18619BCC1AA7217500C77276 /* PushNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationManager.m; sourceTree = "<group>"; };
 		18619BCE1AA72CCD00C77276 /* PushNotificationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationQueue.h; sourceTree = "<group>"; };
@@ -3954,6 +3957,8 @@
 			children = (
 				C31E66CF1AE65DBE00A8AE7E /* GetPriceDataServiceLayer.h */,
 				C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */,
+				185C71641B8DC26000046759 /* SVMXGetPriceList.h */,
+				185C71651B8DC26000046759 /* SVMXGetPriceList.m */,
 				183A9FA019E6B18500919345 /* AttachmentServiceLayer.h */,
 				183A9FA119E6B18500919345 /* AttachmentServiceLayer.m */,
 				183A9FA219E6B18500919345 /* BaseServiceLayer.h */,
@@ -7170,6 +7175,7 @@
 				183A9E2619E69DB000919345 /* LocalEventUpdateModel.m in Sources */,
 				183A9E8E19E6A11800919345 /* RequestConstants.m in Sources */,
 				183AA38319E6DC9300919345 /* DynamicTableCreator.m in Sources */,
+				185C71661B8DC26000046759 /* SVMXGetPriceList.m in Sources */,
 				183AA04E19E6C80400919345 /* NSError+SMInternalError.m in Sources */,
 				9E8D1C581A496E2300741918 /* ChatterFeedComments.m in Sources */,
 				183A9E5A19E69DB000919345 /* SyncRecordHeapModel.m in Sources */,
