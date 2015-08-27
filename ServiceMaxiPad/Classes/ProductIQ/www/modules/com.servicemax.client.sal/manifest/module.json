@@ -1,0 +1,27 @@
+
+{	"id" : "com.servicemax.client.sal" , 
+	"name" : "ServiceMax Client Sevice Abstraction Layer",
+	"description" : "Provides the core runtime capabilities for ServiceMax service access",
+	"version" : "1.0.0",
+	"module-activator" : "com.servicemax.client.sal.impl.Module",
+	
+	"depends" : [
+	
+	], 
+	
+	"declares" : [ 
+
+	],
+	
+	"defines" : [
+	
+	],
+	
+	"services" : [
+		{ "id" : "com.servicemax.client.sal.service.factory", "class-name" : "com.servicemax.client.sal.impl.ServiceManagerFactory" }
+	],
+	
+	"scripts" : [
+		"impl.js"
+	] 
+}

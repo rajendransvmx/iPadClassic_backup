@@ -1,0 +1,62 @@
+{
+  "name": "qunit-reporter-junit",
+  "title": "JUnit reporter for QUnit",
+  "description": "Produce JUnit-style XML test reports with QUnit.",
+  "version": "1.0.2",
+  "author": {
+    "name": "jQuery Foundation and other contributors",
+    "url": "https://github.com/JamesMGreene/qunit-reporter-junit/blob/master/AUTHORS.txt"
+  },
+  "maintainers": [
+    {
+      "name": "jamesmgreene",
+      "email": "james.m.greene@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/JamesMGreene/qunit-reporter-junit",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/JamesMGreene/qunit-reporter-junit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JamesMGreene/qunit-reporter-junit/issues"
+  },
+  "license": {
+    "name": "MIT",
+    "url": "https://github.com/JamesMGreene/qunit-reporter-junit/blob/master/LICENSE.txt"
+  },
+  "keywords": [
+    "qunit",
+    "qunit-plugin",
+    "qunit-reporter",
+    "junit"
+  ],
+  "main": "qunit-reporter-junit.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-contrib-connect": "~0.7.0",
+    "grunt-contrib-jshint": "~0.9.0",
+    "grunt-git-authors": "~1.2.0",
+    "grunt-lib-phantomjs": "~0.6.0",
+    "qunitjs": "1.x"
+  },
+  "gitHead": "7b06015a2df2041b82eda11d4d402bed9088e0ba",
+  "_id": "qunit-reporter-junit@1.0.2",
+  "_shasum": "5b422841598b50e4638a465b63159d138f91b340",
+  "_from": "qunit-reporter-junit@*",
+  "_npmVersion": "1.4.28",
+  "_npmUser": {
+    "name": "jamesmgreene",
+    "email": "james.m.greene@gmail.com"
+  },
+  "dist": {
+    "shasum": "5b422841598b50e4638a465b63159d138f91b340",
+    "tarball": "http://registry.npmjs.org/qunit-reporter-junit/-/qunit-reporter-junit-1.0.2.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/qunit-reporter-junit/-/qunit-reporter-junit-1.0.2.tgz",
+  "readme": "ERROR: No README data found!"
+}

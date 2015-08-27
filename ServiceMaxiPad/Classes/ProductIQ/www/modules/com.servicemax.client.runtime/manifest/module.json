@@ -1,0 +1,38 @@
+
+{	"id" : "com.servicemax.client.runtime" , 
+	"name" : "ServiceMax Client Runtime",
+	"description" : "Provides the core runtime capabilities for ServiceMax client applications",
+	"version" : "1.0.0",
+	"module-activator" : "com.servicemax.client.runtime.impl.Module",
+	"load-at-startup" : "true",
+	
+	"depends" : [
+	
+	], 
+	
+	"declares" : [
+		{ "id" : "com.servicemax.client.runtime.application" },
+		{ "id" : "com.servicemax.client.runtime.uitheme" },
+		{ "id" : "com.servicemax.client.runtime.namedinstance" }
+	],
+	
+	"defines" : [
+	
+	],
+	
+	"services" : [
+		{ "id" : "com.servicemax.client.logging",        "class-name" : "com.servicemax.client.lib.services.LoggingService" },
+		{ "id" : "com.servicemax.client.resourceloader", "class-name" : "com.servicemax.client.lib.services.ResourceLoaderService" },
+		{ "id" : "com.servicemax.client.niservice",      "class-name" : "com.servicemax.client.runtime.impl.NamedInstanceService" },
+		{ "id" : "com.servicemax.client.themeservice",   "class-name" : "com.servicemax.client.runtime.impl.ThemeService" },
+		{ "id" : "com.servicemax.client.preferences",    "class-name" : "com.servicemax.client.runtime.impl.Preferences" }
+	],
+	
+	"scripts" : [
+		"api.js",
+		"impl.js",
+		"jsee/api.js",
+		"jsee/expressions.js",
+		"constants.js"
+	] 
+}
