@@ -57,6 +57,7 @@
     }
     
 }
+
 -(void)loadDataForTable:(NSString *)tableName
 {
     NSStringEncoding encoding;
@@ -73,13 +74,17 @@
         {
             
             NSString *StrValue=[NSString stringWithFormat:@"%@",[messArr objectAtIndex:i]];
-            StrValue=[StrValue stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-            StrValue=[StrValue stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            
             if (i==0)
             {
+                StrValue=[StrValue stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+                StrValue=[StrValue stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 fields = [StrValue componentsSeparatedByString:@"|"];
                 continue;
             }
+            
+//StrValue=[StrValue stringByReplacingOccurrencesOfString:@"\"\"" withString:@"\""];
+            StrValue=[StrValue stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             
             NSArray *arr=[StrValue componentsSeparatedByString:@"|"];
             
@@ -91,20 +96,75 @@
             NSString *tableFields = [fields componentsJoinedByString:@","];
             
             NSString *fieldValues=@"";
-
+            
             for (NSString *string in arr){
-               NSString *string2 = [string stringByReplacingOccurrencesOfString:@"'" withString:@" "];
-                fieldValues = [fieldValues stringByAppendingFormat:@"'%@',",string2];
+                //               NSString *string2 = [string stringByReplacingOccurrencesOfString:@"'" withString:@" "];
+                fieldValues = [fieldValues stringByAppendingFormat:@"%@,",string];
             }
-
+            
             fieldValues = [fieldValues substringToIndex:fieldValues.length-1];
             
             NSString *insertString = [NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)", tableName, tableFields, fieldValues];
-
+            
             [[DBManager getSharedInstance] executeQuery:insertString];
-
+            
         }
     }
 }
+
+
+//-(void)loadDataForTable:(NSString *)tableName
+//{
+//    NSStringEncoding encoding;
+//    NSString *path1=[[NSString alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:tableName ofType:@"csv"]  usedEncoding:&encoding error:nil];
+//    //You will get the array of lines
+//    NSArray *messArr=[path1 componentsSeparatedByString:@"\n"];
+//    
+//    
+//    NSArray *fields;
+//    //Now start to process each single line.
+//    if(messArr)
+//    {
+//        for(int i=0;i<=[messArr count]-1;i++)
+//        {
+//            
+//            NSString *StrValue=[NSString stringWithFormat:@"%@",[messArr objectAtIndex:i]];
+//            StrValue=[StrValue stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+//            StrValue=[StrValue stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//            if (i==0)
+//            {
+//                StrValue=[StrValue stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+//                StrValue=[StrValue stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//                fields = [StrValue componentsSeparatedByString:@"|"];
+//                continue;
+//            }
+//            
+//             StrValue=[StrValue stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//            
+//            NSArray *arr=[StrValue componentsSeparatedByString:@"|"];
+//            
+//            /*Add value for each column into dictionary*/
+//            if (arr.count !=fields.count) {
+//                continue;
+//            }
+//            
+//            NSString *tableFields = [fields componentsJoinedByString:@","];
+//            
+//            NSString *fieldValues=@"";
+//
+//            for (NSString *string in arr){
+////               NSString *string2 = [string stringByReplacingOccurrencesOfString:@"'" withString:@" "];
+//                fieldValues = [fieldValues stringByAppendingFormat:@"'%@',",string];
+//            }
+//
+//            fieldValues = [fieldValues substringToIndex:fieldValues.length-1];
+//            
+//            NSString *insertString = [NSString stringWithFormat:@"INSERT INTO %@ (%@) VALUES (%@)", tableName, tableFields, fieldValues];
+//
+//            [[DBManager getSharedInstance] executeQuery:insertString];
+//
+//        }
+//    }
+//}
 
 @end

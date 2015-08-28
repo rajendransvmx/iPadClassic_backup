@@ -56,24 +56,24 @@ static DBManager *sharedInstance = nil;
 {
     //Create Tables
     //DROP TABLE IF EXISTS 'ClientCache';
-    [self executeQuery:@"CREATE TABLE 'ClientCache' ( 'RecordId' INTEGER PRIMARY KEY AUTOINCREMENT, 'Key'	VARCHAR UNIQUE, 'Value'	VARCHAR);"];
+    [self createTableWithQuery:@"CREATE TABLE 'ClientCache' ( 'RecordId' INTEGER PRIMARY KEY AUTOINCREMENT, 'Key'	VARCHAR UNIQUE, 'Value'	VARCHAR);"];
     
-    [self executeQuery:@"CREATE TABLE 'ClientSyncConflict' ( 'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT, 'Id'	VARCHAR UNIQUE, 'ObjectName'	VARCHAR, 'Type'	VARCHAR, 'Message'	VARCHAR, 'CreatedDate'	VARCHAR, 'Action'	VARCHAR);"];
+    [self createTableWithQuery:@"CREATE TABLE 'ClientSyncConflict' ( 'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT, 'Id'	VARCHAR UNIQUE, 'ObjectName'	VARCHAR, 'Type'	VARCHAR, 'Message'	VARCHAR, 'CreatedDate'	VARCHAR, 'Action'	VARCHAR);"];
     
-    [self executeQuery:@"CREATE TABLE 'ClientSyncLog' ( 'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT, 'Id'	VARCHAR UNIQUE, 'ObjectName'	VARCHAR, 'Operation'	VARCHAR, 'LastModifiedDate'	VARCHAR, 'Pending'	VARCHAR);"];
+    [self createTableWithQuery:@"CREATE TABLE 'ClientSyncLog' ( 'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT, 'Id'	VARCHAR UNIQUE, 'ObjectName'	VARCHAR, 'Operation'	VARCHAR, 'LastModifiedDate'	VARCHAR, 'Pending'	VARCHAR);"];
     
-    [self executeQuery:@"CREATE TABLE 'ClientSyncLogTransient' ( 'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT, 'Id'	VARCHAR UNIQUE, 'ObjectName'	VARCHAR, 'Operation'	VARCHAR, 'LastModifiedDate'	VARCHAR, 'Pending'	VARCHAR);"];
+    [self createTableWithQuery:@"CREATE TABLE 'ClientSyncLogTransient' ( 'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT, 'Id'	VARCHAR UNIQUE, 'ObjectName'	VARCHAR, 'Operation'	VARCHAR, 'LastModifiedDate'	VARCHAR, 'Pending'	VARCHAR);"];
     
-    [self executeQuery:@"CREATE TABLE 'RecordName' ( 'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id'	VARCHAR UNIQUE,  'Name'	VARCHAR);"];
+    [self createTableWithQuery:@"CREATE TABLE 'RecordName' ( 'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id'	VARCHAR UNIQUE,  'Name'	VARCHAR);"];
     
-    [self executeQuery:@"CREATE TABLE 'Translations' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Key' VARCHAR,'Text' VARCHAR )"];
+    [self createTableWithQuery:@"CREATE TABLE 'Translations' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Key' VARCHAR,'Text' VARCHAR )"];
     
-    [self executeQuery:@"CREATE TABLE 'FieldDescribe' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'FieldName' VARCHAR,'DescribeResult' VARCHAR )"];
-    [self executeQuery:@"CREATE TABLE 'ObjectDescribe' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'ObjectName' VARCHAR UNIQUE ,'DescribeResult' VARCHAR )"];
+    [self createTableWithQuery:@"CREATE TABLE 'FieldDescribe' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'FieldName' VARCHAR,'DescribeResult' VARCHAR )"];
+    [self createTableWithQuery:@"CREATE TABLE 'ObjectDescribe' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'ObjectName' VARCHAR UNIQUE ,'DescribeResult' VARCHAR )"];
     
-    [self executeQuery:@"CREATE TABLE 'Configuration' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Type' VARCHAR,'Key' VARCHAR,'Value' VARCHAR )"];
+    [self createTableWithQuery:@"CREATE TABLE 'Configuration' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Type' VARCHAR,'Key' VARCHAR,'Value' VARCHAR )"];
     
-    [self executeQuery:@"CREATE TABLE  'SVMXC__Sub_Location__c ' (  'RecordId '	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id '	VARCHAR UNIQUE,  'OwnerId '	VARCHAR,  'IsDeleted '	VARCHAR,  'Name '	VARCHAR,  'CurrencyIsoCode '	VARCHAR,  'CreatedDate '	VARCHAR,  'CreatedById '	VARCHAR,  'LastModifiedDate '	VARCHAR,  'LastModifiedById '	VARCHAR,  'SystemModstamp '	VARCHAR,  'LastActivityDate '	VARCHAR,  'MayEdit '	VARCHAR,  'IsLocked '	VARCHAR,  'SVMXC__Account__c '	VARCHAR,  'SVMXC__City__c '	VARCHAR,  'SVMXC__Country__c '	VARCHAR,  'SVMXC__Email__c '	VARCHAR,  'SVMXC__Fax__c '	VARCHAR,  'SVMXC__Latitude__c '	VARCHAR,  'SVMXC__Location__c '	VARCHAR,  'SVMXC__Longitude__c '	VARCHAR,  'SVMXC__Parent__c '	VARCHAR,  'SVMXC__Phone__c '	VARCHAR,  'SVMXC__State__c '	VARCHAR,  'SVMXC__Street__c '	VARCHAR,  'SVMXC__Web_site__c '	VARCHAR,  'SVMXC__Zip__c '	VARCHAR );"];
+    [self createTableWithQuery:@"CREATE TABLE  'SVMXC__Sub_Location__c' (  'RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id'	VARCHAR UNIQUE,  'OwnerId'	VARCHAR,  'IsDeleted'	VARCHAR,  'Name'	VARCHAR,  'CurrencyIsoCode'	VARCHAR,  'CreatedDate'	VARCHAR,  'CreatedById'	VARCHAR,  'LastModifiedDate'	VARCHAR,  'LastModifiedById'	VARCHAR,  'SystemModstamp'	VARCHAR,  'LastActivityDate '	VARCHAR,  'MayEdit '	VARCHAR,  'IsLocked '	VARCHAR,  'SVMXC__Account__c '	VARCHAR,  'SVMXC__City__c'	VARCHAR,  'SVMXC__Country__c'	VARCHAR,  'SVMXC__Email__c'	VARCHAR,  'SVMXC__Fax__c'	VARCHAR,  'SVMXC__Latitude__c'	VARCHAR,  'SVMXC__Location__c'	VARCHAR,  'SVMXC__Longitude__c'	VARCHAR,  'SVMXC__Parent__c'	VARCHAR,  'SVMXC__Phone__c'	VARCHAR,  'SVMXC__State__c'	VARCHAR,  'SVMXC__Street__c'	VARCHAR,  'SVMXC__Web_site__c'	VARCHAR,  'SVMXC__Zip__c'	VARCHAR );"];
     
 //    [self executeQuery:@"CREATE TABLE  'Product2 ' (  'RecordId '	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id '	VARCHAR UNIQUE,  'Name '	VARCHAR,  'ProductCode '	VARCHAR,  'Description '	VARCHAR,  'IsActive '	VARCHAR,  'CreatedDate '	VARCHAR,  'CreatedById '	VARCHAR,  'LastModifiedDate '	VARCHAR,  'LastModifiedById '	VARCHAR,  'SystemModstamp '	VARCHAR,  'Family '	VARCHAR,  'CurrencyIsoCode '	VARCHAR,  'IsDeleted '	VARCHAR,  'MayEdit '	VARCHAR,  'IsLocked '	VARCHAR,  'SVMXC__Enable_Serialized_Tracking__c '	VARCHAR,  'SVMXC__Inherit_Parent_Warranty__c '	VARCHAR,  'SVMXC__Product_Cost__c '	VARCHAR,  'SVMXC__Product_Line__c '	VARCHAR,  'SVMXC__Select__c '	VARCHAR,  'SVMXC__Stockable__c '	VARCHAR,  'SVMXC__Tracking__c '	VARCHAR,  'SVMXC__Unit_Of_Measure__c '	VARCHAR,  'SVMXC__Replacement_Available__c '	VARCHAR,  'Brand__c '	VARCHAR,  'CommercialReference__c '	VARCHAR,  'DeviceType__c '	VARCHAR,  'EndOfCommercialisation_Date__c '	VARCHAR,  'EndOfLifeDate__c '	VARCHAR,  'Note__c '	VARCHAR,  'Range__c '	VARCHAR,  'SDHProductName__c '	VARCHAR,  'SKU__c '	VARCHAR,  'ServiceObsolecenseDate__c '	VARCHAR,  'Serviceability__c '	VARCHAR,  'SubType__c '	VARCHAR,  'Download_to_Mobile__c '	VARCHAR,  'Traceability__c '	VARCHAR,  'Type__c '	VARCHAR,  'UsefullLifeDuration__c '	VARCHAR,  'WithdrawalDate__c '	VARCHAR,  'Brand2__c '	VARCHAR,  'DeviceType2__c '	VARCHAR,  'ExtProductId__c '	VARCHAR,  'RangeLabel__c '	VARCHAR,  'SDHCategoryIdLabel__c '	VARCHAR,  'SDHCategoryId__c '	VARCHAR,  'SKULabel__c '	VARCHAR,  'SubTypeLabel__c '	VARCHAR,  'TECH_DownloadOffline__c '	VARCHAR,  'TECH_SDHQUERYAction__c '	VARCHAR,  'TypeLabel__c '	VARCHAR,  'CategoryId__c '	VARCHAR,  'SE_Material_Id__c '	VARCHAR,  'TECH_IsEnriched__c '	VARCHAR,  'TECH_SDHBRANDID__c '	VARCHAR,  'TECH_SDHCategoryId__c '	VARCHAR,  'TECH_SDHDEVICETYPEID__c '	VARCHAR,  'TECH_isCompetitor__c '	VARCHAR,  'BarcodeCategory__c '	VARCHAR,  'BarcodeNumber__c '	VARCHAR,  'BigMachines__Part_Number__c '	VARCHAR,  'BusinessType__c '	VARCHAR,  'CatalogReference__c '	VARCHAR,  'CommercialStatus__c '	VARCHAR,  'CommercialStatusDate__c '	VARCHAR,  'DimensionUnit__c '	VARCHAR,  'GrossWeight__c '	VARCHAR,  'Height__c '	VARCHAR,  'Length__c '	VARCHAR,  'NetWeight__c '	VARCHAR,  'ProductGDP__c '	VARCHAR,  'PublisherofGolden__c '	VARCHAR,  'SDHIntegrationID__c '	VARCHAR,  'SDHVersion__c '	VARCHAR,  'UniqueMaterialID__c '	VARCHAR,  'Volume__c '	VARCHAR,  'VolumeUnit__c '	VARCHAR,  'WeightUnit__c '	VARCHAR,  'Width__c '	VARCHAR,  'BusinessUnit__c '	VARCHAR,  'EndofCommercializationDate__c '	VARCHAR,  'FamilyName__c '	VARCHAR,  'FirstPublisherName__c '	VARCHAR,  'GDPGMR__c '	VARCHAR,  'GlobalOffer__c '	VARCHAR,  'ProductFamilyId__c '	VARCHAR,  'ProductFamilyName__c '	VARCHAR,  'ProductFamily__c '	VARCHAR,  'ProductLine__c '	VARCHAR,  'SchneiderUniqueReference__c '	VARCHAR,  'SourceKeyMaterial__c '	VARCHAR,  'SubstitutionReference__c '	VARCHAR,  'TECH_SDHVersion__c '	VARCHAR,  'Tech_PWP_Country__c '	VARCHAR,  'UnitofMeasure__c '	VARCHAR,  'isDiscontinued__c '	VARCHAR,  'isDocumentationFormula__c '	VARCHAR,  'isMarketingDocumentation__c '	VARCHAR,  'isOldFormula__c '	VARCHAR,  'isOld__c '	VARCHAR,  'isSparePartFormula__c '	VARCHAR,  'isSparePart__c '	VARCHAR,  'productgdpgmr__c '	VARCHAR,  'Cache_BusinessUnit__c '	VARCHAR,  'Cache_Family__c '	VARCHAR,  'Cache_ProductFamily__c '	VARCHAR,  'Cache_ProductLine__c '	VARCHAR,  'City__c '	VARCHAR,  'Tech_Concatenate__c '	VARCHAR,  'service_plan__c '	VARCHAR,  'RenewableService__c '	VARCHAR);"];
     
@@ -82,6 +82,26 @@ static DBManager *sharedInstance = nil;
     
 //    [self executeQuery:@"CREATE TABLE  'SVMXC__Site__c ' (  'RecordId '	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id '	VARCHAR UNIQUE,  'OwnerId '	VARCHAR,  'IsDeleted '	VARCHAR,  'Name '	VARCHAR,  'CurrencyIsoCode '	VARCHAR,  'RecordTypeId '	VARCHAR,  'CreatedDate '	VARCHAR,  'CreatedById '	VARCHAR,  'LastModifiedDate '	VARCHAR,  'LastModifiedById '	VARCHAR,  'SystemModstamp '	VARCHAR,  'LastActivityDate '	VARCHAR,  'MayEdit '	VARCHAR,  'IsLocked '	VARCHAR,  'LastViewedDate '	VARCHAR,  'LastReferencedDate '	VARCHAR,  'SVMXC__Account__c '	VARCHAR,  'SVMXC__City__c '	VARCHAR,  'SVMXC__Costed_at_value__c '	VARCHAR,  'SVMXC__Country__c '	VARCHAR,  'SVMXC__Email__c '	VARCHAR,  'SVMXC__Inventory_Account__c '	VARCHAR,  'SVMXC__IsPartnerRecord__c '	VARCHAR,  'SVMXC__IsPartner__c '	VARCHAR,  'SVMXC__Latitude__c '	VARCHAR,  'SVMXC__Longitude__c '	VARCHAR,  'SVMXC__Partner_Account__c '	VARCHAR,  'SVMXC__Partner_Contact__c '	VARCHAR,  'SVMXC__Service_Engineer__c '	VARCHAR,  'SVMXC__Site_Fax__c '	VARCHAR,  'SVMXC__Site_Phone__c '	VARCHAR,  'SVMXC__State__c '	VARCHAR,  'SVMXC__Stocking_Location__c '	VARCHAR,  'SVMXC__Street__c '	VARCHAR,  'SVMXC__Web_site__c '	VARCHAR,  'SVMXC__Zip__c '	VARCHAR,  'SVMXC__IsDefault_Delivery__c '	VARCHAR,  'SVMXC__IsDelivery_Location__c '	VARCHAR,  'SVMXC__IsGood_Stock__c '	VARCHAR,  'SVMXC__IsReceiving_Location__c '	VARCHAR,  'SVMXC__IsRepair_Location__c '	VARCHAR,  'SVMXC__IsStaging_Location__c '	VARCHAR,  'SVMXC__Location_Type__c '	VARCHAR,  'SVMXC__Parent__c '	VARCHAR,  'AccountName__c '	VARCHAR,  'AdditionalInfoAddressForFSE__c '	VARCHAR,  'AdditionalRequirements__c '	VARCHAR,  'AddressLine2__c '	VARCHAR,  'AirConditionning__c '	VARCHAR,  'AirDryerInTheSubstation__c '	VARCHAR,  'AutoAssignmentEnabled__c '	VARCHAR,  'CableTypeForNetwork__c '	VARCHAR,  'CustomerLocationNamingConvention__c '	VARCHAR,  'EnvironmentStressLevel__c '	VARCHAR,  'FifthPreferredTechnician__c '	VARCHAR,  'FourthPreferredTechnician__c '	VARCHAR,  'GoldenLocationId__c '	VARCHAR,  'HabilitationSubType__c '	VARCHAR,  'HabilitationType__c '	VARCHAR,  'Habilitation_Name__c '	VARCHAR,  'HealthAndSafety__c '	VARCHAR,  'Heating__c '	VARCHAR,  'HumidityValue__c '	VARCHAR,  'Inactive__c '	VARCHAR,  'IpAddressForNetwork__c '	VARCHAR,  'Language__c '	VARCHAR,  'LocalisationInformation__c '	VARCHAR,  'LocationAccessibiltyInformation__c '	VARCHAR,  'LocationCountry__c '	VARCHAR,  'LocationFunction__c '	VARCHAR,  'LocationNotes__c '	VARCHAR,  'LocationTechnicalCaracteristics__c '	VARCHAR,  'Location_Typology__c '	VARCHAR,  'NetworkSpeedUoM__c '	VARCHAR,  'TECH_CreateFromWS_IP__c '	VARCHAR,  'OverheadCabling__c '	VARCHAR,  'PUE__c '	VARCHAR,  'PreferredFSE__c '	VARCHAR,  'ProtocolOfNetwork__c '	VARCHAR,  'RaisedFloor__c '	VARCHAR,  'SecondPreferredFSE__c '	VARCHAR,  'SiteSpecificComments__c '	VARCHAR,  'SixthPreferredTechnician__c '	VARCHAR,  'StateProvince__c '	VARCHAR,  'SubType_Of_Location__c '	VARCHAR,  'TECH_Customer_Location__c '	VARCHAR,  'TECH_IsLocationReadOnly__c '	VARCHAR,  'TemperatureUnitOfMessure__c '	VARCHAR,  'Temperature__c '	VARCHAR,  'ThirdPreferredFSE__c '	VARCHAR,  'TimeZone__c '	VARCHAR,  'ToDelete__c '	VARCHAR,  'Valid__c '	VARCHAR,  'ValidationError__c '	VARCHAR,  'Ventilation__c '	VARCHAR,  'Certification_Business_Unit__c '	VARCHAR,  'Country_Name__c '	VARCHAR,  'NetworkSpeed__c '	VARCHAR,  'Parent_Hierarchy__c '	VARCHAR,  'PrimaryLocation__c '	VARCHAR,  'SAP_Instance__c '	VARCHAR,  'SAP_Plant_ID__c '	VARCHAR,  'SAP_Storage_Location_ID__c '	VARCHAR,  'Stock_Location_Type__c '	VARCHAR,  'TECH_CurrentUserSesa__c '	VARCHAR,  'TECH_IsCoveredByHRequirement__c '	VARCHAR,  'TECH_SDHGoldenVersion__c '	VARCHAR,  'TECH_SDHPublisherMaster__c '	VARCHAR,  'Top_Level_Location__c '	VARCHAR,  'Top_Level_Parent__c '	VARCHAR,  'Top_Parent__c '	VARCHAR,  'TECH_LocDeletionDate__c '	VARCHAR,  'TECH_LocSendToBatch__c '	VARCHAR,  'TECH_isAddressSynchedWithAccount__c '	VARCHAR,  'ValidTimeZone__c '	VARCHAR,  'SVMXC__Preferred_Business_Hours__c '	VARCHAR,  'VIPIcon__c '	VARCHAR,  'VIPStatus__c '	VARCHAR,  'TECH_CountryCode__c '	VARCHAR);"];
 
+}
+
+- (void)createTableWithQuery:(NSString*)query {
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        __block BOOL sucessFull = NO;
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            sucessFull = [db executeUpdate:query];
+            
+            if (!sucessFull)
+            {
+                if ([db hadError])
+                {
+                    NSLog(@"Create table failed with error : %@ ", [db lastErrorMessage]);
+                }
+            }
+        }];
+        
+    }
 }
 
 -(NSMutableArray *)executeQuery:(NSString *)query {
@@ -93,15 +113,19 @@ static DBManager *sharedInstance = nil;
         
         [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
             
-            SQLResultSet * resultSet = [db executeQuery:query];
-            
-            while ([resultSet next]) {
+            if(![query hasPrefix:@"DROP"]) {
+                SQLResultSet * resultSet = [db executeQuery:query];
                 
-                NSDictionary * dict = [resultSet resultDictionary];
-                [records addObject:dict];
+                while ([resultSet next]) {
+                    
+                    NSDictionary * dict = [resultSet resultDictionary];
+                    [records addObject:dict];
+                    
+                }
+                [resultSet close];
 
             }
-            [resultSet close];
+            
         }];
     }
     return records;
