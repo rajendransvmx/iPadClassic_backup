@@ -227,7 +227,7 @@
     if(![[NSFileManager defaultManager] fileExistsAtPath:pathToCheck]) // If core library already exists then DONOT unzip
     {
         //        [UnzipUtility unzipBundledStaticResourceAtPath:[FileManager getCoreLibSubDirectoryPath]];
-        NSString *filepath = [[NSBundle mainBundle] pathForResource:@"js" ofType:@"zip"];
+        NSString *filepath = [[NSBundle mainBundle] pathForResource:@"www" ofType:@"zip"];
         [UnzipUtility unzipFileAtPath:filepath toFolder:pathToCheck];
         
     }

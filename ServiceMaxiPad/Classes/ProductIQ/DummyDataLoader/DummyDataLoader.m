@@ -18,7 +18,7 @@
     NSMutableArray *data = [[DBManager getSharedInstance] executeQuery:query];
 
     if (data.count) {
-        return;
+//        return;
     }
 //    [self createTestTables];
     NSArray *lTableArray = @[@"ObjectDescribe",@"Configuration", @"RecordName", @"Translations"];

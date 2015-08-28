@@ -251,7 +251,7 @@ NSString *const kDatabaseEncryptedDBName       = @"encrypted";
 {
     NSString *databasePath = [[FileManager getRootPath] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", kMainDatabaseFileName, kMainDatabaseFileExtension]];
     
-    //NSLog(@"PrimaryDatabasePath Path : %@", databasePath);
+    NSLog(@"PrimaryDatabasePath Path : %@", databasePath);
     return databasePath;
 }
 

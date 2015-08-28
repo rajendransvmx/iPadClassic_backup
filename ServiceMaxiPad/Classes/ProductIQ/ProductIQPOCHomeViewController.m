@@ -9,7 +9,7 @@
 #import "ProductIQPOCHomeViewController.h"
 #import "CustomerOrgInfo.h"
 #import "DBManager.h"
-//#import "ProductIQDataLoader.h"
+#import "FileManager.h"
 
 @interface ProductIQPOCHomeViewController ()
 
@@ -199,8 +199,10 @@ static  ProductIQPOCHomeViewController *instance;
 // END - webview events
 
 - (void)startApplicationload:(NSString *)successUrl {
-    //NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"www"]];
-    NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"installigence-index" ofType:@"html" inDirectory:@"www"]];
+
+    NSURL *url = [NSURL fileURLWithPath:[self htmlPath]];
+
+//    NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"installigence-index" ofType:@"html" inDirectory:@"www"]];
     
     NSURL *u = [[NSURL alloc]initWithString:successUrl];
     NSString *f = u.fragment;
@@ -223,8 +225,18 @@ static  ProductIQPOCHomeViewController *instance;
     accessToken = [[CustomerOrgInfo sharedInstance] accessToken];
     instanceUrl = [[CustomerOrgInfo sharedInstance] instanceURL];
 
-    NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"installigence-index" ofType:@"html" inDirectory:@"www"]];
+    NSURL *url = [NSURL fileURLWithPath:[self htmlPath]];
     [webview loadRequest:[NSURLRequest requestWithURL:url]];
+}
+
+-(NSString *)htmlPath
+{
+    NSString *corelibDir = [FileManager getCoreLibSubDirectoryPath];
+    corelibDir = [corelibDir stringByAppendingPathComponent:@"PRODUCTJS"];
+    corelibDir = [corelibDir stringByAppendingPathComponent:@"www"];
+    
+    NSString *htmlfilepath = [corelibDir stringByAppendingPathComponent:@"installigence-index.html"];
+    return htmlfilepath;
 }
 
 - (void)handleNativeCall:(NSString *)url {
