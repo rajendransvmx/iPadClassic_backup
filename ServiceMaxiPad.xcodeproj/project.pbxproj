@@ -603,6 +603,7 @@
 		185C71661B8DC26000046759 /* SVMXGetPriceList.m in Sources */ = {isa = PBXBuildFile; fileRef = 185C71651B8DC26000046759 /* SVMXGetPriceList.m */; };
 		18619BCD1AA7217500C77276 /* PushNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18619BCC1AA7217500C77276 /* PushNotificationManager.m */; };
 		18619BD01AA72CCD00C77276 /* PushNotificationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 18619BCF1AA72CCD00C77276 /* PushNotificationQueue.m */; };
+		186984691B8F002800F9E636 /* SVMXGetPriceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 186984681B8F002800F9E636 /* SVMXGetPriceModel.m */; };
 		186CDD7E1A023FE400DC93DA /* SMLocalNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 186CDD7D1A023FE400DC93DA /* SMLocalNotificationManager.m */; };
 		186CDD811A02421C00DC93DA /* SMLocalNotificationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 186CDD801A02421C00DC93DA /* SMLocalNotificationHelper.m */; };
 		186CDD841A025D6F00DC93DA /* LocalNotificationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 186CDD831A025D6F00DC93DA /* LocalNotificationModel.m */; };
@@ -2210,6 +2211,8 @@
 		18619BCC1AA7217500C77276 /* PushNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationManager.m; sourceTree = "<group>"; };
 		18619BCE1AA72CCD00C77276 /* PushNotificationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationQueue.h; sourceTree = "<group>"; };
 		18619BCF1AA72CCD00C77276 /* PushNotificationQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationQueue.m; sourceTree = "<group>"; };
+		186984671B8F002800F9E636 /* SVMXGetPriceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXGetPriceModel.h; sourceTree = "<group>"; };
+		186984681B8F002800F9E636 /* SVMXGetPriceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXGetPriceModel.m; sourceTree = "<group>"; };
 		186CDD7C1A023FE400DC93DA /* SMLocalNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMLocalNotificationManager.h; sourceTree = "<group>"; };
 		186CDD7D1A023FE400DC93DA /* SMLocalNotificationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMLocalNotificationManager.m; sourceTree = "<group>"; };
 		186CDD7F1A02421C00DC93DA /* SMLocalNotificationHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMLocalNotificationHelper.h; sourceTree = "<group>"; };
@@ -3959,6 +3962,8 @@
 				C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */,
 				185C71641B8DC26000046759 /* SVMXGetPriceList.h */,
 				185C71651B8DC26000046759 /* SVMXGetPriceList.m */,
+				186984671B8F002800F9E636 /* SVMXGetPriceModel.h */,
+				186984681B8F002800F9E636 /* SVMXGetPriceModel.m */,
 				183A9FA019E6B18500919345 /* AttachmentServiceLayer.h */,
 				183A9FA119E6B18500919345 /* AttachmentServiceLayer.m */,
 				183A9FA219E6B18500919345 /* BaseServiceLayer.h */,
@@ -7450,6 +7455,7 @@
 				183A996F19E6602400919345 /* StyleGuideConstants.m in Sources */,
 				183A9E1919E69DB000919345 /* AttachmentErrorModel.m in Sources */,
 				183A9A0319E68BC700919345 /* SMProgressAlertView.m in Sources */,
+				186984691B8F002800F9E636 /* SVMXGetPriceModel.m in Sources */,
 				183A9E3519E69DB000919345 /* ServiceReportLogoModel.m in Sources */,
 				5B8286721A01FDB100C91854 /* RecentsPlistUtility.m in Sources */,
 				183A9E4E19E69DB000919345 /* SFRecordTypeModel.m in Sources */,
