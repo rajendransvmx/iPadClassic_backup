@@ -11,6 +11,6 @@
 
 @interface SVMXGetPriceList : NSObject
 
--(NSArray *)getDistinctProductIds;
--(NSArray *)getDistinctDataCustomPriceBookIds;
+-(NSArray *)getPricebookIds;
+-(NSArray *)getServicePricebookIds;
 @end

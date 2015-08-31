@@ -21,6 +21,7 @@
 #import "SyncConstants.h"
 #import "SyncHeapService.h"
 #import "SVMXGetPriceList.h"
+#import "SVMXGetPriceModel.h"
 
 @interface IncrementalSyncRequestParamHelper ()
 
@@ -465,26 +466,26 @@
 }
 -(NSArray*)getPricebookIds
 {
-    NSArray *sfidsArray = [[NSArray alloc] init];
-    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    NSMutableArray *sfidsArray = [[NSMutableArray alloc] init];
     SVMXGetPriceList *list = [[SVMXGetPriceList alloc] init];
-    [list getDistinctProductIds];
-    if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
-        sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"PRICEBOOK_IDs"
-                                                            forLimit:0 forParallelSyncType:kParallelGetPriceSync];
+    NSArray *sfidsArrayObj = [list getPricebookIds];
+    for(SVMXGetPriceModel *iDs in sfidsArrayObj) {
+        if (iDs) {
+            [sfidsArray addObject:iDs.Id];
+        }
     }
     return sfidsArray;
 }
 
 -(NSArray*)getServicePricebookIds
 {
-    NSArray *sfidsArray = [[NSArray alloc] init];
-    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    NSMutableArray *sfidsArray = [[NSMutableArray alloc] init];
     SVMXGetPriceList *list = [[SVMXGetPriceList alloc] init];
-    [list getDistinctDataCustomPriceBookIds];
-    if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
-        sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"SERVICE_PRICEBOOK_IDs"
-                                                            forLimit:0 forParallelSyncType:kParallelGetPriceSync];
+    NSArray *sfidsArrayObj = [list getServicePricebookIds];
+    for(SVMXGetPriceModel *iDs in sfidsArrayObj) {
+        if (iDs) {
+            [sfidsArray addObject:iDs.Id];
+        }
     }
     return sfidsArray;
 }

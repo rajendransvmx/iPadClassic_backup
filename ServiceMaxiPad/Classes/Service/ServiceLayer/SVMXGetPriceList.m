@@ -13,29 +13,30 @@
 #import "DatabaseManager.h"
 #import "SyncRecordHeapModel.h"
 #import "SVMXSystemConstant.h"
+#import "SVMXGetPriceModel.h"
 
 @implementation SVMXGetPriceList
 
--(NSArray *)getDistinctProductIds
+-(NSArray *)getPricebookIds
 {
-//    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kDataPurgePriceBook andFieldNames:[NSArray arrayWithObjects:kId, nil] whereCriteria:nil];
-//    
-//    [requestSelect setDistinctRowsOnly];
-//    
-//    return [self getRecordsFromQuery:[requestSelect query]];
-//    
-//    return nil;
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kDataPurgePriceBook andFieldNames:[NSArray arrayWithObjects:kId, nil] whereCriteria:nil];
+    
+    [requestSelect setDistinctRowsOnly];
+    
+    return [self getRecordsFromQuery:[requestSelect query]];
+    
+    return nil;
     return @[];
 }
--(NSArray *)getDistinctDataCustomPriceBookIds
+-(NSArray *)getServicePricebookIds
 {
-//    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kDataPurgeCustomPriceBook andFieldNames:[NSArray arrayWithObjects:kId, nil] whereCriteria:nil];
-//    
-//    [requestSelect setDistinctRowsOnly];
-//    
-//    return [self getRecordsFromQuery:[requestSelect query]];
-//    
-//    return nil;
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kDataPurgeCustomPriceBook andFieldNames:[NSArray arrayWithObjects:kId, nil] whereCriteria:nil];
+    
+    [requestSelect setDistinctRowsOnly];
+    
+    return [self getRecordsFromQuery:[requestSelect query]];
+    
+    return nil;
     return @[];
 }
 
@@ -49,7 +50,7 @@
             SQLResultSet * resultSet = [db executeQuery:query];
             
             while ([resultSet next]) {
-                SyncRecordHeapModel * model = [[SyncRecordHeapModel alloc] init];
+                SVMXGetPriceModel * model = [[SVMXGetPriceModel alloc] init];
                 [resultSet kvcMagic:model];
                 [records addObject:model];
             }
