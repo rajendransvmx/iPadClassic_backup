@@ -1,10 +1,10 @@
 
 --------------------------------------------------------------------------------------------
-ServiceMax iPad Sum15Build
+ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.50.005
+Version = 15.99.001
 
 ===========================================
 
@@ -12,13 +12,16 @@ Version = 15.50.005
 Fixed Defects
 
 -------------
-021348 
+
+1.Integrated ProductIQ with Servicemax iPad app.
+2.Created ProductIQ tables as part of our actual sfm.sqlite database.
+3.Populating preloaded data from sfm database.
 
 -------------
 
-Note:
-1. SVMXC namespace.
 
+NOTE:
+Name Space: SVMXDEV
 
 
 
