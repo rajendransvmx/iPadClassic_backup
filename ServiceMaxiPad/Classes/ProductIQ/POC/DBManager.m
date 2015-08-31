@@ -17,7 +17,7 @@ static DBManager *sharedInstance = nil;
     if (!sharedInstance) {
         sharedInstance = [[super allocWithZone:NULL]init];
 //        [sharedInstance createDB];
-        [sharedInstance createTestTables];
+//        [sharedInstance createTestTables];
 
     }
     return sharedInstance;
@@ -40,8 +40,7 @@ static DBManager *sharedInstance = nil;
         const char *dbpath = [databasePath UTF8String];
         if (sqlite3_open(dbpath, &database) == SQLITE_OK) {
             sqlite3_close(database);
-            [sharedInstance createTestTables];
-
+            
             return  isSuccess;
         } else {
             isSuccess = NO;

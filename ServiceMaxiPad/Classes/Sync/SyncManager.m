@@ -1257,8 +1257,6 @@ static SyncManager *_instance;
     
     [self loadDummyData];
     
-
-
     [self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
     [self updatePlistWithLastConfigSyncTimeAndStatus:kSuccess];
     [[SMDataPurgeManager sharedInstance] initiateAllDataPurgeProcess];
@@ -1282,7 +1280,6 @@ static SyncManager *_instance;
 {
     
     DummyDataLoader *ldummyDataLoader = [[DummyDataLoader alloc] init];
-    
     [ldummyDataLoader loadDataIntables];
     
 }
