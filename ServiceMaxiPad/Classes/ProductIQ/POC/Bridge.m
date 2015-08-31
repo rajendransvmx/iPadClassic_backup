@@ -7,11 +7,12 @@
 //
 
 #import "Bridge.h"
+#import "StringUtil.h"
 
 @implementation Bridge
 
 - (void)invoke:(NSString *)input {
-    if ([input containsString:@"SELECT"]) {
+    if ([StringUtil containsString:@"SELECT" inString:input]) {
         NSLog(@"input:%@",input);
         NSLog(@"Testing");
     }
