@@ -3,13 +3,13 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.032
+Version = 15.20.033
 ===========================================
 -------------
 Fixed Defects
 -------------
 
-1. 17934-Signatures coming up as a Tree image on the online server, after the user generates the Smart Docs in iPad.
+1. 018955 - Service Reports are not appearing in the browser following an aggressive /data sync
 
 -------------
 Known Issues
