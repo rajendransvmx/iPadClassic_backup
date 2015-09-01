@@ -61,7 +61,7 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 	[request setHTTPBody:data];
     request.timeoutInterval = [Utility requestTimeOutValueFromSetting];
     
-    NSLog(@"request timeout: %f", request.timeoutInterval);
+    SXLogDebug(@"OPD: SET timeout: %f", request.timeoutInterval);
     
 	if(self.logXMLInOut) {
 		//undochangespushpak

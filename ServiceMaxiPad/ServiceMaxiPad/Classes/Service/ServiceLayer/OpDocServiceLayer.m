@@ -356,7 +356,7 @@
 
         if(successStatus)
         {
-            SXLogInfo(@"Generate PDF Successful");
+            SXLogInfo(@"OPD: Generate PDF Successful");
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:YES];
 
             NSArray *ResponseForSubmitArray = [responseDict objectForKey:@"valueMap"];
@@ -382,7 +382,7 @@
         else
         {
             //TODO: What if success is 0?
-            SXLogWarning(@"Generate PDF failed.");
+            SXLogWarning(@"OPD: Generate PDF failed.");
 
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
         }
@@ -398,6 +398,7 @@
     
     if (self.requestType == RequestTypeCheckOPDOCUploadStatus) {
         
+        SXLogDebug(@"OPD: RequestTypeCheckOPDOCUploadStatus request");
         
         param = [[RequestParamModel alloc] init];
         param.value = [[OpDocHelper sharedManager] getQueryForCheckingOPDOCFileUploadStatus];
@@ -445,6 +446,8 @@
         param = [[RequestParamModel alloc] init];
         param.values = array;
         param.context = dict;
+        
+        SXLogDebug(@"OPD: RequestTypeOpDocUploading request");
 
     }
     else if (self.requestType == RequestTypeOPDocHTMLAndSignatureSubmit){ // For SUBMITTING the list of HTML and Signature files to Server
@@ -473,6 +476,8 @@
         param = [[RequestParamModel alloc] init];
         param.valueMap = @[htmlValueMap, signatureValueMap];
         
+        SXLogDebug(@"OPD: RequestTypeOPDocHTMLAndSignatureSubmit request");
+        
     }
     else if (self.requestType == RequestTypeOPDocGeneratePDF){  // For Generating the PDF in the server of the HTML File Submitted already.
         
@@ -493,6 +498,8 @@
         
         param = [[RequestParamModel alloc] init];
         param.valueMap = @[htmlValueMap, signatureValueMap];
+        
+        SXLogDebug(@"OPD: RequestTypeOPDocGeneratePDF request");
         
     }
     

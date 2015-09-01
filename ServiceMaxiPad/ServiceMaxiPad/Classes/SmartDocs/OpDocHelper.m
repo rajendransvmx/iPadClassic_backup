@@ -71,12 +71,16 @@
     if (_OpDocSyncInProgress)
         return;
     
+    SXLogDebug(@"OPD: Initiate OPDoc Upload");
+    
     _OpDocSyncInProgress = YES;
     
     if (cHtmlListArray) {
         cHtmlListArray = nil;
     }
     cHtmlListArray = [[NSMutableArray alloc] initWithArray:[self getHTMLFileList]];
+    
+    SXLogDebug(@"OPD: Upload count: %d", [cHtmlListArray count]);
 
     [self getSignaturesAndMakeADictOfHTMLSignToUpload];
     
@@ -153,7 +157,7 @@
 
 -(void)initiateDocumentSubmissionProcess
 {
-    SXLogDebug(@"initiateDocumentSubmissionProcess");
+    SXLogDebug(@"OPD: initiateDocumentSubmissionProcess");
     if (cHtmlListArray.count) {
         cSignatureAndHTMLSubmitListDictionary = [self getSignatureAndHTMLSFIDListForHtmlFile:[cHtmlListArray objectAtIndex:0]];
     }
@@ -161,7 +165,7 @@
     else{
         // For failed Cases in the previous cycles.
         
-        SXLogDebug(@"DOC SUB for previously failed cases.");
+        SXLogDebug(@"OPD: DOC SUB for previously failed cases.");
 
         if (!cFailedInPreviousProcessHTMLListArray) {
             cFailedInPreviousProcessHTMLListArray = [[NSMutableArray alloc] initWithArray:[self getHTMLListForDocSubmission]];
@@ -287,6 +291,8 @@
 {
     //Initiate SYncing for the next HTML file and its associated signatures.
     
+    SXLogDebug(@"OPD: initiate next report");
+    
     if (cHtmlListArray.count) {
         [cHtmlListArray removeObjectAtIndex:0];
 
@@ -295,6 +301,8 @@
             _resetTheQueueAsOneMoreSyncIsTriggered = NO;
         }
     }
+    
+    SXLogDebug(@"OPD: current count: %d", [cHtmlListArray count]);
     
     if (cHtmlListArray.count) {
         [self getSignaturesAndMakeADictOfHTMLSignToUpload];
