@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "EditMenuLabel.h"
 typedef enum {
     CellTypeNonEditableTextViewField,
     CellTypeNonEditableTextField,
@@ -37,7 +37,7 @@ typedef enum {
 @property (nonatomic, assign) id<SFMCollectionViewCellDelegate> delegate;
 
 @property (nonatomic, strong) NSIndexPath *indexPath;
-@property (nonatomic, strong) UILabel *nameField;
+@property (nonatomic, strong) EditMenuLabel *nameField;
 @property(nonatomic,assign)BOOL shouldShowAsteric;
 
 
