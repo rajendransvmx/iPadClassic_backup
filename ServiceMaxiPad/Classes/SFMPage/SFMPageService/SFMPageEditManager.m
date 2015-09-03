@@ -2767,6 +2767,17 @@
     else if([sfmPageField.dataType isEqualToString:kSfDTPicklist] || [sfmPageField.dataType isEqualToString:kSfDTMultiPicklist]) {
         recordField.displayValue = value;
     }
+    
+    else if ([sfmPageField.dataType isEqualToString:kSfDTCurrency] || [sfmPageField.dataType isEqualToString:kSfDTDouble] || [sfmPageField.dataType isEqualToString:kSfDTPercent]) {
+        
+        if (![StringUtil isStringEmpty:value]) {
+            double valueInDouble = [value doubleValue];
+            value  = [[NSString alloc] initWithFormat:@"%.*f",sfmPageField.scale.intValue, valueInDouble];
+        }
+        recordField.internalValue = value;
+        recordField.displayValue = value;
+    }
+    
     else {
         recordField.internalValue = value;
         recordField.displayValue = value;
