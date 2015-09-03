@@ -942,7 +942,7 @@
 #pragma mark - Download on demand methods.
 - (void)showDoDViewWithSeachObject:(SFMSearchObjectModel *)searchModel
                  transactionObject:(TransactionObjectModel *)transactionModel
-                 fromTableViewCell:(UITableViewCell *)cell
+                 fromTableViewCell:(SFMSearchCell *)cell
 {
     /*
      * We have to dismiss the popover if its already displayed or taking time to display,
@@ -959,8 +959,16 @@
     
     self.dodPopoverController.delegate = dodVC;
     self.dodPopoverController.popoverContentSize = CGSizeMake(320, 320);
-    [self.dodPopoverController presentPopoverFromRect:cell.textLabel.frame inView:cell permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
+    CGFloat width = [self widthOfString:cell.titleLabel.text withFont:[UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18]];
+    CGRect rect = CGRectMake(cell.titleLabel.frame.origin.x, cell.titleLabel.frame.origin.y, width, cell.titleLabel.frame.size.height);
+    [self.dodPopoverController presentPopoverFromRect:rect inView:cell permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
     
+}
+
+//This method will give you the width of the lable,
+- (CGFloat)widthOfString:(NSString *)string withFont:(UIFont *)font {
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+    return [[[NSAttributedString alloc] initWithString:string attributes:attributes] size].width;
 }
 
 - (void)downloadedSuccessfullyForSFMSearchObject:(SFMSearchObjectModel *)searchObject transactionObject:(TransactionObjectModel *)transactionModel {
