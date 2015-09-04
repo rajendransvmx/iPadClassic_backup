@@ -24,9 +24,6 @@
     [requestSelect setDistinctRowsOnly];
     
     return [self getRecordsFromQuery:[requestSelect query]];
-    
-    return nil;
-    return @[];
 }
 -(NSArray *)getServicePricebookIds
 {
@@ -35,9 +32,6 @@
     [requestSelect setDistinctRowsOnly];
     
     return [self getRecordsFromQuery:[requestSelect query]];
-    
-    return nil;
-    return @[];
 }
 
 - (NSArray*)getRecordsFromQuery:(NSString*)query
