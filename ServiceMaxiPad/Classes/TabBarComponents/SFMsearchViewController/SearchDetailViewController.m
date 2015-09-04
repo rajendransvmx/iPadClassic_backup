@@ -968,6 +968,12 @@
 //This method will give you the width of the lable,
 - (CGFloat)widthOfString:(NSString *)string withFont:(UIFont *)font {
     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+    int labelWidth = self.searchDetailTableView.frame.size.width;
+    int textWidth = [[[NSAttributedString alloc] initWithString:string attributes:attributes] size].width;
+    //Here we are checking for text width is more then the cell of the table, If yes then pointer will be center of the table.
+    if ((labelWidth-100)<textWidth) {
+        return (self.searchDetailTableView.frame.size.width-100.0);
+    }
     return [[[NSAttributedString alloc] initWithString:string attributes:attributes] size].width;
 }
 
