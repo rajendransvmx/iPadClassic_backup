@@ -21,6 +21,9 @@
 #import "SFMSearchDataHandler.h"
 #import "StringUtil.h"
 #import "SFMSearchFieldModel.h"
+#import "MobileDeviceSettingDAO.h"
+#import "FactoryDAO.h"
+#import "Utility.h"
 
 @interface SFMOnlineSearchManager()
 
@@ -87,11 +90,27 @@
     
     NSMutableDictionary *recordLimitDict = [[NSMutableDictionary alloc]init];
     [recordLimitDict setValue:kSFMSearchRecordLimit forKey:kSVMXKey];
-    [recordLimitDict setValue:@"100" forKey:kSVMXValue];
+    //Setting serch limit for number of list
+    [recordLimitDict setValue:[self fetchSearchRange] forKey:kSVMXValue];
     [valueMapArray addObject:recordLimitDict];
     
     requestParamModel.valueMap = [NSArray arrayWithArray:valueMapArray];
     return requestParamModel;
+}
+
+//This method fetching all 
+-(NSString *)fetchSearchRange
+{
+    id <MobileDeviceSettingDAO> mobileSettingService = [FactoryDAO serviceByServiceType:ServiceTypeMobileDeviceSettings];
+    MobileDeviceSettingsModel *lMobileDeviceSettingsModel = [mobileSettingService fetchDataForSettingId:kTag_SFMSearchLimit];
+    if ([Utility isStringNotNULL:lMobileDeviceSettingsModel.value]) {
+        int limitValue = [lMobileDeviceSettingsModel.value intValue];
+        if (limitValue <=0) {
+            return @"100";
+        }
+        return lMobileDeviceSettingsModel.value;
+    }
+    return @"100";
 }
 
 #pragma mark - flownode delegate
