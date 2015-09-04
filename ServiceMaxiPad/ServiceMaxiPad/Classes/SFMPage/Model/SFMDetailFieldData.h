@@ -20,7 +20,7 @@
 @property(nonatomic, strong) NSString  *recordId;
 @property(nonatomic, strong) NSString *sortingData;
 @property(nonatomic, strong) NSMutableArray *criteriaObjects;
-@property(nonatomic, assign) BOOL isSourceToTargetProcess;
+@property(nonatomic, copy) NSString *sourceToTargetType;
 
 - (NSMutableArray *)getAllFieldNames;
 - (NSDictionary *)getSortingDetails;

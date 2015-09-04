@@ -17,7 +17,8 @@
 
 - (NSMutableArray *)getAllFieldNames
 {
-    if (self.isSourceToTargetProcess) {
+    if ([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll] ||
+        [self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetChild]) {
         return [NSMutableArray arrayWithArray:self.fieldsArray];
     }
     
@@ -37,27 +38,36 @@
 - (void)updateEntryCriteriaObjects
 {
     NSMutableArray * criteriaObjects = [[NSMutableArray alloc] initWithCapacity:0];
-    
-    if (self.isSourceToTargetProcess) {
+    // Anoop : SRC to Target All and Child only fixed duplicate line issues
+    if ([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll] ||
+        [self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetChild]) {
         
-        if ([self.parentLocalId length] > 0) {
+        if (![StringUtil isStringEmpty:self.parentLocalId]) {
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kLocalId
                                                              operatorType:SQLOperatorEqual
                                                             andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
         }
-    }
-    else {
-        
-        if ([self.parentColumnName length] > 0 && [self.parentSfID length] > 0) {
-            //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
-             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
+        if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentSfID]) {
+            NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
             [criteriaObjects addObject:criteria];
         }
-        if ([self.parentColumnName length] > 0 && [self.parentLocalId length] > 0) {
-            //NSString *fieldName = [NSString stringWithFormat:@"'%@'.%@", self.objectName, self.parentColumnName];
-             NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
+        if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentLocalId]) {
+            NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
+            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
+            [criteriaObjects addObject:criteria];
+        }
+    }
+    else {
+        
+        if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentSfID]) {
+            NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
+            DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentSfID];
+            [criteriaObjects addObject:criteria];
+        }
+        if (![StringUtil isStringEmpty:self.parentColumnName] && ![StringUtil isStringEmpty:self.parentLocalId]) {
+            NSString *fieldName = [NSString stringWithFormat:@"%@", self.parentColumnName];
             DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:fieldName operatorType:SQLOperatorEqual andFieldValue:self.parentLocalId];
             [criteriaObjects addObject:criteria];
         }
@@ -109,18 +119,28 @@
                 newExpression = @"(1 OR 2)";;
             }
         }
+        else if ([criteriaObjects count] == 3) {
+            if ([self.criteriaObjects count] > 0) {
+                newExpression = [[NSString alloc] initWithFormat:@"(%@) AND (%d OR %d OR %d)",self.expression,(int)([self.criteriaObjects count]+1), (int)([self.criteriaObjects count]+2), (int)([self.criteriaObjects count]+3)];
+            }
+            else {
+                newExpression = @"(1 OR 2 OR 3)";;
+            }
+        }
         else if ([criteriaObjects count] == 1) {
             if ([self.criteriaObjects count] > 0) {
-                 newExpression = [[NSString alloc] initWithFormat:@"(%@) AND %d",self.expression,(int)([self.criteriaObjects count]+1)];
+                newExpression = [[NSString alloc] initWithFormat:@"(%@) AND %d",self.expression,(int)([self.criteriaObjects count]+1)];
             }
         }
     }
     else {
         if ([criteriaObjects count] == 2)
-            newExpression = @"(1 OR 2)";
+        newExpression = @"(1 OR 2)";
+        if ([criteriaObjects count] == 3)
+        newExpression = @"(1 OR 2 OR 3)";
     }
     self.expression = newExpression;
-
+    
     if (self.criteriaObjects == nil) {
         self.criteriaObjects = [[NSMutableArray alloc] initWithCapacity:0];
     }
