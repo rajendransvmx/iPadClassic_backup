@@ -4,19 +4,19 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.59.003
+Version = 15.59.004
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-020224
+021777
 021406
 
 
 Note:
-1. Custom SFM Search Results Limit
+—-
 
 
 
