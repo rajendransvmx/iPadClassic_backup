@@ -224,9 +224,12 @@
         NSString *objectName =  [serviceRequest getObjectName:[theDict objectForKey:kWhatId]];
 //        
         if ([objectName isEqualToString:kWorkOrderTableName]) {
-            [whatEventStartDateValueMap setObject:[theDict objectForKey:kStartDateTime]forKey:[theDict objectForKey:kWhatId]];
+            if([theDict objectForKey:kStartDateTime] != nil)
+            {
+                [whatEventStartDateValueMap setObject:[theDict objectForKey:kStartDateTime]forKey:[theDict objectForKey:kWhatId]];
+            }
             [theDict setObject:@"YES" forKey:@"isWorkOrder"];
-
+            
         }
         else if ([objectName isEqualToString:kCaseObject]) {
             [lCaseSFIDArray addObject:[theDict objectForKey:kWhatId]];
