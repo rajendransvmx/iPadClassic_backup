@@ -1,15 +1,14 @@
 //
-//  SVMXGetPriceList.h
+//  SVMXGetPriceHelper.h
 //  ServiceMaxiPad
 //
-//  Created by Apple on 26/08/15.
+//  Created by Apple on 04/09/15.
 //  Copyright (c) 2015 ServiceMax Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "CommonServiceDAO.h"
+#import <UIKit/UIKit.h>
 
-@interface SVMXGetPriceList : NSObject
+@interface SVMXGetPriceHelper : NSObject
 
 -(NSArray *)getPricebookIds;
 -(NSArray *)getServicePricebookIds;

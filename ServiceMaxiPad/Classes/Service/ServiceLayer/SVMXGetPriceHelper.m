@@ -1,22 +1,21 @@
 //
-//  SVMXGetPriceList.m
+//  SVMXGetPriceHelper.m
 //  ServiceMaxiPad
 //
-//  Created by Apple on 26/08/15.
+//  Created by Apple on 04/09/15.
 //  Copyright (c) 2015 ServiceMax Inc. All rights reserved.
 //
 
-#import "SVMXGetPriceList.h"
+#import "SVMXGetPriceHelper.h"
 #import "DBRequestSelect.h"
 #import "DatabaseQueue.h"
 #import "SQLResultSet.h"
 #import "DatabaseManager.h"
 #import "SyncRecordHeapModel.h"
 #import "SVMXSystemConstant.h"
-#import "SVMXGetPriceModel.h"
+#import "Utility.h"
 
-@implementation SVMXGetPriceList
-
+@implementation SVMXGetPriceHelper
 -(NSArray *)getPricebookIds
 {
     DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kDataPurgePriceBook andFieldNames:[NSArray arrayWithObjects:kId, nil] whereCriteria:nil];
@@ -42,11 +41,13 @@
         
         [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
             SQLResultSet * resultSet = [db executeQuery:query];
-            
             while ([resultSet next]) {
-                SVMXGetPriceModel * model = [[SVMXGetPriceModel alloc] init];
-                [resultSet kvcMagic:model];
-                [records addObject:model];
+                NSDictionary *dict = [resultSet resultDictionary];
+                NSString *recordId = [dict objectForKey:kId];
+                if ([Utility isStringNotNULL:recordId])
+                {
+                    [records addObject:recordId];
+                }
             }
             [resultSet close];
         }];
