@@ -156,13 +156,6 @@
                     modelObj.objectName = objectName;
                     modelObj.syncType = @"DC"; //TODO : Remove hard coding
                     modelObj.syncFlag = NO;
-                    
-                    /* get price call for new change */
-                    if ([[GetPriceManager sharedInstance] isGetPriceInProgress])
-                    {
-                        modelObj.parallelSyncType = kParallelGetPriceSync;
-                    }
-                    
                     [heapDictionary setObject:modelObj forKey:sfId];
                 }
             }
