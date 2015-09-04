@@ -20,8 +20,7 @@
 #import "StringUtil.h"
 #import "SyncConstants.h"
 #import "SyncHeapService.h"
-#import "SVMXGetPriceList.h"
-#import "SVMXGetPriceModel.h"
+#import "SVMXGetPriceHelper.h"
 
 @interface IncrementalSyncRequestParamHelper ()
 
@@ -103,7 +102,7 @@
                 pricebookIds = @[];
             }
             
-            if (true) {
+            if ([pricebookIds count]) {
                 subParamDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"PRICEBOOK_IDs",kSVMXRequestKey,pricebookIds,kSVMXRequestValues,nil];
                 [parameterArray addObject:subParamDictionary];
             }
@@ -112,7 +111,7 @@
             if (servicepricebookIds == nil) {
                 servicepricebookIds = @[];
             }
-            if (true) {
+            if ([servicepricebookIds count]) {
                 subParamDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"SERVICE_PRICEBOOK_IDs",kSVMXRequestKey,servicepricebookIds,kSVMXRequestValues,nil];
                 [parameterArray addObject:subParamDictionary];
             }
@@ -466,28 +465,16 @@
 }
 -(NSArray*)getPricebookIds
 {
-    NSMutableArray *sfidsArray = [[NSMutableArray alloc] init];
-    SVMXGetPriceList *list = [[SVMXGetPriceList alloc] init];
+    SVMXGetPriceHelper *list = [[SVMXGetPriceHelper alloc] init];
     NSArray *sfidsArrayObj = [list getPricebookIds];
-    for(SVMXGetPriceModel *iDs in sfidsArrayObj) {
-        if (iDs) {
-            [sfidsArray addObject:iDs.Id];
-        }
-    }
-    return sfidsArray;
+    return sfidsArrayObj;
 }
 
 -(NSArray*)getServicePricebookIds
 {
-    NSMutableArray *sfidsArray = [[NSMutableArray alloc] init];
-    SVMXGetPriceList *list = [[SVMXGetPriceList alloc] init];
+    SVMXGetPriceHelper *list = [[SVMXGetPriceHelper alloc] init];
     NSArray *sfidsArrayObj = [list getServicePricebookIds];
-    for(SVMXGetPriceModel *iDs in sfidsArrayObj) {
-        if (iDs) {
-            [sfidsArray addObject:iDs.Id];
-        }
-    }
-    return sfidsArray;
+    return sfidsArrayObj;
 }
 
 @end
