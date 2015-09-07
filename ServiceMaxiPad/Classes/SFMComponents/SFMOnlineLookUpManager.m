@@ -121,8 +121,8 @@
     [lookupDefDetailDict setValue:searchFieldArray forKey:@"searchFields"];
     [lookupDefDetailDict setValue:displayFieldArray forKey:@"displayFields"];
 
-    [lookupDefDetailDict setValue: forKey:@"queryColumns"]; //TODO:Check- Should "Id" be always be included by default.
-    [lookupDefDetailDict setValue: forKey:@"preFilterCriteria"]; //TODO:Check- is it prepared using "defaultLookupColumn". eg. "Name LIKE 'San%'"
+//    [lookupDefDetailDict setValue: forKey:@"queryColumns"]; //TODO:Check- Should "Id" be always be included by default.
+//    [lookupDefDetailDict setValue: forKey:@"preFilterCriteria"]; //TODO:Check- is it prepared using "defaultLookupColumn". eg. "Name LIKE 'San%'"
     [lookupDefDetailDict setValue:[NSNumber numberWithLong:self.lookUpObject.recordLimit] forKey:@"numberOfRecs"];
     [lookupDefDetailDict setValue:@"" forKey:@"formFillFields"];
     [lookupDefDetailDict setValue:self.lookUpObject.defaultColoumnName forKey:@"defaultLookupColumn"];
