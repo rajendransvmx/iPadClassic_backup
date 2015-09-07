@@ -2,13 +2,16 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.035
+Version = 15.20.036
 ===========================================
 -------------
 Fixed Defects
 -------------
-Sync failing issue fixed
-Line Mapping and Duplicate Line issue fixed
+OPDoc related issues (18955, 021015):
+1. OPDoc sync flag reset if OPDoc fails.
+2. Duplicate PDF generation issue.
+
+
 -------------
 Known Issues
 -------------
