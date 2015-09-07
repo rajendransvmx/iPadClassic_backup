@@ -330,6 +330,7 @@ extern NSString *const KTagSettingsTitle;
 #define kTag_SyncConflicts @"IPAD018_TAG093"
 #define kTag_KeepMyChanges @"IPAD018_TAG097"
 #define kTag_IncludeOnlineItems @"IPAD019_TAG013"
+#define kTag_SFMSearchLimit   @"IPAD019_SET001"
 #define kTag_Documents @"IPAD024_TAG004"
 #define kTag_ImagesAndVideo @"IPAD024_TAG037"
 #define kTag_AccountHistoryAndRecords @"IPAD019_TAG015"
