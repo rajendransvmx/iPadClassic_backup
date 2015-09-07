@@ -942,7 +942,7 @@
 #pragma mark - Download on demand methods.
 - (void)showDoDViewWithSeachObject:(SFMSearchObjectModel *)searchModel
                  transactionObject:(TransactionObjectModel *)transactionModel
-                 fromTableViewCell:(UITableViewCell *)cell
+                 fromTableViewCell:(SFMSearchCell *)cell
 {
     /*
      * We have to dismiss the popover if its already displayed or taking time to display,
@@ -955,12 +955,28 @@
                    searchObject:searchModel
            andTransactionObject:transactionModel];
     
- self.dodPopoverController = [[UIPopoverController alloc]initWithContentViewController:dodVC];
+    self.dodPopoverController = [[UIPopoverController alloc]initWithContentViewController:dodVC];
     
     self.dodPopoverController.delegate = dodVC;
     self.dodPopoverController.popoverContentSize = CGSizeMake(320, 320);
-    [self.dodPopoverController presentPopoverFromRect:cell.textLabel.frame inView:cell permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
     
+    //GETTING WIDTH OF THE TEXT AND POINTING POPOVER VIWE CONTROLLER.
+    CGFloat width = [self widthOfString:cell.titleLabel.text withFont:[UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18]];
+    CGRect rect = CGRectMake(cell.titleLabel.frame.origin.x, cell.titleLabel.frame.origin.y, width, cell.titleLabel.frame.size.height);
+    [self.dodPopoverController presentPopoverFromRect:rect inView:cell permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
+    
+}
+
+//This method will give you the width of the lable,
+- (CGFloat)widthOfString:(NSString *)string withFont:(UIFont *)font {
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+    int labelWidth = self.searchDetailTableView.frame.size.width;
+    int textWidth = [[[NSAttributedString alloc] initWithString:string attributes:attributes] size].width;
+    //Here we are checking for text width is more then the cell of the table, If yes then pointer will be center of the table.
+    if ((labelWidth-100)<textWidth) {
+        return (self.searchDetailTableView.frame.size.width-100.0);
+    }
+    return [[[NSAttributedString alloc] initWithString:string attributes:attributes] size].width;
 }
 
 - (void)downloadedSuccessfullyForSFMSearchObject:(SFMSearchObjectModel *)searchObject transactionObject:(TransactionObjectModel *)transactionModel {
