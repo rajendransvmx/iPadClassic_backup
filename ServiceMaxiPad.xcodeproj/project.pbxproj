@@ -870,7 +870,6 @@
 		6BF9D02A1AA9BEA30057D8AC /* NotificationTrackerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D0281AA9BEA30057D8AC /* NotificationTrackerVC.m */; };
 		6BF9D02F1AA9C0D50057D8AC /* NotificationDownloadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D02D1AA9C0D50057D8AC /* NotificationDownloadCell.m */; };
 		6BF9D0301AA9C0D50057D8AC /* NotificationDownloadCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */; };
-		840C71511B8F4F3200796A16 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 840C71501B8F4F3200796A16 /* www */; };
 		841121581B901775006C3668 /* Configuration.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121521B901775006C3668 /* Configuration.csv */; };
 		841121591B901775006C3668 /* DummyDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 841121541B901775006C3668 /* DummyDataLoader.m */; };
 		8411215A1B901775006C3668 /* ObjectDescribe.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121551B901775006C3668 /* ObjectDescribe.csv */; };
@@ -2662,7 +2661,6 @@
 		6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationDownloadCell.xib; sourceTree = "<group>"; };
 		84026B021A9B5A4D0096C6B8 /* EventTransactionObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTransactionObjectModel.h; sourceTree = "<group>"; };
 		84026B031A9B5A4D0096C6B8 /* EventTransactionObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTransactionObjectModel.m; sourceTree = "<group>"; };
-		840C71501B8F4F3200796A16 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ServiceMaxiPad/Classes/ProductIQ/www; sourceTree = "<group>"; };
 		841121521B901775006C3668 /* Configuration.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Configuration.csv; sourceTree = "<group>"; };
 		841121531B901775006C3668 /* DummyDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyDataLoader.h; sourceTree = "<group>"; };
 		841121541B901775006C3668 /* DummyDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DummyDataLoader.m; sourceTree = "<group>"; };
@@ -5398,7 +5396,6 @@
 		18A2171019E57C5A00F22EA6 = {
 			isa = PBXGroup;
 			children = (
-				840C71501B8F4F3200796A16 /* www */,
 				18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */,
 				18A2174119E57C5A00F22EA6 /* ServiceMaxiPadTests */,
 				18A2171B19E57C5A00F22EA6 /* Frameworks */,
@@ -6644,7 +6641,6 @@
 				184A9E1019E7D592006DA6BE /* map_CurrentLocation@2x.png in Resources */,
 				C3E890801A0CC52000A0653B /* Attachment-SelectionCheckempty@2x.png in Resources */,
 				841121581B901775006C3668 /* Configuration.csv in Resources */,
-				840C71511B8F4F3200796A16 /* www in Resources */,
 				184A9E1519E7D592006DA6BE /* map_priorityflag@2x.png in Resources */,
 				184A9DEA19E7D592006DA6BE /* login-servicemax-logo@2x.png in Resources */,
 				8BA32EAA19EE3F9300BFA769 /* day_triangle-down.png in Resources */,
