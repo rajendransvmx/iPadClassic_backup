@@ -29,7 +29,7 @@
 
 //Changes for multiday event for date range. Here we are removing events.
 //Currently we are not using this method, It was impleted for multiday event with given Date range.
--(void)removeEventFromArray_EventWindow:(SMXEvent *)event numberOfDays:(int)numberOfDays{
+-(void)removeEventFromArray:(SMXEvent *)event numberOfDays:(int)numberOfDays{
     NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
     int length=(int)(dateRange.length);
     if (length>=0) {
@@ -54,7 +54,7 @@
     
 }
 
--(void)removeEventFromArray:(SMXEvent *)event numberOfDays:(int)numberOfDays{
+-(void)removeEventFromArray_EventWindow:(SMXEvent *)event numberOfDays:(int)numberOfDays{
     //NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
     //int length=(int)(dateRange.length);
     for (int i=0; i<numberOfDays; i++) {
@@ -189,7 +189,7 @@
 
 /*Here we are spliting multiDay event and making each day event, adding into locat Model and DB */
 //Currently we are not using this method, It was impleted for multiday event with given Date range.
--(void)makingEvent_DateWindow:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
+-(void)makingEvent:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
     NSRange dateRange= [self eventWindow:multiDayEvent.dateTimeBegin endDate:multiDayEvent.dateTimeEnd];
     int length=(int)(dateRange.length);
     int location=(int)(dateRange.location);
@@ -268,7 +268,7 @@
     }
 }
 
--(void)makingEvent:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
+-(void)makingEvent_EventWindow:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
     for (int i=0; i<numberOfDays; i++) {
         SMXEvent *newEvent =[[SMXEvent alloc] initWithCalendarModel_self:multiDayEvent];
         newEvent.dateTimeBegin_multi=multiDayEvent.dateTimeBegin;

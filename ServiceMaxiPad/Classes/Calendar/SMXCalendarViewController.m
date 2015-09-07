@@ -856,7 +856,7 @@
 
 //making event for multiday and adding into array, This is old function with event window.
 //Currently we are not using this method, It was impleted for multiday event with given Date range.
--(void)makeEvent_EventWindow:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
+-(void)makeEvent:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
     NSArray *lSplitArrayEvent = [self stringToArray:splitEventString];
     NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
     int length=(int)(dateRange.length);
@@ -910,7 +910,7 @@
     }
 }
 
--(void)makeEvent:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
+-(void)makeEvent_EventWindow:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
     NSArray *lSplitArrayEvent = [self stringToArray:splitEventString];
     NSString *dateBegin, *dateEnd, *duration;
     for (int i=0; i<[lSplitArrayEvent count]; i++) {
