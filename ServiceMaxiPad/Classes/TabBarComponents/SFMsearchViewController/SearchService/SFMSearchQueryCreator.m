@@ -11,6 +11,9 @@
 #import "SFMSearchFieldModel.h"
 #import "OuterJoinObject.h"
 #import "SFMPageHelper.h"
+#import "MobileDeviceSettingDAO.h"
+#import "Utility.h"
+#import "FactoryDAO.h"
 
 @interface SFMSearchQueryCreator()
 

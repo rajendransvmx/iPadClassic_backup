@@ -21,6 +21,9 @@
 #import "SFMSearchDataHandler.h"
 #import "StringUtil.h"
 #import "SFMSearchFieldModel.h"
+#import "MobileDeviceSettingDAO.h"
+#import "Utility.h"
+#import "FactoryDAO.h"
 
 @interface SFMOnlineSearchManager()
 
@@ -89,6 +92,7 @@
     [recordLimitDict setValue:kSFMSearchRecordLimit forKey:kSVMXKey];
     //Setting serch limit for number of list
     [recordLimitDict setValue:[self fetchSearchRange] forKey:kSVMXValue];
+    //[recordLimitDict setValue:@"100" forKey:kSVMXValue];
     [valueMapArray addObject:recordLimitDict];
     
     requestParamModel.valueMap = [NSArray arrayWithArray:valueMapArray];
