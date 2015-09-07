@@ -18,6 +18,7 @@
 #import "ModifiedRecordModel.h"
 #import "CacheManager.h"
 #import "StringUtil.h"
+#import "SVMXGetPriceHelper.h"
 
 @interface IncrementalSyncRequestParamHelper ()
 
@@ -93,6 +94,26 @@
                 [parameterArray addObject:subParamDictionary];
             }
             
+            
+            /* Get price change */
+            NSArray *pricebookIds = [self getPricebookIds];
+            if (pricebookIds == nil) {
+                pricebookIds = @[];
+            }
+            
+            if ([pricebookIds count]) {
+                subParamDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"PRICEBOOK_IDs",kSVMXRequestKey,pricebookIds,kSVMXRequestValues,nil];
+                [parameterArray addObject:subParamDictionary];
+            }
+            
+            NSArray *servicepricebookIds = [self getServicePricebookIds];
+            if (servicepricebookIds == nil) {
+                servicepricebookIds = @[];
+            }
+            if ([servicepricebookIds count]) {
+                subParamDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"SERVICE_PRICEBOOK_IDs",kSVMXRequestKey,servicepricebookIds,kSVMXRequestValues,nil];
+                [parameterArray addObject:subParamDictionary];
+            }
             /* We need to send last time stamp for individual request */
             NSDictionary *lastSyncTimeDict = [[NSDictionary alloc] initWithObjectsAndKeys:kOldLastSyncTime,kSVMXRequestKey,lastModifiedTime,kSVMXRequestValue,nil];
             
@@ -439,6 +460,19 @@
 
     [PlistManager storeLastLocalIdnDefaults:[[NSString alloc] initWithFormat:@"%ld",(long)localId]];
     
+}
+-(NSArray*)getPricebookIds
+{
+    SVMXGetPriceHelper *list = [[SVMXGetPriceHelper alloc] init];
+    NSArray *sfidsArrayObj = [list getPricebookIds];
+    return sfidsArrayObj;
+}
+
+-(NSArray*)getServicePricebookIds
+{
+    SVMXGetPriceHelper *list = [[SVMXGetPriceHelper alloc] init];
+    NSArray *sfidsArrayObj = [list getServicePricebookIds];
+    return sfidsArrayObj;
 }
 
 @end

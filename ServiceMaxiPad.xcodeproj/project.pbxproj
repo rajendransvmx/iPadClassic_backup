@@ -690,6 +690,7 @@
 		18A217C319E585D700F22EA6 /* UnzipUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A217B119E585D700F22EA6 /* UnzipUtility.m */; };
 		18A2FE9019F6A412002BDA6D /* LocationPingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A2FE8F19F6A412002BDA6D /* LocationPingManager.m */; };
 		18B1170E1A723E5400D57621 /* SMKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B1170D1A723E5400D57621 /* SMKeychain.m */; };
+		18B532C41B9D72350092D91F /* SVMXGetPriceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B532C31B9D72350092D91F /* SVMXGetPriceHelper.m */; };
 		18B8AEC91A1DFE36006781D2 /* up_arrow_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 18B8AEC81A1DFE36006781D2 /* up_arrow_gray.png */; };
 		18BB0A4B19E8F80400162524 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BB0A4A19E8F80400162524 /* MBProgressHUD.m */; };
 		18BB0A6C19E9088600162524 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18BB0A6519E9088600162524 /* libzbar.a */; };
@@ -2358,6 +2359,8 @@
 		18A2FE8F19F6A412002BDA6D /* LocationPingManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationPingManager.m; sourceTree = "<group>"; };
 		18B1170C1A723E5400D57621 /* SMKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMKeychain.h; sourceTree = "<group>"; };
 		18B1170D1A723E5400D57621 /* SMKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMKeychain.m; sourceTree = "<group>"; };
+		18B532C21B9D72350092D91F /* SVMXGetPriceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXGetPriceHelper.h; sourceTree = "<group>"; };
+		18B532C31B9D72350092D91F /* SVMXGetPriceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXGetPriceHelper.m; sourceTree = "<group>"; };
 		18B8AEC81A1DFE36006781D2 /* up_arrow_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = up_arrow_gray.png; sourceTree = "<group>"; };
 		18BB0A4919E8F80400162524 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		18BB0A4A19E8F80400162524 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
@@ -3995,6 +3998,8 @@
 		183A9F9F19E6B18500919345 /* ServiceLayer */ = {
 			isa = PBXGroup;
 			children = (
+				18B532C21B9D72350092D91F /* SVMXGetPriceHelper.h */,
+				18B532C31B9D72350092D91F /* SVMXGetPriceHelper.m */,
 				C31E66CF1AE65DBE00A8AE7E /* GetPriceDataServiceLayer.h */,
 				C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */,
 				183A9FA019E6B18500919345 /* AttachmentServiceLayer.h */,
@@ -7042,6 +7047,7 @@
 				183A9FCD19E6B18500919345 /* ObjectNameFieldValueService.m in Sources */,
 				84E28DE91A108163001067B5 /* AttachmentsUploadManager.m in Sources */,
 				400E3CF319FE355E00BC5207 /* NSData-AES.m in Sources */,
+				18B532C41B9D72350092D91F /* SVMXGetPriceHelper.m in Sources */,
 				183A9A7B19E6949800919345 /* DBField.m in Sources */,
 				183A9E4119E69DB000919345 /* SFMSearchProcessModel.m in Sources */,
 				5B8286751A025BFD00C91854 /* RecentModel.m in Sources */,

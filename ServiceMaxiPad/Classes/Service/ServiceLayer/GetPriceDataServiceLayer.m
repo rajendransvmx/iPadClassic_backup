@@ -16,6 +16,10 @@
 #import "PlistManager.h"
 #import "TXFetchHelper.h"
 #import "TimeLogCacheManager.h"
+#import "SyncHeapDAO.h"
+#import "SyncConstants.h"
+#import "SVMXGetPriceHelper.h"
+#import "SVMXSystemConstant.h"
 
 @interface GetPriceDataServiceLayer ()
 
@@ -116,6 +120,28 @@
                 [valueMaps addObject:currencyDict];
             }
             
+            /* Price book change for */
+            
+            NSArray *pricebookIds = [self getPricebookIds];
+            if (pricebookIds == nil) {
+                pricebookIds = @[];
+            }
+            
+            
+            if ([pricebookIds count]) {
+                NSDictionary *pricebookIdsDict = [NSDictionary dictionaryWithObjectsAndKeys:@"PRICEBOOK_IDs",kSVMXRequestKey,pricebookIds, kSVMXRequestValues, nil];
+                [valueMaps addObject:pricebookIdsDict];
+            }
+            
+            NSArray *servicepricebookIds = [self getServicePricebookIds];
+            if (servicepricebookIds == nil) {
+                servicepricebookIds = @[];
+            }
+            
+            if ([servicepricebookIds count]) {
+                NSDictionary *servicepricebookIdsDict = [NSDictionary dictionaryWithObjectsAndKeys:@"SERVICE_PRICEBOOK_IDs",kSVMXRequestKey,servicepricebookIds, kSVMXRequestValues, nil];
+                [valueMaps addObject:servicepricebookIdsDict];
+            }
             [valueMaps addObject:[NSDictionary dictionaryWithObjectsAndKeys:kGetPriceDataLastIndex,kSVMXKey,@2,kSVMXValue, nil]];
             paramObj.valueMap = [NSArray arrayWithArray:valueMaps];
             
@@ -215,5 +241,38 @@
     }
 }
 
+-(NSArray*)getPricebookIds
+{
+    SVMXGetPriceHelper *list = [[SVMXGetPriceHelper alloc] init];
+    NSArray *sfidsArrayObj = [list getPricebookIds];
+    return [sfidsArrayObj arrayByAddingObjectsFromArray:[self getPricebookIdsFromHeapTable]];;
+}
 
+-(NSArray*)getServicePricebookIds
+{
+    SVMXGetPriceHelper *list = [[SVMXGetPriceHelper alloc] init];
+    NSArray *sfidsArrayObj = [list getServicePricebookIds];
+    return [sfidsArrayObj arrayByAddingObjectsFromArray:[self getServicePricebookIdsFromHeapTable]];
+}
+-(NSArray*)getPricebookIdsFromHeapTable
+{
+    NSArray *sfidsArray = [[NSArray alloc] init];
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
+        sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"PRICEBOOK_IDs"
+                                                            forLimit:0 forParallelSyncType:nil];
+    }
+    return sfidsArray;
+}
+
+-(NSArray*)getServicePricebookIdsFromHeapTable
+{
+    NSArray *sfidsArray = [[NSArray alloc] init];
+    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
+        sfidsArray = [daoService getAllIdsFromHeapTableForObjectName:@"SERVICE_PRICEBOOK_IDs"
+                                                            forLimit:0 forParallelSyncType:nil];
+    }
+    return sfidsArray;
+}
 @end
