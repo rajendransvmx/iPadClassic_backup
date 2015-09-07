@@ -89,7 +89,6 @@
     [recordLimitDict setValue:kSFMSearchRecordLimit forKey:kSVMXKey];
     //Setting serch limit for number of list
     [recordLimitDict setValue:[self fetchSearchRange] forKey:kSVMXValue];
-    [recordLimitDict setValue:@"100" forKey:kSVMXValue];
     [valueMapArray addObject:recordLimitDict];
     
     requestParamModel.valueMap = [NSArray arrayWithArray:valueMapArray];
