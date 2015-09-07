@@ -418,6 +418,7 @@
                 {
                     if([self.customDelegate conformsToProtocol:@protocol(OPDocCustomDelegate)])
                     {
+                        _OpDocSyncInProgress = NO;
                         [self.customDelegate OpdocStatus:NO forCategory:CategoryTypeOpDocUploadStatus];
                     }
                 }
@@ -427,6 +428,7 @@
                 {
                     if([self.customDelegate conformsToProtocol:@protocol(OPDocCustomDelegate)])
                     {
+                        _OpDocSyncInProgress = NO;
                         [self.customDelegate OpdocStatus:NO forCategory:CategoryTypeOpDoc];
                     }
                 }
@@ -436,6 +438,7 @@
                 {
                     if([self.customDelegate conformsToProtocol:@protocol(OPDocCustomDelegate)])
                     {
+                        _OpDocSyncInProgress = NO;
                         [self.customDelegate OpdocStatus:NO forCategory:CategoryTypeSubmitDocument];
                     }
                 }
@@ -445,6 +448,7 @@
                 {
                     if([self.customDelegate conformsToProtocol:@protocol(OPDocCustomDelegate)])
                     {
+                        _OpDocSyncInProgress = NO;
                         [self.customDelegate OpdocStatus:NO forCategory:CategoryTypeGeneratePDF];
                     }
                 }
@@ -710,6 +714,9 @@
 }
 
 
-
+-(void)deleteTheAlreadyUploadedFiles:(NSArray *)deleteIds {
+    [self deleteTheSignatureFiles:deleteIds];
+    [self deleteTheHTMLFiles:deleteIds];
+}
 
 @end

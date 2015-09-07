@@ -251,6 +251,7 @@
 
         NSDictionary *lOPDocHTMLAndSignatureObjectDict = [[OpDocSyncDataManager sharedManager] cHtmlSignatureDocSubmissionDictionary];
         NSArray *listOfSignatureIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"signature"]];
+        NSArray *listOfHTMLIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"html"]];
         
         int successStatus = [[responseDict objectForKey:@"success"] intValue];
         NSArray *ResponseForSubmitArray = [responseDict objectForKey:@"valueMap"];
@@ -292,15 +293,40 @@
         }
         else
         {
+            BOOL deleteIDExist = NO;
+            
+            for(NSString *sfid in listOfSignatureIds) {
+                if ([responseDeleteArray containsObject:sfid]) {
+                    deleteIDExist = YES;
+                    break;
+                }
+            }
+            
+            if (!deleteIDExist) {
+                for(NSString *sfid in listOfHTMLIds) {
+                    if ([responseDeleteArray containsObject:sfid]) {
+                        deleteIDExist = YES;
+                        break;
+                    }
+                }
+            }
+            
+            if (successStatus == 1 && deleteIDExist == YES) {
+                //TODO: What if success is 0?
+                SXLogWarning(@"Submit DOC failed - PDF Generated already");
+                [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
+                [[OpDocHelper sharedManager] deleteTheAlreadyUploadedFiles:responseDeleteArray];
+            }
+            else {
+
             //TODO: What if success is 0?
             SXLogWarning(@"Submit DOC failed.");
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
 
             [self removeSFIDFromTheTableForDOCSubmissionFAILURE]; // Removing the SFID from the tables. this will make the client to get the SFID again and then submit for doc-submission again. Its just a FAIL safe.
+            }
 
         }
-        
-
     }
     else
     { // Generate PDF
