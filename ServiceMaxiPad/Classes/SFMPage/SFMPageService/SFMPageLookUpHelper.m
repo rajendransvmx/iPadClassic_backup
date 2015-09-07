@@ -279,6 +279,7 @@
         [displayFields addObject:lookUpObj.defaultColoumnName];
     }
     [displayFields addObject:@"Id"];
+    [displayFields addObject:@"localId"]; 
     
     return displayFields;
 }
@@ -287,9 +288,9 @@
 {
     NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
     
-    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+//    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
     
-    [criteriaArray addObject:criteria1];
+//    [criteriaArray addObject:criteria1];
     
     if(![StringUtil isStringEmpty:lookUpObj.searchString])
     {

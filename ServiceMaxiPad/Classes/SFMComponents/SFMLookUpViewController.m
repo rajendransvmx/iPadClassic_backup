@@ -512,7 +512,8 @@
 -(BOOL)isSelectedAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
-    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"Id"];
+//    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"Id"];
+    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"localId"];
 
     for (int counter = 0; counter < [self.selectedRecords count]; counter ++)
     {
@@ -529,7 +530,8 @@
 -(void)addRecordfieldForIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
-    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+//    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+    SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
     [self.selectedRecords addObject:recordField];
 }
 
@@ -540,7 +542,8 @@
     for (int counter = 0; counter < [self.lookUpObject.dataArray count]; counter ++)
     {
         NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:counter];
-        SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+//        SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+        SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
          if([recordField.internalValue isEqualToString:fieldData.internalValue])
          {
              indexPath =[NSIndexPath indexPathForRow:counter inSection:0];
@@ -552,7 +555,8 @@
 -( SFMRecordFieldData *)getRecordFieldForIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
-    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+//    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+    SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
     return recordField;
 }
 -( SFMRecordFieldData *)getNameFieldForIndexPath:(NSIndexPath *)indexPath
