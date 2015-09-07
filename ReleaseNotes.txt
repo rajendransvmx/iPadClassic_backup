@@ -4,7 +4,7 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.001
+Version = 15.99.002
 
 ===========================================
 
@@ -12,10 +12,10 @@ Version = 15.99.001
 Fixed Defects
 
 -------------
-
-1.Integrated ProductIQ with Servicemax iPad app.
-2.Created ProductIQ tables as part of our actual sfm.sqlite database.
-3.Populating preloaded data from sfm database.
+1. PriceBook change
+2. SFM search limit
+3. 021777
+4. 021406
 
 -------------
 
