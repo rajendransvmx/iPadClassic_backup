@@ -136,6 +136,8 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
         }
     }
     
+    theURL = [theURL stringByReplacingOccurrencesOfString:@"." withString:@"/"];
+
     return theURL;
 }
 
