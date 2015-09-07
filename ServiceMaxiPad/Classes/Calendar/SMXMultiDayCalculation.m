@@ -26,7 +26,10 @@
     newEvent.dateTimeEnd_multi = endTim;
     [self processEvent:newEvent];
 }
--(void)removeEventFromArray:(SMXEvent *)event numberOfDays:(int)numberOfDays{
+
+//Changes for multiday event for date range. Here we are removing events.
+//Currently we are not using this method, It was impleted for multiday event with given Date range.
+-(void)removeEventFromArray_EventWindow:(SMXEvent *)event numberOfDays:(int)numberOfDays{
     NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
     int length=(int)(dateRange.length);
     if (length>=0) {
@@ -49,6 +52,19 @@
         [self removeEventFromArray:event eventdate:[self changeTime:event.dateTimeBegin_multi newHour:0 newMin:0 numberOfday:numberOfDays]];
     }
     
+}
+
+-(void)removeEventFromArray:(SMXEvent *)event numberOfDays:(int)numberOfDays{
+    //NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
+    //int length=(int)(dateRange.length);
+    for (int i=0; i<numberOfDays; i++) {
+        if (i==0) {
+            [self removeEventFromArray:event eventdate:[self changeTime:event.dateTimeBegin_multi newHour:23 newMin:59 numberOfday:i]];
+        }else{
+            [self removeEventFromArray:event eventdate:[self changeTime:event.dateTimeBegin_multi newHour:0 newMin:0 numberOfday:i]];
+        }
+    }
+    [self removeEventFromArray:event eventdate:[self changeTime:event.dateTimeBegin_multi newHour:0 newMin:0 numberOfday:numberOfDays]];
 }
 -(void)removeEventFromArray:(SMXEvent *)multiDayEvent eventdate:(NSDate *)date{
     NSDateComponents *comp = [NSDate componentsOfDate:date];
@@ -172,7 +188,8 @@
 }
 
 /*Here we are spliting multiDay event and making each day event, adding into locat Model and DB */
--(void)makingEvent:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
+//Currently we are not using this method, It was impleted for multiday event with given Date range.
+-(void)makingEvent_DateWindow:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
     NSRange dateRange= [self eventWindow:multiDayEvent.dateTimeBegin endDate:multiDayEvent.dateTimeEnd];
     int length=(int)(dateRange.length);
     int location=(int)(dateRange.location);
@@ -249,6 +266,40 @@
             [self addEventIntoArray:newEvent];
         }
     }
+}
+
+-(void)makingEvent:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
+    for (int i=0; i<numberOfDays; i++) {
+        SMXEvent *newEvent =[[SMXEvent alloc] initWithCalendarModel_self:multiDayEvent];
+        newEvent.dateTimeBegin_multi=multiDayEvent.dateTimeBegin;
+        newEvent.dateTimeEnd_multi=multiDayEvent.dateTimeEnd;
+        newEvent.isMultidayEvent=YES;
+        if (i==0) {
+            /* This is for First day of the event */
+            newEvent.dateTimeBegin=multiDayEvent.dateTimeBegin;
+            newEvent.dateTimeEnd=[self changeTime:multiDayEvent.dateTimeBegin newHour:23 newMin:59 numberOfday:i];
+        }else{
+            newEvent.dateTimeBegin=[self changeTime:multiDayEvent.dateTimeBegin newHour:0 newMin:0 numberOfday:i];
+            newEvent.dateTimeEnd=[self changeTime:multiDayEvent.dateTimeBegin newHour:23 newMin:59 numberOfday:i];
+        }
+        newEvent.eventIndex=i;
+        newEvent.numberOfDays=numberOfDays+1;
+        newEvent.duration = [newEvent.dateTimeEnd timeIntervalSinceDate:newEvent.dateTimeBegin]/60;  //NEW BSP
+        [self makingEventObjects:newEvent];
+        [self addEventIntoArray:newEvent];
+    }
+    /* This is for last day of the event */
+    SMXEvent *newEvent =[[SMXEvent alloc] initWithCalendarModel_self:multiDayEvent];
+    newEvent.dateTimeBegin_multi=multiDayEvent.dateTimeBegin;
+    newEvent.dateTimeEnd_multi=multiDayEvent.dateTimeEnd;
+    newEvent.isMultidayEvent=YES;
+    newEvent.dateTimeBegin=[self changeTime:multiDayEvent.dateTimeBegin newHour:0 newMin:0 numberOfday:numberOfDays];
+    newEvent.dateTimeEnd=multiDayEvent.dateTimeEnd;
+    newEvent.eventIndex=numberOfDays;
+    newEvent.numberOfDays=numberOfDays+1;
+    newEvent.duration = [newEvent.dateTimeEnd timeIntervalSinceDate:newEvent.dateTimeBegin]/60;  //NEW BSP
+    [self makingEventObjects:newEvent];
+    [self addEventIntoArray:newEvent];
 }
 -(void)makingEventObjects:(SMXEvent *)localEvent{
     [self createObjectWithEvnet:localEvent]; //Making model of the day for DB, Adding thging into db.

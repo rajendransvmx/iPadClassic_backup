@@ -853,7 +853,10 @@
     return jsonArray;
 }
 
--(void)makeEvent:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
+
+//making event for multiday and adding into array, This is old function with event window.
+//Currently we are not using this method, It was impleted for multiday event with given Date range.
+-(void)makeEvent_EventWindow:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
     NSArray *lSplitArrayEvent = [self stringToArray:splitEventString];
     NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
     int length=(int)(dateRange.length);
@@ -904,6 +907,36 @@
             newEvent.numberOfDays=[[object objectForKey:kEventNumber] intValue];
             [array addObject:newEvent];
         }
+    }
+}
+
+-(void)makeEvent:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
+    NSArray *lSplitArrayEvent = [self stringToArray:splitEventString];
+    NSString *dateBegin, *dateEnd, *duration;
+    for (int i=0; i<[lSplitArrayEvent count]; i++) {
+        NSDictionary *object=[lSplitArrayEvent objectAtIndex:i];
+        /*Cloning event and making new refrensh */
+        SMXEvent *newEvent =[[SMXEvent alloc] initWithCalendarModel_self:event];
+        /* checking table for proper value */
+        if ([newEvent.eventTableName isEqualToString:kSVMXTableName])
+        {
+            dateBegin = kSVMXStartDateTime;
+            dateEnd = kSVMXEndDateTime;
+            duration = kSVMXDurationInMinutes;
+        }
+        else
+        {
+            dateBegin = kStartDateTime;
+            dateEnd = kEndDateTime;
+            duration = kDurationInMinutes;
+        }
+        newEvent.dateTimeBegin = [self dateForTheString: [object objectForKey:dateBegin]];
+        newEvent.dateTimeEnd =  [self dateForTheString: [object objectForKey:dateEnd]];
+        newEvent.duration= [[object objectForKey:duration] intValue];
+        newEvent.isMultidayEvent=YES;
+        newEvent.eventIndex=[[object objectForKey:kEventIndex] intValue];
+        newEvent.numberOfDays=[[object objectForKey:kEventNumber] intValue];
+        [array addObject:newEvent];
     }
 }
 
