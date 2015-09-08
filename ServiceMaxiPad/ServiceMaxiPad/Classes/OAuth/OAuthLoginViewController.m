@@ -107,7 +107,6 @@ NSInteger webViewLoadCounter;
 - (void)makeUserAuthorizationRequest
 {
     [OAuthService deleteSalesForceCookies];
-    
     [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInAuthenticationPage];
     
     @autoreleasepool {
@@ -295,7 +294,7 @@ NSInteger webViewLoadCounter;
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
     webViewLoadCounter--;
-    [self performSelector:@selector(webViewFinishLoadWithCondition) withObject:nil afterDelay:0.05];
+    [self performSelector:@selector(webViewFinishLoadWithCondition) withObject:nil afterDelay:0.05f];
 	SXLogDebug(@" webViewDidFinishLoad --- ");
     
 }
@@ -406,13 +405,13 @@ NSInteger webViewLoadCounter;
 
 -(void)webViewFinishLoadWithCondition{
     
-    if(webViewLoadCounter==0){
+   // if(webViewLoadCounter==0){
         //We can be safe to treat this as place where everything is loaded.
         if (([[AppManager sharedInstance] applicationStatus] == ApplicationStatusInAuthenticationPage))
         {
             [self removeActivityAndLoadingLabel];
         }
-    }
+   // }
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
