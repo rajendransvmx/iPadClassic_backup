@@ -71,6 +71,7 @@
         case CategoryTypeConfigSync:
         case CategoryTypeOneCallConfigSync:
         case CategoryTypeSFMSearch:
+        case CategoryTypeLookupSearch:
         case CategoryTypeResetApp:
         case CategoryTypeGetPriceData:
         case CategoryTypeJobLog:                    // By default Yes :)
@@ -326,6 +327,10 @@
         case CategoryTypeSFMSearch:
             requestType = [self getNextRequestForSFMSearchResult:currentRequest andPreviousRequest:previousRequest];
             break;
+        case CategoryTypeLookupSearch:
+            requestType = [self getNextRequestForOnlineLookUp:currentRequest andPreviousRequest:previousRequest];
+            break;
+
         case CategoryTypeAccountHistory:
             requestType = [self getNextRequestForAccountHistoryResult:currentRequest andPreviousRequest:previousRequest];
             break;
@@ -377,6 +382,21 @@
     }
     return nextRequestType;
 }
+
+- (RequestType)getNextRequestForOnlineLookUp:(SVMXServerRequest *)currentRequest
+                             andPreviousRequest:(SVMXServerRequest *)previousRequest {
+    
+    RequestType nextRequestType = 0;
+    
+    if (currentRequest == nil) {
+        nextRequestType = RequestTypeOnlineLookUp;
+    }
+    if (currentRequest.requestType == RequestTypeOnlineLookUp) {
+        nextRequestType = RequestTypeNone;
+    }
+    return nextRequestType;
+}
+
 
 - (RequestType)getNextRequestForOneCallMetaInitialSync:(SVMXServerRequest *)currentRequest
                            andPreviousRequest:(SVMXServerRequest *)previousRequest {

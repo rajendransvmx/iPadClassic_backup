@@ -1144,6 +1144,11 @@
                 
                 return self.dataDictionary;
             }
+            else if (self.requestType == RequestTypeOnlineLookUp)
+            {
+                return self.requestParameter.requestInformation;
+            }
+            
             NSDictionary *clientDictionary = [[AppMetaData sharedInstance] getApplicationMetaInfo];
             NSMutableDictionary *postDict = [[NSMutableDictionary alloc] initWithDictionary:clientDictionary] ;
            

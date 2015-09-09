@@ -16,6 +16,11 @@
 #import "SFNamedSearchComponentModel.h"
 #import "CacheManager.h"
 #import "WebserviceResponseStatus.h"
+#import "SFMPageLookUpHelper.h"
+#import "DBCriteria.h"
+#import "SFExpressionComponentDAO.h"
+#import "FactoryDAO.h"
+#import "SFExpressionComponentModel.h"
 
 @interface SFMOnlineLookUpManager ()
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -33,12 +38,15 @@
 - (void)performOnlineLookUpWithLookUpObject:(SFMLookUp *)lookUpObj
                                andSearchText:(NSString *)searchText {
     
-    
     self.searchText = searchText;
     self.lookUpObject = lookUpObj;
+
+    [self getThePrefilterString];
+
     [self removeAllCacheData];
     [self initiateSearchResultWebService];
-    
+   
+    //Testing
  
 }
 
@@ -50,7 +58,7 @@
 
 - (void)initiateSearchResultWebService
 {
-    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeSFMSearch
+    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeLookupSearch
                                              requestParam:[self getRequestParameterForSearchResult]
                                            callerDelegate:self];
     self.taskIdentifier = taskModel.taskId;
@@ -85,8 +93,8 @@
 - (RequestParamModel*)getRequestParameterForSearchResult
 {
     
-    NSMutableArray *valueMapArray = [[NSMutableArray alloc]init];
     RequestParamModel *requestParamModel = [[RequestParamModel alloc]init];
+    
     
     // INNER-MOST Level START--
     NSMutableArray *searchFieldArray = [[NSMutableArray alloc] init];
@@ -104,6 +112,7 @@
     }
     
     NSMutableArray *displayFieldArray = [[NSMutableArray alloc] init];
+    NSMutableArray *displayFieldForQueryColumnArray  = [[NSMutableArray alloc] initWithObjects:@"Id", nil];
     for (SFNamedSearchComponentModel *searchObjectmodel in self.lookUpObject.displayFields) {
         NSMutableDictionary *displayObjectDict = [[NSMutableDictionary alloc]init];
         [displayObjectDict setValue:[NSNumber numberWithDouble:searchObjectmodel.sequence] forKey:@"sequence"];
@@ -113,6 +122,7 @@
         [displayObjectDict setValue:searchObjectmodel.fieldRelationshipName forKey:@"fieldRelationshipName"];
         [displayObjectDict setValue:searchObjectmodel.fieldDataType forKey:@"dataType"];
         [displayObjectDict setValue:searchObjectmodel.fieldName forKey:@"apiName"];
+        [displayFieldForQueryColumnArray addObject:searchObjectmodel.fieldName];
         
         [displayFieldArray addObject:displayObjectDict];
     }
@@ -121,12 +131,14 @@
     [lookupDefDetailDict setValue:searchFieldArray forKey:@"searchFields"];
     [lookupDefDetailDict setValue:displayFieldArray forKey:@"displayFields"];
 
-//    [lookupDefDetailDict setValue: forKey:@"queryColumns"]; //TODO:Check- Should "Id" be always be included by default.
-//    [lookupDefDetailDict setValue: forKey:@"preFilterCriteria"]; //TODO:Check- is it prepared using "defaultLookupColumn". eg. "Name LIKE 'San%'"
+    [lookupDefDetailDict setValue:displayFieldForQueryColumnArray forKey:@"queryColumns"]; //TODO:Check- Should "Id" be always be included by default.
+    [lookupDefDetailDict setValue:[self getThePrefilterString] forKey:@"preFilterCriteria"]; //TODO:Check- is it prepared using  "defaultLookupColumn". eg. "Name LIKE 'San%'" THIS SHOUDL COME FROM SERVER.
+
     [lookupDefDetailDict setValue:[NSNumber numberWithLong:self.lookUpObject.recordLimit] forKey:@"numberOfRecs"];
     [lookupDefDetailDict setValue:@"" forKey:@"formFillFields"];
     [lookupDefDetailDict setValue:self.lookUpObject.defaultColoumnName forKey:@"defaultLookupColumn"];
 
+    
     // INNER-MOST Level END--
 
      // INNER-MOST Level-1 START--
@@ -142,8 +154,8 @@
     // INNER-MOST Level-2 START--
     NSMutableDictionary *llookupRequestDict = [[NSMutableDictionary alloc]init];
     [llookupRequestDict setValue:lLookupDefDict forKey:@"LookupDef"];
-    [llookupRequestDict setValue:self.lookUpObject.serachName forKey:@"KeyWord"]; //TODO:Check IF THis is correct?
-    [llookupRequestDict setValue:@"contains" forKey:@"Operator"];   //TODO:Check IF THis will always be contains.
+    [llookupRequestDict setValue:self.searchText forKey:@"KeyWord"]; //TODO:Check IF THis is correct?
+    [llookupRequestDict setValue:@"contains" forKey:@"Operator"];
     // INNER-MOST Level-2 END--
 
     //OUTER-MOST Level START---
@@ -156,10 +168,165 @@
     [lOuterMostLevelRequestDict setValue:@"" forKey:@"groupId"];
     //OUTER-MOST Level END---
 
-    requestParamModel.valueMap = [NSArray arrayWithArray:valueMapArray];
+    
+    requestParamModel.requestInformation = lOuterMostLevelRequestDict;
      
     
     return requestParamModel;
 }
 
+-(NSString *)getThePrefilterString
+{
+    SFMPageLookUpHelper *helper = [[SFMPageLookUpHelper alloc] init];
+    
+    NSArray * criteriaArray;// = [helper getWhereclause:self.lookUpObject];
+
+    
+    for (SFMLookUpFilter *model in self.lookUpObject.preFilters) {
+        if (model != nil) {
+            
+            if ([model.ruleType isEqualToString:kSearchFilterCriteria]) {
+                if (!model.allowOverride || !model.objectPermission) {
+                    continue;
+                }
+            }
+            criteriaArray = [helper getCriteriaObjectForfilter:model];
+            
+            
+        }
+    }
+    
+    
+    NSArray *advanceExp = [[self getAdvanceExpression] componentsSeparatedByString:@" "];
+    NSString *criteriaString=@"";
+    for (int i=0;i<criteriaArray.count;i++) {
+        DBCriteria *criteria = [criteriaArray objectAtIndex:i];
+        criteriaString = [criteriaString stringByAppendingFormat:@" %@ %@",criteria.lhsValue, [self getOperatorStringAndRHSValue:criteria] ];
+        if (i!=criteriaArray.count-1) {
+            criteriaString = [criteriaString stringByAppendingFormat:@" %@",[advanceExp objectAtIndex:(i*2)+1]];
+        }
+    }
+    criteriaString = [criteriaString substringFromIndex:1]; //Removing the white space at the beginning
+    return criteriaString;
+    
+}
+
+-(NSString *)getOperatorStringAndRHSValue:(DBCriteria *)criteria
+{
+    /*
+    SQLOperatorNone = 0,
+    SQLOperatorLessThan = 1,
+    SQLOperatorGreaterThan = 2,
+    SQLOperatorLessThanEqualTo = 3,
+    SQLOperatorGreaterThanEqualTo = 4,
+    SQLOperatorLike = 5,
+    SQLOperatorNotLike = 6,
+    SQLOperatorIn = 7,
+    SQLOperatorNotIn = 8,
+    SQLOperatorBetween = 13,
+    SQLOperatorIsNull = 9,
+    SQLOperatorIsNotNull = 10,
+    SQLOperatorEqual = 11,
+    SQLOperatorNotEqual = 12,
+    SQLOperatorStartsWith = 14,
+    SQLOperatorEndsWith = 15,
+    SQLOperatorLikeOverride = 16,
+    SQLOperatorNotLikeOverride = 17,
+    SQLOperatorNotLikeWithIsNull = 18,
+    SQLOperatorNotEqualWithIsNull = 19
+    */
+    NSString *operatorString;
+    switch (criteria.operatorType) {
+        case SQLOperatorLessThan:
+            operatorString = [NSString stringWithFormat:@"lessThan '%@'", criteria.rhsValue];
+            break;
+        case SQLOperatorGreaterThan:
+            operatorString = [NSString stringWithFormat:@"greaterThan '%@'", criteria.rhsValue];
+            break;
+        case SQLOperatorGreaterThanEqualTo:
+            operatorString = [NSString stringWithFormat:@"greaterThanEqualTo '%@'", criteria.rhsValue];
+            break;
+        case SQLOperatorLike:
+            operatorString = [NSString stringWithFormat:@"like '%%%@%%'", criteria.rhsValue];
+            break;
+        case SQLOperatorIsNull:
+            operatorString = [NSString stringWithFormat:@"equals '%@'", criteria.rhsValue];
+            break;
+        case SQLOperatorIsNotNull:
+            operatorString = [NSString stringWithFormat:@"equals '%@'", criteria.rhsValue];
+            break;
+        case SQLOperatorEqual:
+            operatorString = [NSString stringWithFormat:@"equals '%@'", criteria.rhsValue];
+            break;
+        case SQLOperatorNotEqual:
+            operatorString = [NSString stringWithFormat:@"notEquals '%@'", criteria.rhsValue];
+            break;
+        case SQLOperatorStartsWith:
+            operatorString = [NSString stringWithFormat:@"like '%@%%'", criteria.rhsValue];
+            break;
+        case SQLOperatorEndsWith:
+            operatorString = [NSString stringWithFormat:@"like '%%%@'", criteria.rhsValue];
+            break;
+            
+        default:
+            break;
+    }
+    return operatorString;
+}
+
+
+
+-(NSString *)getAdvanceExpression
+{
+    NSString * advanceExpression;
+    for (SFMLookUpFilter *filter in self.lookUpObject.preFilters) {
+        advanceExpression = filter.advanceExpression;
+    }
+    return advanceExpression;
+    
+}
+
+-(void)advanceFilterData
+{
+    NSMutableDictionary *lOutermostLayer = [NSMutableDictionary new];
+    for (SFMLookUpFilter *model in self.lookUpObject.advanceFilters) {
+        if (model != nil) {
+//            if ([model.lookupContext length] == 0) {
+                if (![model.ruleType isEqualToString:kSearchFilterCriteria]) {
+                    
+                    continue;
+                }
+            
+            [lOutermostLayer setValue:(model.defaultOn? @"true":@"false") forKey:@"defaultOn"];
+            [lOutermostLayer setValue:(model.allowOverride? @"true":@"false") forKey:@"allowOverride"];
+            [lOutermostLayer setValue:model.name forKey:@"filterName"];
+            [lOutermostLayer setValue:model.sourceObjectName forKey:@"filterObject"];//TODO:Check
+            [lOutermostLayer setValue:model.searchId forKey:@"key"];//TODO:Check
+            [lOutermostLayer setValue:@"" forKey:@"lookupField"];//TODO:Check
+
+            NSMutableDictionary *filterCriteriaFields = [NSMutableDictionary new];
+            id<SFExpressionComponentDAO> expCompService = [FactoryDAO serviceByServiceType:ServiceTypeExpressionComponent];
+            NSArray *expCompArray =[expCompService getExpressionComponentsBySFId:model.searchId];
+
+            for (SFExpressionComponentModel *expComp in expCompArray) {
+                [filterCriteriaFields setValue:expComp.operatorValue forKey:@"operatorValue"]; //Specifically for value. dont have to be sent in API.
+                [filterCriteriaFields setValue:expComp.parameterType forKey:@"operandType"];
+                [filterCriteriaFields setValue:[NSNumber numberWithDouble:expComp.componentSequenceNumber] forKey:@"sequence"];
+                [filterCriteriaFields setValue:expComp.componentLHS forKey:@"refObjectNameField"];
+                [filterCriteriaFields setValue:expComp.componentRHS forKey:@""];
+//            TODO:
+//                1) what to do when LHS and RHS both are present. Where to assign RHS
+//                2) what is lookupField?
+//                3) filterObject?
+                
+               
+            }
+//                NSArray *dataArray = [self getCriteriaObjectForAdvanceFilter:model];
+//                [criteriaArray addObjectsFromArray:dataArray];
+//            }
+            
+        }
+    }
+
+}
 @end

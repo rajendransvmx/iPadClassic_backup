@@ -888,6 +888,7 @@
 		8413F5071B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413F5051B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m */; };
 		8416A6EC1B660E64000D5FE9 /* CustomXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8416A6EB1B660E64000D5FE9 /* CustomXMLParser.m */; };
 		8417EA141B9D9EF800D49EA5 /* SFMOnlineLookUpManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8417EA131B9D9EF800D49EA5 /* SFMOnlineLookUpManager.m */; };
+		8417EA171B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8417EA161B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.m */; };
 		844F00C01B848CC4008BC652 /* ProductIQHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 844F00BE1B848CC4008BC652 /* ProductIQHomeViewController.m */; };
 		844F00C11B848CC4008BC652 /* ProductIQHomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 844F00BF1B848CC4008BC652 /* ProductIQHomeViewController.xib */; };
 		84BEDC9919FA157800350B56 /* priority_Flag@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9619FA157800350B56 /* priority_Flag@2x.png */; };
@@ -2692,6 +2693,8 @@
 		8416A6EB1B660E64000D5FE9 /* CustomXMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomXMLParser.m; sourceTree = "<group>"; };
 		8417EA121B9D9EF800D49EA5 /* SFMOnlineLookUpManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMOnlineLookUpManager.h; sourceTree = "<group>"; };
 		8417EA131B9D9EF800D49EA5 /* SFMOnlineLookUpManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMOnlineLookUpManager.m; sourceTree = "<group>"; };
+		8417EA151B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMOnlineLookUpServiceLayer.h; sourceTree = "<group>"; };
+		8417EA161B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMOnlineLookUpServiceLayer.m; sourceTree = "<group>"; };
 		844F00BD1B848CC4008BC652 /* ProductIQHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductIQHomeViewController.h; sourceTree = "<group>"; };
 		844F00BE1B848CC4008BC652 /* ProductIQHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductIQHomeViewController.m; sourceTree = "<group>"; };
 		844F00BF1B848CC4008BC652 /* ProductIQHomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductIQHomeViewController.xib; sourceTree = "<group>"; };
@@ -4049,6 +4052,8 @@
 				9EB4F79F1A443B6F00E2A8BD /* ChatterServiceLayer.m */,
 				181A4DCD1B37EACE00549C38 /* CustomActionWebServiceLayer.h */,
 				181A4DCE1B37EACE00549C38 /* CustomActionWebServiceLayer.m */,
+				8417EA151B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.h */,
+				8417EA161B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.m */,
 			);
 			path = ServiceLayer;
 			sourceTree = "<group>";
@@ -7203,6 +7208,7 @@
 				57BA2CDD1A1105080081389B /* ProductManualDetail.m in Sources */,
 				184A8E5E19E7A0BE006DA6BE /* SMXButtonAddEventWithPopover.m in Sources */,
 				189F00151A1481B900570C54 /* DODHelper.m in Sources */,
+				8417EA171B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.m in Sources */,
 				183A9FD519E6B18500919345 /* SFMSearchFilterCriteriaService.m in Sources */,
 				C362BE651A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.m in Sources */,
 				183A9E3419E69DB000919345 /* ServiceLocationModel.m in Sources */,

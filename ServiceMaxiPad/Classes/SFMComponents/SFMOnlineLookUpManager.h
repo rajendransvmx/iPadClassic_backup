@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "SFMLookUp.h"
 @interface SFMOnlineLookUpManager : NSObject
 
+- (void)performOnlineLookUpWithLookUpObject:(SFMLookUp *)lookUpObj
+                              andSearchText:(NSString *)searchText;
 @end

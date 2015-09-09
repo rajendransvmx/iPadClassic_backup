@@ -16,6 +16,7 @@
 #import "SFMLookUpFilterViewController.h"
 #import "StringUtil.h"
 #import "PushNotificationHeaders.h"
+#import "SFMOnlineLookUpManager.h"
 
 @interface SFMLookUpViewController () <LookUpFilterDelegate>
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -265,6 +266,13 @@
     subView.backgroundColor = [UIColor whiteColor];
     headerView.contentView.backgroundColor  = [UIColor whiteColor];
     return headerView;
+}
+
+//TODO:Testing Online LookUP.
+-(void)launchOnlineAPI
+{
+    SFMOnlineLookUpManager *manager = [[SFMOnlineLookUpManager alloc] init];
+    [manager performOnlineLookUpWithLookUpObject:self.lookUpObject andSearchText:@""];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -743,6 +751,14 @@
     self.searchView.layer.borderWidth = 1;
     [[NSClassFromString(@"UISearchBarTextField") appearanceWhenContainedIn:[UISearchBar class], nil] setBorderStyle:UITextBorderStyleNone];
     self.searchView.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+    
+    
+    UIButton *onlineButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [onlineButton setBackgroundColor:[UIColor redColor]];
+    [onlineButton setTitle:@"Include Online" forState:UIControlStateNormal];
+    onlineButton.frame = CGRectMake(300, self.searchView.frame.origin.y - 35, 200, 30);
+    [onlineButton addTarget:self action:@selector(launchOnlineAPI) forControlEvents:UIControlEventTouchUpInside];
+    [self.searchView.superview addSubview:onlineButton];
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
