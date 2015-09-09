@@ -106,7 +106,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<true/>
+			<false/>
 			<key>Key</key>
 			<string>Session Auto Refresh</string>
 			<key>Title</key>
@@ -122,7 +122,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>15.59.004</string>
+			<string>15.59.005</string>
 			<key>Key</key>
 			<string>appVersion</string>
 			<key>Title</key>
