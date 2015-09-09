@@ -16,6 +16,8 @@
 #import "SFNamedSearchComponentModel.h"
 #import "CacheManager.h"
 #import "WebserviceResponseStatus.h"
+#import "TransactionObjectModel.h"
+#import "Utility.h"
 #import "SFMPageLookUpHelper.h"
 #import "DBCriteria.h"
 #import "SFExpressionComponentDAO.h"
@@ -44,9 +46,7 @@
     [self getThePrefilterString];
 
     [self removeAllCacheData];
-    [self initiateSearchResultWebService];
-   
-    //Testing
+  //  [self initiateSearchResultWebService];
  
 }
 
@@ -55,6 +55,8 @@
     //TODO: This is Not working YET.
     [[CacheManager sharedInstance] clearCacheByKey:@""];
 }
+
+
 
 - (void)initiateSearchResultWebService
 {
@@ -89,6 +91,7 @@
         }
     }
 }
+
 
 - (RequestParamModel*)getRequestParameterForSearchResult
 {
@@ -173,6 +176,34 @@
      
     
     return requestParamModel;
+}
+
+#pragma mark - Parsing methods
+
+- (NSMutableArray*)parseSFMOnlineLookupData:(NSDictionary*)responseDictionary {
+    
+    @autoreleasepool {
+        
+        NSMutableArray *onlineDataArray = [[NSMutableArray alloc] initWithCapacity:0];
+
+        //TODO: remove unwanted code from this method once we get the actual response from server.
+        NSString *jsonStr = @"{\"records\":[{\"attributes\":{\"type\":\"Account\"},\"Name\":\"Santosh Nadagowda\"},{\"attributes\":{\"type\":\"Account\"},\"Name\":\"San Francisco\"},{\"attributes\":{\"type\":\"Account\"},\"Name\":\"Sangam\"}]}";
+        
+        NSData *data = [jsonStr dataUsingEncoding:NSUTF8StringEncoding];
+        
+        
+        responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+        
+        NSArray *records = [responseDictionary objectForKey:@"records"];
+        for (NSDictionary *dictionary in records) {
+            TransactionObjectModel * model = [[TransactionObjectModel alloc] init];
+            [model mergeFieldValueDictionaryForFields:dictionary];
+            if (model != nil) {
+                [onlineDataArray addObject:model];
+            }
+        }
+        return onlineDataArray;
+    }
 }
 
 -(NSString *)getThePrefilterString

@@ -27,6 +27,8 @@
 - (NSArray *) getCriteriaArrayForContextLookUp:(SFMLookUp *)lookup ;
 
 
+- (void)fillOnlineLookupData:(NSMutableArray*)onlineDataArray forLookupObject:(SFMLookUp*)lookUpObj;
+
 //Needed for Online LookUpPrefilter.
 -(NSString *)advanceExpression:(SFMLookUp *)lookUpObj;
 - (NSArray *)getCriteriaObjectForfilter:(SFMLookUpFilter *)filter;

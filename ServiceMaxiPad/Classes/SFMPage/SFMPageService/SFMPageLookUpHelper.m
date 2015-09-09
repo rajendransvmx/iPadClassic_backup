@@ -157,6 +157,52 @@
     
 }
 
+- (void)fillOnlineLookupData:(NSMutableArray*)onlineDataArray forLookupObject:(SFMLookUp*)lookUpObj {
+    
+    NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
+    NSArray * onlineRecordsArray = [self getRecordArrayFromTransactionModel:onlineDataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
+    
+    //Get locally created records if sfids are not matched.
+    
+//    NSArray *localRecords = [self getLocalLookupRecords:allSFIDs forLookUpObject:lookUpObj];
+    
+    NSArray *localRecords = [self getOfflineLookupRecordsForLookupObject:lookUpObj];
+    
+    NSMutableArray *finalArray = [[NSMutableArray alloc] init];
+    
+    if (onlineRecordsArray.count > 0) {
+        [finalArray addObjectsFromArray:onlineRecordsArray];
+    }
+    if (localRecords.count > 0) {
+        [finalArray addObjectsFromArray:localRecords];
+    }
+    
+    lookUpObj.dataArray = finalArray;
+    
+}
+
+- (NSArray*)getOfflineLookupRecordsForLookupObject:(SFMLookUp*)lookUpObj {
+    
+    NSArray *lookupArray = nil;
+    NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
+    
+    NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
+    
+    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNull andFieldValue:nil];
+    [criteriaArray addObject:criteria];
+    
+    id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    lookupArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:nil criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
+    
+    NSArray * recordsArray = [self getRecordArrayFromTransactionModel:lookupArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
+    
+    return recordsArray;
+
+}
+
+
+
 -(NSArray *)getRecordArrayFromTransactionModel:(NSArray *)dataArray  lookUpObject:(SFMLookUp *)lookUpObject forDisplayFields:(NSArray *)displayFields
 {
     NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -342,6 +388,8 @@
     }
     return criteriaArray;
 }
+
+
 
 -(NSString *)advanceExpression:(SFMLookUp *)lookUpObj
 {
