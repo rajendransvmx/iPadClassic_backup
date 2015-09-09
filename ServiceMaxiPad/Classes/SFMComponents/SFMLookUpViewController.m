@@ -795,7 +795,16 @@
     }
 }
 
+#pragma mark - SFMOnlineLookUpManagerDelegate methods
 
+- (void)onlineLookupSearchSuccessfullwithResponse:(NSMutableArray *)dataArray {
+    
+    [self.lookUpHelper fillOnlineLookupData:dataArray forLookupObject:self.lookUpObject];
+    [self.tableView reloadData];
+}
 
+- (void)onlineLookupSearchFailedwithError:(NSError *)error {
+    
+}
 
 @end

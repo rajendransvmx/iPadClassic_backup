@@ -83,10 +83,20 @@
             WebserviceResponseStatus *webServiceStatus = (WebserviceResponseStatus*)status;
             if (webServiceStatus.syncStatus == SyncStatusSuccess) {
              //   NSDictionary *dataDictionary = [[CacheManager sharedInstance] getCachedObjectByKey:kSFMSearchCacheId];
-              //  [self onlineSearchSuccessfullwithResponseData:[NSMutableDictionary dictionaryWithDictionary:dataDictionary]];
+                
+                //TODO: Get the response data array from cache and pass it to parseSFM method.
+                NSMutableArray *parsedDataArray = [self parseSFMOnlineLookupData:nil];
+                
+                if (self.delegate != nil && [self.delegate respondsToSelector:@selector(onlineLookupSearchSuccessfullwithResponse:)]) {
+                    [self.delegate onlineLookupSearchSuccessfullwithResponse:parsedDataArray];
+                }
+                
             } else if (webServiceStatus.syncStatus == SyncStatusFailed)
             {
               //  [self onlineSearchFailedWithError:webServiceStatus.syncError];
+                if (self.delegate != nil && [self.delegate respondsToSelector:@selector(onlineLookupSearchFailedwithError:)]) {
+                    [self.delegate onlineLookupSearchFailedwithError:webServiceStatus.syncError];
+                }
             }
         }
     }

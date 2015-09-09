@@ -11,6 +11,7 @@
 #import "BarCodeScannerUtility.h"
 #import "SFMLookUpFilter.h"
 #import "SFMPageField.h"
+#import "SFMOnlineLookUpManager.h"
 
 typedef enum : NSUInteger {
     singleSelectionMode,
@@ -18,7 +19,7 @@ typedef enum : NSUInteger {
 } LookUpSelectionMode;
 
 
-@interface SFMLookUpViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UIPopoverControllerDelegate,BarCodeScannerProtocol>
+@interface SFMLookUpViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,UIPopoverControllerDelegate,BarCodeScannerProtocol,SFMOnlineLookUpManagerDelegate>
 @property (nonatomic, strong) SFMPageField *pageField;
 @property (nonatomic,strong) NSString *lookUpId;
 @property (nonatomic,strong) NSString * objectName;

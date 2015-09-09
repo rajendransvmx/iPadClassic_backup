@@ -8,7 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import "SFMLookUp.h"
+
+@protocol  SFMOnlineLookUpManagerDelegate <NSObject>
+
+- (void)onlineLookupSearchSuccessfullwithResponse:(NSMutableArray *)dataArray;
+- (void)onlineLookupSearchFailedwithError:(NSError *)error ;
+
+@end
+
 @interface SFMOnlineLookUpManager : NSObject
+
+@property(nonatomic, weak) id <SFMOnlineLookUpManagerDelegate>delegate;
 
 - (void)performOnlineLookUpWithLookUpObject:(SFMLookUp *)lookUpObj
                               andSearchText:(NSString *)searchText;
