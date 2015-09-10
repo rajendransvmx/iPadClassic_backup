@@ -215,8 +215,9 @@
     }
     for(TransactionObjectModel *transObjectModel in objectsList)
     {
-        if ([transObjectModel valueForField:@"CurrencyISO"]) {
-            [values addObject:[transObjectModel valueForField:@"CurrencyISO"]];
+        //getting price Book currency for WO table
+        if ([transObjectModel valueForField:@"CurrencyIsoCode"]) {
+            [values addObject:[transObjectModel valueForField:@"CurrencyIsoCode"]];
         }
     }
     return values;
