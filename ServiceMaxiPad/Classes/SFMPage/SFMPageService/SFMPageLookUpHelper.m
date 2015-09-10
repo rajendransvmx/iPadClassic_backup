@@ -35,6 +35,7 @@
 #import "TagManager.h"
 #import "DataTypeUtility.h"
 #import "NSDate+SMXDaysCount.h"
+#import "Utility.h"
 
 @interface SFMPageLookUpHelper ()
 
@@ -143,7 +144,7 @@
 {
     NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
     
-    NSArray * criteriaArray = [self getWhereclause:lookUpObj];
+    NSArray * criteriaArray = [self getWhereclause:lookUpObj withSFIds:nil];
     
     NSString * advanceExpression = [self advanceExpression:lookUpObj];
     
@@ -159,8 +160,32 @@
 
 - (void)fillOnlineLookupData:(NSMutableArray*)onlineDataArray forLookupObject:(SFMLookUp*)lookUpObj {
     
+    //Get all sfids from onlinedaraArray.
+    
+    NSMutableArray *allSfids = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    for (TransactionObjectModel *objectModel in onlineDataArray) {
+        NSDictionary *currentDictionary = [objectModel getFieldValueDictionary];
+        NSString *sfID = [currentDictionary objectForKey:kId];
+        if (![Utility isStringEmpty:sfID]) {
+            [allSfids addObject:sfID];
+        }
+    }
+    
     NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
+    NSArray * criteriaArray = [self getWhereclause:lookUpObj withSFIds:allSfids];
+    
+    NSString * advanceExpression = [self advanceExpression:lookUpObj];
+    
+    id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    NSArray * dataArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
+    
+    NSArray * localRecordsArray = [self getRecordArrayFromTransactionModel:dataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
+    
     NSArray * onlineRecordsArray = [self getRecordArrayFromTransactionModel:onlineDataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
+    
+    [self updateLocalIdsForOnlineData:onlineRecordsArray withLocalData:localRecordsArray];
     
     //Get locally created records if sfids are not matched.
     
@@ -179,6 +204,30 @@
     
     lookUpObj.dataArray = finalArray;
     
+}
+
+- (void)updateLocalIdsForOnlineData:(NSArray*)onlineArray withLocalData:(NSArray*)localRecordsArray {
+    
+    @autoreleasepool {
+        for (NSMutableDictionary *localDictionary in localRecordsArray) {
+            
+            SFMRecordFieldData *localSfIdRecord = [localDictionary objectForKey:kId];
+            SFMRecordFieldData *localIdrecord = [localDictionary objectForKey:kLocalId];
+            
+            for (NSMutableDictionary *onlineDictionary in onlineArray) {
+                SFMRecordFieldData *onlineSfIdRecord = [onlineDictionary objectForKey:kId];
+                
+                if ([localSfIdRecord.internalValue isEqualToString:onlineSfIdRecord.internalValue]) {
+                    
+                    //Update with local id for online record that indicates record already exits.
+                    if (![Utility isStringEmpty:localIdrecord.internalValue]) {
+                        SFMRecordFieldData *fieldData = [[SFMRecordFieldData alloc] initWithFieldName:kLocalId value:localIdrecord.internalValue andDisplayValue:localIdrecord.internalValue];
+                        [onlineDictionary setObject:fieldData forKey:kLocalId];
+                    }
+                }
+            }
+        }
+    }
 }
 
 - (NSArray*)getOfflineLookupRecordsForLookupObject:(SFMLookUp*)lookUpObj {
@@ -330,9 +379,15 @@
     return displayFields;
 }
 
--(NSArray *)getWhereclause:(SFMLookUp *)lookUpObj 
+-(NSArray *)getWhereclause:(SFMLookUp *)lookUpObj withSFIds:(NSMutableArray*)allSFIds
 {
     NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
+    
+    if (allSFIds != nil && allSFIds.count > 0) { // get local records which matches with online records.
+        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:allSFIds];
+        
+        [criteriaArray addObject:criteria1];
+    }
     
 //    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
     
