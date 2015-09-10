@@ -213,8 +213,9 @@
     }
     for(TransactionObjectModel *transObjectModel in objectsList)
     {
-        if ([transObjectModel valueForField:@"CurrencyISO"]) {
-            [values addObject:[transObjectModel valueForField:@"CurrencyISO"]];
+        //getting currency from WO table
+        if ([transObjectModel valueForField:@"CurrencyIsoCode"]) {
+            [values addObject:[transObjectModel valueForField:@"CurrencyIsoCode"]];
         }
     }
     return values;
