@@ -142,9 +142,10 @@
 
 -(void)fillDataForLookUpObject:(SFMLookUp *)lookUpObj
 {
+    
     NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
     
-    NSArray * criteriaArray = [self getWhereclause:lookUpObj withSFIds:nil];
+    NSArray * criteriaArray = [self getWhereclause:lookUpObj];
     
     NSString * advanceExpression = [self advanceExpression:lookUpObj];
     
@@ -158,9 +159,18 @@
     
 }
 
+/*
+  Method:fillOnlineLookupData:forLookupObject
+  Params:onlineDataArray,lookUpObj
+  Description:
+  1.Get all sifids from onlineDataArray.
+  2.Get all local records which matches with online sifds.
+  3.Update localIds with onlineDataArray if sfid is available.This will indicate that record exits in local DB.
+  4.Now get all locally created records which doesn't have sfid with circular check.
+  5.Add locally created records with onlineDataArray.
+ */
+
 - (void)fillOnlineLookupData:(NSMutableArray*)onlineDataArray forLookupObject:(SFMLookUp*)lookUpObj {
-    
-    //Get all sfids from onlinedaraArray.
     
     NSMutableArray *allSfids = [[NSMutableArray alloc] initWithCapacity:0];
     
@@ -173,7 +183,7 @@
     }
     
     NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
-    NSArray * criteriaArray = [self getWhereclause:lookUpObj withSFIds:allSfids];
+    NSArray * criteriaArray = [self getWhereclauseForOnlineLookupData:lookUpObj withSFIds:allSfids];
     
     NSString * advanceExpression = [self advanceExpression:lookUpObj];
     
@@ -188,8 +198,6 @@
     [self updateLocalIdsForOnlineData:onlineRecordsArray withLocalData:localRecordsArray];
     
     //Get locally created records if sfids are not matched.
-    
-//    NSArray *localRecords = [self getLocalLookupRecords:allSFIDs forLookUpObject:lookUpObj];
     
     NSArray *localRecords = [self getOfflineLookupRecordsForLookupObject:lookUpObj];
     
@@ -206,6 +214,80 @@
     
 }
 
+/*
+ Method: getOfflineLookupRecordsForLookupObject
+ Params: lookUpObj
+ Description:
+ Get all the locally created if sfid is null and circular reference should not happen.
+ */
+
+- (NSArray*)getOfflineLookupRecordsForLookupObject:(SFMLookUp*)lookUpObj {
+    
+    NSArray *lookupArray = nil;
+    NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
+    NSArray * criteriaArray = [self getWhereclause:lookUpObj];
+    NSString * advanceExpression = [self advanceExpression:lookUpObj];
+    
+    id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    lookupArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
+    
+    NSArray * recordsArray = [self getRecordArrayFromTransactionModel:lookupArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
+    
+    return recordsArray;
+    
+}
+/*
+ Method: getReferenceFieldsFor
+ Params: objectName
+ Description:
+ This method will get reference columns for specified table.
+ */
+-(NSDictionary *)getReferenceFieldsFor:(NSString *)objectName
+{
+    NSMutableDictionary *referenceToDict = [[NSMutableDictionary alloc] init];
+    
+    DBCriteria * criteia1 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
+    
+    
+    DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:@"referenceTo" operatorType:SQLOperatorNotEqual andFieldValue:@"\\"];
+    
+    DBCriteria * criteria3 = [[DBCriteria alloc] initWithFieldName:@"referenceTo" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
+    
+    id <SFObjectFieldDAO> objFieldDAO = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
+    
+    
+    //   NSArray * sfFieldObjects =   [objFieldDAO fetchSFObjectFieldsInfoByFields:[NSArray arrayWithObjects:@"fieldName", @"referenceTo" , nil] andCriteria:[NSArray arrayWithObjects:criteia1,criteria2,criteria3, nil]];
+    
+    NSArray * sfFieldObjects =   [objFieldDAO fetchSFObjectFieldsInfoByFields:[NSArray arrayWithObjects:@"fieldName", @"referenceTo" , nil] andCriteriaArray:[NSArray arrayWithObjects:criteia1,criteria2,criteria3, nil] advanceExpression:@"(1 AND 2 AND 3)"];
+    
+    for (SFObjectFieldModel * objField in sfFieldObjects) {
+        [referenceToDict setObject:objField.fieldName forKey:objField.referenceTo];
+    }
+    
+    return referenceToDict;
+}
+/*
+ Method: getReferenceColumnNameFromReferenceDictionary
+ Params: referenceDictioanry,parentObject
+ Description:
+ This method will get reference column from specified table with refDictioanry.
+ */
+- (NSString*)getReferenceColumnNameFromReferenceDictionary:(NSDictionary*)referenceDictioanry forContextObject:(NSString*)parentObject {
+    
+    NSString *referenceFieldName = nil;
+    
+    referenceFieldName = [referenceDictioanry objectForKey:parentObject];
+    
+    return referenceFieldName;
+}
+/*
+ Method: updateLocalIdsForOnlineData
+ Params: onlineArray,localRecordsArray
+ Description:
+ This method will localIds with onlineArray.This will indicate that online record exits in local DB.
+ */
 - (void)updateLocalIdsForOnlineData:(NSArray*)onlineArray withLocalData:(NSArray*)localRecordsArray {
     
     @autoreleasepool {
@@ -229,31 +311,44 @@
         }
     }
 }
-
-- (NSArray*)getOfflineLookupRecordsForLookupObject:(SFMLookUp*)lookUpObj {
-    
-    NSArray *lookupArray = nil;
-    NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
-    
-    NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
+/*
+ Method: getCircularReferenceRecordsForParentObject
+ Params: parentObject
+ Description:
+ This method will get the circular ref records localIds */
+- (NSArray*)getCircularReferenceRecordsForParentObject:(NSString*)parentObject {
+ 
+    NSArray *circularRefRecords = nil;
+    NSMutableArray * criteriaArray = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray *fieldsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    [fieldsArray addObject:@"localId"];
     
     DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNull andFieldValue:nil];
     [criteriaArray addObject:criteria];
     
     id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
     
-    lookupArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:nil criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
+    circularRefRecords = [transactionModel fetchDataForObject:parentObject
+                                                       fields:fieldsArray
+                                                   expression:nil
+                                                     criteria:criteriaArray
+                          ];
+    NSMutableArray *refRecords = [[NSMutableArray alloc] initWithCapacity:0];
+    for (TransactionObjectModel *model in circularRefRecords) {
+        NSDictionary *dictionary = [model getFieldValueDictionary];
+        NSString *localId = [dictionary objectForKey:kLocalId];
+        if (![Utility isStringEmpty:localId]) {
+            [refRecords addObject:localId];
+        }
+    }
     
-    NSArray * recordsArray = [self getRecordArrayFromTransactionModel:lookupArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
-    
-    return recordsArray;
-
+    return refRecords;
 }
-
-
 
 -(NSArray *)getRecordArrayFromTransactionModel:(NSArray *)dataArray  lookUpObject:(SFMLookUp *)lookUpObject forDisplayFields:(NSArray *)displayFields
 {
+    
+    
     NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
     
     NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
@@ -379,15 +474,26 @@
     return displayFields;
 }
 
--(NSArray *)getWhereclause:(SFMLookUp *)lookUpObj withSFIds:(NSMutableArray*)allSFIds
+-(NSArray *)getWhereclause:(SFMLookUp *)lookUpObj
 {
     NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
     
-    if (allSFIds != nil && allSFIds.count > 0) { // get local records which matches with online records.
-        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:allSFIds];
+    /******** Circular reference check **************/
+    NSArray *circularRefArray = [self getCircularReferenceRecordsForParentObject:lookUpObj.contextLookupFilter.lookupContextParentObject];
+    
+    NSDictionary *referenceDictionary = [self getReferenceFieldsFor:lookUpObj.objectName];
+    
+    NSString *referenceFieldName = [self getReferenceColumnNameFromReferenceDictionary:referenceDictionary forContextObject:lookUpObj.contextLookupFilter.lookupContextParentObject];
+    
+    if (circularRefArray.count > 0 && ![Utility isStringEmpty:referenceFieldName]) {
+        DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:referenceFieldName operatorType:SQLOperatorNotIn andFieldValues:circularRefArray];
         
-        [criteriaArray addObject:criteria1];
+        [criteriaArray addObject:criteria];
     }
+    
+    //Get local records if SFID is null.
+    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNull andFieldValue:nil];
+    [criteriaArray addObject:criteria];
     
 //    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
     
@@ -416,6 +522,72 @@
             else
             {
                  tempCriteria =  [[DBCriteria alloc] initWithFieldName:compModel.fieldName operatorType:SQLOperatorLike andFieldValue:lookUpObj.searchString];
+            }
+            //ReferenceCheck
+            
+            [criteriaArray addObject:tempCriteria];
+        }
+    }
+    if ([lookUpObj.preFilters count] > 0) {
+        NSArray *filerCriteria = [self getCriteriaArrayForPreFilters:lookUpObj.preFilters];
+        if ([filerCriteria count] > 0) {
+            [criteriaArray addObjectsFromArray:filerCriteria];
+        }
+    }
+    
+    if ([lookUpObj.advanceFilters count] > 0) {
+        NSArray *filerCriteria = [self getCriteriaArrayForAdvanceFilters:lookUpObj.advanceFilters];
+        if ([filerCriteria count] > 0) {
+            [criteriaArray addObjectsFromArray:filerCriteria];
+        }
+    }
+    if (lookUpObj.contextLookupFilter.lookupContext != nil && lookUpObj.contextLookupFilter.lookupContext.length > 0) {
+        NSArray *contextfilterCriteria = [self getCriteriaArrayForContextLookUp:lookUpObj];
+        if ([contextfilterCriteria count] > 0) {
+            [criteriaArray addObjectsFromArray:contextfilterCriteria];
+        }
+    }
+    return criteriaArray;
+}
+
+-(NSArray *)getWhereclauseForOnlineLookupData:(SFMLookUp *)lookUpObj withSFIds:(NSMutableArray*)allSFIds
+{
+    NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
+    
+    
+    if (allSFIds != nil && allSFIds.count > 0) { // get local records which matches with online records.
+        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:allSFIds];
+        
+        [criteriaArray addObject:criteria1];
+    }
+    
+    //    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
+    //    [criteriaArray addObject:criteria1];
+    
+    if(![StringUtil isStringEmpty:lookUpObj.searchString])
+    {
+        for ( int counter = 0 ; counter <  [lookUpObj.searchFields count]; counter ++)
+        {
+            SFNamedSearchComponentModel * compModel  =   [lookUpObj.searchFields objectAtIndex:counter];
+            DBCriteria * tempCriteria = nil;
+            if([compModel.fieldDataType isEqualToString:kLookUpReference])
+            {
+                SFObjectFieldModel * fieldModel =  [lookUpObj.fieldInfoDict objectForKey:compModel.fieldName];
+                NSString * referenceTo  = fieldModel.referenceTo;
+                
+                NSString * nameField = [SFMPageHelper getNameFieldForObject:referenceTo];
+                
+                DBCriteria * insserCiteria = [[DBCriteria alloc] initWithFieldName:nameField operatorType:SQLOperatorLike andFieldValue:lookUpObj.searchString];
+                
+                DBRequestSelect *innerSelect = [[DBRequestSelect alloc] initWithTableName:referenceTo andFieldNames:[NSArray arrayWithObject:@"Id"] whereCriteria:insserCiteria];
+                
+                tempCriteria =  [[DBCriteria alloc] initWithFieldName:compModel.fieldName operatorType:SQLOperatorIn andInnerQUeryRequest:innerSelect];
+                
+            }
+            else
+            {
+                tempCriteria =  [[DBCriteria alloc] initWithFieldName:compModel.fieldName operatorType:SQLOperatorLike andFieldValue:lookUpObj.searchString];
             }
             //ReferenceCheck
             
