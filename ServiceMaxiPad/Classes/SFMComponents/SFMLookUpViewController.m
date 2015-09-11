@@ -25,7 +25,7 @@
 @property (nonatomic, strong) NSMutableArray *selectedRecords;
 @property (nonatomic, strong) UIPopoverController * popOverController;
 @property (nonatomic, strong)  BarCodeScannerUtility *barcodeScannerUtil;
-
+@property (nonatomic, strong) SFMOnlineLookUpManager *manager;
 @end
 
 @implementation SFMLookUpViewController
@@ -271,8 +271,9 @@
 //TODO:Testing Online LookUP.
 -(void)launchOnlineAPI
 {
-    SFMOnlineLookUpManager *manager = [[SFMOnlineLookUpManager alloc] init];
-    [manager performOnlineLookUpWithLookUpObject:self.lookUpObject andSearchText:@""];
+    self.manager = [[SFMOnlineLookUpManager alloc] init];
+    self.manager.delegate = self;
+    [self.manager performOnlineLookUpWithLookUpObject:self.lookUpObject andSearchText:@""];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
