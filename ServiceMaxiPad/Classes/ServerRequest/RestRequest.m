@@ -664,7 +664,10 @@
             /* Adding class_name and method_name for webservice call */
             url =   [self getUrlWithStringApppended:kCustomWebServiceUrlLink];
             break;
-            /****************    ************** */
+            
+        case RequestTypeOnlineLookUp:
+            url =   [self getUrlWithStringApppended:kOnlineLookUpURL];
+            break;
         default:
             break;
             

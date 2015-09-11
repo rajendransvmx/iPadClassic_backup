@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SFMLookUp.h"
+#import "FlowNode.h"
 
 @protocol  SFMOnlineLookUpManagerDelegate <NSObject>
 
@@ -16,7 +17,7 @@
 
 @end
 
-@interface SFMOnlineLookUpManager : NSObject
+@interface SFMOnlineLookUpManager : NSObject <FlowDelegate>
 
 @property(nonatomic, weak) id <SFMOnlineLookUpManagerDelegate>delegate;
 

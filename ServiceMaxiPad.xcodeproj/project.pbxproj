@@ -870,6 +870,7 @@
 		6BF9D02A1AA9BEA30057D8AC /* NotificationTrackerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D0281AA9BEA30057D8AC /* NotificationTrackerVC.m */; };
 		6BF9D02F1AA9C0D50057D8AC /* NotificationDownloadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D02D1AA9C0D50057D8AC /* NotificationDownloadCell.m */; };
 		6BF9D0301AA9C0D50057D8AC /* NotificationDownloadCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */; };
+		840E2B7C1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 840E2B7B1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m */; };
 		841121581B901775006C3668 /* Configuration.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121521B901775006C3668 /* Configuration.csv */; };
 		841121591B901775006C3668 /* DummyDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 841121541B901775006C3668 /* DummyDataLoader.m */; };
 		8411215A1B901775006C3668 /* ObjectDescribe.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121551B901775006C3668 /* ObjectDescribe.csv */; };
@@ -2663,6 +2664,8 @@
 		6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NotificationDownloadCell.xib; sourceTree = "<group>"; };
 		84026B021A9B5A4D0096C6B8 /* EventTransactionObjectModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTransactionObjectModel.h; sourceTree = "<group>"; };
 		84026B031A9B5A4D0096C6B8 /* EventTransactionObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTransactionObjectModel.m; sourceTree = "<group>"; };
+		840E2B7A1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMOnlineLookUpParser.h; sourceTree = "<group>"; };
+		840E2B7B1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMOnlineLookUpParser.m; sourceTree = "<group>"; };
 		841121521B901775006C3668 /* Configuration.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Configuration.csv; sourceTree = "<group>"; };
 		841121531B901775006C3668 /* DummyDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyDataLoader.h; sourceTree = "<group>"; };
 		841121541B901775006C3668 /* DummyDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DummyDataLoader.m; sourceTree = "<group>"; };
@@ -4126,6 +4129,8 @@
 				9EBDD6821A55314100EFF9F6 /* ChatterFeedsParser.m */,
 				18FB610D1B3982810011AF75 /* CustomWebServiceParser.h */,
 				18FB610E1B3982810011AF75 /* CustomWebServiceParser.m */,
+				840E2B7A1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.h */,
+				840E2B7B1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -6917,6 +6922,7 @@
 				183A9E2119E69DB000919345 /* DocumentModel.m in Sources */,
 				57186B5C19EF9DDD00B4642A /* TroubleshootingMasterViewController.m in Sources */,
 				183AA03619E6BDB300919345 /* RecordTypeParser.m in Sources */,
+				840E2B7C1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m in Sources */,
 				184A8E7F19E7A0BE006DA6BE /* TKCalendarMonthView.m in Sources */,
 				9EB4F7901A44332C00E2A8BD /* ChatterCell.m in Sources */,
 				183A99B619E682F800919345 /* FileManager.m in Sources */,

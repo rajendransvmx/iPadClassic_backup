@@ -37,6 +37,7 @@
 #import "UserTrunkDataParser.h"
 #import "APNSParser.h"
 #import "CustomWebServiceParser.h"
+#import "SFMOnlineLookUpParser.h"
 
 //#import "GroupProfileParser.h"
 
@@ -354,7 +355,9 @@
         case RequestTypeCustomActionWebServiceAfterBefore:
             parser = [[CustomWebServiceParser alloc] init];
             break;
-        
+        case RequestTypeOnlineLookUp:
+            parser = [[SFMOnlineLookUpParser alloc] init];
+            break;
         default:
             SXLogWarning(@"Invalid parser type requested");
             break;

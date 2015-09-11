@@ -22,11 +22,11 @@
 
 - (ResponseCallback*)processResponseWithRequestParam:(RequestParamModel*)requestParamModel responseData:(id)responseData {
     ResponseCallback *callBack = nil;
-//    WebServiceParser *parserObj = (WebServiceParser *)[ParserFactory parserWithRequestType:self.requestType];
-//    if ([parserObj conformsToProtocol:@protocol(WebServiceParserProtocol)]) {
-//        parserObj.clientRequestIdentifier = self.requestIdentifier;
-//        callBack = [parserObj parseResponseWithRequestParam:requestParamModel responseData:responseData];
-//    }
+    WebServiceParser *parserObj = (WebServiceParser *)[ParserFactory parserWithRequestType:self.requestType];
+    if ([parserObj conformsToProtocol:@protocol(WebServiceParserProtocol)]) {
+        parserObj.clientRequestIdentifier = self.requestIdentifier;
+        callBack = [parserObj parseResponseWithRequestParam:requestParamModel responseData:responseData];
+    }
     return callBack;
 }
 

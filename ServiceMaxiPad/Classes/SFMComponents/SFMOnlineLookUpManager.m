@@ -23,6 +23,7 @@
 #import "SFExpressionComponentDAO.h"
 #import "FactoryDAO.h"
 #import "SFExpressionComponentModel.h"
+#import "CacheConstants.h"
 
 @interface SFMOnlineLookUpManager ()
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -43,10 +44,10 @@
     self.searchText = searchText;
     self.lookUpObject = lookUpObj;
 
-    [self getThePrefilterString];
-
+//    [self advanceFilterData];
+//    [self getThePrefilterString];
     [self removeAllCacheData];
-  //  [self initiateSearchResultWebService];
+    [self initiateSearchResultWebService];
  
 }
 
@@ -82,13 +83,13 @@
         {
             WebserviceResponseStatus *webServiceStatus = (WebserviceResponseStatus*)status;
             if (webServiceStatus.syncStatus == SyncStatusSuccess) {
-             //   NSDictionary *dataDictionary = [[CacheManager sharedInstance] getCachedObjectByKey:kSFMSearchCacheId];
+                NSArray *dataOnlineDataArray = [[CacheManager sharedInstance] getCachedObjectByKey:kSFMOnlineLookUpCacheData];
                 
-                //TODO: Get the response data array from cache and pass it to parseSFM method.
-                NSMutableArray *parsedDataArray = [self parseSFMOnlineLookupData:nil];
+//                //TODO: Get the response data array from cache and pass it to parseSFM method.
+//                NSMutableArray *parsedDataArray = [self parseSFMOnlineLookupData:nil];
                 
                 if (self.delegate != nil && [self.delegate respondsToSelector:@selector(onlineLookupSearchSuccessfullwithResponse:)]) {
-                    [self.delegate onlineLookupSearchSuccessfullwithResponse:parsedDataArray];
+                    [self.delegate onlineLookupSearchSuccessfullwithResponse:dataOnlineDataArray];
                 }
                 
             } else if (webServiceStatus.syncStatus == SyncStatusFailed)
@@ -144,11 +145,11 @@
     [lookupDefDetailDict setValue:searchFieldArray forKey:@"searchFields"];
     [lookupDefDetailDict setValue:displayFieldArray forKey:@"displayFields"];
 
-    [lookupDefDetailDict setValue:displayFieldForQueryColumnArray forKey:@"queryColumns"]; //TODO:Check- Should "Id" be always be included by default.
+    [lookupDefDetailDict setValue:[displayFieldForQueryColumnArray componentsJoinedByString:@","] forKey:@"queryColumns"]; //TODO:Check- Should "Id" be always be included by default.
     [lookupDefDetailDict setValue:[self getThePrefilterString] forKey:@"preFilterCriteria"]; //TODO:Check- is it prepared using  "defaultLookupColumn". eg. "Name LIKE 'San%'" THIS SHOUDL COME FROM SERVER.
 
     [lookupDefDetailDict setValue:[NSNumber numberWithLong:self.lookUpObject.recordLimit] forKey:@"numberOfRecs"];
-    [lookupDefDetailDict setValue:@"" forKey:@"formFillFields"];
+//    [lookupDefDetailDict setValue:@[] forKey:@"formFillFields"];
     [lookupDefDetailDict setValue:self.lookUpObject.defaultColoumnName forKey:@"defaultLookupColumn"];
 
     
@@ -160,7 +161,7 @@
     [lLookupDefDict setValue:lookupDefDetailDict forKey:@"lookupDefDetail"];
     [lLookupDefDict setValue:self.lookUpObject.objectName forKey:@"lookUpObject"];
     [lLookupDefDict setValue:self.lookUpObject.lookUpId forKey:@"key"]; //TODO:Check IF THis the ID required.
-    [lLookupDefDict setValue:@[] forKey:@"advFilters"]; //TODO:Check IF the advance filter has to be sent or not. If it has to be sent what will be the structure.
+    [lLookupDefDict setValue:[self advanceFilterData] forKey:@"advFilters"]; //TODO:Check IF the advance filter has to be sent or not. If it has to be sent what will be the structure.
 
     // INNER-MOST Level-1 END--
 
@@ -174,11 +175,11 @@
     //OUTER-MOST Level START---
     NSMutableDictionary *lOuterMostLevelRequestDict = [[NSMutableDictionary alloc]init];
     [lOuterMostLevelRequestDict setValue:llookupRequestDict forKey:@"lookupRequest"];
-    [lOuterMostLevelRequestDict setValue:@"" forKey:@"docTemplate"];
-    [lOuterMostLevelRequestDict setValue:@"" forKey:@"fieldUpdateRuleInfoList"];
-    [lOuterMostLevelRequestDict setValue:@"" forKey:@"fieldsToNull"];
-    [lOuterMostLevelRequestDict setValue:@"" forKey:@"bizRuleInfo"];
-    [lOuterMostLevelRequestDict setValue:@"" forKey:@"groupId"];
+    [lOuterMostLevelRequestDict setValue:nil forKey:@"docTemplate"];
+    [lOuterMostLevelRequestDict setValue:nil forKey:@"fieldUpdateRuleInfoList"];
+    [lOuterMostLevelRequestDict setValue:nil forKey:@"fieldsToNull"];
+    [lOuterMostLevelRequestDict setValue:nil forKey:@"bizRuleInfo"];
+    [lOuterMostLevelRequestDict setValue:nil forKey:@"groupId"];
     //OUTER-MOST Level END---
 
     
@@ -189,7 +190,7 @@
 }
 
 #pragma mark - Parsing methods
-
+/*
 - (NSMutableArray*)parseSFMOnlineLookupData:(NSDictionary*)responseDictionary {
     
     @autoreleasepool {
@@ -215,7 +216,7 @@
         return onlineDataArray;
     }
 }
-
+*/
 -(NSString *)getThePrefilterString
 {
     SFMPageLookUpHelper *helper = [[SFMPageLookUpHelper alloc] init];
@@ -327,10 +328,12 @@
     
 }
 
--(void)advanceFilterData
+-(NSMutableArray *)advanceFilterData
 {
-    NSMutableDictionary *lOutermostLayer = [NSMutableDictionary new];
+    NSMutableArray *filterArray = [NSMutableArray new];
     for (SFMLookUpFilter *model in self.lookUpObject.advanceFilters) {
+        NSMutableDictionary *lOutermostLayer = [NSMutableDictionary new];
+
         if (model != nil) {
 //            if ([model.lookupContext length] == 0) {
                 if (![model.ruleType isEqualToString:kSearchFilterCriteria]) {
@@ -338,23 +341,34 @@
                     continue;
                 }
             
-            [lOutermostLayer setValue:(model.defaultOn? @"true":@"false") forKey:@"defaultOn"];
-            [lOutermostLayer setValue:(model.allowOverride? @"true":@"false") forKey:@"allowOverride"];
-            [lOutermostLayer setValue:model.name forKey:@"filterName"];
-            [lOutermostLayer setValue:model.sourceObjectName forKey:@"filterObject"];//TODO:Check
-            [lOutermostLayer setValue:model.searchId forKey:@"key"];//TODO:Check
-            [lOutermostLayer setValue:@"" forKey:@"lookupField"];//TODO:Check
+//           [lOutermostLayer setValue:(model.defaultOn? @"true":@"false") forKey:@"defaultOn"];
+             [lOutermostLayer setValue:[NSNumber numberWithBool:model.defaultOn] forKey:@"defaultOn"];
 
-            NSMutableDictionary *filterCriteriaFields = [NSMutableDictionary new];
+//          [lOutermostLayer setValue:(model.allowOverride? @"true":@"false") forKey:@"allowOverride"];
+            [lOutermostLayer setValue:[NSNumber numberWithBool:model.allowOverride] forKey:@"allowOverride"];
+
+            [lOutermostLayer setValue:model.name forKey:@"filterName"]; // Checked.
+            [lOutermostLayer setValue:model.sourceObjectName forKey:@"filterObject"];//TODO:Check. CHECKED
+            [lOutermostLayer setValue:model.searchId forKey:@"key"];//TODO:Check. Data not matching.
+            [lOutermostLayer setValue:model.searchFieldName forKey:@"lookupField"];//TODO:Check
+
             id<SFExpressionComponentDAO> expCompService = [FactoryDAO serviceByServiceType:ServiceTypeExpressionComponent];
             NSArray *expCompArray =[expCompService getExpressionComponentsBySFId:model.searchId];
 
+            NSString *filterCriteriaString = @"";
+            NSMutableArray *filterCriteriaArray = [NSMutableArray new];
             for (SFExpressionComponentModel *expComp in expCompArray) {
+                NSMutableDictionary *filterCriteriaFields = [NSMutableDictionary new];
+
                 [filterCriteriaFields setValue:expComp.operatorValue forKey:@"operatorValue"]; //Specifically for value. dont have to be sent in API.
                 [filterCriteriaFields setValue:expComp.parameterType forKey:@"operandType"];
                 [filterCriteriaFields setValue:[NSNumber numberWithDouble:expComp.componentSequenceNumber] forKey:@"sequence"];
-                [filterCriteriaFields setValue:expComp.componentLHS forKey:@"refObjectNameField"];
-                [filterCriteriaFields setValue:expComp.componentRHS forKey:@""];
+                [filterCriteriaFields setValue:@"" forKey:@"refObjectNameField"];
+                [filterCriteriaFields setValue:expComp.componentLHS forKey:@"apiName"];
+                
+                filterCriteriaString = [filterCriteriaString stringByAppendingFormat:@" %@ %@",expComp.componentLHS, [self operatorAndRHSValue:expComp]];
+                
+                [filterCriteriaArray addObject:filterCriteriaFields];
 //            TODO:
 //                1) what to do when LHS and RHS both are present. Where to assign RHS
 //                2) what is lookupField?
@@ -362,12 +376,39 @@
                 
                
             }
-//                NSArray *dataArray = [self getCriteriaObjectForAdvanceFilter:model];
-//                [criteriaArray addObjectsFromArray:dataArray];
-//            }
-            
+            [lOutermostLayer setValue:filterCriteriaString forKey:@"filterCriteria"];
+            [lOutermostLayer setValue:filterCriteriaArray forKey:@"filterCriteriaFields"];
         }
+        [filterArray addObject:lOutermostLayer];
     }
-
+    return filterArray;
 }
+
+-(NSString *)operatorAndRHSValue:(SFExpressionComponentModel *)expComp
+{
+    NSString *theString = @"";
+    if ([expComp.operatorValue isEqualToString:@"contains"]) {
+        theString = [NSString stringWithFormat:@"contains '%%%@%%'",expComp.componentRHS];
+    }
+    else if ([expComp.operatorValue isEqualToString:@"starts"]){
+        theString = [NSString stringWithFormat:@"contains '%@%%'",expComp.componentRHS];
+
+    }
+    else if ([expComp.operatorValue isEqualToString:@"ends"]){
+        theString = [NSString stringWithFormat:@"contains '%%%@'",expComp.componentRHS];
+        
+    }
+    else if ([expComp.operatorValue isEqualToString:@"isnull"] || [expComp.operatorValue isEqualToString:@"isnotnull"]){
+    
+        theString = [NSString stringWithFormat:@"%@",expComp.operatorValue];
+
+    }
+        else
+        {
+            theString = [NSString stringWithFormat:@"%@ '%@'",expComp.operatorValue , expComp.componentRHS];
+
+        }
+    return theString;
+}
+
 @end

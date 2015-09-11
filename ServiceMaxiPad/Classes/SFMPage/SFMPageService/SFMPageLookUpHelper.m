@@ -850,7 +850,7 @@
             if ([model.lookupContext length] == 0) {
                 if ([model.ruleType isEqualToString:kSearchFilterCriteria]) {
                     if ((!model.defaultOn || !model.objectPermission)) {
-                        continue;
+//                        continue;
                     }
                 }
                 NSArray *dataArray = [self getCriteriaObjectForAdvanceFilter:model];

@@ -144,7 +144,10 @@
                 
                 requestClass = [self getRestRequestByType:requestType];
                 break;
-
+            case RequestTypeOnlineLookUp:
+                
+                requestClass = [self getRestRequestByType:requestType];
+                break;
             default:
                 break;
         }
