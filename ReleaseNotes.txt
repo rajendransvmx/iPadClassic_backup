@@ -4,7 +4,7 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.003
+Version = 15.99.004
 
 ===========================================
 
@@ -12,9 +12,7 @@ Version = 15.99.003
 Fixed Defects
 
 -------------
-1. PriceBook change
-2. 021788
-3. 021802
+Forward ported fixes for defects - 017934, 018955, 021015
 
 -------------
 
