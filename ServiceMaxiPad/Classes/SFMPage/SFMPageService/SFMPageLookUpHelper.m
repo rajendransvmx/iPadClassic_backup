@@ -145,7 +145,7 @@
     
     NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
     
-    NSArray * criteriaArray = [self getWhereclause:lookUpObj];
+    NSArray * criteriaArray = [self getWhereclause:lookUpObj forLocalRecords:NO];
     
     NSString * advanceExpression = [self advanceExpression:lookUpObj];
     
@@ -225,7 +225,7 @@
     
     NSArray *lookupArray = nil;
     NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
-    NSArray * criteriaArray = [self getWhereclause:lookUpObj];
+    NSArray * criteriaArray = [self getWhereclause:lookUpObj forLocalRecords:YES];
     NSString * advanceExpression = [self advanceExpression:lookUpObj];
     
     id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
@@ -474,7 +474,7 @@
     return displayFields;
 }
 
--(NSArray *)getWhereclause:(SFMLookUp *)lookUpObj
+-(NSArray *)getWhereclause:(SFMLookUp *)lookUpObj forLocalRecords:(BOOL)localRecords
 {
     NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
     
@@ -491,9 +491,11 @@
         [criteriaArray addObject:criteria];
     }
     
-    //Get local records if SFID is null.
-    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNull andFieldValue:nil];
-    [criteriaArray addObject:criteria];
+    if (localRecords == YES) {
+        //Get local records if SFID is null.
+        DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNull andFieldValue:nil];
+        [criteriaArray addObject:criteria];
+    }
     
 //    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
     
