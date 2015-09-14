@@ -56,5 +56,7 @@
 + (BOOL)isCameraAvailable;
 + (NSString *)jsonStringFromObject:(id)object;
 + (id)objectFromJsonString:(NSString *)jsonString;
++(NSInteger)requestTimeOutValueFromSetting;
+
 
 @end

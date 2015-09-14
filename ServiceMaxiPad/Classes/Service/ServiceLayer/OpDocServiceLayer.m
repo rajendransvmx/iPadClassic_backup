@@ -75,21 +75,21 @@
     
     NSDictionary *responseDict = (NSDictionary *)responseData;
     SXLogInfo(@"responseDict :%@", responseDict);
-
+    
     if (!responseDict.count || [responseData isKindOfClass:[NSArray class]]) {
         [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
-
+        
     }
     
     else if (self.requestType == RequestTypeCheckOPDOCUploadStatus) {
-    
-    ZKQueryResult *result = [responseDict objectForKey:@"result"];
+        
+        ZKQueryResult *result = [responseDict objectForKey:@"result"];
         
         if (result.size) {
             NSArray *recordsArray = [result records];
             if (recordsArray.count) {
                 [[OpDocSyncDataManager sharedManager] setFileAlreadyUploaded:YES];
-
+                
                 ZKSObject *object = [recordsArray objectAtIndex:0];
                 
                 NSString *sfID = object.Id;
@@ -100,6 +100,7 @@
                 {
                     OPDocHTML *lOPDocHTML = (OPDocHTML *)OPDocObject;
                     lOPDocHTML.sfid = [NSString stringWithFormat:@"%@",sfID];
+                    SXLogInfo(@"File Already uploaded: htmlName: %@", lOPDocHTML.Name);
                     
                     OPDocServices *lOpdocHTMLService = [[OPDocServices alloc] init];
                     [lOpdocHTMLService updateHTML:lOPDocHTML];
@@ -108,6 +109,7 @@
                 else{
                     OPDocSignature *lOPDocSignature = (OPDocSignature *)OPDocObject;
                     lOPDocSignature.sfid = [NSString stringWithFormat:@"%@",sfID];
+                    SXLogInfo(@"File Already uploaded: lOPDocSignature Name: %@", lOPDocSignature.Name);
                     
                     OPDocSignatureService *lOpdocSignatureService = [[OPDocSignatureService alloc] init];
                     [lOpdocSignatureService updateSignature:lOPDocSignature];
@@ -116,41 +118,47 @@
             }
             else
             {
+                SXLogInfo(@"1- Its a new file. Upload it.");
+                
                 [[OpDocSyncDataManager sharedManager] setFileAlreadyUploaded:NO];
-
+                
             }
         }
         else
         {
+            SXLogInfo(@"2- Its a new file. Upload it.");
+            
             [[OpDocSyncDataManager sharedManager] setFileAlreadyUploaded:NO];
-
+            
         }
     }
     else if (self.requestType == RequestTypeOpDocUploading) {
         
         /*
-        Expected Result
+         Expected Result
          responseData: {
-            context =     {
-                Name = "samplehtmlpage.html";
-                ProcessID = "sdfsdfsdf-2323";
-                "SF_ID" = a1LK0000001XaoBMAS;
-                };
+         context =     {
+         Name = "samplehtmlpage.html";
+         ProcessID = "sdfsdfsdf-2323";
+         "SF_ID" = a1LK0000001XaoBMAS;
+         };
          result =     (
-            00PK0000001sobwMAA
-            );
+         00PK0000001sobwMAA
+         );
          }
-        
-        */
+         
+         */
         
         //NSDictionary *lContextDictionary = (NSDictionary *)[responseDict objectForKey:@"context"];
         
         NSArray *lResultantSFIDs = [responseDict objectForKey:@"result"];
         
         //lResultantSFIDs will return array of zksresultObject
-
+        
         if([lResultantSFIDs count] > 0)
         {
+            SXLogInfo(@"File Uploaded successfully");
+            
             NSString *lResultantSFID = (NSString*)[lResultantSFIDs objectAtIndex:0];
             
             id OPDocObject = [[OpDocSyncDataManager sharedManager] cOpDocObjectForSync];
@@ -177,6 +185,8 @@
         }
         else
         {
+            SXLogWarning(@"File Upload Unsuccesful");
+            
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
         }
     }
@@ -185,161 +195,199 @@
         
         /*
          
-        Expected Response
+         Expected Response
          
-        responseData: {
-            aplOrder = "<null>";
-            errors =     (
-            );
-            eventName = "SUBMIT_DOCUMENT";
-            eventType = SYNC;
-            message = "<null>";
-            messageType = "<null>";
-            pageUI = "<null>";
-            success = 1;
-            value = "<null>";
-            valueMap =     (
-                            {
-                                data = "<null>";
-                                key = HTMLID;
-                                "lstInternal_Request" = "<null>";
-                                "lstInternal_Response" = "<null>";
-                                record = "<null>";
-                                value = "<null>";
-                                valueMap =             (
-                                );
-                                values =             (
-                                                      00PK0000001sYozMAE
-                                                      );
-                            },
-                            {
-                                data = "<null>";
-                                key = SIGNATURE;
-                                "lstInternal_Request" = "<null>";
-                                "lstInternal_Response" = "<null>";
-                                record = "<null>";
-                                value = "<null>";
-                                valueMap =             (
-                                );
-                                values =             (
-                                );
-                            },
-                            {
-                                data = "<null>";
-                                key = "DELETE_ID";
-                                "lstInternal_Request" = "<null>";
-                                "lstInternal_Response" = "<null>";
-                                record = "<null>";
-                                value = "<null>";
-                                valueMap =             (
-                                );
-                                values =             (
-                                );
-                            }
-                            );
-            values =     (
-            );
-        }
-        */
-
+         responseData: {
+         aplOrder = "<null>";
+         errors =     (
+         );
+         eventName = "SUBMIT_DOCUMENT";
+         eventType = SYNC;
+         message = "<null>";
+         messageType = "<null>";
+         pageUI = "<null>";
+         success = 1;
+         value = "<null>";
+         valueMap =     (
+         {
+         data = "<null>";
+         key = HTMLID;
+         "lstInternal_Request" = "<null>";
+         "lstInternal_Response" = "<null>";
+         record = "<null>";
+         value = "<null>";
+         valueMap =             (
+         );
+         values =             (
+         00PK0000001sYozMAE
+         );
+         },
+         {
+         data = "<null>";
+         key = SIGNATURE;
+         "lstInternal_Request" = "<null>";
+         "lstInternal_Response" = "<null>";
+         record = "<null>";
+         value = "<null>";
+         valueMap =             (
+         );
+         values =             (
+         );
+         },
+         {
+         data = "<null>";
+         key = "DELETE_ID";
+         "lstInternal_Request" = "<null>";
+         "lstInternal_Response" = "<null>";
+         record = "<null>";
+         value = "<null>";
+         valueMap =             (
+         );
+         values =             (
+         );
+         }
+         );
+         values =     (
+         );
+         }
+         */
+        
+        NSDictionary *lOPDocHTMLAndSignatureObjectDict = [[OpDocSyncDataManager sharedManager] cHtmlSignatureDocSubmissionDictionary];
+        NSArray *listOfSignatureIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"signature"]];
+        NSArray *listOfHTMLIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"html"]];
+        
         int successStatus = [[responseDict objectForKey:@"success"] intValue];
-        if(successStatus)
-        {
-            
-            NSArray *ResponseForSubmitArray = [responseDict objectForKey:@"valueMap"];
-            
-            NSArray *htmlArray;
-            NSArray *signatureArray;
-            NSArray *deleteArray;
-            
-            for (NSDictionary *lDict in ResponseForSubmitArray) {
-                if ([[lDict objectForKey:@"key"] isEqualToString:@"HTMLID"]) {
-                    htmlArray = [lDict objectForKey:@"values"];
-                    
-                }
-                else  if ([[lDict objectForKey:@"key"] isEqualToString:@"SIGNATURE"]) {
-                    signatureArray = [lDict objectForKey:@"values"];
-                    
-                }
-                else  if ([[lDict objectForKey:@"key"] isEqualToString:@"DELETE_ID"]) {
-                    deleteArray = [lDict objectForKey:@"values"];
-                    
-                }
+        NSArray *ResponseForSubmitArray = [responseDict objectForKey:@"valueMap"];
+        NSArray *responseHtmlArray;
+        NSArray *responseSignatureArray;
+        NSArray *responseDeleteArray;
+        
+        for (NSDictionary *lDict in ResponseForSubmitArray) {
+            if ([[lDict objectForKey:@"key"] isEqualToString:@"HTMLID"]) {
+                responseHtmlArray = [lDict objectForKey:@"values"];
+                
             }
+            else  if ([[lDict objectForKey:@"key"] isEqualToString:@"SIGNATURE"]) {
+                responseSignatureArray = [lDict objectForKey:@"values"];
+                
+            }
+            else  if ([[lDict objectForKey:@"key"] isEqualToString:@"DELETE_ID"]) {
+                responseDeleteArray = [lDict objectForKey:@"values"];
+                
+            }
+        }
+        
+        NSSet *set1 = [NSSet setWithArray:listOfSignatureIds];
+        NSSet *set2 = [NSSet setWithArray:responseSignatureArray];
+        
+        /*
+         1. NSSET used to compare so that the id's are same.
+         2. count is compared so as to acertain that the number of id's are equal before and after the request.
+         */
+        if(successStatus && [set1 isEqualToSet:set2] && listOfSignatureIds.count == responseSignatureArray.count)
+            
+        {
+            SXLogInfo(@"Submit Doc Successful");
+            
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:YES];
-
-            [[OpDocSyncDataManager sharedManager] setCResponseForDocSubmitDictionary:@{kOPDocHTMLString:htmlArray?htmlArray:@[], kOPDocSignatureString:signatureArray?signatureArray:@[], kOPDocDeleteString:deleteArray?deleteArray:@[]}];
+            
+            [[OpDocSyncDataManager sharedManager] setCResponseForDocSubmitDictionary:@{kOPDocHTMLString:responseHtmlArray?responseHtmlArray:@[], kOPDocSignatureString:responseSignatureArray?responseSignatureArray:@[], kOPDocDeleteString:responseDeleteArray?responseDeleteArray:@[]}];
             
         }
         else
         {
-            //TODO: What if success is 0?
+            BOOL deleteIDExist = NO;
             
-            [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
-
-            [self removeSFIDFromTheTableForDOCSubmissionFAILURE]; // Removing the SFID from the tables. this will make the client to get the SFID again and then submit for doc-submission again. Its just a FAIL safe.
-
+            for(NSString *sfid in listOfSignatureIds) {
+                if ([responseDeleteArray containsObject:sfid]) {
+                    deleteIDExist = YES;
+                    break;
+                }
+            }
+            
+            if (!deleteIDExist) {
+                for(NSString *sfid in listOfHTMLIds) {
+                    if ([responseDeleteArray containsObject:sfid]) {
+                        deleteIDExist = YES;
+                        break;
+                    }
+                }
+            }
+            
+            if (successStatus == 1 && deleteIDExist == YES) {
+                //TODO: What if success is 0?
+                SXLogWarning(@"Submit DOC failed - PDF Generated already");
+                [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
+                [[OpDocHelper sharedManager] deleteTheAlreadyUploadedFiles:responseDeleteArray];
+            }
+            else {
+                
+                //TODO: What if success is 0?
+                SXLogWarning(@"Submit DOC failed.");
+                [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
+                
+                [self removeSFIDFromTheTableForDOCSubmissionFAILURE]; // Removing the SFID from the tables. this will make the client to get the SFID again and then submit for doc-submission again. Its just a FAIL safe.
+            }
+            
         }
-        
-
-        SXLogInfo(@"responseDict :%@", responseDict);
     }
     else
     { // Generate PDF
-
+        
         /*
          
          Expected Response:
          
-        responseData: {
-            aplOrder = "<null>";
-            errors =     (
-            );
-            eventName = "GENERATE_PDF";
-            eventType = SYNC;
-            message = "<null>";
-            messageType = "<null>";
-            pageUI = "<null>";
-            success = 1;
-            value = "<null>";
-            valueMap =     (
-                            {
-                                data = "<null>";
-                                key = HTMLID;
-                                "lstInternal_Request" = "<null>";
-                                "lstInternal_Response" = "<null>";
-                                record = "<null>";
-                                value = "<null>";
-                                valueMap =             (
-                                );
-                                values =             (
-                                                      00PK0000001sobwMAA
-                                                      );
-                            },
-                            {
-                                data = "<null>";
-                                key = SIGNATURE;
-                                "lstInternal_Request" = "<null>";
-                                "lstInternal_Response" = "<null>";
-                                record = "<null>";
-                                value = "<null>";
-                                valueMap =             (
-                                );
-                                values =             (
-                                );
-                            }
-                            );
-            values =     (
-            );
-        }
-    */
+         responseData: {
+         aplOrder = "<null>";
+         errors =     (
+         );
+         eventName = "GENERATE_PDF";
+         eventType = SYNC;
+         message = "<null>";
+         messageType = "<null>";
+         pageUI = "<null>";
+         success = 1;
+         value = "<null>";
+         valueMap =     (
+         {
+         data = "<null>";
+         key = HTMLID;
+         "lstInternal_Request" = "<null>";
+         "lstInternal_Response" = "<null>";
+         record = "<null>";
+         value = "<null>";
+         valueMap =             (
+         );
+         values =             (
+         00PK0000001sobwMAA
+         );
+         },
+         {
+         data = "<null>";
+         key = SIGNATURE;
+         "lstInternal_Request" = "<null>";
+         "lstInternal_Response" = "<null>";
+         record = "<null>";
+         value = "<null>";
+         valueMap =             (
+         );
+         values =             (
+         );
+         }
+         );
+         values =     (
+         );
+         }
+         */
         
         int successStatus = [[responseDict objectForKey:@"success"] intValue];
-
+        
         if(successStatus)
         {
+            SXLogInfo(@"OPD: Generate PDF Successful");
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:YES];
-
+            
             NSArray *ResponseForSubmitArray = [responseDict objectForKey:@"valueMap"];
             
             NSArray *htmlArray = nil;
@@ -359,13 +407,13 @@
             }
             
             [[OpDocSyncDataManager sharedManager] setCResponseForGeneratingPDFDictionary:@{kOPDocHTMLString:htmlArray?htmlArray:@[], kOPDocSignatureString:signatureArray?signatureArray:@[]}];
-
         }
         else
         {
             //TODO: What if success is 0?
+            SXLogWarning(@"OPD: Generate PDF failed.");
+            
             [[OpDocSyncDataManager sharedManager]setIsSuccessfullyUploaded:NO];
-
         }
         
     }
@@ -379,11 +427,12 @@
     
     if (self.requestType == RequestTypeCheckOPDOCUploadStatus) {
         
+        SXLogDebug(@"OPD: RequestTypeCheckOPDOCUploadStatus request");
         
         param = [[RequestParamModel alloc] init];
         param.value = [[OpDocHelper sharedManager] getQueryForCheckingOPDOCFileUploadStatus];
         
-//        return @[param];
+        //        return @[param];
         
     }
     
@@ -395,14 +444,14 @@
         if(!success)
             return @[];
         
-//        self.cParent_SFID = @"a1LK0000001XaoBMAS"; //TODO:REMVOE it. For Testing only
+        //        self.cParent_SFID = @"a1LK0000001XaoBMAS"; //TODO:REMVOE it. For Testing only
         
         ZKSObject * obj = [[ZKSObject alloc] initWithType:@"Attachment"];
         
         [obj setFieldValue:self.cFileName field:@"Name"];
         [obj setFieldValue:self.cWorkOrderOuputString field:@"Description"];
         
-      
+        
         NSString *lFilePath =  [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:self.cFileName];
         
         NSData * fileData = [NSData dataWithContentsOfFile:lFilePath];
@@ -426,7 +475,9 @@
         param = [[RequestParamModel alloc] init];
         param.values = array;
         param.context = dict;
-
+        
+        SXLogDebug(@"OPD: RequestTypeOpDocUploading request");
+        
     }
     else if (self.requestType == RequestTypeOPDocHTMLAndSignatureSubmit){ // For SUBMITTING the list of HTML and Signature files to Server
         
@@ -434,8 +485,8 @@
         NSArray *listOfHTMLIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"html"]];
         NSArray *listOfSignatureIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"signature"]];
         
-
-//        listOfHTMLIds = @[@"00PK0000001sobwMAA"]; // TODO:Remove. For testing only.
+        
+        //        listOfHTMLIds = @[@"00PK0000001sobwMAA"]; // TODO:Remove. For testing only.
         
         if(![listOfHTMLIds count])
         {
@@ -454,6 +505,8 @@
         param = [[RequestParamModel alloc] init];
         param.valueMap = @[htmlValueMap, signatureValueMap];
         
+        SXLogDebug(@"OPD: RequestTypeOPDocHTMLAndSignatureSubmit request");
+        
     }
     else if (self.requestType == RequestTypeOPDocGeneratePDF){  // For Generating the PDF in the server of the HTML File Submitted already.
         
@@ -462,8 +515,8 @@
         NSArray *listOfHTMLIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"html"]];
         NSArray *listOfSignatureIds = [NSMutableArray arrayWithArray:[lOPDocHTMLAndSignatureObjectDict objectForKey:@"signature"]];
         
-//        listOfHTMLIds = @[@"00PK0000001sobwMAA"]; // TODO:Remove. For testing only.
-
+        //        listOfHTMLIds = @[@"00PK0000001sobwMAA"]; // TODO:Remove. For testing only.
+        
         NSMutableDictionary *htmlValueMap = [NSMutableDictionary dictionary];
         [htmlValueMap setObject:kSmartDocsHTMLID forKey:@"key"];
         [htmlValueMap setObject:listOfHTMLIds forKey:@"values"];
@@ -475,10 +528,12 @@
         param = [[RequestParamModel alloc] init];
         param.valueMap = @[htmlValueMap, signatureValueMap];
         
+        SXLogDebug(@"OPD: RequestTypeOPDocGeneratePDF request");
+        
     }
     
-   return (param != nil) ? @[param]:nil;
-   // return @[param];
+    return (param != nil) ? @[param]:nil;
+    // return @[param];
 }
 
 -(BOOL)saveFileDetailsLocallyForObject
@@ -507,16 +562,16 @@
         self.cRecord_ID = lOPDocSignature.record_id;
         self.cObjectName = lOPDocSignature.objectName;
         self.isHTMLDoc = NO;
-
+        
     }
     
     self.cWorkOrderOuputString = @"Work Order Output Doc";
     
     NSString *oldFileName = [NSString stringWithString:self.cFileName];
-//    [self.cFileName copy];
+    //    [self.cFileName copy];
     
     self.cParent_SFID =  [SFMPageHelper getSfIdForLocalId:self.cRecord_ID objectName:self.cObjectName]; //Retreiving the Parent SF_ID for the corresponding Record_ID.
- 
+    
     if(self.cParent_SFID.length <= 0)
         return NO;
     
@@ -524,7 +579,7 @@
     
     if (self.cFileName && self.isHTMLDoc) {
         
-         [self updateTheTablesWithTheNewFileName:OPDocObject];  // Changing the Filename in the OPDOCHTML Table or OPDOC Signature Table.
+        [self updateTheTablesWithTheNewFileName:OPDocObject];  // Changing the Filename in the OPDOCHTML Table or OPDOC Signature Table.
         
         //update document table too.
         [self updateFileInLocalForFileName:oldFileName withNewFileName:self.cFileName];
@@ -532,7 +587,7 @@
         //update signature table for html fileName
         [self updateHtmlFileName:self.cFileName inSignaturesForOld:oldFileName];
     }
-   
+    
     return YES;
 }
 - (void)updateFileInLocalForFileName:(NSString *)filename withNewFileName:(NSString *)newName {
@@ -550,7 +605,7 @@
         {
             SXLogWarning(@"File rename unsuccessful : %@",newFilePath);
         }
-
+        
     }
 }
 
@@ -584,7 +639,7 @@
         //Also replace file in doc directory.
     }
     else{
-    
+        
     }
     
 }
@@ -600,12 +655,12 @@
         OPDocSignatureService *srvc = [[OPDocSignatureService alloc] init];
         [srvc updateTableToRemovetheSFIDForList:listOfSignatureIds];
     }
-
+    
     if (listOfHTMLIds && listOfHTMLIds.count) {
         OPDocServices *lOpdocHTMLService = [[OPDocServices alloc] init];
         [lOpdocHTMLService updateTableToRemovetheSFIDForList:listOfHTMLIds];
     }
-
+    
     
 }
 @end

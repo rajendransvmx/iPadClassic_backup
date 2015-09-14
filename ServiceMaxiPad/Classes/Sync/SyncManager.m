@@ -758,7 +758,7 @@ static SyncManager *_instance;
 - (void)currentDataSyncfinished {
     
     @synchronized([self class]) {
-
+        
         [AppManager updateTabBarBadges];
         
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
@@ -768,6 +768,8 @@ static SyncManager *_instance;
         BOOL conflictsResolved = [self continueDataSyncIfConflictsResolved];
         
         BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
+        
+        SXLogDebug(@"SS: didRestartSuccessiveSync: %d", didRestart);
         
         if (!didRestart) {
             
@@ -789,8 +791,12 @@ static SyncManager *_instance;
                 /* Clear user deafults utility */
                 
                 [PlistManager clearAllWhatIdObjectInformation];
-                [[OpDocHelper sharedManager] initiateFileSync];
-                [[OpDocHelper sharedManager] setCustomDelegate:self];
+                
+                if (![[OpDocHelper sharedManager] isTheOpDocSyncInProgress]) {
+                    
+                    [[OpDocHelper sharedManager] initiateFileSync];
+                    [[OpDocHelper sharedManager] setCustomDelegate:self];
+                }
             }
             
             [self manageSyncQueueProcess];
