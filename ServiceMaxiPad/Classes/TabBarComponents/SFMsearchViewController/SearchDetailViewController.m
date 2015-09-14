@@ -487,12 +487,19 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    
+    if (![self isCellExpandedForSection:section]) {
+        return 0;
+
+    }
+
     SFMSearchObjectModel *srchObj = [self.searchProcess.searchObjects objectAtIndex:section];
     NSArray *list = [self.dataList objectForKey:srchObj.objectId];
     
     // Update the results count
     //resultsCount += list.count;
     //    [self.lblItemsCount setText:[NSString stringWithFormat:@"%d %@",resultsCount,@"items found"]];
+    
 
     return list.count;
 }
