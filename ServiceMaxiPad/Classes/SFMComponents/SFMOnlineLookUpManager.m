@@ -161,6 +161,7 @@
     [lLookupDefDict setValue:lookupDefDetailDict forKey:@"lookupDefDetail"];
     [lLookupDefDict setValue:self.lookUpObject.objectName forKey:@"lookUpObject"];
     [lLookupDefDict setValue:self.lookUpObject.lookUpId forKey:@"key"]; //TODO:Check IF THis the ID required.
+    [lLookupDefDict setValue:self.lookUpObject.objectName forKey:@"objectName"];
     [lLookupDefDict setValue:[self advanceFilterData] forKey:@"advFilters"]; //TODO:Check IF the advance filter has to be sent or not. If it has to be sent what will be the structure.
 
     // INNER-MOST Level-1 END--
