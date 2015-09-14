@@ -8,6 +8,7 @@
 
 #import "Utility.h"
 #import "SVMXSystemConstant.h"
+#import "StringUtil.h"
 
 void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message);
 @implementation Utility
@@ -347,5 +348,21 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     return json;
 }
+
+
+
++(NSInteger)requestTimeOutValueFromSetting
+{
+    NSInteger requestTimeOutInSec = 180;
+    NSString *stringValue = [[NSUserDefaults standardUserDefaults] objectForKey:@"reqTimeout_Setting"];
+    NSInteger requestTimeOut = 0;
+    if ([StringUtil isStringEmpty:stringValue])
+    {
+        requestTimeOut = [stringValue integerValue];
+        requestTimeOutInSec = requestTimeOut * 60;
+    }
+    return requestTimeOutInSec;
+}
+
 
 @end

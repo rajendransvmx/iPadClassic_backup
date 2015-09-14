@@ -27,6 +27,8 @@
 #import "NSURL+Additions.h"
 //#import "AppDelegate.h"
 #import "CustomerOrgInfo.h"
+#import "Utility.h"
+
 void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message);
 
 static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
@@ -50,20 +52,23 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
 {
     
     CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
-
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[customerOrgInfoInstance apiURL]]]; //Shrinivas : OAuth
-	[request setHTTPMethod:@"POST"];
-	[request addValue:@"text/xml; charset=UTF-8" forHTTPHeaderField:@"content-type"];	
-	[request addValue:@"\"\"" forHTTPHeaderField:@"SOAPAction"];
-	NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
-	[request setHTTPBody:data];
     
-	if(self.logXMLInOut) {
-		//undochangespushpak
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[customerOrgInfoInstance apiURL]]]; //Shrinivas : OAuth
+    [request setHTTPMethod:@"POST"];
+    [request addValue:@"text/xml; charset=UTF-8" forHTTPHeaderField:@"content-type"];
+    [request addValue:@"\"\"" forHTTPHeaderField:@"SOAPAction"];
+    NSData *data = [payload dataUsingEncoding:NSUTF8StringEncoding];
+    [request setHTTPBody:data];
+    request.timeoutInterval = [Utility requestTimeOutValueFromSetting];
+    
+    SXLogDebug(@"OPD: SET timeout: %f", request.timeoutInterval);
+    
+    if(self.logXMLInOut) {
+        //undochangespushpak
         //
         //SMLog(kLogLevelVerbose,@"OutputHeaders:\n%@", [request allHTTPHeaderFields]);
-		//SMLog(kLogLevelVerbose,@"OutputBody:\n%@", payload);
-	}
+        //SMLog(kLogLevelVerbose,@"OutputBody:\n%@", payload);
+    }
     
     return [self _sendRequest:request target:target selector:sel context:context];
 }

@@ -800,40 +800,46 @@ static SyncManager *_instance;
     dispatch_async(dispatch_get_main_queue(), ^{
         [AppManager updateTabBarBadges];
     });
-    [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
-    [self updateLastSyncTime];
-    
-    // if conflicts not resolved, then stop data sync..
-    BOOL conflictsResolved = [self continueDataSyncIfConflictsResolved];
-    
-    BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
-    
-    if (!didRestart) {
+        [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+        [self updateLastSyncTime];
         
-        [self updateSyncStatus];
-        self.isDataSyncInLoop = NO;
-        self.isDataSyncRunning = NO;
-        self.dataSyncStatus = SyncStatusSuccess;
+        // if conflicts not resolved, then stop data sync..
+        BOOL conflictsResolved = [self continueDataSyncIfConflictsResolved];
         
-        [[SMDataPurgeManager sharedInstance] restartDataPurge];
-        [PlistManager removeLastDataSyncStartGMTTime];
-        [PlistManager removeLastLocalIdFromDefaults];
+        BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
         
-        //[self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
-        /* Send data sync Success notification */
-        [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
+        SXLogDebug(@"SS: didRestartSuccessiveSync: %d", didRestart);
         
-        if (conflictsResolved) {
-            /* Clear user deafults utility */
+        if (!didRestart) {
             
-            [PlistManager clearAllWhatIdObjectInformation];
-            [[OpDocHelper sharedManager] initiateFileSync];
-            [[OpDocHelper sharedManager] setCustomDelegate:self];
+            [self updateSyncStatus];
+        self.isDataSyncInLoop = NO;
+            self.isDataSyncRunning = NO;
+            self.dataSyncStatus = SyncStatusSuccess;
+            
+            [[SMDataPurgeManager sharedInstance] restartDataPurge];
+            [PlistManager removeLastDataSyncStartGMTTime];
+            [PlistManager removeLastLocalIdFromDefaults];
+            
+            //[self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
+            /* Send data sync Success notification */
+            [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
+            
+            if (conflictsResolved) {
+                /* Clear user deafults utility */
+                
+                [PlistManager clearAllWhatIdObjectInformation];
+                
+                if (![[OpDocHelper sharedManager] isTheOpDocSyncInProgress]) {
+                    
+                    [[OpDocHelper sharedManager] initiateFileSync];
+                    [[OpDocHelper sharedManager] setCustomDelegate:self];
+                }
+            }
+            
+            [self manageSyncQueueProcess];
         }
-        
-        [self manageSyncQueueProcess];
     }
-}
 
 
 - (void)OpdocStatus:(BOOL)status forCategory:(CategoryType)category {

@@ -22,11 +22,13 @@
 
 + (id)sharedManager;
 
+-(BOOL)isTheOpDocSyncInProgress;
 -(void)initiateFileSync;
 -(void)initiateDocumentSubmissionProcess;
 -(void)initiateGeneratePDFProcess;
 -(NSString *)getQueryForCheckingOPDOCFileUploadStatus;
 -(void)clearOpDocHTMLAndSignatureFilesOnReset;
 -(NSMutableArray*)getLocalOpDocHtmlFilesAndSignatureFiles;
+-(void)deleteTheAlreadyUploadedFiles:(NSArray *)deleteIds;
 
 @end
