@@ -273,7 +273,7 @@
 {
     self.manager = [[SFMOnlineLookUpManager alloc] init];
     self.manager.delegate = self;
-    [self.manager performOnlineLookUpWithLookUpObject:self.lookUpObject andSearchText:@""];
+    [self.manager performOnlineLookUpWithLookUpObject:self.lookUpObject andSearchText:self.searchView.text];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
