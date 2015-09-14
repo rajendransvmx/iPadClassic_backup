@@ -248,7 +248,11 @@
             criteriaString = [criteriaString stringByAppendingFormat:@" %@",[advanceExp objectAtIndex:(i*2)+1]];
         }
     }
-    criteriaString = [criteriaString substringFromIndex:1]; //Removing the white space at the beginning
+    if (![Utility isStringEmpty:criteriaString]) {
+        if ([criteriaString length] > 1) {
+            criteriaString = [criteriaString substringFromIndex:1]; //Removing the white space at the beginning
+        }
+    }
     return criteriaString;
     
 }
