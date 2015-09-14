@@ -36,5 +36,7 @@
 -(NSArray *)recordForRecordId:(NSString *)someRecordId;
 -(void)updateRecordsSent:(ModifiedRecordModel *)model;
 - (BOOL)doesAnyRecordExistForSyncing;
+- (BOOL)checkIfNonInsertRecordsExist;
+- (NSArray *)getInsertRecordsAsArray;
 
 @end

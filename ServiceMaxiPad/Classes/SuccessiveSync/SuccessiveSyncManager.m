@@ -191,8 +191,8 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
                             
                             id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
                             [modifiedRecordService saveRecordModel:syncRecord];
-                            [self.succSyncRecords removeObjectForKey:localId];
                         }
+                        [self.succSyncRecords removeObjectForKey:localId];
                     }
                     else
                     {

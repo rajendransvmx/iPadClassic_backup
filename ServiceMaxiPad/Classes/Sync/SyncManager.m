@@ -44,6 +44,8 @@
 #import "SFMPageHelper.h"
 #import "CacheConstants.h"
 #import "StringUtil.h"
+#import "TransactionObjectService.h"
+#import "SyncErrorConflictService.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -897,26 +899,18 @@ static SyncManager *_instance;
 - (BOOL)restartDataSyncIfNecessary {
     
     @synchronized([self class]) {
-    
-        /* Check the count in modified records table */
-        ModifiedRecordsService *modifiedRecordService = [[ModifiedRecordsService alloc] init];
         
-        if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
+        BOOL modifiedRecordsExist = [self checkIfModifiedRecordsExist];
         
-            BOOL doesExist =  [modifiedRecordService doesAnyRecordExistForSyncing];
-            
-            if (doesExist) {
-                
-                NSLog(@"Successsive sync: initiated");
-                
-                [self performSelectorInBackground:@selector(initiateSyncInBackGround) withObject:nil];
-                return doesExist;
-            }
-            else {
-                NSLog(@"No successive sync started");
-            }
+        if (modifiedRecordsExist) {
+            NSLog(@"Successsive sync: initiated");
+            [self performSelectorInBackground:@selector(initiateSyncInBackGround) withObject:nil];
+            return modifiedRecordsExist;
         }
-        return NO;
+        else {
+            NSLog(@"No successive sync started");
+        }
+        return modifiedRecordsExist;
     }
 }
 
@@ -2004,55 +1998,49 @@ static SyncManager *_instance;
 
 - (void)PerformSYncBasedOnFlags
 {
-  @synchronized([self class]) {
-      
-    [[CacheManager sharedInstance] clearCacheByKey:kAfterSaveInsertCustomCallValueMap]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
-
-    [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
-
-    [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
-
-    ModifiedRecordsService *modifiedRecordService = [[ModifiedRecordsService alloc] init];
-    BOOL doesExist = NO;
-    
-    if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
+    @synchronized([self class]) {
         
-        doesExist =  [modifiedRecordService doesAnyRecordExistForSyncing];
-    }
-    if(doesExist)
-    {
-        self.isDataSyncRunning = NO;
-        [self initiateCustomDataSync];
-    }
-    else {
-        [self currentDataSyncfinished];
+        [[CacheManager sharedInstance] clearCacheByKey:kAfterSaveInsertCustomCallValueMap]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
+        
+        [[CacheManager sharedInstance] clearCacheByKey:kCustomWebServiceAction]; // This is being saved in SFMCustomActionWebServiceHelper. So removing it after the custom call.
+        
+        [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+        
+        BOOL modifiedRecordsExist = [self checkIfModifiedRecordsExist];
+        
+        if(modifiedRecordsExist)
+        {
+            self.isDataSyncRunning = NO;
+            [self initiateCustomDataSync];
+        }
+        else {
+            [self currentDataSyncfinished];
+        }
+        
+        /*
+         if(self.isAfterInsert)
+         {
+         
+         status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:1];
+         }
+         else if(self.isBeforeUpdate)
+         {
+         [self performDataSync];
+         return;
+         
+         }
+         else if(self.isAfterUpdate)
+         {
+         status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:3];
+         }
+         
+         if (!status) {
+         [self currentDataSyncfinished];
+         
+         }
+         */
         
     }
-    
-    /*
-    if(self.isAfterInsert)
-    {
-
-       status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:1];
-    }
-    else if(self.isBeforeUpdate)
-    {
-        [self performDataSync];
-        return;
-
-    }
-    else if(self.isAfterUpdate)
-    {
-      status =  [self customAPICallwithModifiedRecordModelRequestData:self.cCustomCallRecordModel.requestData andRequestType:3];
-    }
-
-    if (!status) {
-        [self currentDataSyncfinished];
-
-    }
-     */
-      
-  }
 }
 
 - (void)customCallResponse
@@ -2155,4 +2143,61 @@ static SyncManager *_instance;
     
     return (insertedRecords.count?YES:NO);
 }
+
+
+// check if there is any record in ModifiedRecords. Also, check if all the records in this table meet following conditions: recordType - DETAIL, operation - INSERT, parent record is unsynced with a conflict (& 'decide later' status). If all records in ModifiedRecords meet these conditions, then dont trigger data sync - for defect 020834
+-(BOOL)checkIfModifiedRecordsExist {
+    BOOL doesExist = NO;
+    ModifiedRecordsService *modifiedRecordService = [[ModifiedRecordsService alloc] init];
+    if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
+        doesExist =  [modifiedRecordService doesAnyRecordExistForSyncing];
+        if (doesExist) {
+            BOOL nonInsertRecordsExist = [modifiedRecordService checkIfNonInsertRecordsExist];
+            if (!nonInsertRecordsExist) { // if only insert records exist..
+                TransactionObjectService *transObjectService = [[TransactionObjectService alloc] init];
+                SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc] init];
+                NSArray *insertRecords = [modifiedRecordService getInsertRecordsAsArray];
+                for (ModifiedRecordModel *model in insertRecords) {
+                    if ([model.recordType isEqualToString:kRecordTypeMaster]) {
+                        doesExist = YES; // header insert record exist, trigger data sync.
+                        break;
+                    }
+                    else {
+                        
+                        BOOL doesParentRecordExist = [transObjectService doesRecordExistsForObject:model.parentObjectName forRecordId:model.parentLocalId];
+                        
+                        if (doesParentRecordExist) {
+                            
+                            NSString *sfIdValue = [transObjectService getSfIdForLocalId:model.parentLocalId forObjectName:model.parentObjectName];
+                            if ([StringUtil isStringEmpty:sfIdValue]) {
+                                BOOL conflictRecordExist = [conflictService isConflictFoundOnHoldForLocalRecordWithObject:model.parentObjectName withLocalId:model.parentLocalId];
+                                if (conflictRecordExist) {
+                                    doesExist = NO; // parent record is in conflict with 'decide later' status..
+                                }
+                                else {
+                                    doesExist = YES; // parent record exist with no conflict, trigger data sync..
+                                    break;
+                                }
+                            }
+                            else {
+                                doesExist = YES; // parent record has SFID, trigger data sync..
+                                break;
+                            }
+                        }
+                        else {
+                            doesExist = YES; // parent record doesn't exist, trigger data sync..
+                            break;
+                        }
+                    }
+                }
+            }
+            else {
+                doesExist = YES; // update/delete records exist, trigger data sync..
+            }
+        }
+    }
+    return doesExist;
+}
+
+
 @end
