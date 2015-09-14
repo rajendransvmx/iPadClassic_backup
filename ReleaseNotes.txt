@@ -4,19 +4,20 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.59.006
+Version = 15.59.007
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-Forward ported fixes for defects - 017934, 018955, 021015
-
+021823
+020834
+Successive sync issue - If a record is created during sync, then successive sync was occurring twice - (one for insert, one for update).
 
 Note:
 —-
-SVMXC
+Namespace - SVMXC
 
 
 
