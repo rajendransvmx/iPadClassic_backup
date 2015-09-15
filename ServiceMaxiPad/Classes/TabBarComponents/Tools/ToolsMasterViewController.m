@@ -89,7 +89,7 @@
 - (void)receivedSyncConflictChangeNotification:(NSNotification *)notification
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self reloadTableView];
+        //[self reloadTableView];
         [self updateTheTabBarBadges];
     });
 }
