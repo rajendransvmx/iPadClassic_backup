@@ -85,7 +85,7 @@
     //    }
 }
 - (void)receivedSyncConflictChangeNotification:(NSNotification *)notification {
-    [self reloadTableView];
+   // [self reloadTableView];
     [self updateTheTabBarBadges];
 
 }
