@@ -1799,9 +1799,9 @@
             [rightButton addTarget:self action:@selector(actionButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
             rightButton.titleLabel.textAlignment=NSTextAlignmentRight;
             rightButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
+            self.navigationItem.rightBarButtonItem.enabled = YES;
         }
         self.navigationItem.rightBarButtonItem =[[UIBarButtonItem alloc] initWithCustomView:rightButton];
-        self.navigationItem.rightBarButtonItem.enabled = YES;
     }
 }
 
