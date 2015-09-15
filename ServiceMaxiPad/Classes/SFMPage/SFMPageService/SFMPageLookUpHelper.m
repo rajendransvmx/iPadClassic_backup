@@ -198,8 +198,11 @@
     [self updateLocalIdsForOnlineData:onlineRecordsArray withLocalData:localRecordsArray];
     
     //Get locally created records if sfids are not matched.
+    NSArray *localRecords = nil;
+    if (onlineDataArray.count < lookUpObj.recordLimit) {
+        localRecords = [self getOfflineLookupRecordsForLookupObject:lookUpObj];
+    }
     
-    NSArray *localRecords = [self getOfflineLookupRecordsForLookupObject:lookUpObj];
     
     NSMutableArray *finalArray = [[NSMutableArray alloc] init];
     
