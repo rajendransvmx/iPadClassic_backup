@@ -37,7 +37,10 @@
 #import "NSDate+SMXDaysCount.h"
 #import "Utility.h"
 
-@interface SFMPageLookUpHelper ()
+@interface SFMPageLookUpHelper () {
+    BOOL isCircularRefEnabled;
+    BOOL includeOfflineRecords;
+}
 
 @property (nonatomic, strong) NSMutableDictionary * pickListData;
 @property (nonatomic, strong) NSMutableDictionary * recordTypeData;
@@ -489,12 +492,18 @@
     NSString *referenceFieldName = [self getReferenceColumnNameFromReferenceDictionary:referenceDictionary forContextObject:lookUpObj.contextLookupFilter.lookupContextParentObject];
     
     if (circularRefArray.count > 0 && ![Utility isStringEmpty:referenceFieldName]) {
+        
+        isCircularRefEnabled = YES;
         DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:referenceFieldName operatorType:SQLOperatorNotIn andFieldValues:circularRefArray];
         
         [criteriaArray addObject:criteria];
+        
+        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:referenceFieldName operatorType:SQLOperatorIsNull andFieldValues:nil];
+        [criteriaArray addObject:criteria1];
     }
     
     if (localRecords == YES) {
+        includeOfflineRecords = YES;
         //Get local records if SFID is null.
         DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNull andFieldValue:nil];
         [criteriaArray addObject:criteria];
@@ -628,6 +637,92 @@
     NSMutableString *advanceExpression  = [[NSMutableString alloc] init];
     NSMutableString *searchFieldsCount = [[NSMutableString alloc] init];
     
+    if (isCircularRefEnabled) {
+        for ( int counter = 0 ; counter <  [lookUpObj.searchFields count]; counter ++)
+        {
+            if(counter != 0){
+                [searchFieldsCount appendString:@" OR "];
+            }
+            if (includeOfflineRecords) {
+                [searchFieldsCount appendFormat:@" %d " , (counter +4)];
+            } else {
+                [searchFieldsCount appendFormat:@" %d " , (counter +3)];
+            }
+        }
+    } else {
+        for ( int counter = 0 ; counter <  [lookUpObj.searchFields count]; counter ++)
+        {
+            if(counter != 0){
+                [searchFieldsCount appendString:@" OR "];
+            }
+            [searchFieldsCount appendFormat:@" %d " , (counter +2)];
+        }
+    }
+    
+    
+    if(![StringUtil isStringEmpty:lookUpObj.searchString])
+    {
+        if (isCircularRefEnabled) {
+            
+            if (includeOfflineRecords) {
+                [advanceExpression appendFormat:@"( (1 OR 2 AND 3)  AND (%@) )",searchFieldsCount];
+
+            } else {
+                [advanceExpression appendFormat:@"( (1 OR 2)  AND (%@) )",searchFieldsCount];
+
+            }
+
+        } else {
+            
+            if (includeOfflineRecords) {
+                [advanceExpression appendFormat:@"(1 AND 2  AND (%@) )",searchFieldsCount];
+
+            } else {
+                [advanceExpression appendFormat:@"(1  AND (%@) )",searchFieldsCount];
+            }
+        }
+    }
+    else
+    {
+        if (isCircularRefEnabled) {
+            if (includeOfflineRecords) {
+                [advanceExpression appendFormat:@"((1 OR 2) AND 3 )"];
+
+            } else {
+                [advanceExpression appendFormat:@"((1 OR 2) )"];
+
+            }
+        } else {
+            
+            [advanceExpression appendFormat:@"(1 )"];
+
+        }
+    }
+    
+    isCircularRefEnabled = NO;
+    includeOfflineRecords = NO;
+
+    [self updateExpressionCount:lookUpObj];
+    
+    if ([lookUpObj.preFilters count] > 0) {
+        [self updateAdvanceExpressionForFiltes:lookUpObj.preFilters expression:advanceExpression];
+    }
+    
+    if ([lookUpObj.advanceFilters count] > 0) {
+        [self updateAdvanceExpressionForAdvanceFiltes:lookUpObj.advanceFilters expression:advanceExpression];
+    }
+    if (lookUpObj.contextLookupFilter.lookupContext != nil && lookUpObj.contextLookupFilter.lookupContext.length > 0 && lookUpObj.contextLookupFilter.defaultOn ) {
+        [self updateAdvancedExpressionForContextFilter:advanceExpression];
+    }
+    return advanceExpression;
+}
+
+-(NSString *)advanceExpressionForOnlineData:(SFMLookUp *)lookUpObj
+{
+    NSMutableString *advanceExpression  = [[NSMutableString alloc] init];
+    NSMutableString *searchFieldsCount = [[NSMutableString alloc] init];
+    
+    
     for ( int counter = 0 ; counter <  [lookUpObj.searchFields count]; counter ++)
     {
         if(counter != 0){
@@ -635,9 +730,12 @@
         }
         [searchFieldsCount appendFormat:@" %d " , (counter +2)];
     }
+    
+    
     if(![StringUtil isStringEmpty:lookUpObj.searchString])
     {
         [advanceExpression appendFormat:@"(1  AND (%@) )",searchFieldsCount];
+        
     }
     else
     {
@@ -658,6 +756,7 @@
     }
     return advanceExpression;
 }
+
 
 -(NSMutableDictionary *)getFieldInformation:(SFMLookUp *)lookUpObject
 {
