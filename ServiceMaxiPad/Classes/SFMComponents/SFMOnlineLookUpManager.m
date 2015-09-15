@@ -160,17 +160,16 @@
     NSMutableDictionary *lLookupDefDict = [[NSMutableDictionary alloc]init];
     [lLookupDefDict setValue:lookupDefDetailDict forKey:@"lookupDefDetail"];
     [lLookupDefDict setValue:self.lookUpObject.objectName forKey:@"lookUpObject"];
-    [lLookupDefDict setValue:self.lookUpObject.lookUpId forKey:@"key"]; //TODO:Check IF THis the ID required.
+    [lLookupDefDict setValue:self.lookUpObject.lookUpId forKey:@"key"];
     [lLookupDefDict setValue:self.lookUpObject.objectName forKey:@"objectName"];
-    [lLookupDefDict setValue:[self advanceFilterData] forKey:@"advFilters"]; //TODO:Check IF the advance filter has to be sent or not. If it has to be sent what will be the structure.
+    [lLookupDefDict setValue:[self advanceFilterData] forKey:@"advFilters"];
 
     // INNER-MOST Level-1 END--
 
     // INNER-MOST Level-2 START--
     NSMutableDictionary *llookupRequestDict = [[NSMutableDictionary alloc]init];
     [llookupRequestDict setValue:lLookupDefDict forKey:@"LookupDef"];
-    [llookupRequestDict setValue:self.searchText forKey:@"KeyWord"]; //TODO:Check IF THis is correct?
-    [llookupRequestDict setValue:@"contains" forKey:@"Operator"];
+    [llookupRequestDict setValue:self.searchText forKey:@"KeyWord"];     [llookupRequestDict setValue:@"contains" forKey:@"Operator"];
     // INNER-MOST Level-2 END--
 
     //OUTER-MOST Level START---
@@ -338,51 +337,54 @@
     NSMutableArray *filterArray = [NSMutableArray new];
     for (SFMLookUpFilter *model in self.lookUpObject.advanceFilters) {
         NSMutableDictionary *lOutermostLayer = [NSMutableDictionary new];
-
+        
         if (model != nil) {
-//            if ([model.lookupContext length] == 0) {
-                if (![model.ruleType isEqualToString:kSearchFilterCriteria]) {
-                    
-                    continue;
+            if ([model.lookupContext length] == 0) {
+                if ([model.ruleType isEqualToString:kSearchFilterCriteria]) {
+                    if ((!model.defaultOn || !model.objectPermission)) {
+                        continue;
+                    }
                 }
-            
-//           [lOutermostLayer setValue:(model.defaultOn? @"true":@"false") forKey:@"defaultOn"];
-             [lOutermostLayer setValue:[NSNumber numberWithBool:model.defaultOn] forKey:@"defaultOn"];
-
-//          [lOutermostLayer setValue:(model.allowOverride? @"true":@"false") forKey:@"allowOverride"];
-            [lOutermostLayer setValue:[NSNumber numberWithBool:model.allowOverride] forKey:@"allowOverride"];
-
-            [lOutermostLayer setValue:model.name forKey:@"filterName"]; // Checked.
-            [lOutermostLayer setValue:model.sourceObjectName forKey:@"filterObject"];//TODO:Check. CHECKED
-            [lOutermostLayer setValue:model.searchId forKey:@"key"];//TODO:Check. Data not matching.
-            [lOutermostLayer setValue:model.searchFieldName forKey:@"lookupField"];//TODO:Check
-
-            id<SFExpressionComponentDAO> expCompService = [FactoryDAO serviceByServiceType:ServiceTypeExpressionComponent];
-            NSArray *expCompArray =[expCompService getExpressionComponentsBySFId:model.searchId];
-
-            NSString *filterCriteriaString = @"";
-            NSMutableArray *filterCriteriaArray = [NSMutableArray new];
-            for (SFExpressionComponentModel *expComp in expCompArray) {
-                NSMutableDictionary *filterCriteriaFields = [NSMutableDictionary new];
-
-                [filterCriteriaFields setValue:expComp.operatorValue forKey:@"operatorValue"]; //Specifically for value. dont have to be sent in API.
-                [filterCriteriaFields setValue:expComp.parameterType forKey:@"operandType"];
-                [filterCriteriaFields setValue:[NSNumber numberWithDouble:expComp.componentSequenceNumber] forKey:@"sequence"];
-                [filterCriteriaFields setValue:@"" forKey:@"refObjectNameField"];
-                [filterCriteriaFields setValue:expComp.componentLHS forKey:@"apiName"];
                 
-                filterCriteriaString = [filterCriteriaString stringByAppendingFormat:@" %@ %@",expComp.componentLHS, [self operatorAndRHSValue:expComp]];
                 
-                [filterCriteriaArray addObject:filterCriteriaFields];
-//            TODO:
-//                1) what to do when LHS and RHS both are present. Where to assign RHS
-//                2) what is lookupField?
-//                3) filterObject?
+                //           [lOutermostLayer setValue:(model.defaultOn? @"true":@"false") forKey:@"defaultOn"];
+                [lOutermostLayer setValue:[NSNumber numberWithBool:model.defaultOn] forKey:@"defaultOn"];
                 
-               
+                //          [lOutermostLayer setValue:(model.allowOverride? @"true":@"false") forKey:@"allowOverride"];
+                [lOutermostLayer setValue:[NSNumber numberWithBool:model.allowOverride] forKey:@"allowOverride"];
+                
+                [lOutermostLayer setValue:model.name forKey:@"filterName"]; // Checked.
+                [lOutermostLayer setValue:model.sourceObjectName forKey:@"filterObject"];//TODO:Check. CHECKED
+                [lOutermostLayer setValue:model.searchId forKey:@"key"];//TODO:Check. Data not matching.
+                [lOutermostLayer setValue:model.searchFieldName forKey:@"lookupField"];//TODO:Check
+                
+                id<SFExpressionComponentDAO> expCompService = [FactoryDAO serviceByServiceType:ServiceTypeExpressionComponent];
+                NSArray *expCompArray =[expCompService getExpressionComponentsBySFId:model.searchId];
+                
+                NSString *filterCriteriaString = @"";
+                NSMutableArray *filterCriteriaArray = [NSMutableArray new];
+                for (SFExpressionComponentModel *expComp in expCompArray) {
+                    NSMutableDictionary *filterCriteriaFields = [NSMutableDictionary new];
+                    
+                    [filterCriteriaFields setValue:expComp.operatorValue forKey:@"operatorValue"]; //Specifically for value. dont have to be sent in API.
+                    [filterCriteriaFields setValue:expComp.parameterType forKey:@"operandType"];
+                    [filterCriteriaFields setValue:[NSNumber numberWithDouble:expComp.componentSequenceNumber] forKey:@"sequence"];
+                    [filterCriteriaFields setValue:@"" forKey:@"refObjectNameField"];
+                    [filterCriteriaFields setValue:expComp.componentLHS forKey:@"apiName"];
+                    
+                    filterCriteriaString = [filterCriteriaString stringByAppendingFormat:@" %@ %@",expComp.componentLHS, [self operatorAndRHSValue:expComp]];
+                    
+                    [filterCriteriaArray addObject:filterCriteriaFields];
+                    //            TODO:
+                    //                1) what to do when LHS and RHS both are present. Where to assign RHS
+                    //                2) what is lookupField?
+                    //                3) filterObject?
+                    
+                    
+                }
+                [lOutermostLayer setValue:filterCriteriaString forKey:@"filterCriteria"];
+                [lOutermostLayer setValue:filterCriteriaArray forKey:@"filterCriteriaFields"];
             }
-            [lOutermostLayer setValue:filterCriteriaString forKey:@"filterCriteria"];
-            [lOutermostLayer setValue:filterCriteriaArray forKey:@"filterCriteriaFields"];
         }
         [filterArray addObject:lOutermostLayer];
     }

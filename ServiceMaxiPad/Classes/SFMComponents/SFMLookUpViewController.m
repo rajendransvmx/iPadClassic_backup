@@ -17,6 +17,7 @@
 #import "StringUtil.h"
 #import "PushNotificationHeaders.h"
 #import "SFMOnlineLookUpManager.h"
+#import "AlertMessageHandler.h"
 
 @interface SFMLookUpViewController () <LookUpFilterDelegate>
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -87,7 +88,7 @@
     UIImage *checkboxImage = [UIImage imageNamed:@"checkbox-active-unchecked.png"];
     [self.includeOnlineButton setImage:checkboxImage  forState:UIControlStateNormal];
     [self.includeOnlineButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
-    [self.includeOnlineButton setTitle:@"include Online" forState:UIControlStateNormal];
+    [self.includeOnlineButton setTitle:@"Include Online" forState:UIControlStateNormal];
     [self.includeOnlineButton setImageEdgeInsets:UIEdgeInsetsMake(0.0, -15.0, 0.0, 0.0)];
     [self.includeOnlineButton setTitleEdgeInsets:UIEdgeInsetsMake(0.0, checkboxImage.size.width-10, 0.0, 0.0)];
 
@@ -97,6 +98,7 @@
 -(void)setUpFilterButton
 {
     [self.filterButton setTitle:@"Add/Edit Filters" forState:UIControlStateNormal];
+    [self.filterButton setTitleEdgeInsets:UIEdgeInsetsMake(-5.0, 0.0, 0.0, 0.0)];
 }
 
 -(void)setUpSearchButton
@@ -482,10 +484,19 @@
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
+    /*
     self.lookUpObject.searchString = searchBar.text;
     [self loadLookUpData];
     [self.tableView reloadData];
 
+    [searchBar resignFirstResponder];
+    */
+    
+    self.lookUpObject.searchString = searchBar.text;
+    [self searchButtonActionMethod:nil];
+    //    [self loadLookUpData];
+    //    [self.tableView reloadData];
+    
     [searchBar resignFirstResponder];
 }
 
@@ -873,6 +884,15 @@
 - (void)onlineLookupSearchFailedwithError:(NSError *)error {
     
     [self enableSearchButton];
+    
+    @synchronized([self class]) {
+        
+        [[AlertMessageHandler sharedInstance] showCustomMessage:[error errorEndUserMessage]
+                                                   withDelegate:nil
+                                                          title:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage]
+                                              cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+                                           andOtherButtonTitles:nil];
+    }
 
 }
 
