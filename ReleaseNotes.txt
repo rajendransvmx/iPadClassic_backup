@@ -4,7 +4,7 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.004
+Version = 15.99.005
 
 ===========================================
 
@@ -12,7 +12,8 @@ Version = 15.99.004
 Fixed Defects
 
 -------------
-Forward ported fixes for defects - 017934, 018955, 021015
+1. In ServiceMax Mobile (default lookup gets data from local DB)      a. Records created locally (without SFDC id)      b. Records those are not in local DB but in online 
+2. Added include online lookup records functionality.
 
 -------------
 
