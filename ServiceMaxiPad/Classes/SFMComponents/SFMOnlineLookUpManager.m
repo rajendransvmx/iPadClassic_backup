@@ -83,7 +83,7 @@
         {
             WebserviceResponseStatus *webServiceStatus = (WebserviceResponseStatus*)status;
             if (webServiceStatus.syncStatus == SyncStatusSuccess) {
-                NSArray *dataOnlineDataArray = [[CacheManager sharedInstance] getCachedObjectByKey:kSFMOnlineLookUpCacheData];
+                NSMutableArray *dataOnlineDataArray = [[CacheManager sharedInstance] getCachedObjectByKey:kSFMOnlineLookUpCacheData];
                 
 //                //TODO: Get the response data array from cache and pass it to parseSFM method.
 //                NSMutableArray *parsedDataArray = [self parseSFMOnlineLookupData:nil];
