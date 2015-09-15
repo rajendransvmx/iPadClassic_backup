@@ -26,6 +26,7 @@
 @property (nonatomic, strong) UIPopoverController * popOverController;
 @property (nonatomic, strong)  BarCodeScannerUtility *barcodeScannerUtil;
 @property (nonatomic, strong) SFMOnlineLookUpManager *manager;
+@property (nonatomic, assign) BOOL isOnlineLookUpSelected;
 @end
 
 @implementation SFMLookUpViewController
@@ -43,7 +44,12 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self.filterButton setTitle:[[TagManager sharedInstance]tagByName:kTag_Filters] forState:UIControlStateNormal];
+//    [self.filterButton setTitle:[[TagManager sharedInstance]tagByName:kTag_Filters] forState:UIControlStateNormal];
+
+    [self setUpIncludeOnlineButton];
+    [self setUpSearchButton];
+    [self setUpFilterButton];
+    
     self.lookUpHelper   = [[SFMPageLookUpHelper alloc] init];
     self.lookUpHelper.viewControllerdelegate = self;
     self.lookUpObject   = [[SFMLookUp alloc] init];
@@ -72,6 +78,36 @@
     [self setSearchBarBackGround];
     [self registerForPopOverDismissNotification];
 }
+
+-(void)setUpIncludeOnlineButton
+{
+    
+    self.isOnlineLookUpSelected = NO; // Default: Online not included in search
+    
+    UIImage *checkboxImage = [UIImage imageNamed:@"checkbox-active-unchecked.png"];
+    [self.includeOnlineButton setImage:checkboxImage  forState:UIControlStateNormal];
+    [self.includeOnlineButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
+    [self.includeOnlineButton setTitle:@"include Online" forState:UIControlStateNormal];
+    [self.includeOnlineButton setImageEdgeInsets:UIEdgeInsetsMake(0.0, -15.0, 0.0, 0.0)];
+    [self.includeOnlineButton setTitleEdgeInsets:UIEdgeInsetsMake(0.0, checkboxImage.size.width-10, 0.0, 0.0)];
+
+
+}
+
+-(void)setUpFilterButton
+{
+    [self.filterButton setTitle:@"Add/Edit Filters" forState:UIControlStateNormal];
+}
+
+-(void)setUpSearchButton
+{
+    [self.searchButton.layer setBorderColor:[[UIColor colorWithHexString:@"#FF6633"] CGColor]];
+    [self.searchButton.layer setBorderWidth:1.0];
+    [self.searchButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
+    [self.searchButton setTitle:@"Search" forState:UIControlStateNormal];
+    
+}
+
 -(BOOL)isValidContextString:(NSString *)contextString {
     
     contextString = [contextString lowercaseString];
@@ -236,6 +272,8 @@
 - (void)dealloc {
     _barcodeScannerUtil.scannerDelegate = nil;
     _barcodeScannerUtil = nil;
+    self.isOnlineLookUpSelected = NO;
+
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillHideNotification
                                                   object:nil];
@@ -753,13 +791,7 @@
     [[NSClassFromString(@"UISearchBarTextField") appearanceWhenContainedIn:[UISearchBar class], nil] setBorderStyle:UITextBorderStyleNone];
     self.searchView.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
     
-    
-    UIButton *onlineButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [onlineButton setBackgroundColor:[UIColor redColor]];
-    [onlineButton setTitle:@"Include Online" forState:UIControlStateNormal];
-    onlineButton.frame = CGRectMake(300, self.searchView.frame.origin.y - 35, 200, 30);
-    [onlineButton addTarget:self action:@selector(launchOnlineAPI) forControlEvents:UIControlEventTouchUpInside];
-    [self.searchView.superview addSubview:onlineButton];
+
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -796,16 +828,59 @@
     }
 }
 
+- (IBAction)includeOnlineActionMethod:(id)sender {
+    
+    if (self.isOnlineLookUpSelected) {
+        self.isOnlineLookUpSelected = NO;
+        [self.includeOnlineButton setImage:[UIImage imageNamed:@"checkbox-active-unchecked.png"]  forState:UIControlStateNormal];
+
+
+    }
+    else
+    {
+        self.isOnlineLookUpSelected = YES;
+        [self.includeOnlineButton setImage: [UIImage imageNamed:@"checkbox-active-checked.png"] forState:UIControlStateNormal];
+
+    }
+    
+}
+
+- (IBAction)searchButtonActionMethod:(id)sender {
+    
+    self.searchButton.enabled = NO;
+    if (self.isOnlineLookUpSelected) {
+        [self launchOnlineAPI];
+    }
+    else
+    {
+        [self loadLookUpData];
+        [self.tableView reloadData];
+        [self noRecordsToDisplay];
+        [self enableSearchButton];
+    }
+}
+
 #pragma mark - SFMOnlineLookUpManagerDelegate methods
 
 - (void)onlineLookupSearchSuccessfullwithResponse:(NSMutableArray *)dataArray {
     
     [self.lookUpHelper fillOnlineLookupData:dataArray forLookupObject:self.lookUpObject];
     [self.tableView reloadData];
+    [self enableSearchButton];
+
 }
 
 - (void)onlineLookupSearchFailedwithError:(NSError *)error {
     
+    [self enableSearchButton];
+
 }
+
+-(void)enableSearchButton
+{
+    self.searchButton.enabled = YES;
+
+}
+
 
 @end
