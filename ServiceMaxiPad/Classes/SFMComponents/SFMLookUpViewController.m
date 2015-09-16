@@ -572,6 +572,11 @@
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
 //    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"Id"];
     SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"localId"];
+    
+    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:selectedIndexPath];
+    if (isOnlineRecord == YES) {
+        selectedIndexPath = [dictionary objectForKey:@"Id"];
+    }
 
     for (int counter = 0; counter < [self.selectedRecords count]; counter ++)
     {
@@ -590,6 +595,11 @@
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
 //    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
     SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
+    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
+    
+    if (isOnlineRecord == YES) {
+        recordField = [dictionary objectForKey:@"Id"];
+    }
     [self.selectedRecords addObject:recordField];
 }
 
@@ -602,6 +612,11 @@
         NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:counter];
 //        SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
         SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
+        BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
+        
+        if (isOnlineRecord == YES) {
+            recordField = [dictionary objectForKey:@"Id"];
+        }
          if([recordField.internalValue isEqualToString:fieldData.internalValue])
          {
              indexPath =[NSIndexPath indexPathForRow:counter inSection:0];
@@ -615,6 +630,12 @@
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
 //    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
     SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
+    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
+    
+    if (isOnlineRecord == YES) {
+        recordField = [dictionary objectForKey:@"Id"];
+    }
+
     return recordField;
 }
 -( SFMRecordFieldData *)getNameFieldForIndexPath:(NSIndexPath *)indexPath
@@ -680,6 +701,14 @@
     return NO;
 }
 
++ (BOOL)isOnlineRecord:(SFMRecordFieldData*)recordFieldData
+{
+    if (recordFieldData.internalValue.length > 30) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
 #pragma mark - Keyboard notification method
 - (void)keyboardWillHideNotificationReceived:(NSNotification *)sender
 {
