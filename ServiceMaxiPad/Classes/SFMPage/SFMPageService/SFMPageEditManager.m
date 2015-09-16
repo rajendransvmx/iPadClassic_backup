@@ -2770,6 +2770,12 @@
     
     else if ([sfmPageField.dataType isEqualToString:kSfDTCurrency] || [sfmPageField.dataType isEqualToString:kSfDTDouble] || [sfmPageField.dataType isEqualToString:kSfDTPercent]) {
         
+        BOOL isStringDate = [self isStringDate:value];
+        
+        if (isStringDate) {
+            value = @"";
+        }
+        
         if (![StringUtil isStringEmpty:value]) {
             double valueInDouble = [value doubleValue];
             value  = [[NSString alloc] initWithFormat:@"%.*f",sfmPageField.scale.intValue, valueInDouble];
@@ -2784,6 +2790,24 @@
     }
 }
 
-
+-(BOOL)isStringDate:(NSString *)value {
+    BOOL isDate = NO;
+    if (![StringUtil isStringEmpty:value]) {
+        NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:kFormulaDateTimeForModule];
+        NSDate *date = [dateFormatter dateFromString:value];
+        if (date == nil) {
+            [dateFormatter setDateFormat:kFormulaDateForModule];
+            date =  [dateFormatter dateFromString:value];
+            if (date != nil) {
+                isDate = YES;
+            }
+        }
+        else {
+            isDate = YES;
+        }
+    }
+    return isDate;
+}
 
 @end
