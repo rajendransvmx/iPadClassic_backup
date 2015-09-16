@@ -871,6 +871,10 @@
 		6BF9D02F1AA9C0D50057D8AC /* NotificationDownloadCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BF9D02D1AA9C0D50057D8AC /* NotificationDownloadCell.m */; };
 		6BF9D0301AA9C0D50057D8AC /* NotificationDownloadCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6BF9D02E1AA9C0D50057D8AC /* NotificationDownloadCell.xib */; };
 		840E2B7C1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 840E2B7B1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m */; };
+		8410153A1BA94CCA007DFAC8 /* checkbox-selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 841015361BA94CCA007DFAC8 /* checkbox-selected.png */; };
+		8410153B1BA94CCA007DFAC8 /* checkbox-selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 841015371BA94CCA007DFAC8 /* checkbox-selected@2x.png */; };
+		8410153C1BA94CCA007DFAC8 /* checkbox-unselected.png in Resources */ = {isa = PBXBuildFile; fileRef = 841015381BA94CCA007DFAC8 /* checkbox-unselected.png */; };
+		8410153D1BA94CCA007DFAC8 /* checkbox-unselected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 841015391BA94CCA007DFAC8 /* checkbox-unselected@2x.png */; };
 		841121581B901775006C3668 /* Configuration.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121521B901775006C3668 /* Configuration.csv */; };
 		841121591B901775006C3668 /* DummyDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 841121541B901775006C3668 /* DummyDataLoader.m */; };
 		8411215A1B901775006C3668 /* ObjectDescribe.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121551B901775006C3668 /* ObjectDescribe.csv */; };
@@ -2666,6 +2670,10 @@
 		84026B031A9B5A4D0096C6B8 /* EventTransactionObjectModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTransactionObjectModel.m; sourceTree = "<group>"; };
 		840E2B7A1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMOnlineLookUpParser.h; sourceTree = "<group>"; };
 		840E2B7B1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMOnlineLookUpParser.m; sourceTree = "<group>"; };
+		841015361BA94CCA007DFAC8 /* checkbox-selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-selected.png"; sourceTree = "<group>"; };
+		841015371BA94CCA007DFAC8 /* checkbox-selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-selected@2x.png"; sourceTree = "<group>"; };
+		841015381BA94CCA007DFAC8 /* checkbox-unselected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unselected.png"; sourceTree = "<group>"; };
+		841015391BA94CCA007DFAC8 /* checkbox-unselected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unselected@2x.png"; sourceTree = "<group>"; };
 		841121521B901775006C3668 /* Configuration.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Configuration.csv; sourceTree = "<group>"; };
 		841121531B901775006C3668 /* DummyDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyDataLoader.h; sourceTree = "<group>"; };
 		841121541B901775006C3668 /* DummyDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DummyDataLoader.m; sourceTree = "<group>"; };
@@ -5735,6 +5743,10 @@
 		18FE08F619EE827800CB8925 /* CheckBoxImages */ = {
 			isa = PBXGroup;
 			children = (
+				841015361BA94CCA007DFAC8 /* checkbox-selected.png */,
+				841015371BA94CCA007DFAC8 /* checkbox-selected@2x.png */,
+				841015381BA94CCA007DFAC8 /* checkbox-unselected.png */,
+				841015391BA94CCA007DFAC8 /* checkbox-unselected@2x.png */,
 				18FE08F719EE827800CB8925 /* checkbox-active-checked@2x.png */,
 				18FE08F819EE827800CB8925 /* checkbox-active-unchecked@2x.png */,
 				18FE08F919EE827800CB8925 /* checkbox-disabled-checked@2x.png */,
@@ -6610,6 +6622,7 @@
 				183AA1C519E6D26400919345 /* SFMPageDetailViewController.xib in Resources */,
 				40F5EAF71A0CC9020038EF6F /* OPDoc_DEBUG.html in Resources */,
 				6BF9D0301AA9C0D50057D8AC /* NotificationDownloadCell.xib in Resources */,
+				8410153B1BA94CCA007DFAC8 /* checkbox-selected@2x.png in Resources */,
 				18A2178219E5841900F22EA6 /* Settings.bundle in Resources */,
 				184A9CBE19E7D591006DA6BE /* leftPanelBG@2x.png in Resources */,
 				183AA1EC19E6D36C00919345 /* WizardViewController.xib in Resources */,
@@ -6645,6 +6658,7 @@
 				57186B5B19EF9DDD00B4642A /* TroubleshootingDetailViewController.xib in Resources */,
 				183AA1B419E6D26400919345 /* PageEditViewController.xib in Resources */,
 				C3AE0BA31A0795AC00490009 /* iOS-Trash-Can-Gray@2x.png in Resources */,
+				8410153A1BA94CCA007DFAC8 /* checkbox-selected.png in Resources */,
 				189F001A1A14896600570C54 /* DODViewController.xib in Resources */,
 				184A9CA419E7D591006DA6BE /* remove.png in Resources */,
 				184A9CC319E7D591006DA6BE /* homeIcon@2x.png in Resources */,
@@ -6731,6 +6745,7 @@
 				40A06F321B06041400218162 /* SCalendar@1x.png in Resources */,
 				184A9D9119E7D592006DA6BE /* FormCheckBoxFilled@2x.png in Resources */,
 				57A321031AB7196A00A172E0 /* STasks@2x.png in Resources */,
+				8410153D1BA94CCA007DFAC8 /* checkbox-unselected@2x.png in Resources */,
 				40A06F3D1B06041400218162 /* STools@3x.png in Resources */,
 				184A9CC219E7D591006DA6BE /* explore@2x.png in Resources */,
 				18800CE21A08D14400930FF9 /* AboutViewController.xib in Resources */,
@@ -6814,6 +6829,7 @@
 				184A9E1419E7D592006DA6BE /* map_phone@2x.png in Resources */,
 				5B4F52B71A15D1A90008FDB3 /* File in Cloud - 70.png in Resources */,
 				40A06F211B06033100218162 /* NavBarRecents@3x.png in Resources */,
+				8410153C1BA94CCA007DFAC8 /* checkbox-unselected.png in Resources */,
 				18FE08F519EE826C00CB8925 /* splashsigninbutton.png in Resources */,
 				184A8EFD19E7A535006DA6BE /* Map.storyboard in Resources */,
 				40A06F371B06041400218162 /* SNewItem@3x.png in Resources */,

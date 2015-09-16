@@ -85,7 +85,7 @@
     
     self.isOnlineLookUpSelected = NO; // Default: Online not included in search
     
-    UIImage *checkboxImage = [UIImage imageNamed:@"checkbox-active-unchecked.png"];
+    UIImage *checkboxImage = [UIImage imageNamed:@"checkbox-unselected.png"];
     [self.includeOnlineButton setImage:checkboxImage  forState:UIControlStateNormal];
     [self.includeOnlineButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
     [self.includeOnlineButton setTitle:@"Include Online" forState:UIControlStateNormal];
@@ -872,14 +872,14 @@
     
     if (self.isOnlineLookUpSelected) {
         self.isOnlineLookUpSelected = NO;
-        [self.includeOnlineButton setImage:[UIImage imageNamed:@"checkbox-active-unchecked.png"]  forState:UIControlStateNormal];
+        [self.includeOnlineButton setImage:[UIImage imageNamed:@"checkbox-unselected.png"]  forState:UIControlStateNormal];
 
 
     }
     else
     {
         self.isOnlineLookUpSelected = YES;
-        [self.includeOnlineButton setImage: [UIImage imageNamed:@"checkbox-active-checked.png"] forState:UIControlStateNormal];
+        [self.includeOnlineButton setImage: [UIImage imageNamed:@"checkbox-selected.png"] forState:UIControlStateNormal];
 
     }
     
