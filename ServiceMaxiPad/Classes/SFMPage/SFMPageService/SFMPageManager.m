@@ -584,10 +584,12 @@ PageManagerErrorType;
 - (NSString *)getUserReadableDateForValueMapping:(NSString *)datetime
 {
     NSString *userdateString = @"";
-    NSDate * date = [DateUtil getDateFromDatabaseString:datetime];
-    if (date != nil) {
-        userdateString = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatForSFMEdit];
-        //ANOOP 017148:[DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+    if (![StringUtil isStringEmpty:datetime]) {
+        NSDate * date = [DateUtil getDateFromDatabaseString:datetime];
+        if (date != nil) {
+            userdateString = [NSDate localDateTimeStringFromDate:date inFormat:kDateFormatForSFMEdit];
+            //ANOOP 017148:[DateUtil stringFromDate:date inFormat:kDateFormatForSFMEdit];
+        }
     }
     return userdateString;
 }

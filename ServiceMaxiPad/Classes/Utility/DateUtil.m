@@ -639,9 +639,10 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 +(NSString *)evaluateDateLiteral:(NSString *)literal  dataType:(NSString *)dataType
 {
     NSDate * date = [DateUtil getDateForLiteral:literal];
-    NSString * dateInString = nil;
-   // NSString *format = [DateUtil getDateFormateForDataType:dataType];
-    dateInString = [self getDatabaseStringForDate:date];
+    NSString * dateInString = @"";
+    if (date != nil) {
+        dateInString = [self getDatabaseStringForDate:date];
+    }
     return dateInString;
 }
 
@@ -669,7 +670,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     }
     else
     {
-        date = [NSDate date];
+        date = nil; //021790
 
     }
     
