@@ -407,13 +407,13 @@ NSInteger webViewLoadCounter;
 
 -(void)webViewFinishLoadWithCondition{
     
-    if(webViewLoadCounter==0){
+   // if(webViewLoadCounter==0){
         //We can be safe to treat this as place where everything is loaded.
         if (([[AppManager sharedInstance] applicationStatus] == ApplicationStatusInAuthenticationPage))
         {
             [self removeActivityAndLoadingLabel];
         }
-    }
+   // }
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
