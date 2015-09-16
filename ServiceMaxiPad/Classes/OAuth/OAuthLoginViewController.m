@@ -30,8 +30,8 @@
 #import "SMAppDelegate.h"
 #import "AlertMessageHandler.h"
 #import "TagManager.h"
-
 #import "MBProgressHUD.h"
+
 @interface OAuthLoginViewController ()
 {
     BOOL loadFailedBool;
@@ -405,15 +405,15 @@ NSInteger webViewLoadCounter;
     }
 }
 
--(void)webViewFinishLoadWithCondition{
-    
-    if(webViewLoadCounter==0){
+-(void)webViewFinishLoadWithCondition
+{
+    //if(webViewLoadCounter==0){
         //We can be safe to treat this as place where everything is loaded.
         if (([[AppManager sharedInstance] applicationStatus] == ApplicationStatusInAuthenticationPage))
         {
             [self removeActivityAndLoadingLabel];
         }
-    }
+    //}
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
