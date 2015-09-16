@@ -492,7 +492,7 @@
     [searchBar resignFirstResponder];
     */
     
-    self.lookUpObject.searchString = searchBar.text;
+//    self.lookUpObject.searchString = searchBar.text;
     [self searchButtonActionMethod:nil];
     //    [self loadLookUpData];
     //    [self.tableView reloadData];
@@ -888,11 +888,13 @@
 - (IBAction)searchButtonActionMethod:(id)sender {
     
     self.searchButton.enabled = NO;
+    self.lookUpObject.searchString = self.searchView.text;
     if (self.isOnlineLookUpSelected) {
         [self launchOnlineAPI];
     }
     else
     {
+        
         [self loadLookUpData];
         [self.tableView reloadData];
         [self noRecordsToDisplay];
