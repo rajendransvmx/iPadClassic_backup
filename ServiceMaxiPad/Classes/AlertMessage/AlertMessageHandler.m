@@ -625,4 +625,397 @@
 
 }
 
+
+#pragma mark - Generate AlertMessage
+/**
+ * @name  <MethodName. optional>
+ *
+ * @author Vipindas Palli
+ * @author Shubha S.
+ *
+ * @brief <A short one line description>
+ *
+ * \par
+ *  <Longer description starts here>
+ *
+ *
+ * @param  Description of method's or function's input parameter
+ * @param  ...
+ *
+ * @return Description of the return value
+ *
+ */
++ (NSString *)titleByType:(AlertMessageType)type
+{
+    NSString * title = nil;
+    switch (type)
+    {
+        case AlertMessageTypeSwitchUser:
+        {
+            title =  [[TagManager sharedInstance] tagByName:kTagAlertSwitchUser];
+        }
+            break;
+            
+        case AlertMessageTypeInternetNotReachable:
+        case AlertMessageTypeResetApplication:
+        case AlertMessageTypeNoEventsForTheDay:
+        case AlertMessageTypeAccessTokenExpired:
+        case AlertMessageTypeInactiveUser:
+            
+        {
+            title =  [[TagManager sharedInstance] tagByName:kTagAlertTitleError];
+        }
+            break;
+            
+        case AlertmessageTypeInternetNotAvailableWithRetryOption:
+        case AlertMessageTypeChatterNoPost:
+        case AlertMessageTypeNoViewLayout:
+        case AlertMessageTypeSFMSwitchProcess:
+        case AlertMessageTypeEventNotAssociatedWithRecord:
+        case AlertMessageTypeGetPriceObjectsNotFound:
+        case AlertMessageTypeNoViewProcess:
+        case AlertMessageTypeNoPageLayout:
+            
+        {
+            title = [[TagManager sharedInstance] tagByName:kTagAlertIpadError];
+        }
+            break;
+            
+        case AlertMessageTypeInvalidURL:
+        case AlertMessageTypeRequiredFieldWarning:
+        case AlertMessageTypeInvalidEmail:
+            
+        {
+            title = [[TagManager sharedInstance] tagByName:kTagAlertWarningError];
+        }
+            break;
+            
+        case AlertMessageTypeAttachmentWithImproperFormat:
+        case AlertMessageTypeCannotFindHost:
+        case AlertMessageTypeCannotFindCustomHost:
+        case AlertMessageTypeCannotLoadInWebView:
+            
+        {
+            title = [[TagManager sharedInstance] tagByName:kTagAlertApplicationError];
+        }
+            break;
+            
+        case AlertMessageTypeErrorInEmail:
+        {
+            title = [[TagManager sharedInstance] tagByName:kTagServiceReportEmailError];
+        }
+            break;
+        case AlertMessageTypeAttachmentDeleteConfirmation:
+        {
+            title = [[TagManager sharedInstance] tagByName:@""];
+        }
+            break;
+            
+        case AlertMessageTypeEventOvelapOnSync:
+        {
+            title = [[TagManager sharedInstance] tagByName:kTagSyncErrorMessage];
+        }
+            break;
+            
+        case AlertMessageTypeInvalidLogin:
+        {
+            title = [[TagManager sharedInstance] tagByName:kTagChatterAlertAuthenticatiojnError];
+        }
+            break;
+            
+        default:
+            break;
+    }
+    return title;
+}
+
+/**
+ * @name  <MethodName. optional>
+ *
+ * @author Vipindas Palli
+ *
+ * @brief <A short one line description>
+ *
+ * \par
+ *  <Longer description starts here>
+ *
+ *
+ * @param  Description of method's or function's input parameter
+ * @param  ...
+ *
+ * @return Description of the return value
+ *
+ */
+
++ (NSString *)messageByType:(AlertMessageType)type
+{
+    NSString * message = nil;
+    switch (type)
+    {
+        case AlertMessageTypeSwitchUser:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagLoginSwitchUser];
+        }
+            break;
+        case AlertMessageTypeNoEventsForTheDay:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagHomeNoEvents];
+        }
+            break;
+        case AlertMessageTypeResetApplication:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagResetApplication];
+        }
+            break;
+        case AlertMessageTypeInternetNotReachable:
+        {
+            message =  [[TagManager sharedInstance] tagByName:KTagAlertInrnetNotAvailableError];
+        }
+            break;
+        case AlertMessageTypeErrorInEmail:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagServiceReportPleaseSetUpEmailFirstError];
+        }
+            break;
+        case AlertMessageTypeAttachmentDeleteConfirmation:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagDocDeleteConfirmation];
+        }
+            break;
+        case AlertMessageTypeChatterNoPost:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagChatterNewPost];
+        }
+            break;
+        case AlertMessageTypeInvalidURL:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagSfmInvalidUrl];
+        }
+            break;
+        case AlertMessageTypeNoViewLayout:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagNoViewLayOut];
+        }
+            break;
+        case AlertMessageTypeSFMSwitchProcess:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagSfmSwitchProcess];
+        }
+            break;
+        case AlertMessageTypeRequiredFieldWarning:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagAlertRequiredFields];
+        }
+            break;
+        case AlertMessageTypeGetPriceObjectsNotFound:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagGetPriceObjectsNotFound];
+        }
+            break;
+        case AlertMessageTypeAttachmentWithImproperFormat:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTag_FileNotSupportedByWebView];
+        }
+            break;
+        case AlertMessageTypeCannotFindHost:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagHostNotFound];
+        }
+            break;
+        case AlertMessageTypeCannotFindCustomHost:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagHostNotFound_CheckURL];
+        }
+            break;
+        case AlertMessageTypeCannotLoadInWebView:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTag_CannotBeLoadedInWebView];
+        }
+            break;
+        case AlertMessageTypeNoPageLayout:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagSfmNoPageLayout];
+        }
+            break;
+        case AlertMessageTypeInvalidEmail:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagSfmInvalidEmail];
+        }
+            break;
+        case AlertMessageTypeEventOvelapOnSync:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagEventOverlap];
+        }
+            break;
+        case AlertMessageTypeEventNotAssociatedWithRecord:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagNotAssociatedRecord];
+        }
+            break;
+        case AlertMessageTypeNoViewProcess:
+        {
+            message =  [[TagManager sharedInstance] tagByName:kTagNoViewProcess];
+        }
+            break;
+        case AlertmessageTypeInternetNotAvailableWithRetryOption:
+        {
+            message =  [[TagManager sharedInstance] tagByName:KTagAlertInrnetNotAvailableError];
+        }
+            break;
+            
+        case AlertMessageTypeAccessTokenExpired:
+        case AlertMessageTypeInactiveUser:
+        {
+            //message =  [[TagManager sharedInstance] tagByName:kTagRemoteAccesError];
+            message =  [[TagManager sharedInstance] tagByName:kTag_RemoteAccessRevokedMsg];
+            
+        }
+            break;
+            
+            
+        default:
+            break;
+    }
+    return message;
+}
+
+/**
+ * @name  <MethodName. optional>
+ *
+ * @author Vipindas Palli
+ *
+ * @brief <A short one line description>
+ *
+ * \par
+ *  <Longer description starts here>
+ *
+ *
+ * @param  Description of method's or function's input parameter
+ * @param  ...
+ *
+ * @return Description of the return value
+ *
+ */
+
++ (NSString *)cancelButtonTitleByType:(AlertMessageType)type
+{
+    NSString * cancelButtonTitle = nil;
+    switch (type)
+    {
+        case AlertMessageTypeSwitchUser:
+        case AlertMessageTypeResetApplication:
+        {
+            cancelButtonTitle =  [[TagManager sharedInstance] tagByName:kTagLoginContinue];
+        }
+            break;
+            
+        case AlertMessageTypeInternetNotReachable:
+        case AlertMessageTypeErrorInEmail:
+        case AlertMessageTypeChatterNoPost:
+        case AlertMessageTypeInvalidURL:
+        case AlertMessageTypeNoEventsForTheDay:
+        case AlertMessageTypeAccessTokenExpired:
+        case AlertMessageTypeInactiveUser:
+        {
+            cancelButtonTitle =  [[TagManager sharedInstance] tagByName:kTagAlertErrorOk];
+        }
+            break;
+            
+        case AlertMessageTypeNoViewLayout:
+        case AlertMessageTypeSFMSwitchProcess:
+        case AlertMessageTypeNoPageLayout:
+            
+        {
+            cancelButtonTitle =  [[TagManager sharedInstance] tagByName:kTagCancelButton];
+        }
+            break;
+            
+        case AlertMessageTypeRequiredFieldWarning:
+        case AlertMessageTypeGetPriceObjectsNotFound:
+        case AlertMessageTypeAttachmentWithImproperFormat:
+        case AlertMessageTypeCannotFindHost:
+        case AlertMessageTypeCannotFindCustomHost:
+        case AlertMessageTypeCannotLoadInWebView:
+        case AlertMessageTypeInvalidEmail:
+        case AlertMessageTypeEventNotAssociatedWithRecord:
+        case AlertMessageTypeNoViewProcess:
+        {
+            cancelButtonTitle =  [[TagManager sharedInstance] tagByName:kTagAlertErrorOk];
+        }
+            break;
+        case AlertMessageTypeAttachmentDeleteConfirmation:
+        {
+            cancelButtonTitle =  [[TagManager sharedInstance] tagByName:kTagDeleteAction];
+        }
+            break;
+            
+        case AlertMessageTypeEventOvelapOnSync:
+        {
+            cancelButtonTitle =  [[TagManager sharedInstance] tagByName:kTagEventReschedulePrompt];
+        }
+            break;
+        case AlertmessageTypeInternetNotAvailableWithRetryOption:
+        {
+            cancelButtonTitle =  [[TagManager sharedInstance] tagByName:kTagSyncProgressRetry];
+        }
+            break;
+            
+        default:
+            break;
+    }
+    return cancelButtonTitle;
+}
+
+/**
+ * @name  <MethodName. optional>
+ *
+ * @author Vipindas Palli
+ *
+ * @brief <A short one line description>
+ *
+ * \par
+ *  <Longer description starts here>
+ *
+ *
+ * @param  Description of method's or function's input parameter
+ * @param  ...
+ *
+ * @return Description of the return value
+ *
+ */
+
++ (NSString *)otherButtonTitleByType:(AlertMessageType)type
+{
+    
+    NSString * otherButtonTitle = nil;
+    switch (type)
+    {
+        case AlertMessageTypeSwitchUser:
+        case AlertMessageTypeResetApplication:
+        {
+            otherButtonTitle =  [[TagManager sharedInstance] tagByName:kTagCancelButton];
+        }
+            break;
+            
+        case AlertMessageTypeAttachmentDeleteConfirmation:
+        {
+            otherButtonTitle =  [[TagManager sharedInstance] tagByName:kTagDeleteLocallyAction];
+        }
+            break;
+        case AlertMessageTypeEventOvelapOnSync:
+        {
+            otherButtonTitle =  [[TagManager sharedInstance] tagByName:kTagYes];
+        }
+            break;
+        case AlertmessageTypeInternetNotAvailableWithRetryOption:
+        {
+            otherButtonTitle =  [[TagManager sharedInstance] tagByName:kTagSyncProgressIWillTry];
+        }
+            break;
+            
+        default:
+            break;
+    }
+    return otherButtonTitle;
+}
 @end

@@ -37,7 +37,7 @@
 #import "AttachmentLocalModel.h"
 #import "PushNotificationManager.h"
 #import "ModifiedRecordModel.h"
-
+#import "AlertMessageHandler.h"
 
 
 typedef NS_ENUM(NSInteger, SaveFlow ) {
@@ -59,8 +59,9 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 @property(nonatomic, strong) LinkedProcess *linkedSfmProcess;
 @property(nonatomic, strong) NSIndexPath *requiredFieldIndexPath;
 @property(nonatomic, assign) BOOL isHeader;
-
+@property(nonatomic, strong) UIAlertView *alertViewBiz;
 @property (nonatomic) SaveFlow saveflow;
+
 @end
 
 @implementation PageEditViewController
@@ -790,7 +791,16 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 #pragma mark - show alert
 -(void)showAlert
 {
-    [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeRequiredFieldWarning andDelegate:self];
+    if (![self.alertViewBiz isVisible])
+    {
+        if (self.alertViewBiz == nil)
+            self.alertViewBiz = [[UIAlertView alloc] initWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning]
+                                                           message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning]
+                                                          delegate:self
+                                                 cancelButtonTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning]
+                                                 otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:AlertMessageTypeRequiredFieldWarning], nil];
+        [self.alertViewBiz performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+    }
 }
 
 

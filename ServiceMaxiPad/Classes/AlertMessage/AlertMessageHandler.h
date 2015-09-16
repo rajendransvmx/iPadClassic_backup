@@ -190,4 +190,12 @@ AlertMessageType;
                     title:(NSString *)title
         cancelButtonTitle:(NSString *)cancelButton
      andOtherButtonTitles:(NSArray *)buttonTitles;
+
+
++ (NSString *)titleByType:(AlertMessageType)type;
++ (NSString *)messageByType:(AlertMessageType)type;
++ (NSString *)otherButtonTitleByType:(AlertMessageType)type;
++ (NSString *)cancelButtonTitleByType:(AlertMessageType)type;
+
+
 @end
