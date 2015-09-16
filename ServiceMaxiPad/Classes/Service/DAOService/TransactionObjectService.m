@@ -322,7 +322,7 @@
         SQLResultSet * resultSet = [db executeQuery:query];
         
         while ([resultSet next]) {
-            NSDictionary * dict = [resultSet resultDictionary];
+            NSDictionary * dict = [resultSet resultDictionaryWithFieldsAsString];
             //Method in model to set the values
             TransactionObjectModel * model = [[TransactionObjectModel alloc] init];
             [model setRecordLocalId:[dict objectForKey:kLocalId]];
