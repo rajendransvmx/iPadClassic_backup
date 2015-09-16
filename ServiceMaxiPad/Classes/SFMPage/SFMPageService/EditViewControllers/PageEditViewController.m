@@ -799,15 +799,22 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 {
     if (![self.alertViewBiz isVisible])
     {
-        self.alertViewBiz = [[UIAlertView alloc] initWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning]
-                                                       message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning]
-                                                      delegate:self
-                                             cancelButtonTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning]
-                                             otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:AlertMessageTypeRequiredFieldWarning], nil];
+        if (self.alertViewBiz == nil)
+            self.alertViewBiz = [[UIAlertView alloc] initWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning]
+                                                           message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning]
+                                                          delegate:self
+                                                 cancelButtonTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning]
+                                                 otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:AlertMessageTypeRequiredFieldWarning], nil];
         [self.alertViewBiz performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
     }
 }
 
+- (void)dealloc
+{
+    self.alertViewBiz.delegate = nil;
+    self.alertViewBiz = nil;
+    
+}
 
 #pragma mark - checking process type
 - (BOOL)isSourceToTargetProcess{
