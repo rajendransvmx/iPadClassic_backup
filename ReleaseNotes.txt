@@ -4,16 +4,17 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.59.007
+Version = 15.59.0078
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-021823
-020834
-Successive sync issue - If a record is created during sync, then successive sync was occurring twice - (one for insert, one for update).
+021790
+022492
+020587
+Unable to login through VPN issue fixed
 
 Note:
 —-
