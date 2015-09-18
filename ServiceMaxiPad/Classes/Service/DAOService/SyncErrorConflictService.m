@@ -34,11 +34,10 @@
 
 - (BOOL)isConflictFoundForObject:(NSString*)objectName withSfId:(NSString*)sfId
 {
-    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"errorType" operatorType:SQLOperatorEqual andFieldValue:@"CONFLICT"];
     DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"operationType" operatorType:SQLOperatorEqual andFieldValue:@"UPDATE"];
     DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
     DBCriteria *criteriaFour = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfId];
-    NSInteger count = [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteriaOne,criteriaTwo,criteriaThree,criteriaFour] andAdvancedExpression:nil];
+    NSInteger count = [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteriaTwo,criteriaThree,criteriaFour] andAdvancedExpression:nil];
     
     BOOL hasRecordFound = NO;
     if (count > 0)
@@ -69,12 +68,11 @@
 
 - (NSString *)fetchExistingModifiedFieldsJsonFromConflictTableForSfId:(NSString *)sfId andObjectName:(NSString *)objectName
 {
-    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"errorType" operatorType:SQLOperatorEqual andFieldValue:@"CONFLICT"];
     DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"operationType" operatorType:SQLOperatorEqual andFieldValue:@"UPDATE"];
     DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
     DBCriteria *criteriaFour = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfId];
     
-    NSArray *tempArray = [self fetchDataForFields:@[@"fieldsModified"] criterias:@[criteriaOne,criteriaTwo, criteriaThree, criteriaFour] objectName:[self tableName] andModelClass:[SyncErrorConflictModel class]];
+    NSArray *tempArray = [self fetchDataForFields:@[@"fieldsModified"] criterias:@[criteriaTwo, criteriaThree, criteriaFour] objectName:[self tableName] andModelClass:[SyncErrorConflictModel class]];
     if ([tempArray count] > 0) {
         SyncErrorConflictModel *syncErrorConflictModel = [tempArray objectAtIndex:0];
         return syncErrorConflictModel.fieldsModified;

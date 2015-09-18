@@ -617,10 +617,9 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"fieldsModified", nil];
     DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:syncConflictModel.sfId];
     DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:@"operationType" operatorType:SQLOperatorEqual andFieldValue:@"UPDATE"];
-    DBCriteria * criteria3 = [[DBCriteria alloc] initWithFieldName:@"errorType" operatorType:SQLOperatorEqual andFieldValue:@"CONFLICT"];
     
     id <SyncErrorConflictDAO> syncErrorService = [FactoryDAO serviceByServiceType:ServiceTypeSyncErrorConflict];
-    [syncErrorService updateEachRecord:syncConflictModel withFields:fieldsArray withCriteria:[NSArray arrayWithObjects:criteria1, criteria2, criteria3, nil]];
+    [syncErrorService updateEachRecord:syncConflictModel withFields:fieldsArray withCriteria:[NSArray arrayWithObjects:criteria1, criteria2, nil]];
 }
 
 
