@@ -92,6 +92,9 @@ PageManagerErrorType;
             SFExpressionParser *parser = [[SFExpressionParser alloc]initWithExpressionId:expId objectName:objectName];
             isEntryCriteraMatching = [parser isEntryCriteriaMatchingForRecordId:recordId];
             if (!isEntryCriteraMatching) {
+                isEntryCriteraMatching = [parser isEntryCriteriaMatchingForRecordId:self.recordId];
+            }
+            if (!isEntryCriteraMatching) {
                 [self fillError:error
                     withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria
                         message:[parser errorMessage]];
