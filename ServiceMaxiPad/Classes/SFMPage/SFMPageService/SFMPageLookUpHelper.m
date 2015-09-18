@@ -213,7 +213,10 @@
         [finalArray addObjectsFromArray:onlineRecordsArray];
     }
     if (localRecords.count > 0) {
-        [finalArray addObjectsFromArray:localRecords];
+        NSInteger index = finalArray.count;
+        for (NSInteger i = index; i < lookUpObj.recordLimit; i++) {
+            [finalArray addObjectsFromArray:localRecords];
+        }
     }
     
     lookUpObj.dataArray = finalArray;
