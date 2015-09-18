@@ -170,6 +170,7 @@ extern NSString *const kLiteralCurrentRecord;
 extern NSString *const kLiteralCurrentRecordHeader;
 extern NSString *const kLiteralUserTrunk;
 extern NSString *const kLiteralSVMXNow;
+extern NSString *const kLiteralCurrentUserId;
 
 extern NSString *const kidentifier;
 extern NSString *const kobjectApiName;

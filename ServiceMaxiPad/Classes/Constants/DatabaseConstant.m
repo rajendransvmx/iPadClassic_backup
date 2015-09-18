@@ -174,6 +174,7 @@ NSString *const kLiteralCurrentRecord       = @"SVMX.CURRENTRECORD";
 NSString *const kLiteralCurrentRecordHeader = @"SVMX.CURRENTRECORDHEADER";
 NSString *const kLiteralUserTrunk           = @"SVMX.USERTRUNK";
 NSString *const kLiteralSVMXNow             = @"SVMX.NOW";
+NSString *const kLiteralCurrentUserId       = @"SVMX.CURRENTUSERID";
 
 
 /*SFProcess column constants*/

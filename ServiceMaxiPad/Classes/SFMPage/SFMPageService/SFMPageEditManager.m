@@ -52,6 +52,7 @@
 #import "FieldUpdateRuleManager.h"
 #import "Utility.h"
 #import "SFMDetailLayout.h"
+#import "CustomerOrgInfo.h"
 
 @interface SFMPageEditManager ()<BusinessRuleManagerDelegate>
 
@@ -500,6 +501,17 @@
         if ([objectField.type isEqualToString:kSfDTReference] && ![objectField.fieldName isEqualToString:kSfDTRecordTypeId])
         {
             if (![StringUtil isStringEmpty:recordfield.internalValue]) {
+                
+                displayValue = [SFMPageHelper  valueOfLiteral:recordfield.internalValue dataType:@""];
+                if(displayValue == nil) {
+                    displayValue = recordfield.displayValue;
+                }
+                else {
+                    if(([recordfield.internalValue caseInsensitiveCompare:kLiteralCurrentUser]== NSOrderedSame) || ([recordfield.internalValue caseInsensitiveCompare:kLiteralOwner]== NSOrderedSame) || ([recordfield.internalValue caseInsensitiveCompare:kLiteralCurrentUserId] == NSOrderedSame)) {
+                        recordfield.internalValue = [[CustomerOrgInfo sharedInstance]currentUserId];
+                    }
+                }
+                
                 [fieldNameAndInternalValue setObject:recordfield.internalValue forKey:objectField.fieldName];
                 if (objectField.referenceTo != nil) {
                     [fieldNameAndObjectApiName setObject:objectField.referenceTo forKey:objectField.fieldName];
@@ -547,8 +559,7 @@
         else
         {
             displayValue = [SFMPageHelper  valueOfLiteral:recordfield.internalValue dataType:@""];
-            if(displayValue == nil)
-            {
+            if(displayValue == nil) {
                 displayValue = recordfield.displayValue;
             }
         }
