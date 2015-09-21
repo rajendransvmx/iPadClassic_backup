@@ -1126,10 +1126,10 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         SFMRecordFieldData *endDateRecordFieldData = [eventDictionary objectForKey:kEndDateTime];
         NSDate *startDate;
         NSDate *endDate;
-        if (startDateRecordFieldData.internalValue != nil) {
+        if (startDateRecordFieldData.internalValue != nil && startDateRecordFieldData.internalValue.length) {
             startDate = [DateUtil getDateFromDatabaseString:startDateRecordFieldData.internalValue];
         }
-        if (endDateRecordFieldData.internalValue != nil) {
+        if (endDateRecordFieldData.internalValue != nil && endDateRecordFieldData.internalValue.length) {
             endDate = [DateUtil getDateFromDatabaseString:endDateRecordFieldData.internalValue];
         }
         
@@ -1144,7 +1144,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         }
     }
     if ([self.sfmPage.objectName isEqualToString:kServicemaxEventObject]) {
-        //
+        /*
         SFMRecordFieldData *startDateRecordFieldData = [eventDictionary objectForKey:kSVMXStartDateTime];
         SFMRecordFieldData *endDateRecordFieldData = [eventDictionary objectForKey:kSVMXEndDateTime];
         if (startDateRecordFieldData.internalValue != nil && endDateRecordFieldData.internalValue != nil) {
@@ -1157,6 +1157,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
                 isEventValid = NO;
             }
         }
+         */
     }
     return isEventValid;
 }
@@ -1311,7 +1312,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 }
 
 -(void)pageEventProcessCalculationFinishedSuccessFully:(SFMPage *)sfPage {
-    NSLog(@"beforeSaveProcessCalculationFinishedSuccessFully");
+    SXLogDebug(@"beforeSaveProcessCalculationFinishedSuccessFully");
     
     if (!self.isLinkedSfmProcess) {
         [self performSelectorInBackground:@selector(saveRecord) withObject:nil];
@@ -1326,7 +1327,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 }
 
 -(void)shouldShowAlertMessageForPageEventProcess:(NSString *)message {
-    NSLog(@"before save failed");
+    SXLogDebug(@"before save failed");
     
     if (!self.isLinkedSfmProcess) {
         [self performSelectorInBackground:@selector(saveRecord) withObject:nil];

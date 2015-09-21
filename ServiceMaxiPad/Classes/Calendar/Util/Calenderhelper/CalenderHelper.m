@@ -171,41 +171,41 @@
         }
         else if ([StringUtil isStringEmpty:companyName])
         {
-                companyName = woSummaryModel.companyId;
+            companyName = woSummaryModel.companyId;
             
         }
-            woSummaryModel.companyName = companyName;
+        woSummaryModel.companyName = companyName;
         
         
         if (![StringUtil isStringEmpty:[transObjModel valueForField:kWorkOrderSite]]) {
             woSummaryModel.IPAtLocation = [self getInstalledListFromSite: [transObjModel valueForField:kWorkOrderSite]];
-
+            
         }
         else{
             woSummaryModel.IPAtLocation = nil;
         }
-
+        
         [workOrderSummaryDict setObject:woSummaryModel forKey:woSummaryModel.Id];
         [workOrderSummaryDict setObject:woSummaryModel forKey:[woSummaryModel.Id substringToIndex:woSummaryModel.Id.length - 3]]; //For SVMX Event, the what ID is shorter by last 3 characters.
-
+        
     }
     
-
+    
     return workOrderSummaryDict;
 }
 
 
 -(NSArray *) getEventDetailsForTheDay
 {
-
+    
     NSMutableArray *lCaseSFIDArray = [[NSMutableArray alloc] init];
-
-//    NSLog(@"<<<<<<<<<<<<<<<<< START eventsOfRangeOfDays >>>>>>>>>>>>>>>>>>");
+    
+    //    NSLog(@"<<<<<<<<<<<<<<<<< START eventsOfRangeOfDays >>>>>>>>>>>>>>>>>>");
     NSMutableArray *lEventListArray = (NSMutableArray *) [self eventsOfRangeOfDaysForSalesForceEventTable];
     NSMutableArray *lSVMXEventListArray = (NSMutableArray *) [self eventsFromSVMXEventTable];
-
-//    NSLog(@"<<<<<<<<<<<<<<<<< END eventsOfRangeOfDays >>>>>>>>>>>>>>>>>>");
-
+    
+    //    NSLog(@"<<<<<<<<<<<<<<<<< END eventsOfRangeOfDays >>>>>>>>>>>>>>>>>>");
+    
     NSMutableArray *lEventArray = lEventListArray;//[self removeTheDayPadding:lEventListArray];
     
     NSMutableDictionary *whatEventStartDateValueMap = [[NSMutableDictionary alloc] init];
@@ -218,16 +218,15 @@
     for (EventTransactionObjectModel *lModel in lEventArray) {
         
         [lModel hasTimeZoneChanged];         //Checking if the split events are adhering to the current local timezone. Everything is done at the Model level.
-
+        
         NSMutableDictionary *theDict = (NSMutableDictionary *) [lModel getFieldValueDictionary];
-
+        
         NSString *objectName =  [serviceRequest getObjectName:[theDict objectForKey:kWhatId]];
-//        
+        //
         if ([objectName isEqualToString:kWorkOrderTableName]) {
-            if([theDict objectForKey:kStartDateTime] != nil)
-            {
-                [whatEventStartDateValueMap setObject:[theDict objectForKey:kStartDateTime]forKey:[theDict objectForKey:kWhatId]];
-            }
+            
+            [whatEventStartDateValueMap setObject:[theDict objectForKey:kStartDateTime]forKey:[theDict objectForKey:kWhatId]];
+            
             [theDict setObject:@"YES" forKey:@"isWorkOrder"];
             
         }
@@ -238,25 +237,26 @@
             [[SMXCalendarViewController sharedInstance].cCaseDetailsDict setObject:object forKey:[theDict objectForKey:kWhatId]];
         }
     }
-
+    
     for (EventTransactionObjectModel *lModel in lSVMXEventListArray) {
         
         [lModel hasTimeZoneChanged];         //Checking if the split events are adhering to the current local timezone. Everything is done at the Model level.
-
+        
         NSMutableDictionary *theDict = (NSMutableDictionary *) [lModel getFieldValueDictionary];
         
         NSString *objectName =  [serviceRequest getObjectName:[theDict objectForKey:kObjectSfId]];
         
         if ([objectName isEqualToString:kWorkOrderTableName]) {
+            
             [whatEventStartDateValueMap setObject:[theDict objectForKey:kSVMXStartDateTime]forKey:[theDict objectForKey:kObjectSfId]];
-//            lModel.isWorkOrder = YES;
+            //           lModel.isWorkOrder = YES;
             [theDict setObject:@"YES" forKey:@"isWorkOrder"];
         }
         else if ([objectName isEqualToString:kCaseObject]) {
             [lCaseSFIDArray addObject:[theDict objectForKey:kObjectSfId]];
-//            lModel.isCaseEvent = YES;
+            //            lModel.isCaseEvent = YES;
             [theDict setObject:@"YES" forKey:@"isCaseEvent"];
-
+            
             CaseObjectModel *object = [CaseObjectModel new];
             [[SMXCalendarViewController sharedInstance].cCaseDetailsDict setObject:object forKey:[theDict objectForKey:kObjectSfId]];
         }
@@ -268,21 +268,21 @@
         
         [SMXCalendarViewController sharedInstance].cWODetailsDict =  [CalenderHelper getWorkOrdersForWhatIds:whatEventStartDateValueMap];
         
-        }
+    }
     
     /*
-    NSSortDescriptor *eventStartDateSortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"startDateTime"
-                                                                                   ascending:YES];
-
-    NSArray *sortedArray = [lEventArray sortedArrayUsingDescriptors:[NSArray arrayWithObjects:eventStartDateSortDescriptor, nil]];
-    return sortedArray;
-    */
+     NSSortDescriptor *eventStartDateSortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"startDateTime"
+     ascending:YES];
+     
+     NSArray *sortedArray = [lEventArray sortedArrayUsingDescriptors:[NSArray arrayWithObjects:eventStartDateSortDescriptor, nil]];
+     return sortedArray;
+     */
     
-
+    
     NSMutableSet *set = [NSMutableSet setWithArray:lEventListArray];
     [set addObjectsFromArray:lSVMXEventListArray];
     NSArray *combinedArray = [set allObjects];
-
+    
     return combinedArray;
     
 }
@@ -295,7 +295,7 @@
     TransactionObjectModel *model =  [serviceRequest getRecordForSalesforceId:lWhatId];
     
     long numberOfRecords = [self getNumberOfConflictRecordsForTransactionModel:model];
-
+    
     if (numberOfRecords>0) {
         
         //If the parent itself is there in the conflict table
@@ -306,7 +306,7 @@
     
     DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kCRObjectNameParentField operatorType:SQLOperatorEqual andFieldValue:model.objectAPIName];
     DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:kCRFieldNameField operatorType:SQLOperatorEqual andFieldValue:model.objectAPIName];
-
+    
     NSArray *lChildModelArray = [childRelationServiceRequest fetchSFChildRelationshipInfoByFields:@[kCRObjectNameChildField] andCriterias:@[criteria1, criteria2] andAdvanceExpresion:@"(1 AND 2)"];
     
     if ((lChildModelArray == nil) || ([lChildModelArray count] < 1))
@@ -318,7 +318,7 @@
     SFChildRelationshipModel * lCRModel = [lChildModelArray objectAtIndex:0];
     
     // Record of the children from child table.
-     NSArray *lDataArray = [serviceRequest conflictStatusOfChildInTable:lCRModel.objectNameChild withWhatID:lWhatId andLocalID:model.recordLocalId forParentTable:model.objectAPIName];
+    NSArray *lDataArray = [serviceRequest conflictStatusOfChildInTable:lCRModel.objectNameChild withWhatID:lWhatId andLocalID:model.recordLocalId forParentTable:model.objectAPIName];
     
     BOOL status = NO;
     for (TransactionObjectModel *lTransModel in lDataArray)
@@ -326,7 +326,7 @@
         //Check if the child ids present in the SyncErrorConflictTable
         
         long numberOfRecords = [self getNumberOfConflictRecordsForTransactionModel:lTransModel];
-       
+        
         if (numberOfRecords>0) {
             
             // this child has Sync error. Break from here and inform of the Sync Status
@@ -335,11 +335,11 @@
         }
         else
         {
-                // this child does not have Sync Error
+            // this child does not have Sync Error
         }
     }
     return status;
-     
+    
 }
 
 
@@ -382,7 +382,7 @@
         }
         
         if ([eventModel.whatId length] && ![lFinishedID containsObject:eventModel.whatId]) {
-      
+            
             [lFinishedID addObject:eventModel.whatId];
             
             BOOL conflict = [CalenderHelper isConflicted:eventModel.whatId];
@@ -402,7 +402,7 @@
                 eventModel.priority = NO;
             }
             eventModel.priorityString = priorityStatus;
-
+            
             
             if ([lAllWOWhatIDs containsObject:eventModel.whatId]) {
                 WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:eventModel.whatId];
@@ -446,7 +446,7 @@
     if(!([model.objectAPIName isEqualToString:kCaseObject] || [model.objectAPIName isEqualToString:kWorkOrderTableName]))
     {
         
-    //if the object is neither case nor WorkOrder
+        //if the object is neither case nor WorkOrder
         return @{@"slaStatus":[NSNumber numberWithBool:NO], @"priorityStatus" : @"Low"};
     }
     
@@ -486,7 +486,7 @@
                     else
                     {
                         lpriorityStatusTemp = [dataDictionary objectForKey:kWorkOrderPriority];
-
+                        
                     }
                     
                     priorityStatus = (lpriorityStatusTemp.length>0 ? lpriorityStatusTemp:priorityStatus);
@@ -523,14 +523,14 @@
                     }
                     
                     priorityStatus = (lpriorityStatusTemp.length>0 ? lpriorityStatusTemp:priorityStatus); //Priority
-
+                    
                 }
- 
+                
             }
         }
         
     }
-
+    
     
     return @{@"slaStatus":[NSNumber numberWithBool:status], @"priorityStatus" : priorityStatus};
 }
@@ -540,9 +540,9 @@
     id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
     
     TransactionObjectModel *model =  [serviceRequest getRecordForSalesforceId:lWhatID];
-
+    
     return model;
-
+    
 }
 
 +(ServiceLocationModel *)getServiceLocationModel:(NSString *)lWhatID
@@ -554,56 +554,6 @@
     ServiceLocationModel *ServiceModel = [[ServiceLocationModel alloc] initWithTransactionModel:model];
     return ServiceModel;
 }
-
-/*
--(NSMutableArray *)removeTheDayPadding:(NSArray *)eventArray
-{
-    
-    NSMutableArray *cEventListArray = [[NSMutableArray alloc] init];
-    
-//    NSDateComponents *lTodayComponent = [[NSCalendar currentCalendar] components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[NSDate date]];
-    
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-
-    NSDateFormatter * lDF = [[NSDateFormatter alloc] init];
-    [lDF setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-    lDF.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-    lDF.calendar = cal;
-    [lDF setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-    
-    for (CalenderEventObjectModel *lModel in eventArray) {
-        
-        NSString *lStartDateString = [NSString stringWithFormat:@"%@", lModel.startDateTime];
-        
-        lStartDateString = [lStartDateString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-        lStartDateString = [lStartDateString stringByReplacingOccurrencesOfString:@".000Z" withString:@""];
-        
-        lStartDateString = [CalenderHelper localTimeFromGMT:lStartDateString];
-        lStartDateString = [lStartDateString stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-        lStartDateString = [lStartDateString stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-        
-        NSDate *lEventStartDate = [lDF dateFromString:lStartDateString];
-        
-        unsigned int unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit;
-        
-
-        NSDateComponents *conversionInfo = [cal components:unitFlags fromDate:[NSDate date]   toDate:lEventStartDate  options:0];
-     
-//        NSLog(@"lEventStartDate:%@", lEventStartDate);
-//        NSLog(@"today:%@",[NSDate date]);
-
-        int daysDifference = (int)[conversionInfo day];
-        
-        if (abs(daysDifference) <= [cRangeOfDaysString intValue])
-        {
-            [cEventListArray addObject:lModel];
-        }
-        
-    }
-    
-    return cEventListArray;
-}
-*/
 
 /*
  
@@ -660,17 +610,25 @@
     
     DBCriteria *criteriaFive = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
     
+    //When the Start date or end date are not present. Either NULl or blank.
+    DBCriteria *criteriaWhenStartNotPresent = [[DBCriteria alloc] initWithFieldName:kStartDateTime operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
+    DBCriteria *criteriaWhenEndNotPresent = [[DBCriteria alloc] initWithFieldName:kEndDateTime operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
     NSArray *eventArray = nil;
     
     id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-
+    
     if (![StringUtil isStringEmpty:ownerId]) {
         
         DBCriteria *criteriaSix = [[DBCriteria alloc] initWithFieldName:kOwnerId operatorType:SQLOperatorEqual andFieldValue:ownerId];
-        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) AND 5 OR (6 AND 7))" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, criteriaSix, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, nil]];
+        
+        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
     }
     else {
-        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) OR (6 AND 7))" criteria:[NSArray arrayWithObjects: criteriaTwo, criteriaThree, criteriaFour, criteriaFive, nil]];
+        //            eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) OR (6 AND 7) AND ())" criteria:[NSArray arrayWithObjects: criteriaTwo, criteriaThree, criteriaFour, criteriaFive, nil]];
+        
+        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND (7 AND 8))" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
     }
     
     return eventArray;
@@ -691,7 +649,7 @@
     
     NSDate *lStartDate = [self dateWithOutTime:[[NSDate date] dateByAddingTimeInterval:-60*60*24*lRangeDayInt]];
     NSDate *lEndDate = [self dateWithOutTime:[[NSDate date] dateByAddingDays:lRangeDayInt+1]];
-
+    
     NSTimeZone *gmt = [[NSTimeZone alloc] initWithName:@"GMT"];
     NSDate *startDate = [NSDate date:lStartDate withTimeZone:gmt];
     
@@ -699,9 +657,9 @@
     
     NSString *startDateString = [CalenderHelper convertDateToStringGMT:startDate];
     NSString *endDateString = [CalenderHelper convertDateToStringGMT:endDate];
-//    NSString *ownerId = [CalenderHelper ownerId];
+    //    NSString *ownerId = [CalenderHelper ownerId];
     NSString *technicianID = [PlistManager getTechnicianId];
-
+    
     // ==== START FOR MULTI-DAY EVENTS, WHEREIN THE EVENT IS STARTING BEFORE THE EVENT WINDOW
     DBCriteria *lMultiDayCriteriaOne = [[DBCriteria alloc] initWithFieldName:kSVMXStartDateTime operatorType:SQLOperatorLessThan andFieldValue:startDateString];
     
@@ -717,17 +675,27 @@
     
     DBCriteria *criteriaFive = [[DBCriteria alloc] initWithFieldName:kSVMXEndDateTime operatorType:SQLOperatorLessThan andFieldValue:endDateString];
     
+    //When the Start date or end date are not present. Either NULl or blank.
+    DBCriteria *criteriaWhenStartNotPresent = [[DBCriteria alloc] initWithFieldName:kSVMXStartDateTime operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
+    DBCriteria *criteriaWhenEndNotPresent = [[DBCriteria alloc] initWithFieldName:kSVMXEndDateTime operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
+    
+    
     NSArray *eventArray = nil;
     
     id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-
+    
     if (![StringUtil isStringEmpty:technicianID]) {
         
         DBCriteria *criteriaSix = [[DBCriteria alloc] initWithFieldName:kSVMXTechnicianId operatorType:SQLOperatorEqual andFieldValue:technicianID];
-        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) AND 5 OR (6 AND 7))" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, criteriaSix, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, nil]];
+        
+        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (7 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
     }
     else {
-        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) OR (6 AND 7))" criteria:[NSArray arrayWithObjects: criteriaTwo, criteriaThree, criteriaFour, criteriaFive, nil]];
+        //              eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) OR (6 AND 7))" criteria:[NSArray arrayWithObjects: criteriaTwo, criteriaThree, criteriaFour, criteriaFive, nil]];
+        
+        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"((1 AND 2) OR (3 AND 4) OR (5 AND 6) AND 7 AND 8)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
     }
     
     return eventArray;
@@ -737,7 +705,7 @@
 +(NSString *)getSyncDayRangeFromMobileDeviceSettings
 {
     [self getBusinessHoursForTheUser];
-
+    
     NSString *rangeDay = [self fetchSyncDayRange];
     //rangeDay = @"5";
     return rangeDay;
@@ -755,7 +723,7 @@
 
 + (void)updateEvent:(SMXEvent *)event toActivityDate:(NSDate *) activityDate andStartTime:(NSDate *)startTime withEndTime:(NSDate *)endTime multiDayEvent:(NSArray *)objectArray
 {
-
+    
     NSDateComponents *comp = [NSDate componentsOfDate:startTime];
     activityDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
     
@@ -775,7 +743,7 @@
         id <CalenderDAO> lCalenderService = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
         
         NSArray *lFieldsArray = [self getEventFieldsForEvent:event];
-
+        
         //get modified field json by comparing data before update and data after update
         NSMutableDictionary *dataDictionary = [NSMutableDictionary dictionaryWithDictionary:[self getDataDict:___lEvent forFields:lFieldsArray andSplitEventArray:nil]];
         
@@ -787,9 +755,9 @@
         }
         SFMPageEditManager *pageEditManager = [[SFMPageEditManager alloc]init];
         pageEditManager.dataDictionaryAfterModification = dataDictionary;
-
+        
         NSString *modifiedFieldAsJson = [pageEditManager getJsonStringAfterComparisionForObject:event.eventTableName recordId:event.localID sfid:event.IDString andSettingsFlag:YES];
-
+        
         //if servicemax event need to update svmx_event table
         //else update event table
         
@@ -797,7 +765,7 @@
                                               withFields:lFieldsArray
                                             withCriteria:[NSArray arrayWithObject:criteria]
                                            withTableName:event.eventTableName];
-
+        
         ModifiedRecordModel *modifiedRecord = [[ModifiedRecordModel alloc]init];
         modifiedRecord.objectName = event.eventTableName;
         modifiedRecord.recordLocalId = event.localID;
@@ -847,8 +815,8 @@
     NSString *endDateTime = [lFieldsArray objectAtIndex:3];
     NSString *durationDateTime = [lFieldsArray objectAtIndex:4];
     NSString *allDayEvent = [lFieldsArray objectAtIndex:5];
-
-
+    
+    
     if (event != nil)
     {
         [self checkAndUpdateTaskModel:event];
@@ -860,7 +828,7 @@
         NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
         dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
         [dateFormatter setTimeZone:gmt];
-
+        
         dateFormatter.dateFormat = @"yyyy-MM-dd";
         [dict setObject:[DateUtil stringFromDate:event.ActivityDateDay inFormat:kDateFormatTypeOnlyDate] forKey:activityDate];
         
@@ -871,7 +839,7 @@
         NSString *activityDateTimeValue = [[dateFormatter stringFromDate:event.dateTimeBegin] stringByAppendingString:@".000+0000"];
         NSString *startDateTimeValue = [[dateFormatter stringFromDate:event.dateTimeBegin] stringByAppendingString:@".000+0000"];
         NSString *endDateTimeValue = [[dateFormatter stringFromDate:event.dateTimeEnd] stringByAppendingString:@".000+0000"];
-
+        
         [dict setObject:activityDateTimeValue forKey:activityDateTime];
         [dict setObject:startDateTimeValue forKey:startDateTime];
         [dict setObject:endDateTimeValue forKey:endDateTime];
@@ -884,14 +852,14 @@
         [dict setObject:event.IDString forKey:kId]; //Same for both SVMX & Salesforce Event table
         
         [dict setObject:[NSNumber numberWithBool:event.isMultidayEvent] forKey:kIsMultiDayEvent]; // if splitArray = nil, that means the method has been called from somewhere else which doesnt update the DB.
-
+        
         [dict setObject:@"false" forKey:allDayEvent];
         
         
         if (splitArray) {
             [dict setObject:[self convertToJsonStringFromArray:splitArray] forKey:kSplitDayEvents];
         }
-
+        
         return dict;
     }
     return nil;
@@ -903,10 +871,10 @@
     NSString *jsonString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
     return jsonString;
 }
-         
+
 + (void)checkAndUpdateTaskModel:(SMXEvent *)event
 {
-
+    
     event.ActivityDateDay = (event.ActivityDateDay) != nil? event.ActivityDateDay:[NSDate date];
     event.IDString = (event.IDString) != nil? event.IDString:@"";
     event.localID = (event.localID) != nil? event.localID:@"";
@@ -917,12 +885,12 @@
 {
     if ([event.eventTableName isEqualToString:kSVMXTableName]) {
         return @[kSVMXActivityDate,kSVMXActivityDateTime, kSVMXStartDateTime, kSVMXEndDateTime, kSVMXDurationInMinutes, kSVMXIsAlldayEvent, kIsMultiDayEvent, kSplitDayEvents, kLocalId];
-
+        
     }
     else
     {
         return @[kActivityDate,kActivityDateTime, kStartDateTime, kEndDateTime, kDurationInMinutes, kIsAlldayEvent, kIsMultiDayEvent, kSplitDayEvents, kLocalId];
-
+        
     }
 }
 
@@ -988,12 +956,12 @@
     }else{
         return nil;
     }
-   
+    
 }
 
 /* Here we are getting value from product table*/
 +(NSArray *)getProductFromProductTable:(NSArray *)ids{
-   DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:ids];
+    DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:ids];
     NSArray *fieldsArray = [[NSArray alloc] initWithObjects:KProductName,kId,nil];
     NSArray *workOrderArray = [self fetchDataFromWorkOrderObject:KProductTable fields:fieldsArray expression:nil criteria:[NSArray arrayWithObject:criteriaOne]];
     if ([workOrderArray count]>0) {
@@ -1009,7 +977,7 @@
 }
 
 +(NSArray *)getList:(NSMutableDictionary *)productIdToNameDictionary productId:(NSArray *)productIds{
-
+    
     // productModels
     NSMutableDictionary *IdModel = [[NSMutableDictionary alloc] init];
     
@@ -1018,7 +986,7 @@
     {
         //SMXProductDisplayModel
         SMXProductListModel *model = [IdModel objectForKey:productId];
-    
+        
         if (model)
         {
             model.count = model.count+1;
@@ -1072,11 +1040,11 @@
 }
 +(NSString *)getServiceLocation:(NSString *)whatID
 {
-
+    
     ServiceLocationModel *model = [self getServiceLocationModel:whatID];
     NSString *cityAndState = nil;
     
-     if (![StringUtil isStringEmpty:model.city]) {
+    if (![StringUtil isStringEmpty:model.city]) {
         cityAndState = [NSString stringWithFormat:@"%@", model.city];
     }
     
@@ -1142,7 +1110,7 @@
     [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     [dateFormatter setCalendar:cal];
     dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-
+    
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     NSString * tmpDate = [gmtDate substringToIndex:[gmtDate length]-0];
@@ -1160,7 +1128,7 @@
     
     someDateString = [someDateString stringByReplacingOccurrencesOfString:@" " withString:@"T"];
     someDateString = [NSString stringWithFormat:@"%@Z", someDateString];
-        
+    
     return someDateString;
 }
 
@@ -1290,7 +1258,7 @@
 +(NSString *)getStringValueForTheDate:(NSDate *)lDate
 {
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-
+    
     NSDateComponents *comp = [cal components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitWeekday fromDate:lDate];
     
     NSString *monthString = [arrayMonthNameAbrev objectAtIndex:comp.month-1];
@@ -1300,7 +1268,7 @@
     if (comp.hour>11) {
         lAmPm = [[TagManager sharedInstance]tagByName:kTag_PM];
     }
-
+    
     NSString *combinedString = [NSString stringWithFormat:@"%@ %@ %ld, %ld %d:%@ %@", dayString, monthString, (long)comp.day, (long)comp.year, (int)(comp.hour>12 ? comp.hour-12:(comp.hour == 0? 12:comp.hour)), (minuteString.length ==1? [@"0" stringByAppendingString:minuteString]:minuteString), lAmPm];
     return combinedString;
 }
@@ -1340,7 +1308,7 @@
 
 #pragma mark - get mobile device settings value
 
- + (NSString*)getEventTypeFromMobileDeviceSettings
++ (NSString*)getEventTypeFromMobileDeviceSettings
 {
     MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
     MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"GLOB001_GBL025"];
@@ -1390,7 +1358,7 @@
     DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kObjectSfId operatorType:SQLOperatorIsNull andFieldValue:nil];
     
     id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-
+    
     NSArray * eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:@[kSVMXWhatId] expression:@"1 and 2" criteria:@[criteria, criteria1]];
     
     for (EventTransactionObjectModel *model in eventArray) {
@@ -1452,7 +1420,7 @@
         TransactionObjectModel *model = [transObjectService getDataForObject:objectName fields:@[kId] expression:nil criteria:@[criteria]];
         
         return [model valueForField:kId];
-
+        
     }
     return nil;
     
