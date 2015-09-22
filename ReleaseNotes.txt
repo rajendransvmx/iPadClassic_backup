@@ -4,18 +4,20 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.59.009
+Version = 15.60.001
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-021708
-021364
+023391
 
 Note:
 —-
+Changed BaseURL from "www.salesforce.com" to "https://login.salesforce.com" as per Salesforce confirmation under below statement:
+As of January 1, 2016, the internal routing will be retired, and any API endpoints will need to be changed if from www.salesforce.com to https://login.salesforce.com. 
+
 Namespace - SVMXC
 
 
