@@ -1775,9 +1775,8 @@
             rightButton.titleLabel.textAlignment=NSTextAlignmentRight;
             rightButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
             self.navigationItem.rightBarButtonItem.enabled = YES;
+            self.navigationItem.rightBarButtonItem =[[UIBarButtonItem alloc] initWithCustomView:rightButton];
         }
-        self.navigationItem.rightBarButtonItem =[[UIBarButtonItem alloc] initWithCustomView:rightButton];
-
     }
 }
 
@@ -1803,6 +1802,7 @@
         leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
     }
 }
+
 -(void)calenderButton{
     grayCalenderBkView = [UIButton buttonWithType:UIButtonTypeCustom];
     grayCalenderBkView.frame = CGRectMake(0,0,1024,1024);
