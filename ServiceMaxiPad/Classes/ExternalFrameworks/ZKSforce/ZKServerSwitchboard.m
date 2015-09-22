@@ -190,7 +190,14 @@ static ZKServerSwitchboard * sharedSwitchboard =  nil;
         return customURL;
 
 	}
-    return @"https://www.salesforce.com";
+    
+    /* HS 22Sep2016 Changed BaseURL from "www.salesforce.com" to "https://login.salesforce.com" as per Salesforce confirmation under below statement
+     As of January 1, 2016, the internal routing will be retired, and any API endpoints will need to be changed if from www.salesforce.com to https://login.salesforce.com.
+     */
+    //return @"https://www.salesforce.com";
+
+    return @"https://login.salesforce.com";
+
 }
 
 #pragma mark Properties
