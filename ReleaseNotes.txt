@@ -4,17 +4,15 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.59.008
+Version = 15.59.009
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-021790
-022492
-020587
-Unable to login through VPN issue fixed
+021708
+021364
 
 Note:
 —-
