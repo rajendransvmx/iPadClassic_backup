@@ -171,6 +171,11 @@
              @"UserImages",
              @"ChatterPostDetail",
              @"ProductImageData",
+             @"RecordName",
+             @"Translations",
+             @"FieldDescribe",
+             @"ObjectDescribe",
+             @"Configuration",
              ];
 }
 

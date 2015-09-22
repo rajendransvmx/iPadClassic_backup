@@ -20,7 +20,7 @@
     if (data.count) {
 //        return;
     }
-    [self createTestTables];
+//    [self createTestTables];
     NSArray *lTableArray = @[@"ObjectDescribe",@"Configuration", @"RecordName", @"Translations"];
     
     for (NSString *tableName in lTableArray) {

@@ -198,6 +198,19 @@ NSString *const kTableAttachmentLocalSchema = @"CREATE TABLE IF NOT EXISTS Attac
 
 NSString *const kTableSFMCustomActionParams = @"CREATE TABLE IF NOT EXISTS CustomActionParams ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'Id' VARCHAR, 'Name' VARCHAR, 'DispatchProcessId' VARCHAR , 'ParameterName' VARCHAR, 'ParameterValue' VARCHAR , 'ParameterType' VARCHAR)";
 
+//ProductIQ tables.
+
+NSString *const KTableRecordName = @"CREATE TABLE IF NOT EXISTS 'RecordName' ('RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id' VARCHAR UNIQUE,  'Name'	VARCHAR);";
+
+NSString *const KTableTranslations = @"CREATE TABLE IF NOT EXISTS 'Translations' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Key' VARCHAR,'Text' VARCHAR )";
+
+NSString *const KTableFieldDescribe = @"CREATE TABLE IF NOT EXISTS 'FieldDescribe' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'FieldName' VARCHAR,'DescribeResult' VARCHAR )";
+
+NSString *const KTableObjectDescribe = @"CREATE TABLE IF NOT EXISTS 'ObjectDescribe' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'ObjectName' VARCHAR UNIQUE ,'DescribeResult' VARCHAR )";
+
+NSString *const KTableConfiguration = @"CREATE TABLE 'Configuration' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Type' VARCHAR,'Key' VARCHAR,'Value' VARCHAR )";
+
+
 @implementation DatabaseSchemaConstant
 
 @end
