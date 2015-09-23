@@ -130,7 +130,7 @@
     
     NSString * advExpression = @"(1 AND 2)";
     
-    NSArray * fieldsArray = [[NSArray alloc] initWithObjects: @"fieldName",@"searchObjectFieldType", @"fieldDataType", @"namedSearchId",nil];
+    NSArray * fieldsArray = [[NSArray alloc] initWithObjects: @"fieldName",@"searchObjectFieldType", @"fieldDataType", @"namedSearchId",@"fieldRelationshipName",@"keyNameField",nil];
     
     
     id<SFNamedSearchComponentDAO>   namedSearchObj =  [FactoryDAO serviceByServiceType:ServiceTypeSearchObjectDetail];

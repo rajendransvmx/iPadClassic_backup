@@ -31,6 +31,7 @@
 @property(nonatomic, copy) NSString *searchObjectFieldType;
 @property(nonatomic, copy) NSString *fieldDataType;
 @property(nonatomic, copy) NSString *fieldRelationshipName;
+@property(nonatomic, copy) NSString *keyNameField;//added new column for online lookup.
 @property(nonatomic, assign) double sequence;
 
 - (id)init;

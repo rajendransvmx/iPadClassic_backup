@@ -227,6 +227,7 @@ extern NSString *const kNSComponentSearchFieldType;
 extern NSString *const kNSComponentFieldDataType;
 extern NSString *const kNSComponentFieldRelation;
 extern NSString *const kNSComponentSequence;
+extern NSString *const kNSCompoentKeyNameField;
 
 /* SFM_SEARCH_DETAILS */
 extern NSString *const kSearchDetailSFID;

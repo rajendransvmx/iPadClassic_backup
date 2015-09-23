@@ -105,7 +105,7 @@ NSString *const kTableSFMSearchFilterCriteriaSchema = @"CREATE TABLE IF NOT EXIS
 
 NSString *const kTableSFMSearchProcessSchema = @"CREATE TABLE IF NOT EXISTS SFM_Search_Process ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'identifier' VARCHAR,'name' VARCHAR, 'processDescription' VARCHAR,'processName' VARCHAR)";
 
-NSString *const kTableSFNamedSearchComponentSchema = @"CREATE TABLE IF NOT EXISTS SFNamedSearchComponent ('local_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'expressionType' VARCHAR, 'fieldName' VARCHAR, 'namedSearchId' VARCHAR, 'searchObjectFieldType' VARCHAR, 'fieldDataType' VARCHAR, 'fieldRelationshipName' VARCHAR, 'sequence' DOUBLE)";
+NSString *const kTableSFNamedSearchComponentSchema = @"CREATE TABLE IF NOT EXISTS SFNamedSearchComponent ('local_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'expressionType' VARCHAR, 'fieldName' VARCHAR, 'namedSearchId' VARCHAR, 'searchObjectFieldType' VARCHAR, 'fieldDataType' VARCHAR, 'fieldRelationshipName' VARCHAR, 'keyNameField' VARCHAR, 'sequence' DOUBLE)";
 
 NSString *const kTableSFNamedSearchFiltersSchema = @"CREATE TABLE IF NOT EXISTS SFNamedSearchFilters ('Id' VARCHAR PRIMARY KEY NOT NULL UNIQUE, 'name' TEXT, 'namedSearchId' VARCHAR, 'ruleType' VARCHAR, 'parentObjectCriteria' VARCHAR, 'sourceObjectName' VARCHAR, 'fieldName' VARCHAR, 'sequence' VARCHAR, 'advancedExpression' VARCHAR, 'allowOverride' BOOLEAN, 'defaultOn' BOOLEAN, 'description' TEXT)";
 

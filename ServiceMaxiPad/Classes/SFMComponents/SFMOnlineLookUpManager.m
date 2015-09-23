@@ -24,6 +24,7 @@
 #import "FactoryDAO.h"
 #import "SFExpressionComponentModel.h"
 #import "CacheConstants.h"
+#import "SFObjectFieldModel.h"
 
 @interface SFMOnlineLookUpManager ()
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -114,14 +115,17 @@
     NSMutableArray *searchFieldArray = [[NSMutableArray alloc] init];
     for (SFNamedSearchComponentModel *searchObjectmodel in self.lookUpObject.searchFields) {
         NSMutableDictionary *searchObjectDict = [[NSMutableDictionary alloc]init];
+        
+        SFObjectFieldModel *objectFieldModel = [self.lookUpObject.fieldInfoDict objectForKey:searchObjectmodel.fieldName];
+        [searchObjectDict setValue:objectFieldModel.referenceTo forKey:@"refObjectName"];
+        
         [searchObjectDict setValue:[NSNumber numberWithDouble:searchObjectmodel.sequence] forKey:@"sequence"];
-        [searchObjectDict setValue:@"" forKey:@"refObjectNameField"];
-        [searchObjectDict setValue:@"" forKey:@"refObjectName"];
+        [searchObjectDict setValue:searchObjectmodel.keyNameField forKey:@"refObjectNameField"];
         [searchObjectDict setValue:searchObjectmodel.expressionType forKey:@"operandType"];
         [searchObjectDict setValue:searchObjectmodel.fieldRelationshipName forKey:@"fieldRelationshipName"];
         [searchObjectDict setValue:searchObjectmodel.fieldDataType forKey:@"dataType"];
         [searchObjectDict setValue:searchObjectmodel.fieldName forKey:@"apiName"];
-
+        
         [searchFieldArray addObject:searchObjectDict];
     }
     
@@ -129,9 +133,11 @@
     NSMutableArray *displayFieldForQueryColumnArray  = [[NSMutableArray alloc] initWithObjects:@"Id", nil];
     for (SFNamedSearchComponentModel *searchObjectmodel in self.lookUpObject.displayFields) {
         NSMutableDictionary *displayObjectDict = [[NSMutableDictionary alloc]init];
+        SFObjectFieldModel *objectFieldModel = [self.lookUpObject.fieldInfoDict objectForKey:searchObjectmodel.fieldName];
+        [displayObjectDict setValue:objectFieldModel.referenceTo forKey:@"refObjectName"];
+        
         [displayObjectDict setValue:[NSNumber numberWithDouble:searchObjectmodel.sequence] forKey:@"sequence"];
-        [displayObjectDict setValue:@"" forKey:@"refObjectNameField"];
-        [displayObjectDict setValue:@"" forKey:@"refObjectName"];
+        [displayObjectDict setValue:searchObjectmodel.keyNameField forKey:@"refObjectNameField"];
         [displayObjectDict setValue:searchObjectmodel.expressionType forKey:@"operandType"];
         [displayObjectDict setValue:searchObjectmodel.fieldRelationshipName forKey:@"fieldRelationshipName"];
         [displayObjectDict setValue:searchObjectmodel.fieldDataType forKey:@"dataType"];
