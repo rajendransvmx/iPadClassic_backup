@@ -118,7 +118,10 @@ NSMutableString *currentElementValue;
     {
         for(NSString *string in [dict allKeys])
         {
-            [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kTargetRecordAsKeyValue,[self getValueNode:[dict objectForKey:string]],kTargetRecordAsKeyValue]];
+            /* We are not sending local id from client side, So removing this value from request body */
+            if (![string isEqualToString:@"localId"]) {
+                [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kTargetRecordAsKeyValue,[self getValueNode:[dict objectForKey:string]],kTargetRecordAsKeyValue]];
+            }
         }
     }
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSourceRecordId,kSourceRecordId]];
@@ -131,8 +134,13 @@ NSMutableString *currentElementValue;
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kFieldsToNull,kFieldsToNull]];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kKey,recordFieldData.name,kKey]];
-    [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSortValue,kSortValue]];
-    [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kType,kType]];
+    
+    //common request structure for custom and standard WS
+    //this key we are not using for standard WS
+    /**********  start  **********/
+   // [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSortValue,kSortValue]];
+   // [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kType,kType]];
+    /**********  end  **********/
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kValue1,kValue1]];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kValue,recordFieldData.internalValue,kValue]];
     return xml;
