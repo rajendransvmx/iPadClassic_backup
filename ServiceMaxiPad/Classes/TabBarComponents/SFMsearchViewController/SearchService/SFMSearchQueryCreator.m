@@ -48,7 +48,14 @@
         if (limitValue <=0) {
             return 100;
         }
-        return limitValue;
+        else
+        {
+            /* Here we are checking, If limit is more then 400...then we are showing 400 records only*/
+            if (limitValue > 400)
+                return 400;
+            else
+                return limitValue;
+        }
     }
     return 100;
 }
