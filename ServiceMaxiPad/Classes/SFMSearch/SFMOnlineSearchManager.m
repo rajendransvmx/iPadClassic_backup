@@ -108,7 +108,14 @@
         if (limitValue <=0) {
             return @"100";
         }
-        return lMobileDeviceSettingsModel.value;
+        else{
+            /* Here we are checking, If limit is more then 400...then we are showing 400 records only*/
+            if (limitValue > 400)
+                return @"400";
+            else
+                return lMobileDeviceSettingsModel.value;
+        }
+        
     }
     return @"100";
 }
