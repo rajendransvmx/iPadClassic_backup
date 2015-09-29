@@ -44,7 +44,7 @@
             while ([resultSet next]) {
                 NSDictionary *dict = [resultSet resultDictionary];
                 NSString *recordId = [dict objectForKey:kId];
-                if ([Utility isStringNotNULL:recordId])
+                if ([Utility isStringNotNULL:recordId] && recordId != nil)
                 {
                     [records addObject:recordId];
                 }

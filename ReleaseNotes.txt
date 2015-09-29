@@ -4,22 +4,19 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.60.005
+Version = 15.60.006
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-022949
-022503
+022949 App crash, when there is No view process assigned for the Object to the user
+
 
 Note:
-—-
-Customer defect fix for ViewProcess and Qualifying Criteria
+____
 
 Namespace - SVMXC
-
-
 
 
