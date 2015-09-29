@@ -182,6 +182,8 @@
       else
       {
           self.singleAddButton.hidden= YES;//
+          self.tableView.hidden = NO;
+
       }
     }
 }
@@ -908,6 +910,7 @@
     
     [self.lookUpHelper fillOnlineLookupData:dataArray forLookupObject:self.lookUpObject];
     [self.tableView reloadData];
+    [self noRecordsToDisplay];
     [self enableSearchButton];
 
 }
