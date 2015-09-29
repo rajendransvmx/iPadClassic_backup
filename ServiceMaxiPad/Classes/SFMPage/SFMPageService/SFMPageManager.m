@@ -74,15 +74,18 @@ PageManagerErrorType;
     }
     
     NSString *recordId;
-    
     if(sfmId == nil)
     {
         recordId = self.recordId;
       
     }else
     {
-        
-       recordId = [self getLocalIdForSFID:sfmId objectName:objectName];
+        recordId = sfmId;
+    }
+    
+    NSString *localId = [self getLocalIdForSFID:recordId objectName:objectName];
+    if (![StringUtil isStringEmpty:localId]) {
+        recordId = localId;
     }
     
     BOOL isEntryCriteraMatching = NO;
@@ -91,9 +94,6 @@ PageManagerErrorType;
         if (![StringUtil isStringEmpty:expId]) {
             SFExpressionParser *parser = [[SFExpressionParser alloc]initWithExpressionId:expId objectName:objectName];
             isEntryCriteraMatching = [parser isEntryCriteriaMatchingForRecordId:recordId];
-            if (!isEntryCriteraMatching) {
-                isEntryCriteraMatching = [parser isEntryCriteriaMatchingForRecordId:self.recordId];
-            }
             if (!isEntryCriteraMatching) {
                 [self fillError:error
                     withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria
