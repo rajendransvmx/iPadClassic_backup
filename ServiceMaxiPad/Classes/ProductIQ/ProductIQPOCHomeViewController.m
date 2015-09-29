@@ -235,7 +235,7 @@ static  ProductIQPOCHomeViewController *instance;
     corelibDir = [corelibDir stringByAppendingPathComponent:@"PRODUCTJS"];
     corelibDir = [corelibDir stringByAppendingPathComponent:@"www"];
     
-    NSString *htmlfilepath = [corelibDir stringByAppendingPathComponent:@"installigence-index.html"];
+    NSString *htmlfilepath = [corelibDir stringByAppendingPathComponent:@"installigence-embedded-index.html"];
     return htmlfilepath;
 }
 

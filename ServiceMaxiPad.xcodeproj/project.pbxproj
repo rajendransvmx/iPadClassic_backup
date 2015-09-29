@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1140D0461BBA634C0025DD2D /* www.zip in Resources */ = {isa = PBXBuildFile; fileRef = 1140D0451BBA634C0025DD2D /* www.zip */; };
 		117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D41B3928A200BA0B63 /* selectEmpty@.png */; };
 		117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D51B3928A200BA0B63 /* selectEmpty@2x.png */; };
 		117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D61B3928A200BA0B63 /* selectFilled@.png */; };
@@ -880,7 +881,6 @@
 		8411215A1B901775006C3668 /* ObjectDescribe.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121551B901775006C3668 /* ObjectDescribe.csv */; };
 		8411215B1B901775006C3668 /* RecordName.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121561B901775006C3668 /* RecordName.csv */; };
 		8411215C1B901775006C3668 /* Translations.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121571B901775006C3668 /* Translations.csv */; };
-		8411215E1B903E8A006C3668 /* www.zip in Resources */ = {isa = PBXBuildFile; fileRef = 8411215D1B903E8A006C3668 /* www.zip */; };
 		84127A9B1B8C8C1300CF8D61 /* Bridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A8F1B8C8C1300CF8D61 /* Bridge.m */; };
 		84127A9C1B8C8C1300CF8D61 /* Console.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A911B8C8C1300CF8D61 /* Console.m */; };
 		84127A9D1B8C8C1300CF8D61 /* DB.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A931B8C8C1300CF8D61 /* DB.m */; };
@@ -1071,6 +1071,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1140D0451BBA634C0025DD2D /* www.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = www.zip; sourceTree = "<group>"; };
 		117656D41B3928A200BA0B63 /* selectEmpty@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@.png"; sourceTree = "<group>"; };
 		117656D51B3928A200BA0B63 /* selectEmpty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@2x.png"; sourceTree = "<group>"; };
 		117656D61B3928A200BA0B63 /* selectFilled@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@.png"; sourceTree = "<group>"; };
@@ -2680,7 +2681,6 @@
 		841121551B901775006C3668 /* ObjectDescribe.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ObjectDescribe.csv; sourceTree = "<group>"; };
 		841121561B901775006C3668 /* RecordName.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RecordName.csv; sourceTree = "<group>"; };
 		841121571B901775006C3668 /* Translations.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Translations.csv; sourceTree = "<group>"; };
-		8411215D1B903E8A006C3668 /* www.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = www.zip; sourceTree = "<group>"; };
 		84127A8E1B8C8C1300CF8D61 /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
 		84127A8F1B8C8C1300CF8D61 /* Bridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bridge.m; sourceTree = "<group>"; };
 		84127A901B8C8C1300CF8D61 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
@@ -6129,7 +6129,7 @@
 		844F00B91B848BE3008BC652 /* ProductIQ */ = {
 			isa = PBXGroup;
 			children = (
-				8411215D1B903E8A006C3668 /* www.zip */,
+				1140D0451BBA634C0025DD2D /* www.zip */,
 				841121511B901775006C3668 /* DummyDataLoader */,
 				84127A8D1B8C8C1300CF8D61 /* POC */,
 				844F00BD1B848CC4008BC652 /* ProductIQHomeViewController.h */,
@@ -6680,6 +6680,7 @@
 				D752644A19EB9278006AAC4C /* SFMLookUpDeatilViewController.xib in Resources */,
 				4048CDC11A02679500B1FD58 /* OPDocBackArrow.png in Resources */,
 				40A06F1F1B06033100218162 /* NavBarNew@3x.png in Resources */,
+				1140D0461BBA634C0025DD2D /* www.zip in Resources */,
 				184A8EA319E7A0BE006DA6BE /* orangeCircle.png in Resources */,
 				9E5E7AE019ECD68000B38EC3 /* PageEditMultiSelectFieldController.xib in Resources */,
 				407252FC19FF52C700ACA729 /* Utility.js in Resources */,
@@ -6763,7 +6764,6 @@
 				184A9CC719E7D591006DA6BE /* tools@2x.png in Resources */,
 				8BA32EAD19EE4AA200BFA769 /* down-arrow-white@2x.png in Resources */,
 				183AA1D119E6D26400919345 /* SFMPageLayoutViewController.xib in Resources */,
-				8411215E1B903E8A006C3668 /* www.zip in Resources */,
 				5BEFF7B31A248B950096B254 /* cloud-download.png in Resources */,
 				40A06F361B06041400218162 /* SNewItem@1x.png in Resources */,
 				4072531219FF6C2900ACA729 /* com.servicemax.client.sfmopdocdelivery.model.zip in Resources */,
