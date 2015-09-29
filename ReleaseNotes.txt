@@ -16,7 +16,7 @@ Fixed Defects
 
 Note:
 —-
-
+Customer defect fix for ViewProcess and Qualifying Criteria
 
 Namespace - SVMXC
 
