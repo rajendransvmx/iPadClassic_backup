@@ -228,7 +228,7 @@
     }
     else if ([sfOperator  isEqualToString:@"starts"])
     {
-        sqlOperator = SQLOperatorLike;
+        sqlOperator = SQLOperatorStartsWith;
     }
     else if( [sfOperator  isEqualToString:@"isnull"])
     {
