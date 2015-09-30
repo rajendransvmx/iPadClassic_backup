@@ -150,6 +150,7 @@ extern NSString *const mobileDeviceSettings;
 extern NSString *const sfmPicklistDefinition;
 extern NSString *const sfmPageData;
 extern NSString *const sfmBatchObjectDefinition;
+extern NSString *const kGetPriceLastSyncTime;
 
 //data sync
 

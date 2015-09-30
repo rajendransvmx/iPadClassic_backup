@@ -15,6 +15,7 @@
 #import "RequestParamModel.h"
 #import "GetPriceManager.h"
 #import "SyncConstants.h"
+#import "PlistManager.h"
 
 static NSString *GetPriceDataZero = @"0";
 static NSString *GetPriceDataOne = @"1";
@@ -144,7 +145,8 @@ static NSString *GetPriceDataTwo = @"2";
                                 {
                                     callBack.callBack = NO;
                                 }
-                                
+                                //storing get price lase call,
+                                [self gettingLastSyncTimeFromGetPrice:svmxMapObject];
                                 SXLogDebug(@"Call Four");
                                 break;
                             default:
@@ -495,6 +497,19 @@ static NSString *GetPriceDataTwo = @"2";
         
         // To avoid duplicates
         [heapDictionary setObject:modelObj forKey:recordId];
+    }
+}
+
+//taking time log from responce, and updating for get price...
+-(void)gettingLastSyncTimeFromGetPrice:(NSDictionary *)inputMapObject
+{
+    NSArray *valueMapArray = [inputMapObject objectForKey:kSVMXSVMXMap];
+    for(NSDictionary *svmxMapObject in valueMapArray)
+    {
+        NSString *key = [svmxMapObject objectForKey:@"key"];
+        if ([key isEqualToString:kGetPriceLastSyncTime]) {
+            [PlistManager storeGetPriceSyncTime:[svmxMapObject objectForKey:@"value"]];
+        }
     }
 }
 

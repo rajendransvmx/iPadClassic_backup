@@ -87,6 +87,7 @@ NSString *const kConfigSyncContext  =  @"CONFIG SYNC";
 NSString *const kDataSyncContext    =  @"INCREMENTAL DATA SYNC";
 NSString *const kSfmSearchContext   =  @"SFM SEARCH";
 NSString *const kDownloadOnDemand   =  @"DATA ON DEMAND";
+NSString *const kGetPriceLastSyncTime = @"LAST_SYNC_PRICE_CALC";
 
 NSString *const kJobLogCarrierContext   =  @"JOB LOG CARRIER";
 

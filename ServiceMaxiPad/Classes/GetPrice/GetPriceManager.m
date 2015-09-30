@@ -69,8 +69,9 @@
                 if (wsResponseStatus.requestType == RequestSyncTimeLogs
                     || wsResponseStatus.syncStatus != SyncStatusSuccess)
                 {
-                    //[[TimeLogCacheManager sharedInstance] clearAllFailureListforCategoryType:CategoryTypeGetPriceData];
-                    //[[TimeLogCacheManager sharedInstance] clearAllLogEntryForCategoryType:CategoryTypeGetPriceData];
+                    //sync time log testing
+                    [[TimeLogCacheManager sharedInstance] clearAllFailureListforCategoryType:CategoryTypeGetPriceData];
+                    [[TimeLogCacheManager sharedInstance] clearAllLogEntryForCategoryType:CategoryTypeGetPriceData];
                     self.isGetPriceProgress = NO;
                     self.getPriceTaskId = nil;
                 }
