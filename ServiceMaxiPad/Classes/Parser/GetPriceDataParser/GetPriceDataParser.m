@@ -506,9 +506,9 @@ static NSString *GetPriceDataTwo = @"2";
     NSArray *valueMapArray = [inputMapObject objectForKey:kSVMXSVMXMap];
     for(NSDictionary *svmxMapObject in valueMapArray)
     {
-        NSString *key = [svmxMapObject objectForKey:@"key"];
+        NSString *key = [svmxMapObject objectForKey:kSVMXRequestKey];
         if ([key isEqualToString:kGetPriceLastSyncTime]) {
-            [PlistManager storeGetPriceSyncTime:[svmxMapObject objectForKey:@"value"]];
+            [PlistManager storeGetPriceSyncTime:[svmxMapObject objectForKey:kSVMXRequestValue]];
         }
     }
 }
