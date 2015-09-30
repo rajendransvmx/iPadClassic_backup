@@ -118,7 +118,9 @@ NSMutableString *currentElementValue;
     {
         for(NSString *string in [dict allKeys])
         {
-            [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kTargetRecordAsKeyValue,[self getValueNode:[dict objectForKey:string]],kTargetRecordAsKeyValue]];
+            if (![string isEqualToString:@"localId"]) {
+                [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kTargetRecordAsKeyValue,[self getValueNode:[dict objectForKey:string]],kTargetRecordAsKeyValue]];
+            }
         }
     }
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSourceRecordId,kSourceRecordId]];
@@ -131,8 +133,10 @@ NSMutableString *currentElementValue;
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kFieldsToNull,kFieldsToNull]];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kKey,recordFieldData.name,kKey]];
-    [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSortValue,kSortValue]];
-    [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kType,kType]];
+    
+    /* Testing on 22 sep  */
+    //[xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSortValue,kSortValue]];
+    //[xml appendString:[NSString stringWithFormat:@"<%@></%@>",kType,kType]];
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kValue1,kValue1]];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kValue,recordFieldData.internalValue,kValue]];
     return xml;
