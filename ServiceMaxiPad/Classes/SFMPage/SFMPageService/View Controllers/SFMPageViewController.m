@@ -50,6 +50,9 @@
 #import "SFMCustomActionHelper.h"
 #import "SFMCustomActionWebServiceHelper.h"
 #import "SNetworkReachabilityManager.h"
+#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQManager.h"
+
 
 @interface SFMPageViewController ()<SMActionSideBarViewControllerDelegate>
 @property (nonatomic, strong) SMActionSideBarViewController *mySideBar;
@@ -139,6 +142,13 @@
     [self addUpdateDODBtninWizard:allWizards];
     [self addEventAndServicemaxEventProcessWizard:allWizards];
     /*If wizard step is not there for a wizard then it should not be shown in the tableView*/
+    
+    //show or hide ProductIQ
+    
+    if ([ProductIQManager isProductIQEnabledForSFMPage:self.sfmPageView]) {
+        allWizards = [ProductIQManager addProductIQWizardForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
+    }
+    
     SFProcessService *processService = [[SFProcessService alloc]init];
     
     if (self.tempViewController == nil) {
@@ -439,7 +449,10 @@
         tempMasterViewController.sfmPageView = self.sfmPageView;
         [tempMasterViewController resetData];
         self.tempViewController.shouldShowTroubleShooting = self.sfmPageView.sfmPage.process.pageLayout.headerLayout.enableTroubleShooting;
+//        [self.tempViewController.tableView reloadData];
+        [self refreshPageData];
         [self.tempViewController.tableView reloadData];
+
         [PlistManager storeLastUsedViewProcess:sfProcess.sfID objectName:sfProcess.objectApiName];
     }
     else
@@ -515,6 +528,9 @@
             }
         }
     }
+    //refresh the action menu item.
+//    [self refreshPageData];
+//    [self.tempViewController.tableView reloadData];
 }
 
 -(void)updateDODRecordFromSalesforce
@@ -534,6 +550,34 @@
     [[TaskManager sharedInstance] addTask:taskModel];
     
 }
+
+#pragma mark -
+#pragma mark ProductIQ
+
+-(void)displayProductIQViewController;
+{
+    /*
+     ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
+     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
+     navController.delegate = lProductIQcontroller;
+     navController.modalPresentationStyle = UIModalPresentationFullScreen;
+     navController.navigationBar.hidden = NO;
+     navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
+     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+     [self.navigationController presentViewController:navController animated:YES completion:nil];
+     */
+    
+    ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
+    navController.delegate = lProductIQcontroller;
+    navController.modalPresentationStyle = UIModalPresentationFullScreen;
+    navController.navigationBar.hidden = NO;
+    navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
+    navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+    
+}
+
 
 #pragma mark - Flow Delegate methods
 - (void)flowStatus:(id)status {

@@ -120,5 +120,57 @@
     }
 }
 
+#pragma mark - ProductIQ methods
+- (NSArray*)getSFMProcessIdsWithSFMProcessArray:(NSMutableArray *)sfmProcessArray {
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    NSString *query = [NSString stringWithFormat:@"SELECT pc.processId as processId FROM SFProcessComponent as pc JOIN InstallBaseObject as ib ON ib.objectName = pc.objectName JOIN SFSourceUpdate as su ON pc.processId = su.process WHERE pc.processId IN %@ UNION SELECT pc.processId FROM SFProcessComponent as pc JOIN InstallBaseObject as ib ON ib.objectName = pc.objectName JOIN SFProcess as p ON pc.processId = p.sfId WHERE pc.componentType IN ('TARGET', 'TARGETCHILD') AND p.processType != 'VIEW RECORD' AND pc.processId IN %@",sfmProcessArray,sfmProcessArray];
+    
+    query = [query stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                [records addObject:[dict objectForKey:@"processId"]];
+                
+            }
+            [resultSet close];
+        }];
+    }
+    
+    return records;
+}
+
+- (NSArray*)getOutputDocumentrocessIdsWithOutputDocumentArray:(NSMutableArray *)outputdocumentArray {
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    NSString *query = [NSString stringWithFormat:@"SELECT pc.processId as processId FROM SFProcessComponent as pc JOIN InstallBaseObject as ib ON ib.objectName = pc.objectName JOIN SFSourceUpdate as su ON pc.sfId = su.process WHERE pc.processId IN %@ ",outputdocumentArray];
+    
+    query = [query stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                [records addObject:[dict objectForKey:@"processId"]];
+                
+            }
+            [resultSet close];
+        }];
+    }
+    return records;
+}
+
 
 @end

@@ -15,4 +15,7 @@
 -(void)updateWizardComponentWithModelArray:(NSArray*)modelArray;
 -(void)updateWizardComponentWithModelArray_withCustomActionFields:(NSArray*)modelArray;
 
+- (NSArray*)getSFMProcessIdsWithSFMProcessArray:(NSMutableArray*)sfmProcessArray;
+- (NSArray*)getOutputDocumentrocessIdsWithOutputDocumentArray:(NSMutableArray*)outputdocumentArray;
+
 @end
