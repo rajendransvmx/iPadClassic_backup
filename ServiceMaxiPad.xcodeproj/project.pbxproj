@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1140D0461BBA634C0025DD2D /* www.zip in Resources */ = {isa = PBXBuildFile; fileRef = 1140D0451BBA634C0025DD2D /* www.zip */; };
+		11596B561BBECD0D00C92872 /* ProductIQManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 11596B551BBECD0D00C92872 /* ProductIQManager.m */; };
 		117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D41B3928A200BA0B63 /* selectEmpty@.png */; };
 		117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D51B3928A200BA0B63 /* selectEmpty@2x.png */; };
 		117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D61B3928A200BA0B63 /* selectFilled@.png */; };
@@ -1072,6 +1073,8 @@
 
 /* Begin PBXFileReference section */
 		1140D0451BBA634C0025DD2D /* www.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = www.zip; sourceTree = "<group>"; };
+		11596B541BBECD0D00C92872 /* ProductIQManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductIQManager.h; path = ServiceMaxiPad/Classes/ProductIQ/ProductIQManager.h; sourceTree = SOURCE_ROOT; };
+		11596B551BBECD0D00C92872 /* ProductIQManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductIQManager.m; path = ServiceMaxiPad/Classes/ProductIQ/ProductIQManager.m; sourceTree = SOURCE_ROOT; };
 		117656D41B3928A200BA0B63 /* selectEmpty@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@.png"; sourceTree = "<group>"; };
 		117656D51B3928A200BA0B63 /* selectEmpty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@2x.png"; sourceTree = "<group>"; };
 		117656D61B3928A200BA0B63 /* selectFilled@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@.png"; sourceTree = "<group>"; };
@@ -6138,6 +6141,8 @@
 				8412850C1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.h */,
 				8412850D1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m */,
 				8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */,
+				11596B541BBECD0D00C92872 /* ProductIQManager.h */,
+				11596B551BBECD0D00C92872 /* ProductIQManager.m */,
 			);
 			path = ProductIQ;
 			sourceTree = "<group>";
@@ -7405,6 +7410,7 @@
 				183A9FFA19E6B18500919345 /* SFMSearchServiceLayer.m in Sources */,
 				183AA37119E6DA9600919345 /* PageContentViewController.m in Sources */,
 				6B54E1291A00AD5F00BBEED6 /* TimeLogModel.m in Sources */,
+				11596B561BBECD0D00C92872 /* ProductIQManager.m in Sources */,
 				183AA21719E6D3C200919345 /* SFMDateCell.m in Sources */,
 				184A8E7019E7A0BE006DA6BE /* SMXWeekHeaderCollectionView.m in Sources */,
 				9E9C5F431A04C5CB0058FD76 /* SFNamedSearchFilterService.m in Sources */,
