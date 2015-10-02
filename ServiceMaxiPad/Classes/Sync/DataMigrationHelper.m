@@ -176,6 +176,7 @@
              @"FieldDescribe",
              @"ObjectDescribe",
              @"Configuration",
+             @"InstallBaseObject",
              ];
 }
 

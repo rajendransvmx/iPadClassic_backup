@@ -210,6 +210,8 @@ NSString *const KTableObjectDescribe = @"CREATE TABLE IF NOT EXISTS 'ObjectDescr
 
 NSString *const KTableConfiguration = @"CREATE TABLE 'Configuration' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Type' VARCHAR,'Key' VARCHAR,'Value' VARCHAR )";
 
+NSString *const KTableInstallBaseObject = @"CREATE TABLE InstallBaseObject ( 'objectName' VARCHAR PRIMARY KEY  NOT NULL  UNIQUE  COLLATE NOCASE  )";
+
 
 @implementation DatabaseSchemaConstant
 
