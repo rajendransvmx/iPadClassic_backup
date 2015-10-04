@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1140D0461BBA634C0025DD2D /* www.zip in Resources */ = {isa = PBXBuildFile; fileRef = 1140D0451BBA634C0025DD2D /* www.zip */; };
 		11596B561BBECD0D00C92872 /* ProductIQManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 11596B551BBECD0D00C92872 /* ProductIQManager.m */; };
+		11596B5C1BBEF96600C92872 /* Misc.m in Sources */ = {isa = PBXBuildFile; fileRef = 11596B5B1BBEF96600C92872 /* Misc.m */; };
 		117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D41B3928A200BA0B63 /* selectEmpty@.png */; };
 		117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D51B3928A200BA0B63 /* selectEmpty@2x.png */; };
 		117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D61B3928A200BA0B63 /* selectFilled@.png */; };
@@ -1075,6 +1076,8 @@
 		1140D0451BBA634C0025DD2D /* www.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = www.zip; sourceTree = "<group>"; };
 		11596B541BBECD0D00C92872 /* ProductIQManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductIQManager.h; path = ServiceMaxiPad/Classes/ProductIQ/ProductIQManager.h; sourceTree = SOURCE_ROOT; };
 		11596B551BBECD0D00C92872 /* ProductIQManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductIQManager.m; path = ServiceMaxiPad/Classes/ProductIQ/ProductIQManager.m; sourceTree = SOURCE_ROOT; };
+		11596B5A1BBEF96600C92872 /* Misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Misc.h; sourceTree = "<group>"; };
+		11596B5B1BBEF96600C92872 /* Misc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Misc.m; sourceTree = "<group>"; };
 		117656D41B3928A200BA0B63 /* selectEmpty@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@.png"; sourceTree = "<group>"; };
 		117656D51B3928A200BA0B63 /* selectEmpty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@2x.png"; sourceTree = "<group>"; };
 		117656D61B3928A200BA0B63 /* selectFilled@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@.png"; sourceTree = "<group>"; };
@@ -6125,6 +6128,8 @@
 				84127A971B8C8C1300CF8D61 /* HTTP.m */,
 				84127A991B8C8C1300CF8D61 /* Utils.h */,
 				84127A9A1B8C8C1300CF8D61 /* Utils.m */,
+				11596B5A1BBEF96600C92872 /* Misc.h */,
+				11596B5B1BBEF96600C92872 /* Misc.m */,
 			);
 			path = POC;
 			sourceTree = "<group>";
@@ -7470,6 +7475,7 @@
 				183AA34819E6D96900919345 /* SVMXSystemConstant.m in Sources */,
 				183A9FC819E6B18500919345 /* DocumentService.m in Sources */,
 				183AA1C019E6D26400919345 /* DebriefSectionView.m in Sources */,
+				11596B5C1BBEF96600C92872 /* Misc.m in Sources */,
 				183AA05E19E6C8C500919345 /* RecentMasterViewController.m in Sources */,
 				183AA1C619E6D26400919345 /* SFMPageFieldCollectionHeaderView.m in Sources */,
 				184A8E8F19E7A0BE006DA6BE /* TKProgressBarView.m in Sources */,
