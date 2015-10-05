@@ -11,6 +11,7 @@
 #import "StringUtil.h"
 #import "SFWizardModel.h"
 #import "WizardComponentModel.h"
+#import "SFMRecordFieldData.h"
 
 @implementation ProductIQManager
 
@@ -33,6 +34,26 @@
     }
     return productIQEnabled;
 }
+/*
+ Method Name: isProductIQEnabledForStandaAloneObject
+ Description:
+ Description: This method will check two conditions to enable ProductIQ wizard for Stand alone object.
+ They are:
+ 
+ 1. setting should be enabled.
+ 2. SFM Page should have IB or Location as fields.
+ */
+
++ (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject {
+    BOOL productIQEnabled = NO;
+    
+    if ([[self class] isProductIQSettingEnable]) {
+        if ([[self class] isProductIQRelatedFieldsAvailableForStandAloneObject:sfObject]) {
+            productIQEnabled = YES;
+        }
+    }
+    return productIQEnabled;
+}
 
 + (BOOL)isProductIQSettingEnable {
     BOOL settingEnabled = NO;
@@ -49,12 +70,17 @@
     [fieldsArray addObject:kWorkOrderSite]; // Location
     [fieldsArray addObject:kInstalledProductTableName]; //IB
     
+    //This logic for header records to verify that IB or Location has value on SFMPage.
     NSArray *headerSections = sfmPageView.sfmPage.process.pageLayout.headerLayout.sections;
     
     for (SFMHeaderSection *headerSection in headerSections) {
         for (SFMPageField *pageField in headerSection.sectionFields) {
             if ([fieldsArray containsObject:pageField.relatedObjectName]) {
-                productIQFieldsAvailable = YES;
+                
+                SFMRecordFieldData *recordFieldData = [sfmPageView.sfmPage.headerRecord objectForKey:pageField.fieldName];
+                if (![StringUtil isStringEmpty:recordFieldData.displayValue]) {
+                    productIQFieldsAvailable = YES;
+                }
                 break;
             }
         }
@@ -63,21 +89,79 @@
         }
     }
     
+    //This logic for child lines to verify that IB or Location has value on SFMPage.
     if (productIQFieldsAvailable == NO) {
-        NSArray *detailSections = sfmPageView.sfmPage.process.pageLayout.detailLayouts;
-        for (SFMDetailLayout *detailSection in detailSections) {
-            for (SFMPageField *pageField in detailSection.detailSectionFields) {
-                if ([fieldsArray containsObject:pageField.relatedObjectName]) {
-                    productIQFieldsAvailable = YES;
+        
+        if (sfmPageView.sfmPage.detailsRecord.count > 0) {
+            
+            NSArray *detailSections = sfmPageView.sfmPage.process.pageLayout.detailLayouts;
+            for (SFMDetailLayout *detailSection in detailSections) {
+                NSInteger index = 0;
+                for (SFMPageField *pageField in detailSection.detailSectionFields) {
+                    if ([fieldsArray containsObject:pageField.relatedObjectName]) {
+                        
+                        SFMRecordFieldData *recordFieldData = [[self class] getRecordFieldForIndex:index andPageField:pageField andSFMPageView:sfmPageView andSFMDetailLayout:detailSection];
+                        
+                        if (![StringUtil isStringEmpty:recordFieldData.displayValue]) {
+                            productIQFieldsAvailable = YES;
+                            break;
+                        }
+                    }
+                    index++;
+                }
+                if (productIQFieldsAvailable) {
                     break;
                 }
-            }
-            if (productIQFieldsAvailable) {
-                break;
             }
         }
     }
     return productIQFieldsAvailable;
+}
+
+/*
+ 
+ Method Name:isProductIQRelatedFieldsAvailableForStandAloneObject
+ 
+ Description: This method will verifies wheather selected stand alone object type is Location or IB.
+ 
+ 
+ */
+
++ (BOOL)isProductIQRelatedFieldsAvailableForStandAloneObject:(SFObjectModel*)sfObject {
+    BOOL productIQFieldsAvailable = NO;
+    
+    NSMutableArray *fieldsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    [fieldsArray addObject:kWorkOrderSite]; // Location
+    [fieldsArray addObject:kInstalledProductTableName]; //IB
+    
+    if ([fieldsArray containsObject:sfObject.objectName]) {
+        productIQFieldsAvailable = YES;
+    }
+    
+    
+    return productIQFieldsAvailable;
+}
+
+/*
+ Method Name:getRecordFieldForIndex
+ Description: This method will get the recordData for matched child line for IB and Location objects.
+ 
+ */
+
++ (SFMRecordFieldData *)getRecordFieldForIndex:(NSInteger)selectedIndex
+                                  andPageField:(SFMPageField *)pageField
+                                andSFMPageView:(SFMPageViewModel*)sfmPageView andSFMDetailLayout:(SFMDetailLayout*)detailLayout {
+    
+    SFMRecordFieldData * recordField = nil;
+    if (pageField.fieldName != nil) {
+        NSMutableDictionary * detailDict =  sfmPageView.sfmPage.detailsRecord;
+        NSArray * detailRecords = [detailDict objectForKey: detailLayout.processComponentId];
+        for (NSDictionary * recordDict in detailRecords) {
+            recordField = [recordDict objectForKey:pageField.fieldName];
+        }
+    }
+    
+    return recordField;
 }
 
 /*

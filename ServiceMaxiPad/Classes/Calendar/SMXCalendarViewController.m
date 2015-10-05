@@ -74,6 +74,7 @@
 
 #import "ProductIQHomeViewController.h"
 #import "ProductIQPOCHomeViewController.h"
+#import "ProductIQManager.h"
 
 //#import "FileManager.h"
 //#import "UnzipUtility.h"
@@ -687,6 +688,14 @@
         //HS 1 Jan code ends here
         
         /*If wizard step is not there for a wizard then it should not be shown in the tableView*/
+        
+        
+        //show or hide ProductIQ
+        SFMPageViewManager *viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:objectModel.objectName recordId:recordId];
+        if ([ProductIQManager isProductIQEnabledForSFMPage:viewPageManager.sfmPageView]) {
+            allWizards = [ProductIQManager addProductIQWizardForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
+        }
+        
         SFProcessService *processService = [[SFProcessService alloc]init];
         
         if (self.tempViewController == nil) {

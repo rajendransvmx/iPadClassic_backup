@@ -9,11 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "SFMPageViewModel.h"
 #import "SFMWizardComponentService.h"
+#import "SFObjectModel.h"
 
 
 @interface ProductIQManager : NSObject
 
 + (BOOL)isProductIQEnabledForSFMPage:(SFMPageViewModel*)sfmPageView;
 + (NSMutableArray*)addProductIQWizardForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService;
++ (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject;
 
 @end
