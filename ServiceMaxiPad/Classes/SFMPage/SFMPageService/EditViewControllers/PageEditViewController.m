@@ -684,15 +684,15 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     [self enableUI];
     if ([self isSourceToTargetProcess] || [self isStandAloneCreateProcess] ) {
         [self dismissViewControllerAnimated:NO completion:nil];
-        if ([self.editViewControllerDelegate respondsToSelector:@selector(loadSFMViewPageLayoutForRecordId:andObjectName:)]) {
-            [self.editViewControllerDelegate loadSFMViewPageLayoutForRecordId:self.sfmPage.recordId andObjectName:self.sfmPage.objectName];
-            self.sfmPage = nil;
-        }
-     
+        
+        [self performSelector:@selector(changViewControl) withObject:nil afterDelay:0.2];
+        
+        
+        
         //Commnented on 16-dec. Cause Notification is getting called. BSP
-//        if ([self.editViewControllerDelegate respondsToSelector:@selector(refreshEventInCalendarView)]) {
-//            [self.editViewControllerDelegate refreshEventInCalendarView];
-//        }
+        //        if ([self.editViewControllerDelegate respondsToSelector:@selector(refreshEventInCalendarView)]) {
+        //            [self.editViewControllerDelegate refreshEventInCalendarView];
+        //        }
     }
     else if ([self isEditProcess] || [self isSourceToTargetChildOnlyProcess]) {
         [self dismissViewControllerAnimated:NO completion:nil];
@@ -704,6 +704,14 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
+
+-(void)changViewControl {
+    if ([self.editViewControllerDelegate respondsToSelector:@selector(loadSFMViewPageLayoutForRecordId:andObjectName:)]) {
+        [self.editViewControllerDelegate loadSFMViewPageLayoutForRecordId:self.sfmPage.recordId andObjectName:self.sfmPage.objectName];
+        self.sfmPage = nil;
+    }
+}
+
 
 #pragma mark - validate page data
 
