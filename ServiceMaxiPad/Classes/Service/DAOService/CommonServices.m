@@ -299,4 +299,32 @@
     return allModels;
     
 }
+
+- (BOOL)saveRecordsFromArray:(NSArray *)recordArray inTable:(NSString *)tableName
+{
+    BOOL retValue = NO;
+    for (NSDictionary *dictionary in recordArray) {
+        retValue = [self saveRecordFromDictionary:dictionary forFields:[dictionary allKeys] inTable:tableName];
+    }
+    return retValue;
+}
+
+
+-(BOOL)saveRecordFromDictionary:(NSDictionary *)recordDict forFields:(NSArray *)fieldNames inTable:(NSString *)tableName {
+    __block BOOL returnValue = NO;
+    
+    DBRequestInsert *insert =  [[DBRequestInsert alloc] initWithTableName:tableName andFieldNames:[NSMutableArray arrayWithArray:fieldNames]];
+    
+    NSString *query = [insert query];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            returnValue = [db executeUpdate:query
+                    withParameterDictionary:recordDict];
+        }];
+    }
+    return returnValue;
+}
+
 @end
