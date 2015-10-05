@@ -1392,6 +1392,8 @@
         [self buttonYearMonthWeekDayAction:segment.selectedSegmentIndex];
         if (!self.navigationItem.rightBarButtonItem.enabled) {
             [self rightBarButtonItem];
+            if(self.cSegmentedControl.selectedSegmentIndex == 0)
+                self.navigationItem.rightBarButtonItem.enabled = NO;
         }
         if (!self.navigationItem.leftBarButtonItem.enabled && segment.selectedSegmentIndex != 0)
         {
