@@ -339,6 +339,8 @@
 
 - (NSMutableArray *)getEventDataForQuery:(DBRequestSelect *)selectQuery
 {
+    SXLogDebug(@"query:%@", selectQuery.query);
+
     NSMutableArray * detailsArray = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {
         DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
