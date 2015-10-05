@@ -124,6 +124,8 @@ NSInteger webViewLoadCounter;
             }
             CGRect viewRect = self.view.bounds;
             viewRect.origin.y = 86; //Space for servicemaxlogo.
+            //defect 23630: As Y position has moved 86px down, we sould reduce height by 86px.
+            viewRect.size.height = viewRect.size.height - viewRect.origin.y;
             self.webview = [[UIWebView alloc]initWithFrame:viewRect];
             self.webview.delegate = self;
             [self.webview setScalesPageToFit:YES];
