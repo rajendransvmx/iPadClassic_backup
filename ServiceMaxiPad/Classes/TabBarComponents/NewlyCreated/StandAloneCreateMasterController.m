@@ -18,6 +18,7 @@
 #import "StandAloneCreateDetailController.h"
 #import "CalenderHelper.h"
 #import "NoDynamicTypeTableViewCell.h"
+#import "ProductIQManager.h"
 
 @interface StandAloneCreateMasterController ()
 @property(nonatomic,strong)NSMutableArray *standAloneObjects;
@@ -241,8 +242,11 @@
 - (void)loadDetailViewControllerForIndex:(NSInteger)index
 {
     SFObjectModel *Object = [self.standAloneUniqueObjects objectAtIndex:index];
+    
+    BOOL isProductIQEnabled = [ProductIQManager isProductIQEnabledForStandaAloneObject:Object];
 
     StandAloneCreateDetailController *detailController = [self.smSplitViewController.viewControllers objectAtIndex:1];
+    detailController.shouldProductIQEnabled = isProductIQEnabled;
     detailController.detailProcessArray = [self.standAloneProcessDict objectForKey:Object.label];
     detailController.objectModel = Object;
     self.smSplitViewController.delegate = detailController;

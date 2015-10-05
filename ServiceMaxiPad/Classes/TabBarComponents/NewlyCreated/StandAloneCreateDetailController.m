@@ -14,6 +14,7 @@
 #import "SFMPageViewManager.h"
 #import "TagManager.h"
 #import "AlertMessageHandler.h"
+#import "ProductIQPOCHomeViewController.h"
 
 
 
@@ -141,7 +142,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self loadDetailViewControllerForIndex:indexPath.row];
+    if (self.shouldProductIQEnabled) {
+        [self displayProductIQViewController];
+    } else {
+        [self loadDetailViewControllerForIndex:indexPath.row];
+    }
 }
 
 -(void)loadDetailViewControllerForIndex:(NSInteger)index
@@ -156,6 +161,21 @@
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:editController];
 
     [self.navigationController presentViewController:navigationController animated:YES completion:^{}];
+    
+}
+#pragma mark -
+#pragma mark ProductIQ
+
+-(void)displayProductIQViewController;
+{
+    ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
+    navController.delegate = lProductIQcontroller;
+    navController.modalPresentationStyle = UIModalPresentationFullScreen;
+    navController.navigationBar.hidden = NO;
+    navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
+    navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
     
 }
 #pragma mark - SMSplitViewControllerDelegate
