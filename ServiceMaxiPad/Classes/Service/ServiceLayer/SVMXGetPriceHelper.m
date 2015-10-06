@@ -43,12 +43,16 @@
             SQLResultSet * resultSet = [db executeQuery:query];
             while ([resultSet next]) {
                 NSDictionary *dict = [resultSet resultDictionary];
-                NSString *recordId = [dict objectForKey:kId];
-                if ([Utility isStringNotNULL:recordId])
+                if([dict count] > 0)
                 {
-                    [records addObject:recordId];
+                    NSString *recordId = [dict objectForKey:kId];
+                    if (![Utility isStringEmpty:recordId])
+                    {
+                        [records addObject:recordId];
+                    }
+
                 }
-            }
+                           }
             [resultSet close];
         }];
     }
