@@ -258,6 +258,9 @@
         value = recordField.internalValue;
         value = [DateUtil getFormulaDateFromGMTDate:value isDateWithTime:([pageField.dataType isEqualToString:kSfDTDateTime])];
     }
+    else if ([pageField.dataType isEqualToString:kSfDTPicklist] || [pageField.dataType isEqualToString:kSfDTMultiPicklist]) {
+        value = recordField.internalValue;
+    }
     else {
         value = recordField.displayValue;
     }

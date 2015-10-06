@@ -2718,7 +2718,7 @@
                         SFMPageField *pageField = [pageFieldArray lastObject];
                         SFMRecordFieldData *recordField = [sfmRecord objectForKey:fieldName];
                         id value = [lineRecord objectForKey:fieldName];
-                        [self updateValue:value inRecordField:recordField forPageField:pageField];
+                        [self updateValue:value inRecordField:recordField forPageField:pageField andObjectName:detailLayout.objectName];
                     }
                 }
             }
@@ -2739,13 +2739,13 @@
                 SFMPageField *sfmPageField = [pageFieldArray lastObject];
                 SFMRecordFieldData *recordField = [headerRecord objectForKey:fieldName];
                 id value = [responseDict objectForKey:fieldName];
-                [self updateValue:value inRecordField:recordField forPageField:sfmPageField];
+                [self updateValue:value inRecordField:recordField forPageField:sfmPageField andObjectName:sfmPage.objectName];
             }
         }
     }
 }
 
--(void)updateValue:(id)value inRecordField:(SFMRecordFieldData *)recordField forPageField:(SFMPageField *)sfmPageField {
+-(void)updateValue:(id)value inRecordField:(SFMRecordFieldData *)recordField forPageField:(SFMPageField *)sfmPageField andObjectName:(NSString *)objectName {
     
     if ([value isKindOfClass:[NSNull class]]) {
         value = @"";
@@ -2775,14 +2775,77 @@
         recordField.displayValue = value;
     }
     else if([sfmPageField.dataType isEqualToString:kSfDTPicklist] || [sfmPageField.dataType isEqualToString:kSfDTMultiPicklist]) {
+        recordField.internalValue = value;
+        
+        NSString *displayVal = [self fetchIntervalValueForPicklistInternal:value ForFieldName:sfmPageField.fieldName andObjectName:objectName];
+        if ([StringUtil isStringEmpty:displayVal]) {
+            recordField.displayValue = value;
+        }
+        else {
+            recordField.displayValue = displayVal;
+        }
+    }
+    
+    else if ([sfmPageField.dataType isEqualToString:kSfDTCurrency] || [sfmPageField.dataType isEqualToString:kSfDTDouble] || [sfmPageField.dataType isEqualToString:kSfDTPercent]) {
+        
+        BOOL isStringDate = [self isStringDate:value];
+        
+        if (isStringDate) {
+            value = @"";
+        }
+        
+        if (![StringUtil isStringEmpty:value]) {
+            double valueInDouble = [value doubleValue];
+            value  = [[NSString alloc] initWithFormat:@"%.*f",sfmPageField.scale.intValue, valueInDouble];
+        }
+        recordField.internalValue = value;
         recordField.displayValue = value;
     }
+    
     else {
         recordField.internalValue = value;
         recordField.displayValue = value;
     }
 }
 
+
+-(BOOL)isStringDate:(NSString *)value {
+    BOOL isDate = NO;
+    if (![StringUtil isStringEmpty:value]) {
+        NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:kFormulaDateTimeForModule];
+        NSDate *date = [dateFormatter dateFromString:value];
+        if (date == nil) {
+            [dateFormatter setDateFormat:kFormulaDateForModule];
+            date =  [dateFormatter dateFromString:value];
+            if (date != nil) {
+                isDate = YES;
+            }
+        }
+        else {
+            isDate = YES;
+        }
+    }
+    return isDate;
+}
+
+-(NSString *)fetchIntervalValueForPicklistInternal:(NSString *)intValue ForFieldName:(NSString *)fieldName andObjectName:(NSString *)objectName {
+    
+    id <SFPicklistDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
+    
+    DBCriteria * criteriaObjectName1 = [[DBCriteria alloc] initWithFieldName:kfieldname operatorType:SQLOperatorEqual andFieldValue:fieldName];
+    DBCriteria * criteriaObjectName2 = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:objectName];
+    DBCriteria * criteriaObjectName3 = [[DBCriteria alloc] initWithFieldName:kvalue operatorType:SQLOperatorEqual andFieldValue:intValue];
+    
+    NSArray * criteriaObjects = [[NSArray alloc] initWithObjects:criteriaObjectName1, criteriaObjectName2,criteriaObjectName3, nil];
+    
+    NSArray *resultSet = [picklistService fetchSFPicklistInfoByFields:@[klabel] andCriteria:criteriaObjects andExpression:nil];
+    if ([resultSet count] > 0) {
+        SFPicklistModel *model = [resultSet objectAtIndex:0];
+        return model.label;
+    }
+    return nil;
+}
 
 
 @end
