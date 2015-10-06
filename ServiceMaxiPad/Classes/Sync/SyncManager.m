@@ -45,6 +45,7 @@
 #import "CacheConstants.h"
 #import "StringUtil.h"
 #import "DummyDataLoader.h"
+#import "ProductIQManager.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -1262,6 +1263,7 @@ static SyncManager *_instance;
     [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncCompleted];
     
     [self loadDummyData];
+    [self loadDataIntoInstalledBaseObject];
     
     [self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
     [self updatePlistWithLastConfigSyncTimeAndStatus:kSuccess];
@@ -1288,6 +1290,10 @@ static SyncManager *_instance;
     DummyDataLoader *ldummyDataLoader = [[DummyDataLoader alloc] init];
     [ldummyDataLoader loadDataIntables];
     
+}
+- (void)loadDataIntoInstalledBaseObject {
+    
+    [ProductIQManager loadDataIntoInstalledBaseObject];
 }
 
 - (void)currentInitialSyncFailedWithError:(NSError *)error

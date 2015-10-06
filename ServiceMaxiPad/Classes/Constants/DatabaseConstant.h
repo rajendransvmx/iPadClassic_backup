@@ -349,6 +349,9 @@ extern NSString *const kCRFieldNameField;
 extern NSString *const kInstalledProductTableName;
 extern NSString *const kIPProductNameField;
 
+//SubLocation Table.
+extern NSString *const KSubLocationTableName;
+
 //ProductList
 extern NSString *const KProductTable;
 extern NSString *const KProductName;

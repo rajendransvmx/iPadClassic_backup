@@ -12,6 +12,7 @@
 #import "SFWizardModel.h"
 #import "WizardComponentModel.h"
 #import "SFMRecordFieldData.h"
+#import "CommonServices.h"
 
 @implementation ProductIQManager
 
@@ -258,6 +259,31 @@
     }
     [wizardModel.wizardComponents addObject:wizardCompModel];
     return wizardModel;
+}
+
+/*
+ Method: loadDataIntoInstalledBaseObject
+ Description: This method will load the data into InstallBaseObject table once Initial sync gets completes.
+ 
+ */
++ (BOOL)loadDataIntoInstalledBaseObject {
+    
+    @autoreleasepool {
+        NSString *tableName = @"InstallBaseObject";
+        NSString *tableField = @"objectName";
+        
+        NSArray *installBaseObjectRecords = nil;
+        NSDictionary *workOrderRecord  = @{tableField:kWorkOrderSite};
+        NSDictionary *installProductRecord = @{tableField:kInstalledProductTableName};
+        NSDictionary *subLocationRecord = @{tableField:KSubLocationTableName};
+        
+        installBaseObjectRecords = @[workOrderRecord,installProductRecord,subLocationRecord];
+        
+        CommonServices *services = [[CommonServices alloc] init];
+        BOOL insertedRecords = [services saveRecordsFromArray:installBaseObjectRecords inTable:tableName];
+        return insertedRecords;
+        
+    }
 }
 
 @end

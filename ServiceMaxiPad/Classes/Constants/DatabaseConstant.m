@@ -360,6 +360,9 @@ NSString *const kCRFieldNameField = @"fieldName";
 NSString *const kInstalledProductTableName = ORG_NAME_SPACE@"__Installed_Product__c";
 NSString *const kIPProductNameField   = ORG_NAME_SPACE@"__Product_Name__c";
 
+//SubLocation table
+NSString *const KSubLocationTableName = ORG_NAME_SPACE@"__Sub_Location__c";
+
 //Product Table
 NSString *const KProductTable=@"Product2";
 NSString *const KProductName= @"Name";
