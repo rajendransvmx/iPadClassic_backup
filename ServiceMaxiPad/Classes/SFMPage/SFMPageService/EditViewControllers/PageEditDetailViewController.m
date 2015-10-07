@@ -118,7 +118,9 @@ static NSString *cellIdentifier = @"cellIdentifier";
          [someView removeFromSuperview];
     }
     cell.clipsToBounds = YES;
-    ChildEditViewController *pageLayoutViewController = [self.childPageLayoutViewControllers objectAtIndex:indexPath.section];
+    ChildEditViewController *pageLayoutViewController = nil;
+    if ([self.childPageLayoutViewControllers count] > indexPath.section)
+        pageLayoutViewController = [self.childPageLayoutViewControllers objectAtIndex:indexPath.section];
     pageLayoutViewController.view.tag = cellSubViewTag;
     pageLayoutViewController.view.frame = CGRectMake(10, 10, tableView.frame.size.width - 20, [self getHeightForIndexPath:indexPath]);
    [cell.contentView addSubview: pageLayoutViewController.view];

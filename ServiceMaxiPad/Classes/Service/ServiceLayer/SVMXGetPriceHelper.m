@@ -46,7 +46,7 @@
                 if([dict count] > 0)
                 {
                     NSString *recordId = [dict objectForKey:kId];
-                    if (![Utility isStringEmpty:recordId])
+                    if ([Utility isStringNotNULL:recordId] && recordId != nil)
                     {
                         [records addObject:recordId];
                     }
