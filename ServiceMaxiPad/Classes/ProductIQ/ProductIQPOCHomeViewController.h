@@ -23,9 +23,12 @@
     NSString *accessToken, *instanceUrl;
 }
 
+@property(nonatomic,retain) NSMutableDictionary *responseDictionary;
+
 +(ProductIQPOCHomeViewController *) getInstance;
 -(NSString *) getAccessToken;
 -(NSString *) getInstanceUrl;
 -(UIWebView *) getBrowser;
+
 
 @end

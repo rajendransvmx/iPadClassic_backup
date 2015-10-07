@@ -691,8 +691,8 @@
         
         
         //show or hide ProductIQ
-        SFMPageViewManager *viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:objectModel.objectName recordId:recordId];
-        if ([ProductIQManager isProductIQEnabledForSFMPage:viewPageManager.sfmPageView]) {
+        self.viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:objectModel.objectName recordId:recordId];
+        if ([ProductIQManager isProductIQEnabledForSFMPage:self.viewPageManager.sfmPageView]) {
             allWizards = [ProductIQManager addProductIQWizardForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
         }
         
@@ -2544,7 +2544,10 @@
     [self.navigationController presentViewController:navController animated:YES completion:nil];
     */
     
+    
     ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
+    lProductIQcontroller.responseDictionary = [ProductIQManager getMessageHandlerResponeDictionaryForSFMPage:self.viewPageManager.sfmPageView];
+    
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
     navController.delegate = lProductIQcontroller;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;

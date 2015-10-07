@@ -568,6 +568,7 @@
      */
     
     ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
+    lProductIQcontroller.responseDictionary = [ProductIQManager getMessageHandlerResponeDictionaryForSFMPage:self.sfmPageView];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
     navController.delegate = lProductIQcontroller;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
