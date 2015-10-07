@@ -111,7 +111,7 @@
             case RequestSignatureBeforeUpdate:
             case RequestSignatureAfterUpdate:
             case RequestGeneratePDF:
-            //case RequestRecordType:
+                //case RequestRecordType:
             case RequestRTDependentPicklist:
                 
                 
@@ -146,6 +146,13 @@
                 break;
             case RequestTypeOnlineLookUp:
                 
+                requestClass = [self getRestRequestByType:requestType];
+                break;
+                
+                
+                /** Product IQ **/
+            case RequestProductIQUserConfiguration:
+            case RequestProductIQTranslations:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
             default:

@@ -83,6 +83,7 @@ typedef enum ServiceType : NSUInteger
     ServiceTypeChatterPostDetail,
     ServiceTypeProductImageData,
     ServiceTypeCustomUrlAction,
+    ServiceTypeProductIQ                    /** Product IQ **/
 }
 ServiceType;
 

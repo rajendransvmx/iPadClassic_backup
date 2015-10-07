@@ -601,6 +601,8 @@
 		184F1C421A136A1000A2B985 /* bizInfo.png in Resources */ = {isa = PBXBuildFile; fileRef = 184F1C3E1A136A1000A2B985 /* bizInfo.png */; };
 		184F1C431A136A1000A2B985 /* bizInfo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184F1C3F1A136A1000A2B985 /* bizInfo@2x.png */; };
 		184F1C451A137A5F00A2B985 /* arrow_down.png in Resources */ = {isa = PBXBuildFile; fileRef = 184F1C441A137A5F00A2B985 /* arrow_down.png */; };
+		18522A761BBA6F1800E9B4E0 /* ProdIQUserConfigParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 18522A751BBA6F1800E9B4E0 /* ProdIQUserConfigParser.m */; settings = {ASSET_TAGS = (); }; };
+		18522A791BBA6F6500E9B4E0 /* ProdIQTranslationsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 18522A781BBA6F6500E9B4E0 /* ProdIQTranslationsParser.m */; settings = {ASSET_TAGS = (); }; };
 		18536E621A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.m in Sources */ = {isa = PBXBuildFile; fileRef = 18536E611A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.m */; };
 		185656AC1A78DE5200DA5C12 /* json2.js in Resources */ = {isa = PBXBuildFile; fileRef = 184A8EC719E7A535006DA6BE /* json2.js */; };
 		18619BCD1AA7217500C77276 /* PushNotificationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18619BCC1AA7217500C77276 /* PushNotificationManager.m */; };
@@ -2232,6 +2234,10 @@
 		184F1C3E1A136A1000A2B985 /* bizInfo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bizInfo.png; sourceTree = "<group>"; };
 		184F1C3F1A136A1000A2B985 /* bizInfo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bizInfo@2x.png"; sourceTree = "<group>"; };
 		184F1C441A137A5F00A2B985 /* arrow_down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow_down.png; sourceTree = "<group>"; };
+		18522A741BBA6F1800E9B4E0 /* ProdIQUserConfigParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProdIQUserConfigParser.h; sourceTree = "<group>"; };
+		18522A751BBA6F1800E9B4E0 /* ProdIQUserConfigParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProdIQUserConfigParser.m; sourceTree = "<group>"; };
+		18522A771BBA6F6500E9B4E0 /* ProdIQTranslationsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProdIQTranslationsParser.h; sourceTree = "<group>"; };
+		18522A781BBA6F6500E9B4E0 /* ProdIQTranslationsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProdIQTranslationsParser.m; sourceTree = "<group>"; };
 		18536E601A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNotificationCenter+UniqueNotif.h"; sourceTree = "<group>"; };
 		18536E611A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNotificationCenter+UniqueNotif.m"; sourceTree = "<group>"; };
 		18619BCB1AA7217500C77276 /* PushNotificationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationManager.h; sourceTree = "<group>"; };
@@ -6148,6 +6154,10 @@
 				8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */,
 				11596B541BBECD0D00C92872 /* ProductIQManager.h */,
 				11596B551BBECD0D00C92872 /* ProductIQManager.m */,
+				18522A741BBA6F1800E9B4E0 /* ProdIQUserConfigParser.h */,
+				18522A751BBA6F1800E9B4E0 /* ProdIQUserConfigParser.m */,
+				18522A771BBA6F6500E9B4E0 /* ProdIQTranslationsParser.h */,
+				18522A781BBA6F6500E9B4E0 /* ProdIQTranslationsParser.m */,
 			);
 			path = ProductIQ;
 			sourceTree = "<group>";
@@ -7304,6 +7314,7 @@
 				183A99BE19E6858B00919345 /* ApplicationVersionWatchDog.m in Sources */,
 				8B2F4BEE1A0B7FFE00D2A346 /* DownloadedCollectionViewCell.m in Sources */,
 				183A99BF19E6858B00919345 /* AppManager.m in Sources */,
+				18522A791BBA6F6500E9B4E0 /* ProdIQTranslationsParser.m in Sources */,
 				18E0BE9119F13444007DBC69 /* LocationManager.m in Sources */,
 				18A2179319E5850300F22EA6 /* OAuthLoginViewController.m in Sources */,
 				183A9E2019E69DB000919345 /* DocTemplateModel.m in Sources */,
@@ -7320,6 +7331,7 @@
 				183AA22219E6D50E00919345 /* TaskManager.m in Sources */,
 				183A9E2619E69DB000919345 /* LocalEventUpdateModel.m in Sources */,
 				183A9E8E19E6A11800919345 /* RequestConstants.m in Sources */,
+				18522A761BBA6F1800E9B4E0 /* ProdIQUserConfigParser.m in Sources */,
 				183AA38319E6DC9300919345 /* DynamicTableCreator.m in Sources */,
 				183AA04E19E6C80400919345 /* NSError+SMInternalError.m in Sources */,
 				9E8D1C581A496E2300741918 /* ChatterFeedComments.m in Sources */,

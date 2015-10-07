@@ -186,3 +186,9 @@ NSString *const kSFMSearchRecordLimit = @"RecordLimit";
 NSString *const kAfterSaveInsertCustomCallValueMap = @"After_Insert_Web_Service";
 NSString *const kOnlineLookUpURL = @"getLookUpResults";
 
+/** Product IQ **/
+
+NSString *const kRestUrlProductIQ = @"/services/apexrest/"ORG_NAME_SPACE"/svmx/rest/ProductIQServiceIntf/";
+NSString *const kProductIQUserConfigUrl = @"getUserConfiguration/9.0/";
+NSString *const kProductIQTranslationsUrl = @"getTranslations/9.0/";
+

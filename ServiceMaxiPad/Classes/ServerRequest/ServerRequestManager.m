@@ -415,7 +415,7 @@
             nextRequestType = RequestMobileDeviceTags;
             break;
         case RequestMobileDeviceTags:
-             nextRequestType = RequestOneCallMetaSync;
+            nextRequestType = RequestOneCallMetaSync;
             break;
         case RequestOneCallMetaSync:
             nextRequestType = RequestSFMPageData ;
@@ -433,7 +433,7 @@
             nextRequestType =  RequestRecordType;
             break;
         case RequestRecordType:
-             nextRequestType =  RequestDependantPickListRest;
+            nextRequestType =  RequestDependantPickListRest;
             break;
         case RequestDependantPickListRest:
             nextRequestType =  RequestRTDependentPicklist;//RequestDocumentDownload;
@@ -442,7 +442,7 @@
             nextRequestType =  RequestStaticResourceLibrary;
             break;
         case RequestStaticResourceLibrary:
-             nextRequestType =  RequestStaticResourceDownload;
+            nextRequestType =  RequestStaticResourceDownload;
             break;
         case RequestStaticResourceDownload:
             nextRequestType =  RequestAttachmentDownload;
@@ -457,7 +457,7 @@
             nextRequestType =  RequestEvents;
             break;
         case RequestEvents:
-             nextRequestType =  RequestTypeUserTrunk;
+            nextRequestType =  RequestTypeUserTrunk;
             // TODO : krishna change to RequestDownloadCriteria
             // Download criteria will only work after upgarading to latest server updates.
             break;
@@ -466,7 +466,7 @@
             nextRequestType = RequestDownloadCriteria;
             break;
         case RequestDownloadCriteria:
-              nextRequestType = RequestAdvancedDownLoadCriteria;
+            nextRequestType = RequestAdvancedDownLoadCriteria;
             break;
         case RequestAdvancedDownLoadCriteria:
             nextRequestType = RequestGetPriceDataTypeZero ;
@@ -487,8 +487,14 @@
             nextRequestType = RequestCleanUp;
             break;
         case RequestCleanUp:
-             nextRequestType = RequestSyncTimeLogs;
-             break;
+            nextRequestType = RequestProductIQUserConfiguration;
+            break;
+        case RequestProductIQUserConfiguration:  /** Product IQ **/
+            nextRequestType = RequestProductIQTranslations;
+            break;
+        case RequestProductIQTranslations:
+            nextRequestType = RequestSyncTimeLogs;
+            break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
             break;
@@ -637,7 +643,13 @@
             nextRequestType =  RequestDocumentDownload;
             break;
         case RequestDocumentDownload:
-            nextRequestType =  RequestSyncTimeLogs;
+            nextRequestType =  RequestProductIQUserConfiguration;
+            break;
+        case RequestProductIQUserConfiguration: /** Product IQ **/
+            nextRequestType = RequestProductIQTranslations;
+            break;
+        case RequestProductIQTranslations:
+            nextRequestType = RequestSyncTimeLogs;
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;

@@ -668,9 +668,17 @@
         case RequestTypeOnlineLookUp:
             url =   [self getUrlWithStringApppended:kOnlineLookUpURL];
             break;
+            
+            /** Product IQ **/
+            
+        case RequestProductIQUserConfiguration:
+            url = [self getURLStringForProductIQRestRequest:kProductIQUserConfigUrl];
+            break;
+        case RequestProductIQTranslations:
+            url = [self getURLStringForProductIQRestRequest:kProductIQTranslationsUrl];
+            break;
         default:
             break;
-            
     }
     return url;
     
@@ -1032,8 +1040,10 @@
         || self.requestType ==  RequestTypeChatterPost
         || self.requestType ==  RequestTypeChatterPostDetails
         || self.requestType == RequestTypeChatterrProductData
-        || self.requestType == RequestTypeChatterUserImage) {
-        
+        || self.requestType == RequestTypeChatterUserImage
+        || self.requestType == RequestProductIQUserConfiguration
+        || self.requestType == RequestProductIQTranslations
+        ) {
         return @"GET";
     }
     if (httpMethod != nil) {
@@ -1255,6 +1265,14 @@
     
     return nil;
 }
+
+
+/** Product IQ **/
+-(NSString *)getURLStringForProductIQRestRequest:(NSString *)stringToAppend {
+    CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
+    return  [[NSString alloc] initWithFormat:@"%@%@%@",[customerOrgInfoInstance instanceURL],kRestUrlProductIQ,stringToAppend];
+}
+
 
 #pragma mark - dealloc
 

@@ -129,6 +129,10 @@ typedef NS_ENUM(NSUInteger, RequestType)
     
     /**LookUP**/
     RequestTypeOnlineLookUp,
+    
+    /** Product IQ **/
+    RequestProductIQUserConfiguration,
+    RequestProductIQTranslations
 };
 
 extern NSString *const kContentType;
@@ -311,3 +315,9 @@ extern NSString *const kSFMSearchRecordLimit;
 extern NSString *const kAfterSaveInsertCustomCallValueMap;
 extern NSString *const  kSoapUrlForWebservice;
 extern NSString *const kOnlineLookUpURL;
+
+/** Product IQ **/
+
+extern NSString *const kRestUrlProductIQ;
+extern NSString *const kProductIQUserConfigUrl;
+extern NSString *const kProductIQTranslationsUrl;
