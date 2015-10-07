@@ -9,6 +9,7 @@
 #import "Misc.h"
 #import "ProductIQPOCHomeViewController.h"
 #import "SNetworkReachabilityManager.h"
+#import "CustomerOrgInfo.h"
 
 @implementation Misc
 
@@ -39,6 +40,41 @@
 
     }
     
+}
+- (void)getLoginUserInfo:(NSString*)params {
+    @autoreleasepool {
+        NSDictionary *requestParams = [self parse:params];
+        NSString *callback = requestParams[@"nativeCallbackHandler"];
+        NSString *requestId = requestParams[@"requestId"];
+        NSString *type = requestParams[@"type"];
+        NSString *methodName = requestParams[@"methodName"];
+        NSString *operation = requestParams[@"operation"];
+        NSString *jsCallback = requestParams[@"jsCallback"];
+        
+        NSMutableDictionary *loginUserInfoDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+        
+        NSString *userName = [CustomerOrgInfo sharedInstance].userName;
+        NSString *userDisplayName = [CustomerOrgInfo sharedInstance].userDisplayName;
+        
+        if (userName != nil) {
+            [loginUserInfoDictionary setObject:userName forKey:@"userName"];
+        }
+        if (userDisplayName != nil) {
+            [loginUserInfoDictionary setObject:userDisplayName forKey:@"userDisplayName"];
+        }
+        
+        NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+        [responseDictionary setObject:requestId forKey:@"requestId"];
+        [responseDictionary setObject:type forKey:@"type"];
+        [responseDictionary setObject:methodName forKey:@"methodName"];
+        if (operation != nil) {
+            [responseDictionary setObject:operation forKey:@"operation"];
+        }
+        [responseDictionary setObject:callback forKey:@"nativeCallbackHandler"];
+        [responseDictionary setObject:jsCallback forKey:@"jsCallback"];
+        [responseDictionary setObject:loginUserInfoDictionary forKey:@"loginUserInfo"];
+        [self respondOnMethod:callback withParams:responseDictionary];
+    }
 }
 
 -(NSDictionary *)parse:(NSString *) str {

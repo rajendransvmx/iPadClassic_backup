@@ -11,5 +11,6 @@
 @interface Misc : NSObject
 
 - (void)checkNetworkReachability:(NSString*)params;
+- (void)getLoginUserInfo:(NSString*)params;
 
 @end
