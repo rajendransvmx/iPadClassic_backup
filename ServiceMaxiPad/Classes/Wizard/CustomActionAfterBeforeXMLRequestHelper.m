@@ -64,7 +64,7 @@ NSMutableString *currentElementValue;
 {
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     [xml appendString:[NSString stringWithFormat:@"<%@>   </%@>",KHeaderRecord,KHeaderRecord]];
-    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KHeaderRecord,[self getRecodeNode:sfmPage.headerRecord objectName:sfmPage.objectName recordType:KHeaderRecord],KHeaderRecord]];
+    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KHeaderRecord,[self getRecodeNode:sfmPage.headerRecord objectName:sfmPage.objectName recordType:KHeaderRecord pageLayout:sfmPage.process.pageLayout.headerLayout.hdrLayoutId],KHeaderRecord]];
     return xml;
 }
 
@@ -73,6 +73,7 @@ NSMutableString *currentElementValue;
     NSDictionary *dict = sfmPage.detailsRecord;
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     NSDictionary *objectDict = [self getProcessComponentIdFromSfPage:sfmPage];
+    NSDictionary *pageLayoutId = [self getPageLayoutIds:sfmPage.process.pageLayout.detailLayouts];
     if (dict)
     {
         for (NSString *key_Id in [dict allKeys])
@@ -81,14 +82,25 @@ NSMutableString *currentElementValue;
             NSArray *itemArray = [dict objectForKey:key_Id];
             for (NSDictionary *childDict in itemArray)
             {
-                [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kDetailRecords,[self getRecodeNode:childDict objectName:objectName recordType:kDetailRecords],kDetailRecords]];
+                [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kDetailRecords,[self getRecodeNode:childDict objectName:objectName recordType:kDetailRecords pageLayout:[pageLayoutId objectForKey:key_Id]],kDetailRecords]];
             }
         }
     }
     return xml;
 }
+-(NSDictionary *)getPageLayoutIds:(NSArray *)layoutInfo
+{
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    if (layoutInfo) {
+        for (SFMDetailLayout *sfmDetailLayout in layoutInfo) {
+            [dict setValue:sfmDetailLayout.pageLayoutId forKey:sfmDetailLayout.processComponentId];
+        }
+        return dict;
+    }
+    return dict;
+}
 
--(NSString *)getRecodeNode:(NSDictionary *)dict objectName:(NSString *)objectName recordType:(NSString *)recordType
+-(NSString *)getRecodeNode:(NSDictionary *)dict objectName:(NSString *)objectName recordType:(NSString *)recordType pageLayout:(NSString *)pageLayoutId
 {
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KObjName,objectName,KObjName]];
@@ -96,7 +108,7 @@ NSMutableString *currentElementValue;
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kParentColumnName,kParentColumnName]];
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kDeleteRecID,kDeleteRecID]];
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kFieldsToNull,kFieldsToNull]];
-    [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kPageLayoutId,kPageLayoutId]];
+    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kPageLayoutId,pageLayoutId,kPageLayoutId]];
     [xml appendString:[NSString stringWithFormat:@"%@",[self getValuesNode:dict]]];
     return xml;
 }
