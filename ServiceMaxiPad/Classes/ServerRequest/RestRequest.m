@@ -182,9 +182,15 @@
                [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
                  
                 [self displayRequest:operation];
-                [self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
-                
-      
+                 if (self.requestType ==  RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
+                 {
+                     //[self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
+                     [self performSelectorInBackground:@selector(didReceiveResponseSuccessfullyForAfterBeforeSave:) withObject:operation];
+                 }
+                 else
+                 {
+                     [self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
+                 }
              }
              failure:^(AFHTTPRequestOperation *operation, NSError *error)
              {
@@ -198,7 +204,6 @@
                  
                  if (self.requestType ==    RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
                  {
-                 
                      CustomXMLParser *parser = [[CustomXMLParser alloc] initwithNSXMLParserObject:(NSXMLParser *)operation.responseObject andError:error andOperation:(id)operation];
                      parser.customDelegate = self;
                      [parser parse];
@@ -1299,6 +1304,20 @@
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
         [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
+    }
+}
+- (void)didReceiveResponseSuccessfullyForAfterBeforeSave:(AFHTTPRequestOperation *)operation
+{
+    @autoreleasepool {
+        CustomXMLParser *parser = [[CustomXMLParser alloc] initwithNSXMLParserObject:operation.responseObject andOperation:(id)operation];
+        parser.customDelegate = self;
+        [parser parseRequestBody:operation.responseString];
+        if (self.requestType == RequestOneCallDataSync)
+        {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"requestIdentifier"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+        [self.serverRequestdelegate didReceiveResponseSuccessfully:operation.responseObject andRequestObject:self];
     }
 }
 
