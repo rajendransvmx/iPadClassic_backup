@@ -19,5 +19,6 @@
 + (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject;
 + (BOOL)loadDataIntoInstalledBaseObject;
 + (NSMutableDictionary*)getMessageHandlerResponeDictionaryForSFMPage:(SFMPageViewModel*)sfmPageView;
++ (BOOL)isProductIQSettingEnable;
 
 @end
