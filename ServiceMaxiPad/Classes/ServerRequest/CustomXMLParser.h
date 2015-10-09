@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "XMLReader.h"
 
 @protocol xmlParserProtocolDelegate <NSObject>
 
@@ -19,5 +20,6 @@
 
 -(instancetype)initwithNSXMLParserObject:(NSXMLParser *)responseData andError:(NSError *)error andOperation:(id)operation;
 -(void)parse;
-
+-(void)parseRequestBody:(NSString *)XMLString;
+-(instancetype)initwithNSXMLParserObject:(NSXMLParser *)responseData andOperation:(id)operation;
 @end
