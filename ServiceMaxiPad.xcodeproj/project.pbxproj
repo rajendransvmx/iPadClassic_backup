@@ -704,6 +704,7 @@
 		18BB0A6E19E9088600162524 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6819E9088600162524 /* zbar-help.html */; };
 		18BB0A6F19E9088600162524 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6919E9088600162524 /* zbar-helpicons.png */; };
 		18BB0A7019E9088600162524 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6A19E9088600162524 /* zbar-samples.png */; };
+		18BF243D1BC3AEE200D92B64 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BF243C1BC3AEE200D92B64 /* XMLReader.m */; };
 		18DE885619E5872E0011E9EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18DE885419E5872E0011E9EE /* Main.storyboard */; };
 		18DE885A19E58A130011E9EE /* PlistManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE885919E58A130011E9EE /* PlistManager.m */; };
 		18DE8B9A1A00C1FD001A602E /* DataMigrationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE8B991A00C1FD001A602E /* DataMigrationHelper.m */; };
@@ -2411,6 +2412,8 @@
 		18BB0A6819E9088600162524 /* zbar-help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "zbar-help.html"; sourceTree = "<group>"; };
 		18BB0A6919E9088600162524 /* zbar-helpicons.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-helpicons.png"; sourceTree = "<group>"; };
 		18BB0A6A19E9088600162524 /* zbar-samples.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples.png"; sourceTree = "<group>"; };
+		18BF243B1BC3AEE200D92B64 /* XMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLReader.h; sourceTree = "<group>"; };
+		18BF243C1BC3AEE200D92B64 /* XMLReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLReader.m; sourceTree = "<group>"; };
 		18DE885519E5872E0011E9EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		18DE885819E58A130011E9EE /* PlistManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlistManager.h; sourceTree = "<group>"; };
 		18DE885919E58A130011E9EE /* PlistManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlistManager.m; sourceTree = "<group>"; };
@@ -3721,6 +3724,8 @@
 				9EA9703D1A484B3F00ECB5F7 /* ZKSQueryRequest.m */,
 				8416A6EA1B660E64000D5FE9 /* CustomXMLParser.h */,
 				8416A6EB1B660E64000D5FE9 /* CustomXMLParser.m */,
+				18BF243B1BC3AEE200D92B64 /* XMLReader.h */,
+				18BF243C1BC3AEE200D92B64 /* XMLReader.m */,
 			);
 			path = ServerRequest;
 			sourceTree = "<group>";
@@ -7584,6 +7589,7 @@
 				6BDC50DF1AA70EB700200DC0 /* TroubleshootingDataHelper.m in Sources */,
 				183AA03219E6BDB300919345 /* ObjectDefinitionParser.m in Sources */,
 				183AA1AD19E6D26400919345 /* PageEditCollectionViewFlowLayout.m in Sources */,
+				18BF243D1BC3AEE200D92B64 /* XMLReader.m in Sources */,
 				6BB4C24819EE9445002A1D88 /* OuterJoinObject.m in Sources */,
 				9EC8473419FA3480000D456A /* SFMPageEditManager.m in Sources */,
 				183A9E2C19E69DB000919345 /* ModifiedRecordModel.m in Sources */,
@@ -7842,7 +7848,7 @@
 				);
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "8a61c2d0-a372-4319-956b-e98842d1255f";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
