@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1140D0461BBA634C0025DD2D /* www.zip in Resources */ = {isa = PBXBuildFile; fileRef = 1140D0451BBA634C0025DD2D /* www.zip */; };
 		11596B561BBECD0D00C92872 /* ProductIQManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 11596B551BBECD0D00C92872 /* ProductIQManager.m */; };
 		11596B5C1BBEF96600C92872 /* Misc.m in Sources */ = {isa = PBXBuildFile; fileRef = 11596B5B1BBEF96600C92872 /* Misc.m */; };
 		117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D41B3928A200BA0B63 /* selectEmpty@.png */; };
@@ -1087,7 +1086,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1140D0451BBA634C0025DD2D /* www.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = www.zip; sourceTree = "<group>"; };
 		11596B541BBECD0D00C92872 /* ProductIQManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductIQManager.h; path = ServiceMaxiPad/Classes/ProductIQ/ProductIQManager.h; sourceTree = SOURCE_ROOT; };
 		11596B551BBECD0D00C92872 /* ProductIQManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductIQManager.m; path = ServiceMaxiPad/Classes/ProductIQ/ProductIQManager.m; sourceTree = SOURCE_ROOT; };
 		11596B5A1BBEF96600C92872 /* Misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Misc.h; sourceTree = "<group>"; };
@@ -6191,7 +6189,6 @@
 		844F00B91B848BE3008BC652 /* ProductIQ */ = {
 			isa = PBXGroup;
 			children = (
-				1140D0451BBA634C0025DD2D /* www.zip */,
 				841121511B901775006C3668 /* DummyDataLoader */,
 				84127A8D1B8C8C1300CF8D61 /* POC */,
 				844F00BD1B848CC4008BC652 /* ProductIQHomeViewController.h */,
@@ -6751,7 +6748,6 @@
 				D752644A19EB9278006AAC4C /* SFMLookUpDeatilViewController.xib in Resources */,
 				4048CDC11A02679500B1FD58 /* OPDocBackArrow.png in Resources */,
 				40A06F1F1B06033100218162 /* NavBarNew@3x.png in Resources */,
-				1140D0461BBA634C0025DD2D /* www.zip in Resources */,
 				184A8EA319E7A0BE006DA6BE /* orangeCircle.png in Resources */,
 				9E5E7AE019ECD68000B38EC3 /* PageEditMultiSelectFieldController.xib in Resources */,
 				407252FC19FF52C700ACA729 /* Utility.js in Resources */,
