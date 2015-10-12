@@ -18,6 +18,9 @@
 #import "PushNotificationHeaders.h"
 #import "SFMOnlineLookUpManager.h"
 #import "AlertMessageHandler.h"
+#import "CacheManager.h"
+#import "TransactionObjectModel.h"
+#import "CacheConstants.h"
 
 @interface SFMLookUpViewController () <LookUpFilterDelegate>
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -551,6 +554,8 @@
             recordField.name = self.callerFieldName;
         }
         
+        [self addOnlineRecordToObjectNameFieldValueForSingleSelectionMode];
+        
         [self.delegate valuesForField:self.selectedRecords forIndexPath:self.indexPath selectionMode:self.selectionMode];
     }
     [self dismissLookUpForm];
@@ -567,6 +572,34 @@
     [self dismissViewControllerAnimated:YES completion:^{
         
     }];
+}
+
+- (void)addOnlineRecordToObjectNameFieldValueForSingleSelectionMode {
+    
+    @autoreleasepool {
+        NSMutableDictionary *onlineRecords = [[CacheManager sharedInstance] getCachedObjectByKey:kObjectNameFieldValueCacheData];
+        
+        if (onlineRecords == nil) {
+            onlineRecords = [[NSMutableDictionary alloc] initWithCapacity:0];
+        }
+        
+        NSArray *allKeys = [onlineRecords allKeys];
+        
+        for(SFMRecordFieldData *recordField in self.selectedRecords) {
+            
+            if (![allKeys containsObject:recordField.internalValue] && [SFMLookUpViewController isOnlineRecord:recordField]) {
+                NSMutableDictionary *currentDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+                [currentDictionary setValue:recordField.internalValue forKey:@"Id"];
+                [currentDictionary setValue:recordField.displayValue forKey:@"Value"];
+                TransactionObjectModel *model = [[TransactionObjectModel alloc] init];
+                [model mergeFieldValueDictionaryForFields:currentDictionary];
+                
+                [onlineRecords setObject:model forKey:recordField.internalValue];
+            }
+        }
+        
+        [[CacheManager sharedInstance] pushToCache:onlineRecords byKey:kObjectNameFieldValueCacheData];
+    }
 }
 
 -(BOOL)isSelectedAtIndexPath:(NSIndexPath *)indexPath

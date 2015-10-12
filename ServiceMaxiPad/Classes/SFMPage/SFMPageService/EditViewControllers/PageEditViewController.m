@@ -38,6 +38,10 @@
 #import "PushNotificationManager.h"
 #import "ModifiedRecordModel.h"
 #import "PageEventProcessManager.h"
+#import "TransactionObjectModel.h"
+#import "CacheManager.h"
+#import "ObjectNameFieldValueService.h"
+#import "CacheConstants.h"
 
 
 typedef NS_ENUM(NSInteger, SaveFlow ) {
@@ -607,6 +611,9 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             BOOL canUpdateHeader = [self.sfmEditPageManager saveHeaderRecord:self.sfmPage];
             BOOL canUpdateDetail = [self.sfmEditPageManager saveDetailRecords:self.sfmPage];
             
+            
+            [self saveOnlineLookupDataIntoObjectFieldNameValue];
+            
             if([self isSourceToTargetProcess] || [self isSourceToTargetChildOnlyProcess]){
                 [self.sfmEditPageManager performSourceUpdate:self.sfmPage];
             }
@@ -634,6 +641,26 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     //    [self checkIfObjectIsEvent:self.sfmPage.objectName];
 }
+/*
+ Method Name:saveOnlineLookupDataIntoObjectFieldNameValue
+ Description: This method is used to save online lookup data into ObjectFieldNameValue table.
+ */
+- (void)saveOnlineLookupDataIntoObjectFieldNameValue {
+    
+    @autoreleasepool {
+        NSMutableDictionary *dataOnlineDataArray = [[CacheManager sharedInstance] getCachedObjectByKey:kObjectNameFieldValueCacheData];
+        NSArray *transactionObjects = [dataOnlineDataArray allValues];
+        
+        if (transactionObjects.count > 0) {
+            ObjectNameFieldValueService *service = [[ObjectNameFieldValueService alloc] init];
+            if([service updateOrInsertTransactionObjects:transactionObjects]) {
+                [[CacheManager sharedInstance] clearCacheByKey:kObjectNameFieldValueCacheData];
+            }
+        }
+    }
+}
+
+
 
 -(void)checkIfObjectIsEvent:(NSString *)objectName
 {

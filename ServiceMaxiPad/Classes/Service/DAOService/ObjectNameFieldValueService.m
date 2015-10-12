@@ -13,6 +13,7 @@
 #import "DBRequestSelect.h"
 #import "DBRequestUpdate.h"
 #import "SQLResultSet.h"
+#import "TransactionObjectService.h"
 
 
 @implementation ObjectNameFieldValueService
@@ -47,6 +48,33 @@
 
 - (BOOL)enableInsertOrReplaceOption {
     return YES;
+}
+- (BOOL)updateOrInsertTransactionObjects:(NSArray *)transactionObjects {
+    
+    
+    DBRequestInsert *insertRequest = nil;
+    DBRequestUpdate *updateRequest = nil;
+    
+    NSMutableArray *fieldsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    [fieldsArray addObject:@"Id"];
+    [fieldsArray addObject:@"Value"];
+    
+    insertRequest = [[DBRequestInsert alloc] initWithTableName:self.tableName andFieldNames:fieldsArray];
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldNameToBeBinded:kId];
+    updateRequest = [[DBRequestUpdate alloc] initWithTableName:self.tableName andFieldNames:fieldsArray whereCriteria:@[criteria] andAdvanceExpression:nil];
+
+    TransactionObjectService * transService = [[TransactionObjectService alloc] init];
+    
+    BOOL isSucces = NO;
+    
+    /* Check the record count by looking for Id */
+    if (insertRequest != nil || updateRequest != nil) {
+            isSucces =  [transService updateOrInsertTransactionObjects:transactionObjects withObjectName:self.tableName andDbRequest:insertRequest andUpdateRequest:updateRequest];
+            
+        }
+
+    
+    return isSucces;
 }
 
 @end
