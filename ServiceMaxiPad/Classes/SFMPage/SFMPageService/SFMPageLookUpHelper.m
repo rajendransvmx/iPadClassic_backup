@@ -357,13 +357,6 @@
 
 -(NSArray *)getRecordArrayFromTransactionModel:(NSArray *)dataArray  lookUpObject:(SFMLookUp *)lookUpObject forDisplayFields:(NSArray *)displayFields
 {
-    
-    
-    NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
-    
-    NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
-    
-    
     NSMutableDictionary * dataTypeVsFieldsDict =[self getFieldDataTypeMap:[lookUpObject.fieldInfoDict allValues]];
     
     [self fillPickPickListAndRecordTypeInfo:dataTypeVsFieldsDict andObjectName:lookUpObject.objectName];
@@ -372,6 +365,9 @@
     NSMutableArray *recordArray = [[NSMutableArray alloc]init];
     for(TransactionObjectModel * model in dataArray)
     {
+        NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
+        NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
+
         NSMutableDictionary * eachDataDict = [[NSMutableDictionary alloc] init];
         NSDictionary * dict =  [model getFieldValueDictionary];
         
