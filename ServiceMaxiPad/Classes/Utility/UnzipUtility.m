@@ -13,8 +13,8 @@
 
 + (NSArray *) getListOfCoreLibraries {
     
-    NSArray *listOfLibs = [NSArray arrayWithObjects:@"com.servicemax.client.lib",
-                           @"com.servicemax.client.mvc",
+    NSArray *listOfLibs = [NSArray arrayWithObjects:@"com.servicemax.client.mvc",
+                           @"com.servicemax.client.lib",
                            @"com.servicemax.client.runtime",
                            @"com.servicemax.client.sal.sfmconsole.model",
                            @"com.servicemax.client.sfmbizrules",
@@ -24,6 +24,15 @@
                            @"com.servicemax.client.sfmopdocdelivery",
                            @"com.servicemax.client.tablet.sal.sfmopdoc.model",
                            @"com.servicemax.client",
+                           @"com.servicemax.client.installigence.admin",
+                           @"com.servicemax.client.installigence.native",
+                           @"com.servicemax.client.installigence.offline.model",
+                           @"com.servicemax.client.installigence.sync",
+                           @"com.servicemax.client.installigence.ui.components",
+                           @"com.servicemax.client.installigence.utils",
+                           @"com.servicemax.client.installigence",
+                           @"com.servicemax.client.sal",
+                           @"com.servicemax.client.testframework",
                            nil];
     return listOfLibs;
 }
@@ -55,13 +64,20 @@
         {
             NSString *filepath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"zip"];
             
-            if([fileManager fileExistsAtPath:[path stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
+            if ([fileName isEqualToString:@"com.servicemax.client.lib"]) {
+                NSString *clientLibPath = [path stringByDeletingLastPathComponent];
+                if([fileManager fileExistsAtPath:[clientLibPath stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
                 continue;
-            
-            [self unzipFileAtPath:filepath toFolder:path];
+                [self unzipFileAtPath:filepath toFolder:clientLibPath];
+            }
+            else {
+                if([fileManager fileExistsAtPath:[path stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
+                continue;
+                [self unzipFileAtPath:filepath toFolder:path];
+            }
         }
         [fileManager removeItemAtPath:[path stringByAppendingPathComponent:@"__MACOSX"] error:NULL];
-
+        
     }
 }
 /**

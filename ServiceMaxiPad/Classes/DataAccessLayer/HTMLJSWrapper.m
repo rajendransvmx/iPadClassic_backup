@@ -23,7 +23,7 @@ const BOOL DEBUG_JAVASCRIPT = FALSE;
 {
     NSString *documentsDirectory = [FileManager getCoreLibSubDirectoryPath]; // [paths objectAtIndex:0]; // Get documents folder
 
-    NSString *bootstrapPath = [documentsDirectory stringByAppendingPathComponent:@"com.servicemax.client.lib/src/bootstrap.js"];
+    NSString *bootstrapPath = [[FileManager getRootPath] stringByAppendingPathComponent:@"com.servicemax.client.lib/src/bootstrap.js"];
     
     NSString *htmlFilePath = [[NSBundle mainBundle] pathForResource:@"OPDoc" ofType:@"html"];
     if(DEBUG_JAVASCRIPT)

@@ -111,11 +111,8 @@
     
 //    NSString *codeSnippet =  [HTMLJSWrapper getWrapperForCodeSnippet];
     
-    NSString *corelibDir = [FileManager getCoreLibSubDirectoryPath];
-    corelibDir = [corelibDir stringByAppendingPathComponent:@"PRODUCTJS"];
-    corelibDir = [corelibDir stringByAppendingPathComponent:@"src"];
-
-    NSString *htmlfilepath = [corelibDir stringByAppendingPathComponent:@"installigence-index.html"];
+    NSString *rootDir = [FileManager getRootPath];
+    NSString *htmlfilepath = [rootDir stringByAppendingPathComponent:@"installigence-index.html"];
     
 //    if([[NSFileManager defaultManager] fileExistsAtPath:htmlfilepath])
 //        [[NSFileManager defaultManager] removeItemAtPath:htmlfilepath error:NULL];

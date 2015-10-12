@@ -642,6 +642,16 @@
 		18897C8A1A00B004007F326B /* DataTypeUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 18897C891A00B004007F326B /* DataTypeUtility.m */; };
 		189234DD1A09F8D9002BD2FA /* ResolveConflictsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 189234D81A09F8D9002BD2FA /* ResolveConflictsHelper.m */; };
 		189430521A48127800357320 /* SMObjectRelationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 189430511A48127800357320 /* SMObjectRelationModel.m */; };
+		189AE1601BC5132700AD549D /* ProductIQ.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE15F1BC5132700AD549D /* ProductIQ.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE1681BC513D500AD549D /* com.servicemax.client.installigence.admin.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE1611BC513D500AD549D /* com.servicemax.client.installigence.admin.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE1691BC513D500AD549D /* com.servicemax.client.installigence.native.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE1621BC513D500AD549D /* com.servicemax.client.installigence.native.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE16A1BC513D500AD549D /* com.servicemax.client.installigence.offline.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE1631BC513D500AD549D /* com.servicemax.client.installigence.offline.model.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE16B1BC513D500AD549D /* com.servicemax.client.installigence.sync.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE1641BC513D500AD549D /* com.servicemax.client.installigence.sync.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE16C1BC513D500AD549D /* com.servicemax.client.installigence.ui.components.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE1651BC513D500AD549D /* com.servicemax.client.installigence.ui.components.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE16D1BC513D500AD549D /* com.servicemax.client.installigence.utils.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE1661BC513D500AD549D /* com.servicemax.client.installigence.utils.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE16E1BC513D500AD549D /* com.servicemax.client.installigence.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE1671BC513D500AD549D /* com.servicemax.client.installigence.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE1701BC513EB00AD549D /* com.servicemax.client.sal.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE16F1BC513EB00AD549D /* com.servicemax.client.sal.zip */; settings = {ASSET_TAGS = (); }; };
+		189AE1721BC513FA00AD549D /* com.servicemax.client.testframework.zip in Resources */ = {isa = PBXBuildFile; fileRef = 189AE1711BC513FA00AD549D /* com.servicemax.client.testframework.zip */; settings = {ASSET_TAGS = (); }; };
 		189B678A1A138C2600001A2C /* SFMSearchParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 189B67891A138C2600001A2C /* SFMSearchParser.m */; };
 		189F00151A1481B900570C54 /* DODHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 189F00131A1481B900570C54 /* DODHelper.m */; };
 		189F00191A14896600570C54 /* DODViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 189F00171A14896600570C54 /* DODViewController.m */; };
@@ -2304,6 +2314,16 @@
 		189234D81A09F8D9002BD2FA /* ResolveConflictsHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ResolveConflictsHelper.m; sourceTree = "<group>"; };
 		189430501A48127800357320 /* SMObjectRelationModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMObjectRelationModel.h; sourceTree = "<group>"; };
 		189430511A48127800357320 /* SMObjectRelationModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMObjectRelationModel.m; sourceTree = "<group>"; };
+		189AE15F1BC5132700AD549D /* ProductIQ.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = ProductIQ.zip; sourceTree = "<group>"; };
+		189AE1611BC513D500AD549D /* com.servicemax.client.installigence.admin.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.installigence.admin.zip; sourceTree = "<group>"; };
+		189AE1621BC513D500AD549D /* com.servicemax.client.installigence.native.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.installigence.native.zip; sourceTree = "<group>"; };
+		189AE1631BC513D500AD549D /* com.servicemax.client.installigence.offline.model.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.installigence.offline.model.zip; sourceTree = "<group>"; };
+		189AE1641BC513D500AD549D /* com.servicemax.client.installigence.sync.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.installigence.sync.zip; sourceTree = "<group>"; };
+		189AE1651BC513D500AD549D /* com.servicemax.client.installigence.ui.components.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.installigence.ui.components.zip; sourceTree = "<group>"; };
+		189AE1661BC513D500AD549D /* com.servicemax.client.installigence.utils.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.installigence.utils.zip; sourceTree = "<group>"; };
+		189AE1671BC513D500AD549D /* com.servicemax.client.installigence.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.installigence.zip; sourceTree = "<group>"; };
+		189AE16F1BC513EB00AD549D /* com.servicemax.client.sal.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sal.zip; sourceTree = "<group>"; };
+		189AE1711BC513FA00AD549D /* com.servicemax.client.testframework.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.testframework.zip; sourceTree = "<group>"; };
 		189B67881A138C2600001A2C /* SFMSearchParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMSearchParser.h; sourceTree = "<group>"; };
 		189B67891A138C2600001A2C /* SFMSearchParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMSearchParser.m; sourceTree = "<group>"; };
 		189F00121A1481B900570C54 /* DODHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DODHelper.h; sourceTree = "<group>"; };
@@ -5408,6 +5428,14 @@
 			path = TextSize;
 			sourceTree = "<group>";
 		};
+		189AE15E1BC512FC00AD549D /* ProductIQ Resources */ = {
+			isa = PBXGroup;
+			children = (
+				189AE15F1BC5132700AD549D /* ProductIQ.zip */,
+			);
+			name = "ProductIQ Resources";
+			sourceTree = "<group>";
+		};
 		189F00101A1481B900570C54 /* DOD */ = {
 			isa = PBXGroup;
 			children = (
@@ -5491,6 +5519,7 @@
 		18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */ = {
 			isa = PBXGroup;
 			children = (
+				189AE15E1BC512FC00AD549D /* ProductIQ Resources */,
 				407252FF19FF6C2900ACA729 /* Static Resources */,
 				18A2177C19E57E7E00F22EA6 /* Classes */,
 				18A2173419E57C5A00F22EA6 /* Images.xcassets */,
@@ -5861,6 +5890,15 @@
 		407252FF19FF6C2900ACA729 /* Static Resources */ = {
 			isa = PBXGroup;
 			children = (
+				189AE1711BC513FA00AD549D /* com.servicemax.client.testframework.zip */,
+				189AE16F1BC513EB00AD549D /* com.servicemax.client.sal.zip */,
+				189AE1611BC513D500AD549D /* com.servicemax.client.installigence.admin.zip */,
+				189AE1621BC513D500AD549D /* com.servicemax.client.installigence.native.zip */,
+				189AE1631BC513D500AD549D /* com.servicemax.client.installigence.offline.model.zip */,
+				189AE1641BC513D500AD549D /* com.servicemax.client.installigence.sync.zip */,
+				189AE1651BC513D500AD549D /* com.servicemax.client.installigence.ui.components.zip */,
+				189AE1661BC513D500AD549D /* com.servicemax.client.installigence.utils.zip */,
+				189AE1671BC513D500AD549D /* com.servicemax.client.installigence.zip */,
 				43E7C2DD1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip */,
 				4072530019FF6C2900ACA729 /* com.servicemax.client.lib.zip */,
 				4072530119FF6C2900ACA729 /* com.servicemax.client.mvc.zip */,
@@ -6607,6 +6645,7 @@
 				C3EF97A21A036D7300476293 /* Attachment-FileinCloud@2x.png in Resources */,
 				42B1EED119ECF98700E3511D /* timing-line@2x.png in Resources */,
 				18779DC219EBEF200086A9B7 /* barcode.png in Resources */,
+				189AE16A1BC513D500AD549D /* com.servicemax.client.installigence.offline.model.zip in Resources */,
 				C34A17FA19EBE50A009E9EA8 /* map_reload@2x.png in Resources */,
 				40A06F221B06033100218162 /* NavBarTasks@1x.png in Resources */,
 				42B1EECC19ECF96C00E3511D /* sfm_down_arrow.png in Resources */,
@@ -6640,6 +6679,7 @@
 				18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */,
 				18800CF51A08D14400930FF9 /* TextSizeDetailViewController.xib in Resources */,
 				184A9CB219E7D591006DA6BE /* ObjectHighlightBar.png in Resources */,
+				189AE1601BC5132700AD549D /* ProductIQ.zip in Resources */,
 				18EFFC581B3D1C4200BE15A0 /* wizardComponentIcon@2x.png in Resources */,
 				184A9E0F19E7D592006DA6BE /* map_chat@2x.png in Resources */,
 				8B2F4BF71A0C8D0100D2A346 /* u259.png in Resources */,
@@ -6687,6 +6727,7 @@
 				407252F819FF52C700ACA729 /* DataAcessLayer.js in Resources */,
 				57186B5B19EF9DDD00B4642A /* TroubleshootingDetailViewController.xib in Resources */,
 				183AA1B419E6D26400919345 /* PageEditViewController.xib in Resources */,
+				189AE16C1BC513D500AD549D /* com.servicemax.client.installigence.ui.components.zip in Resources */,
 				C3AE0BA31A0795AC00490009 /* iOS-Trash-Can-Gray@2x.png in Resources */,
 				8410153A1BA94CCA007DFAC8 /* checkbox-selected.png in Resources */,
 				189F001A1A14896600570C54 /* DODViewController.xib in Resources */,
@@ -6717,6 +6758,7 @@
 				8B35B67219F668D0008A2B9F /* dotted_line@2x.png in Resources */,
 				40A06F231B06033100218162 /* NavBarTasks@3x.png in Resources */,
 				183A9AE919E6967F00919345 /* AddOrEditTaskVC.xib in Resources */,
+				189AE1721BC513FA00AD549D /* com.servicemax.client.testframework.zip in Resources */,
 				8B2F4BF31A0C875B00D2A346 /* DownloadedCollectionViewCell.xib in Resources */,
 				57A320EA1AB7178C00A172E0 /* NavBarNew@2x.png in Resources */,
 				183AA21319E6D3C200919345 /* PageEditLongTexFieldController.xib in Resources */,
@@ -6743,6 +6785,7 @@
 				C3EF978B1A036CAE00476293 /* ImagesVideosViewController.xib in Resources */,
 				40CA1A0019FE4B340097F5A1 /* OPDocSignatureViewController.xib in Resources */,
 				18800CF11A08D14400930FF9 /* SignOutDetailViewController.xib in Resources */,
+				189AE16B1BC513D500AD549D /* com.servicemax.client.installigence.sync.zip in Resources */,
 				4072531519FF6C2900ACA729 /* com.servicemax.client.zip in Resources */,
 				184A9CBD19E7D591006DA6BE /* homeIcon.png in Resources */,
 				184A9CB619E7D591006DA6BE /* summary-icon.png in Resources */,
@@ -6751,6 +6794,7 @@
 				4072531319FF6C2900ACA729 /* com.servicemax.client.sfmopdocdelivery.zip in Resources */,
 				9E239C031A08CB4B001F75D3 /* SFMLookUpFilterCell.xib in Resources */,
 				40A06F251B06033100218162 /* NavBarTools@3x.png in Resources */,
+				189AE16D1BC513D500AD549D /* com.servicemax.client.installigence.utils.zip in Resources */,
 				C3EF97A41A036D7300476293 /* Attachment-Powerpoint@2x.png in Resources */,
 				5BB909BC19EE4C4F004AA281 /* triangle-down.png in Resources */,
 				407252FB19FF52C700ACA729 /* svmx_client_api.js in Resources */,
@@ -6778,6 +6822,7 @@
 				57A321031AB7196A00A172E0 /* STasks@2x.png in Resources */,
 				8410153D1BA94CCA007DFAC8 /* checkbox-unselected@2x.png in Resources */,
 				40A06F3D1B06041400218162 /* STools@3x.png in Resources */,
+				189AE1701BC513EB00AD549D /* com.servicemax.client.sal.zip in Resources */,
 				184A9CC219E7D591006DA6BE /* explore@2x.png in Resources */,
 				18800CE21A08D14400930FF9 /* AboutViewController.xib in Resources */,
 				184F1C401A136A1000A2B985 /* bizExclamation.png in Resources */,
@@ -6815,6 +6860,7 @@
 				183A9A0819E68CB000919345 /* LocalizationDefaults.plist in Resources */,
 				184A9CB319E7D591006DA6BE /* PortraitSelection.png in Resources */,
 				40A06F1C1B06033100218162 /* NavBarExplore@1x.png in Resources */,
+				189AE16E1BC513D500AD549D /* com.servicemax.client.installigence.zip in Resources */,
 				C3AE0BA01A0795AC00490009 /* iOS-Share-Blue@2x.png in Resources */,
 				183AA1B619E6D26400919345 /* PageLayoutEditViewController.xib in Resources */,
 				117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */,
@@ -6861,6 +6907,7 @@
 				40A06F211B06033100218162 /* NavBarRecents@3x.png in Resources */,
 				8410153C1BA94CCA007DFAC8 /* checkbox-unselected.png in Resources */,
 				18FE08F519EE826C00CB8925 /* splashsigninbutton.png in Resources */,
+				189AE1691BC513D500AD549D /* com.servicemax.client.installigence.native.zip in Resources */,
 				184A8EFD19E7A535006DA6BE /* Map.storyboard in Resources */,
 				40A06F371B06041400218162 /* SNewItem@3x.png in Resources */,
 				9EEC45D919F27950003B5A43 /* RemoveNew@2x.png in Resources */,
@@ -6868,6 +6915,7 @@
 				40A06F3B1B06041400218162 /* STasks@3x.png in Resources */,
 				9EF90F851A24B45500FFFA75 /* SFMPageHistoryViewController.xib in Resources */,
 				57A321011AB7196A00A172E0 /* SExplore@2x.png in Resources */,
+				189AE1681BC513D500AD549D /* com.servicemax.client.installigence.admin.zip in Resources */,
 				18BB0A6D19E9088600162524 /* zbar-back.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -212,24 +212,27 @@
     // Load Existing customer org info
     [PlistManager loadCustomerOrgInfo];
     
-    //TODO:ForTesting purposes only. Remove IT
-    [self installJSForProductIQForTestingPurposesOnly];
+    //Load Product IQ resources
+    [self installProductIQResources];
     
     [self verifyUserAndApplicationStatus];
 
 }
 
--(void)installJSForProductIQForTestingPurposesOnly
-{
-    NSString *pathToCheck = [FileManager getCoreLibSubDirectoryPath];
-    pathToCheck = [pathToCheck stringByAppendingPathComponent:@"PRODUCTJS"];
-    
-    if(![[NSFileManager defaultManager] fileExistsAtPath:pathToCheck]) // If core library already exists then DONOT unzip
-    {
-        //        [UnzipUtility unzipBundledStaticResourceAtPath:[FileManager getCoreLibSubDirectoryPath]];
-        NSString *filepath = [[NSBundle mainBundle] pathForResource:@"www" ofType:@"zip"];
+-(void)installProductIQResources {
+    NSString *pathToCheck = [FileManager getRootPath];
+    NSString *htmlfilepath = [pathToCheck stringByAppendingPathComponent:@"installigence-index.html"];
+    if(![[NSFileManager defaultManager] fileExistsAtPath:htmlfilepath]) {
+        NSString *filepath = [[NSBundle mainBundle] pathForResource:@"ProductIQ" ofType:@"zip"];
         [UnzipUtility unzipFileAtPath:filepath toFolder:pathToCheck];
-        
+        NSString *ProductIQPath = [pathToCheck stringByAppendingPathComponent:@"ProductIQ"];
+        NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:ProductIQPath error:nil];
+        for (NSString *file in files) {
+            [[NSFileManager defaultManager] moveItemAtPath:[ProductIQPath stringByAppendingPathComponent:file]
+                        toPath:[pathToCheck stringByAppendingPathComponent:file]
+                         error:nil];
+        }
+        [[NSFileManager defaultManager] removeItemAtPath:ProductIQPath error:nil];
     }
     else
     {

@@ -10,7 +10,7 @@
 #import "UnzipUtility.h"
 
 static NSString *const kRootDirectoryName = ORG_NAME_SPACE;
-static NSString *const kCoreLibraryDirectoryName = @"CoreLib";
+static NSString *const kCoreLibraryDirectoryName = @"modules";
 
 //PA
 static NSString *const kPerforamanceLogDirectoryName = @"PerformanceLog";

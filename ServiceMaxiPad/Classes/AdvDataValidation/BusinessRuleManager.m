@@ -50,7 +50,7 @@
     
     BOOL isBizRuleInfoAvailable = NO;
     NSString *coreLibraryPath = [FileManager getCoreLibSubDirectoryPath];
-    if([FileManager isDirectoryExistsAtPath:[coreLibraryPath stringByAppendingPathComponent:CORE_LIB_CLIENT_APP]] && [FileManager isDirectoryExistsAtPath:[coreLibraryPath stringByAppendingPathComponent:CORE_CLIENT_LIB]] && [FileManager isDirectoryExistsAtPath:[coreLibraryPath stringByAppendingPathComponent:CORE_BIZ_RUlE_LIB]] && [FileManager isDirectoryExistsAtPath:[coreLibraryPath stringByAppendingPathComponent:CORE_RUNTIME_LIB]])
+    if([FileManager isDirectoryExistsAtPath:[coreLibraryPath stringByAppendingPathComponent:CORE_LIB_CLIENT_APP]] && [FileManager isDirectoryExistsAtPath:[[FileManager getRootPath] stringByAppendingPathComponent:CORE_CLIENT_LIB]] && [FileManager isDirectoryExistsAtPath:[coreLibraryPath stringByAppendingPathComponent:CORE_BIZ_RUlE_LIB]] && [FileManager isDirectoryExistsAtPath:[coreLibraryPath stringByAppendingPathComponent:CORE_RUNTIME_LIB]])
          {
              isBizRuleInfoAvailable = YES;
          }
@@ -231,12 +231,12 @@
 
 - (NSString *)pathForBootstrapLibrary{
     
-    NSString *bsLibraryPath = [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:@"com.servicemax.client.lib/src/bootstrap.js"];
+    NSString *bsLibraryPath = [[FileManager getRootPath] stringByAppendingPathComponent:@"com.servicemax.client.lib/src/bootstrap.js"];
     return bsLibraryPath;
 }
 
 - (NSString *)pathForClientLibrary{
-    NSString *bsLibraryPath = [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:@"com.servicemax.client.lib"];
+    NSString *bsLibraryPath = [[FileManager getRootPath] stringByAppendingPathComponent:@"com.servicemax.client.lib"];
     return bsLibraryPath;
 
 }
