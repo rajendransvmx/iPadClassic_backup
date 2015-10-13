@@ -8,6 +8,8 @@
 
 #import "MessageHandler.h"
 #import "ProductIQPOCHomeViewController.h"
+#import "SFMRecordFieldData.h"
+#import "StringUtil.h"
 
 @implementation MessageHandler
 
@@ -33,7 +35,7 @@
         }
         [responseDictionary setValue:callback forKey:@"nativeCallbackHandler"];
         [responseDictionary setValue:jsCallback forKey:@"jsCallback"];
-        [responseDictionary setValue:messageHandlerResponse forKey:@"responseDictioanry"];
+        [responseDictionary setValue:messageHandlerResponse forKey:@"data"];
         [self respondOnMethod:callback withParams:responseDictionary];
     }
 }
@@ -56,6 +58,27 @@
     NSLog(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];
 }
+
+#pragma mark - MessageHandler Response
+
++ (NSMutableDictionary*)getMessageHandlerResponeDictionaryForSFMPage:(SFMPageViewModel*)sfmPageView {
+    @autoreleasepool {
+        NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+        NSMutableArray *recordIds = [[NSMutableArray alloc] initWithCapacity:0];
+        
+        SFMRecordFieldData *recordData = [sfmPageView.sfmPage.headerRecord objectForKey:@"Id"];
+        if (![StringUtil isStringEmpty:recordData.internalValue]) {
+            [recordIds addObject:recordData.internalValue];
+        }
+        
+        [responseDictionary setValue:sfmPageView.sfmPage.objectName forKey:@"object"];
+        [responseDictionary setValue:@"VIEW" forKey:@"action"];
+        [responseDictionary setValue:recordIds forKey:@"recordIds"];
+        [responseDictionary setValue:sfmPageView.sfmPage.nameFieldValue forKey:@"sourceRecordName"];
+        return responseDictionary;
+    }
+}
+
 
 
 @end

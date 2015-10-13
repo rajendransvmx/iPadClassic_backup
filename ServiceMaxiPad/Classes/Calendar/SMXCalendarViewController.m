@@ -75,6 +75,7 @@
 #import "ProductIQHomeViewController.h"
 #import "ProductIQPOCHomeViewController.h"
 #import "ProductIQManager.h"
+#import "MessageHandler.h"
 
 //#import "FileManager.h"
 //#import "UnzipUtility.h"
@@ -2546,7 +2547,7 @@
     
     
     ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
-    lProductIQcontroller.responseDictionary = [ProductIQManager getMessageHandlerResponeDictionaryForSFMPage:self.viewPageManager.sfmPageView];
+    lProductIQcontroller.responseDictionary = [MessageHandler getMessageHandlerResponeDictionaryForSFMPage:self.viewPageManager.sfmPageView];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
     navController.delegate = lProductIQcontroller;

@@ -287,23 +287,6 @@
     }
 }
 
-+ (NSMutableDictionary*)getMessageHandlerResponeDictionaryForSFMPage:(SFMPageViewModel*)sfmPageView {
-    @autoreleasepool {
-        NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
-        NSMutableArray *recordIds = [[NSMutableArray alloc] initWithCapacity:0];
-        
-        SFMRecordFieldData *recordData = [sfmPageView.sfmPage.headerRecord objectForKey:@"Id"];
-        if (![StringUtil isStringEmpty:recordData.internalValue]) {
-            [recordIds addObject:recordData.internalValue];
-        }
-        
-        [responseDictionary setValue:sfmPageView.sfmPage.objectName forKey:@"object"];
-        [responseDictionary setValue:@"VIEW" forKey:@"action"];
-        [responseDictionary setValue:recordIds forKey:@"recordIds"];
-        [responseDictionary setValue:sfmPageView.sfmPage.nameFieldValue forKey:@"sourceRecordName"];
-        return responseDictionary;
-    }
-}
 
 
 @end

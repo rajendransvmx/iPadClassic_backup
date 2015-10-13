@@ -7,9 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SFMPageViewModel.h"
 
 @interface MessageHandler : NSObject
 
 - (void)executeMessageHandler:(NSString*)params;
++ (NSMutableDictionary*)getMessageHandlerResponeDictionaryForSFMPage:(SFMPageViewModel*)sfmPageView;
+
 
 @end

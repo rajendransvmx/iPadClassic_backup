@@ -18,7 +18,6 @@
 + (NSMutableArray*)addProductIQWizardForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService;
 + (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject;
 + (BOOL)loadDataIntoInstalledBaseObject;
-+ (NSMutableDictionary*)getMessageHandlerResponeDictionaryForSFMPage:(SFMPageViewModel*)sfmPageView;
 + (BOOL)isProductIQSettingEnable;
 
 @end

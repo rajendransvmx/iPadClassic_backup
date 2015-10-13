@@ -52,6 +52,7 @@
 #import "SNetworkReachabilityManager.h"
 #import "ProductIQPOCHomeViewController.h"
 #import "ProductIQManager.h"
+#import "MessageHandler.h"
 
 
 @interface SFMPageViewController ()<SMActionSideBarViewControllerDelegate>
@@ -568,7 +569,7 @@
      */
     
     ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
-    lProductIQcontroller.responseDictionary = [ProductIQManager getMessageHandlerResponeDictionaryForSFMPage:self.sfmPageView];
+    lProductIQcontroller.responseDictionary = [MessageHandler getMessageHandlerResponeDictionaryForSFMPage:self.sfmPageView];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
     navController.delegate = lProductIQcontroller;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
