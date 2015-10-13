@@ -4,17 +4,14 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.013
+Version = 15.99.014
 
 ===========================================
 
 -------------
 Features:
 
-1. Enable ProductIQ wizard, if ProductIQ setting is true.
-2. Disable IB/Location create/edit processes if ProductIQ setting is true.
-3. launch ProductIQ from NewItem tab for standalone create of IB/Location, if ProductIQ setting is true.
-
+After/Before WebService Parsing
 ——————
 None
 
@@ -22,7 +19,7 @@ None
 
 
 NOTE:
-Namespace: Changed to SVMXDEV
+Namespace: SVMXDEV
 
 
 
