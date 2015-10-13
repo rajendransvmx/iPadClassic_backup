@@ -509,14 +509,21 @@
 {
     self.lookUpObject.searchString = nil;
     [self loadLookUpData];
+    [self removePreviouslySelectedData];
     [self.tableView reloadData];
     [searchBar resignFirstResponder];
     
 }
 
+-(void)removePreviouslySelectedData
+{
+    [self.selectedRecords removeAllObjects];
+}
+
 -(NSString *)getTitleForIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
     NSString * defaultColumnName = self.lookUpObject.defaultColoumnName;
+    
     SFMRecordFieldData *recordField  = [dictionary objectForKey:defaultColumnName];
     return     recordField.displayValue;
 }
@@ -778,6 +785,7 @@
     self.searchView.text = decodedData;
     self.lookUpObject.searchString = decodedData;
     [self loadLookUpData];
+//    [self removePreviouslySelectedData];
     [self.tableView reloadData];
 }
 - (void) barcodeCaptureCancelled
@@ -852,6 +860,7 @@
     self.lookUpObject.advanceFilters = advanceFilter;
     
     [self loadLookUpData];
+    [self removePreviouslySelectedData];
     [self.tableView reloadData];
 
 }
@@ -931,6 +940,7 @@
     {
         
         [self loadLookUpData];
+        [self removePreviouslySelectedData];
         [self.tableView reloadData];
         [self noRecordsToDisplay];
         [self enableSearchButton];
@@ -942,6 +952,7 @@
 - (void)onlineLookupSearchSuccessfullwithResponse:(NSMutableArray *)dataArray {
     
     [self.lookUpHelper fillOnlineLookupData:dataArray forLookupObject:self.lookUpObject];
+    [self removePreviouslySelectedData];
     [self.tableView reloadData];
     [self noRecordsToDisplay];
     [self enableSearchButton];
