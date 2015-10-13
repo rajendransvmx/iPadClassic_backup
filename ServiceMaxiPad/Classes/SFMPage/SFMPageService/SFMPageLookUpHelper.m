@@ -209,15 +209,24 @@
     }
     
     //Get locally created records if sfids are not matched.
-    NSArray *localRecords = nil;
+    NSMutableArray *localRecords = nil;
     if (onlineDataArray.count < lookUpObj.recordLimit) {
-        localRecords = [self getOfflineLookupRecordsForLookupObject:lookUpObj];
+        localRecords = (NSMutableArray *)[self getOfflineLookupRecordsForLookupObject:lookUpObj];
     }
     
     if (localRecords.count > 0) {
         NSInteger index = finalArray.count;
-        for (NSInteger i = index; i < lookUpObj.recordLimit; i++) {
-            [finalArray addObjectsFromArray:localRecords];
+        for (NSInteger i = index; i < lookUpObj.recordLimit; i++)
+        {
+            if([localRecords count ] >0)
+            {
+                [finalArray addObject:[localRecords objectAtIndex:0]];
+                [localRecords removeObjectAtIndex:0];
+            }
+            else
+            {
+                break;
+            }
         }
     }
     
