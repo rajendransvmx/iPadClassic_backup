@@ -26,17 +26,21 @@
         
         NSDictionary *messageHandlerResponse = [ProductIQPOCHomeViewController getInstance].responseDictionary;
         
-        NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
-        [responseDictionary setValue:requestId forKey:@"requestId"];
-        [responseDictionary setValue:type forKey:@"type"];
-        [responseDictionary setValue:methodName forKey:@"methodName"];
-        if (operation != nil) {
-            [responseDictionary setValue:operation forKey:@"operation"];
+        //If messageHandlerResponse is nil, then try to avoid the call.
+        if (messageHandlerResponse != nil && messageHandlerResponse.count > 0) {
+            NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
+            [responseDictionary setValue:requestId forKey:@"requestId"];
+            [responseDictionary setValue:type forKey:@"type"];
+            [responseDictionary setValue:methodName forKey:@"methodName"];
+            if (operation != nil) {
+                [responseDictionary setValue:operation forKey:@"operation"];
+            }
+            [responseDictionary setValue:callback forKey:@"nativeCallbackHandler"];
+            [responseDictionary setValue:jsCallback forKey:@"jsCallback"];
+            [responseDictionary setValue:messageHandlerResponse forKey:@"data"];
+            [self respondOnMethod:callback withParams:responseDictionary];
         }
-        [responseDictionary setValue:callback forKey:@"nativeCallbackHandler"];
-        [responseDictionary setValue:jsCallback forKey:@"jsCallback"];
-        [responseDictionary setValue:messageHandlerResponse forKey:@"data"];
-        [self respondOnMethod:callback withParams:responseDictionary];
+        
     }
 }
 

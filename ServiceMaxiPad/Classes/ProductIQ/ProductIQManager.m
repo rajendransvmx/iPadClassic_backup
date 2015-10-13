@@ -71,22 +71,30 @@
     [fieldsArray addObject:kWorkOrderSite]; // Location
     [fieldsArray addObject:kInstalledProductTableName]; //IB
     
-    //This logic for header records to verify that IB or Location has value on SFMPage.
-    NSArray *headerSections = sfmPageView.sfmPage.process.pageLayout.headerLayout.sections;
+//    //Check view process object name. If view process for IB or Location then enable ProductIQ.
+//    
+//    if ([fieldsArray containsObject:sfmPageView.sfmPage.objectName]) {
+//        productIQFieldsAvailable = YES;
+//    }
     
-    for (SFMHeaderSection *headerSection in headerSections) {
-        for (SFMPageField *pageField in headerSection.sectionFields) {
-            if ([fieldsArray containsObject:pageField.relatedObjectName]) {
-                
-                SFMRecordFieldData *recordFieldData = [sfmPageView.sfmPage.headerRecord objectForKey:pageField.fieldName];
-                if (![StringUtil isStringEmpty:recordFieldData.displayValue]) {
-                    productIQFieldsAvailable = YES;
+    if (productIQFieldsAvailable == NO) {
+        //This logic for header records to verify that IB or Location has value on SFMPage.
+        NSArray *headerSections = sfmPageView.sfmPage.process.pageLayout.headerLayout.sections;
+        
+        for (SFMHeaderSection *headerSection in headerSections) {
+            for (SFMPageField *pageField in headerSection.sectionFields) {
+                if ([fieldsArray containsObject:pageField.relatedObjectName]) {
+                    
+                    SFMRecordFieldData *recordFieldData = [sfmPageView.sfmPage.headerRecord objectForKey:pageField.fieldName];
+                    if (![StringUtil isStringEmpty:recordFieldData.displayValue]) {
+                        productIQFieldsAvailable = YES;
+                        break;
+                    }
                 }
+            }
+            if (productIQFieldsAvailable) {
                 break;
             }
-        }
-        if (productIQFieldsAvailable) {
-            break;
         }
     }
     
