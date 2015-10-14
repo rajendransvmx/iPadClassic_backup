@@ -845,6 +845,10 @@
     
     return [self.delegate filterCriteriaForContextFilter:fieldName forHeaderObject:headerValue];
 }
+-(id)getValueForContextFilterThroughDelegateForfieldName:(NSString *)fieldName forHeaderObject:(NSString *)headerValue{
+    return [self.delegate filterCriteriaForContextFilter:fieldName forHeaderObject:headerValue];
+
+}
 - (void)applyFilterChanges:(NSArray *)advanceFilter
 {
     [self dismissPoPover];
@@ -861,7 +865,7 @@
     
     [self loadLookUpData];
     [self removePreviouslySelectedData];
-    [self.tableView reloadData];
+//    [self.tableView reloadData];  apply button in the filters should not display any data. Only tapping on the Search button should display the results.
 
 }
 #pragma mark - End
