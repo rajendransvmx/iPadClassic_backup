@@ -24,6 +24,9 @@
 #import "SFObjectFieldModel.h"
 #import "SFNamedSearchFilterDAO.h"
 
+#import "StringUtil.h"
+#import "SFMRecordFieldData.h"
+
 @interface SFMOnlineLookUpManager ()
 //@property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
 @property (nonatomic, strong) SFMLookUp *lookUpObject;
@@ -160,7 +163,16 @@
     // INNER-MOST Level-2 START--
     NSMutableDictionary *llookupRequestDict = [[NSMutableDictionary alloc]init];
     [llookupRequestDict setValue:lLookupDefDict forKey:@"LookupDef"];
-    [llookupRequestDict setValue:self.searchText forKey:@"KeyWord"];     [llookupRequestDict setValue:@"contains" forKey:@"Operator"];
+    [llookupRequestDict setValue:self.searchText forKey:@"KeyWord"];
+    [llookupRequestDict setValue:@"contains" forKey:@"Operator"];
+
+    if (![StringUtil isStringEmpty:self.lookUpObject.contextLookupFilter.lookupQuery] && ![StringUtil isStringEmpty:self.lookUpObject.contextLookupFilter.lookupContext] && self.lookUpObject.contextLookupFilter.defaultOn) {
+        NSString *contextValue = [self contextFilterValue];
+        [llookupRequestDict setValue:(contextValue?contextValue:@"") forKey:@"ContextValue"];
+        [llookupRequestDict setValue:self.lookUpObject.contextLookupFilter.lookupQuery forKey:@"ContextMatchField"];
+
+    }
+
     // INNER-MOST Level-2 END--
     
     //OUTER-MOST Level START---
@@ -176,6 +188,21 @@
     requestParamModel.requestInformation = lOuterMostLevelRequestDict;
     
     return requestParamModel;
+}
+
+
+-(NSString *)contextFilterValue
+{
+    NSString *displayValue;
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(getValueForContextFilterThroughDelegateForfieldName:forHeaderObject:)]) {
+    
+     SFMRecordFieldData *recordData = [self.delegate getValueForContextFilterThroughDelegateForfieldName:self.lookUpObject.contextLookupFilter.lookupContext forHeaderObject:self.lookUpObject.contextLookupFilter.sourceObjectName];
+
+    
+        displayValue = (recordData.displayValue.length > 0) ? recordData.displayValue : @"";
+    }
+    
+    return displayValue;
 }
 
 #pragma mark - Parsing methods
@@ -226,7 +253,7 @@
     NSMutableArray *filterArray = [NSMutableArray new];
     for (SFMLookUpFilter *model in self.lookUpObject.advanceFilters) {
         NSMutableDictionary *lOutermostLayer = [NSMutableDictionary new];
-        
+
         if (model != nil) {
             if ([model.lookupContext length] == 0) {
                 if ([model.ruleType isEqualToString:kSearchFilterCriteria]) {
@@ -264,7 +291,8 @@
                 [lOutermostLayer setValue:filterCriteriaArray forKey:@"filterCriteriaFields"];
             }
         }
-        [filterArray addObject:lOutermostLayer];
+        if(lOutermostLayer.count)
+            [filterArray addObject:lOutermostLayer];
     }
     return filterArray;
 }
