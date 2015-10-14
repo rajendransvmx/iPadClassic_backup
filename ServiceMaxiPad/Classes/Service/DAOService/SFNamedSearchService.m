@@ -33,7 +33,7 @@
         
         SQLResultSet * resultSet = [db executeQuery:query];
         
-        if ([resultSet next])
+        while([resultSet next])
         {
             namedSearchModel = [[SFNamedSearchModel alloc] init];
             NSDictionary *dict = [resultSet resultDictionary];
@@ -43,6 +43,37 @@
     }];
     }
     return namedSearchModel;
+}
+
+-(NSArray *)getLookUpRecordListForDBCriterias:(NSArray *)criteriaArray  advancedExpression:(NSString *)advancedExpression  fields:(NSArray *)fields;
+{
+    NSMutableArray *lNamedSearchModelList = [NSMutableArray new];
+    
+    DBRequestSelect * select = [[DBRequestSelect alloc] initWithTableName:[self tableName]
+                                                            andFieldNames:fields
+                                                           whereCriterias:criteriaArray
+                                                     andAdvanceExpression:advancedExpression];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [select query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while([resultSet next])
+            {
+                SFNamedSearchModel * namedSearchModel = nil;
+
+                namedSearchModel = [[SFNamedSearchModel alloc] init];
+                NSDictionary *dict = [resultSet resultDictionary];
+                [ParserUtility parseJSON:dict toModelObject:namedSearchModel withMappingDict:nil];
+                [lNamedSearchModelList addObject:namedSearchModel];
+            }
+            [resultSet close];
+        }];
+    }
+    return lNamedSearchModelList;
 }
 
 

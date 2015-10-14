@@ -29,5 +29,6 @@
 @protocol SFNamedSearchDAO <CommonServiceDAO>
 
 -(SFNamedSearchModel *)getLookUpRecordsForDBCriteria:(NSArray *)criteriaArray  advancedExpression:(NSString *)advancedExpression  fields:(NSArray *)fields;
+-(NSArray *)getLookUpRecordListForDBCriterias:(NSArray *)criteriaArray  advancedExpression:(NSString *)advancedExpression  fields:(NSArray *)fields;
 
 @end

@@ -80,9 +80,13 @@
     NSArray * criteriaArray = nil;
     DBCriteria * criteria1 = nil;
     DBCriteria * criteria2 = nil;
+    DBCriteria * criteria3 = nil;
+    BOOL islookIDNil = NO;
 
     if([StringUtil isStringEmpty:lookUpObj.lookUpId]){
         criteria1 = [[DBCriteria alloc] initWithFieldName:@"isStandard" operatorType:SQLOperatorEqual andFieldValue:@"1"];
+        criteria3 = [[DBCriteria alloc] initWithFieldName:@"isDefault" operatorType:SQLOperatorEqual andFieldValue:@"1"];
+        islookIDNil = YES;
     }
     else
     {
@@ -91,16 +95,30 @@
 
     criteria2 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:lookUpObj.objectName];
 
-    criteriaArray = [[NSArray alloc] initWithObjects:criteria1,criteria2, nil];
+    criteriaArray = [[NSArray alloc] initWithObjects:criteria1,criteria2,criteria3, nil];
 
-    NSString * advExpression = @"(1 AND 2)";
+    NSString * advExpression = @"((1 OR 3) AND 2)";
 
-    NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"noOfLookupRecords",@"defaultLookupColumn",@"searchName", @"namedSearchId",nil];
+    NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"noOfLookupRecords",@"defaultLookupColumn",@"searchName", @"namedSearchId", @"isStandard", @"isDefault",nil];
 
+    SFNamedSearchModel * namedSearchModel;
+    NSArray *theNamedList;
     id<SFNamedSearchDAO>   namedSearchObj =  [FactoryDAO serviceByServiceType:ServiceTypeNamedSearch];
 
-    SFNamedSearchModel * namedSearchModel =  [namedSearchObj getLookUpRecordsForDBCriteria:criteriaArray advancedExpression:advExpression fields:fieldsArray];
+    if (islookIDNil) {
+            theNamedList =  [namedSearchObj getLookUpRecordListForDBCriterias:criteriaArray advancedExpression:advExpression fields:fieldsArray];
+        for (SFNamedSearchModel * searchModel in theNamedList) {
 
+            namedSearchModel = searchModel;
+            if (searchModel.isDefault && !searchModel.isStandard) {
+                break;
+            }
+        }
+    }
+    else
+    {
+        namedSearchModel =  [namedSearchObj getLookUpRecordsForDBCriteria:criteriaArray advancedExpression:advExpression fields:fieldsArray];
+    }
      if([StringUtil isStringEmpty:lookUpObj.lookUpId])
      {
          lookUpObj.lookUpId = namedSearchModel.namedSearchId;
