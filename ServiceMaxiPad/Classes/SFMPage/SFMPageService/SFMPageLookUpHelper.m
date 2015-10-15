@@ -431,12 +431,27 @@
                 }
             }
             else if ([aPageField.type isEqualToString:kSfDTBoolean]) {
-                if ([fieldDataObj.internalValue isEqualToString:@"1"]) {
-                    displayValue = kTrue;
-                }
-                else if ([fieldDataObj.internalValue isEqualToString:@"0"]) {
-                    displayValue = kFalse;
-                }
+                
+                 if ([fieldDataObj.internalValue isKindOfClass:[NSString class]]) {
+                     if ([fieldDataObj.internalValue isEqualToString:@"1"]) {
+                         displayValue = kTrue;
+                     }
+                     else if ([fieldDataObj.internalValue isEqualToString:@"0"]) {
+                         displayValue = kFalse;
+                     }
+                 } else {
+                     if ([fieldDataObj.internalValue isKindOfClass:[NSNumber class]]) {
+                         NSNumber *number = (NSNumber*) fieldDataObj.internalValue ;
+                         displayValue = number.stringValue;
+                         if ([displayValue isEqualToString:@"1"]) {
+                             displayValue = kTrue;
+                         }
+                         else if ([displayValue isEqualToString:@"0"]) {
+                             displayValue = kFalse;
+                         }
+                     }
+                 }
+                
             } else if([aPageField.type isEqualToString:kSfDTCurrency]
                       || [aPageField.type isEqualToString:kSfDTDouble]
                       || [aPageField.type isEqualToString:kSfDTPercent]
