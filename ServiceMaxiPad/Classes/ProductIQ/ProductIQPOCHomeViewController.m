@@ -31,7 +31,8 @@ static  ProductIQPOCHomeViewController *instance;
     instance = self;
     
     bridge = [[Bridge alloc]init];
-    webview = [[UIWebView alloc]initWithFrame:CGRectMake(0, 20, 1024,748)];
+//    webview = [[UIWebView alloc]initWithFrame:CGRectMake(0, 20, 1024,748)];
+    [self createWebView];
     
     nativeCallUrl = @"native-call://";
     clientId = @"3MVG9VmVOCGHKYBRKMhA_p09I93C_GY2N1wz8gvNtsZnJ0SE4cNbqfNLqBV5vFIT8E.Exhq8e0qBlRE3zezAb";
@@ -48,14 +49,21 @@ static  ProductIQPOCHomeViewController *instance;
      [webview loadRequest:nsrequest];
      [self.view addSubview:webview];
      */
-    [self.view addSubview:webview];
 
     [self populateNavigationBar];
     [self testLoadProductIQ];
     [self debugButtonForProductIQ];
     
-    webview.delegate = self;
 }
+- (void)createWebView {
+    webview = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    webview.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    webview.delegate = self;
+    webview.scalesPageToFit = YES;
+    [self.view addSubview:webview];
+
+}
+
 
 /** Populating navigation bar **/
 - (void)populateNavigationBar
