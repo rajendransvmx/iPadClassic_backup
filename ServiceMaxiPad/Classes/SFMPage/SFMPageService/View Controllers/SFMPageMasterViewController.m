@@ -221,7 +221,7 @@ SFMPageMasterSectionType;
                 
             case SFMPageMasterSectionTypeHistory:/*Additional Info*/
                 if (headerLayout.enableAccountHistory || headerLayout.enableProductHistory ) {
-                    headerTitle = @"History";
+                    headerTitle = [tagManager tagByName:kTag_History]; //Fixed issue:013801
                 }
                 break;
                 
