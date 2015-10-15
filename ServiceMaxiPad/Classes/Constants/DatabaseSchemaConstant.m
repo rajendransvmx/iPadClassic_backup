@@ -208,9 +208,11 @@ NSString *const KTableFieldDescribe = @"CREATE TABLE IF NOT EXISTS 'FieldDescrib
 
 NSString *const KTableObjectDescribe = @"CREATE TABLE IF NOT EXISTS 'ObjectDescribe' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'ObjectName' VARCHAR UNIQUE ,'DescribeResult' VARCHAR )";
 
-NSString *const KTableConfiguration = @"CREATE TABLE 'Configuration' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Type' VARCHAR,'Key' VARCHAR,'Value' VARCHAR )";
+NSString *const KTableConfiguration = @"CREATE TABLE IF NOT EXISTS 'Configuration' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Type' VARCHAR,'Key' VARCHAR,'Value' VARCHAR )";
 
-NSString *const KTableInstallBaseObject = @"CREATE TABLE InstallBaseObject ( 'objectName' VARCHAR PRIMARY KEY  NOT NULL  UNIQUE  COLLATE NOCASE  )";
+NSString *const KTableInstallBaseObject = @"CREATE TABLE IF NOT EXISTS 'InstallBaseObject' ( 'objectName' VARCHAR PRIMARY KEY  NOT NULL  UNIQUE  COLLATE NOCASE  )";
+
+NSString *const KTableClientSyncLogTransient =@"CREATE TABLE IF NOT EXISTS 'ClientSyncLogTransient' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Id' VARCHAR UNIQUE ,'ObjectName' VARCHAR,'Operation' VARCHAR,'LastModifiedDate' VARCHAR,'Pending' VARCHAR )";
 
 
 @implementation DatabaseSchemaConstant

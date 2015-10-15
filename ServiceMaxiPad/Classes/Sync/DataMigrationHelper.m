@@ -177,6 +177,7 @@
              @"ObjectDescribe",
              @"Configuration",
              @"InstallBaseObject",
+             @"ClientSyncLogTransient",
              ];
 }
 
