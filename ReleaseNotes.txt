@@ -4,16 +4,17 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.014
+Version = 15.99.015
 
 ===========================================
 
 -------------
 Features:
 
-After/Before WebService Parsing
-——————
 None
+Defects
+023960
+023961
 
 -------------
 
