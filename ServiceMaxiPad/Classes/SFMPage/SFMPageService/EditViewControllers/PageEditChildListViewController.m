@@ -1357,9 +1357,11 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
             title = fieldData.displayValue;
             if ([pageField.dataType isEqualToString:kSfDTBoolean]) {
                 if ([StringUtil isItTrue:fieldData.internalValue]) {
-                    title = kYes;
+                    //title = kYes;//HS Fix:020290
+                    title = [[TagManager sharedInstance]tagByName:kTagYes];
                 }else{
-                    title = kNo;
+                    //title = kNo;
+                    title = [[TagManager sharedInstance]tagByName:kTagNo];
                 }
                 
             }

@@ -987,9 +987,12 @@ PageManagerErrorType;
 {
     NSString *boolValue;
     if ([StringUtil isItTrue:internalValue]) {
-        boolValue = kYes;
+        //boolValue = kYes;//HS Fix:020290
+        boolValue = [[TagManager sharedInstance]tagByName:kTagYes];
     }else{
-        boolValue = kNo;
+        //boolValue = kNo;
+        boolValue = [[TagManager sharedInstance]tagByName:kTagNo];
+
     }
     return boolValue;
 }

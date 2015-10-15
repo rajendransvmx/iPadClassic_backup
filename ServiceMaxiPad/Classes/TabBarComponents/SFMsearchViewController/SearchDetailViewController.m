@@ -322,7 +322,8 @@
             value = [numValue stringValue];
         }
         BOOL istrue = [Utility isItTrue:value];
-        value = istrue ? kYes : kNo;
+        //value = istrue ? kYes : kNo;//HS Fix:020290
+        value = istrue ? [[TagManager sharedInstance]tagByName:kTagYes]:[[TagManager sharedInstance]tagByName:kTagNo];
     }
     else
     {
