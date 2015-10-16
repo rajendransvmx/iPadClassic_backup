@@ -40,8 +40,7 @@
 #import "SFMOnlineLookUpParser.h"
 #import "ProdIQUserConfigParser.h"
 #import "ProdIQTranslationsParser.h"
-
-//#import "GroupProfileParser.h"
+#import "ProdIQObjectDescribeParser.h"
 
 @implementation ParserFactory
 
@@ -365,6 +364,9 @@
                 break;
             case RequestProductIQTranslations:
                 parser = [[ProdIQTranslationsParser alloc] init];
+                break;
+            case RequestProductIQObjectDescribe:
+                parser = [[ProdIQObjectDescribeParser alloc] init];
                 break;
             default:
                 SXLogWarning(@"Invalid parser type requested");

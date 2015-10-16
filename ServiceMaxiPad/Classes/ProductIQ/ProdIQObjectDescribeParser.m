@@ -1,15 +1,16 @@
 //
-//  ProdIQUserConfigParser.m
+//  ProdIQObjectDescribeParser.m
 //  ServiceMaxiPad
 //
-//  Created by Padmashree on 29/09/15.
+//  Created by Padmashree on 12/10/15.
 //  Copyright © 2015 ServiceMax Inc. All rights reserved.
 //
 
-#import "ProdIQUserConfigParser.h"
+#import "ProdIQObjectDescribeParser.h"
 #import "CommonServices.h"
 
-@implementation ProdIQUserConfigParser
+@implementation ProdIQObjectDescribeParser
+
 
 -(ResponseCallback*)parseResponseWithRequestParam:(RequestParamModel*)requestParamModel
                                      responseData:(id)responseData {
@@ -19,18 +20,19 @@
             NSError *err = nil;
             NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&err];
             if (jsonData != nil) {
-               NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-                [self insertProdIQUserConfigToDB:jsonString];
+                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                [self insertProdIQObjectDescribeToDB:jsonString forObject:requestParamModel.value];
             }
             return nil;
         }
     }
 }
 
--(void)insertProdIQUserConfigToDB:(NSString *)configString {
-    NSDictionary *recordDict = [NSDictionary dictionaryWithObjects:@[@"user", @"", configString] forKeys:@[@"Type", @"Key", @"Value"]];
+-(void)insertProdIQObjectDescribeToDB:(NSString *)dataString forObject:(NSString *)objectName {
+    NSDictionary *recordDict = [NSDictionary dictionaryWithObjects:@[objectName, dataString] forKeys:@[@"ObjectName", @"DescribeResult"]];
     CommonServices *service = [[CommonServices alloc] init];
-    [service saveRecordFromDictionary:recordDict forFields:[recordDict allKeys] inTable:@"Configuration"];
+    [service saveRecordFromDictionary:recordDict forFields:[recordDict allKeys] inTable:@"ObjectDescribe"];
 }
+
 
 @end

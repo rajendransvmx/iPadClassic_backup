@@ -24,6 +24,7 @@
 #import "CacheConstants.h"
 #import "CustomActionAfterBeforeXMLRequestHelper.h"
 #import "CustomActionXMLRequestHelper.h"
+#import "ProductIQManager.h"
 
 @implementation RestRequest
 @synthesize dataDictionary;
@@ -682,6 +683,9 @@
         case RequestProductIQTranslations:
             url = [self getURLStringForProductIQRestRequest:kProductIQTranslationsUrl];
             break;
+        case RequestProductIQObjectDescribe:
+            url =  [self getURLStringForProductIQObjectDescribeRequest];
+            break;
         default:
             break;
     }
@@ -1048,6 +1052,7 @@
         || self.requestType == RequestTypeChatterUserImage
         || self.requestType == RequestProductIQUserConfiguration
         || self.requestType == RequestProductIQTranslations
+        || self.requestType == RequestProductIQObjectDescribe
         ) {
         return @"GET";
     }
@@ -1276,6 +1281,12 @@
 -(NSString *)getURLStringForProductIQRestRequest:(NSString *)stringToAppend {
     CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
     return  [[NSString alloc] initWithFormat:@"%@%@%@",[customerOrgInfoInstance instanceURL],kRestUrlProductIQ,stringToAppend];
+}
+
+-(NSString *)getURLStringForProductIQObjectDescribeRequest {
+    NSString *urlString = [NSString stringWithFormat:kProductIQObjectDescribeUrl, self.requestParameter.value];
+    CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
+    return  [[NSString alloc] initWithFormat:@"%@%@",[customerOrgInfoInstance instanceURL],urlString];
 }
 
 

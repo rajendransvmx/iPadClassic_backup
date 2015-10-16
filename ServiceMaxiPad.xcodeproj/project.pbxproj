@@ -20,6 +20,7 @@
 		11FF9E451B5657E5000FE90C /* ThirdPartyAppActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 11FF9E431B5657E5000FE90C /* ThirdPartyAppActivity.m */; };
 		18071BC71A14B62500DC723A /* upArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18071BC61A14B62500DC723A /* upArrow@2x.png */; };
 		180E3AB11B3AE45F0055036D /* FieldUpdateRuleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 180E3AB01B3AE45F0055036D /* FieldUpdateRuleManager.m */; };
+		18105DCF1BCBD44500732BFD /* ProdIQObjectDescribeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 18105DCE1BCBD44500732BFD /* ProdIQObjectDescribeParser.m */; settings = {ASSET_TAGS = (); }; };
 		1814AD1A1B2AA775001167DE /* CustomActionURLModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD191B2AA775001167DE /* CustomActionURLModel.m */; };
 		1814AD1E1B2AC0CB001167DE /* SFCustomActionURLService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD1D1B2AC0CB001167DE /* SFCustomActionURLService.m */; };
 		1814AD211B2B04D2001167DE /* SFMCustomActionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1814AD201B2B04D2001167DE /* SFMCustomActionHelper.m */; };
@@ -1106,6 +1107,8 @@
 		18071BC61A14B62500DC723A /* upArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "upArrow@2x.png"; sourceTree = "<group>"; };
 		180E3AAF1B3AE45F0055036D /* FieldUpdateRuleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldUpdateRuleManager.h; sourceTree = "<group>"; };
 		180E3AB01B3AE45F0055036D /* FieldUpdateRuleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FieldUpdateRuleManager.m; sourceTree = "<group>"; };
+		18105DCD1BCBD44500732BFD /* ProdIQObjectDescribeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProdIQObjectDescribeParser.h; path = ServiceMaxiPad/Classes/ProductIQ/ProdIQObjectDescribeParser.h; sourceTree = SOURCE_ROOT; };
+		18105DCE1BCBD44500732BFD /* ProdIQObjectDescribeParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProdIQObjectDescribeParser.m; path = ServiceMaxiPad/Classes/ProductIQ/ProdIQObjectDescribeParser.m; sourceTree = SOURCE_ROOT; };
 		1814AD181B2AA775001167DE /* CustomActionURLModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionURLModel.h; sourceTree = "<group>"; };
 		1814AD191B2AA775001167DE /* CustomActionURLModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionURLModel.m; sourceTree = "<group>"; };
 		1814AD1B1B2ABDDB001167DE /* SFCustomActionURLDAO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SFCustomActionURLDAO.h; sourceTree = "<group>"; };
@@ -6199,6 +6202,8 @@
 				8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */,
 				11596B541BBECD0D00C92872 /* ProductIQManager.h */,
 				11596B551BBECD0D00C92872 /* ProductIQManager.m */,
+				18105DCD1BCBD44500732BFD /* ProdIQObjectDescribeParser.h */,
+				18105DCE1BCBD44500732BFD /* ProdIQObjectDescribeParser.m */,
 				18522A741BBA6F1800E9B4E0 /* ProdIQUserConfigParser.h */,
 				18522A751BBA6F1800E9B4E0 /* ProdIQUserConfigParser.m */,
 				18522A771BBA6F6500E9B4E0 /* ProdIQTranslationsParser.h */,
@@ -7195,6 +7200,7 @@
 				183A9A1519E68D9400919345 /* ViewControllerFactory.m in Sources */,
 				183A99C019E6858B00919345 /* AppMetaData.m in Sources */,
 				183A9FCF19E6B18500919345 /* SearchProcessObjectsService.m in Sources */,
+				18105DCF1BCBD44500732BFD /* ProdIQObjectDescribeParser.m in Sources */,
 				1886B8AE1A05205800942638 /* SQLResultSet.m in Sources */,
 				42F968361A073CF000676C34 /* SuccessiveSyncManager.m in Sources */,
 				183A99EF19E6890C00919345 /* SNetworkReachabilityManager.m in Sources */,

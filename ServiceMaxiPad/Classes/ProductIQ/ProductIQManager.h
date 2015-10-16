@@ -28,5 +28,5 @@
 - (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject;
 - (BOOL)loadDataIntoInstalledBaseObject;
 - (BOOL)isProductIQSettingEnable;
-
+- (NSArray *)getProdIQRelatedObjects;
 @end

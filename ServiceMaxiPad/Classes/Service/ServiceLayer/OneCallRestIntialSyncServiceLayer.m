@@ -32,6 +32,7 @@
 #import "CalenderHelper.h"
 #import "ServerRequestManager.h"
 #import "TimeLogCacheManager.h"
+#import "ProductIQManager.h"
 
 @implementation OneCallRestIntialSyncServiceLayer
 
@@ -142,14 +143,14 @@
         case RequestGetPriceCodeSnippet:
             return [self getRequestParametersForGetPriceCodeSnippet];
             break;
-         case RequestTXFetch:
+        case RequestTXFetch:
             return [self getTxFetcRequestParamsForRequestCount:requestCount];
             break;
         case RequestStaticResourceDownload:
-            {
-                ResourceHandler *resourceHandler = [[ResourceHandler alloc]init];
-                return [resourceHandler getStaticeResourceRequestParameterForCount:requestCount];
-            }
+        {
+            ResourceHandler *resourceHandler = [[ResourceHandler alloc]init];
+            return [resourceHandler getStaticeResourceRequestParameterForCount:requestCount];
+        }
             break;
         case RequestAttachmentDownload:
         {
@@ -157,13 +158,13 @@
             return [resourceHandler getDownloadDocTemplateRequestparameterForCount:requestCount];
         }
             
-             break;
+            break;
         case RequestDocumentInfoFetch:
         {
             ResourceHandler *resourceHandler = [[ResourceHandler alloc]init];
             return [resourceHandler getRequestParamsForDocumentInformation];
         }
-             break;
+            break;
         case RequestDocumentDownload:
         {
             ResourceHandler *resourceHandler = [[ResourceHandler alloc]init];
@@ -175,7 +176,12 @@
             RequestParamModel *model = [[RequestParamModel alloc] init];
             return @[model];
         }
-        break;
+            break;
+        case RequestProductIQObjectDescribe:
+        {
+            return [self createParallelRequestsForProdIQObjectDescribe];
+        }
+            break;
         default:
             break;
     }
@@ -183,6 +189,18 @@
    // NSLog(@"Invalid request type");
     return nil;
     
+}
+
+
+-(NSArray *)createParallelRequestsForProdIQObjectDescribe {
+    NSArray *objDescArray = [[ProductIQManager sharedInstance] getProdIQRelatedObjects];
+    NSMutableArray *requestParams = [NSMutableArray array];
+    for (int count = 0; count < [objDescArray count]; count++) {
+        RequestParamModel *model = [[RequestParamModel alloc] init];
+        model.value = [objDescArray objectAtIndex:count];
+        [requestParams addObject:model];
+    }
+    return requestParams;
 }
 
 -(NSArray*)getRequestParamModelForGetPriceData:(RequestType)getPriceDataType {

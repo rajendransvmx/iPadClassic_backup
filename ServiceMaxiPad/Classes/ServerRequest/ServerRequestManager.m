@@ -167,6 +167,8 @@
             return kMaximumNoOfParallelPageLayoutCalls;//New page layout call.
             // Vipindas changed Bugbash - Nov 04 2014
             break;
+        case RequestProductIQObjectDescribe:
+            return [[[ProductIQManager sharedInstance]getProdIQRelatedObjects] count];
             
         default:
             break;
@@ -411,96 +413,99 @@
     }
     
     switch (currentRequest.requestType) {
-        
+            
         case RequestValidateProfile:
-        nextRequestType = RequestMobileDeviceTags;
-        break;
+            nextRequestType = RequestMobileDeviceTags;
+            break;
         case RequestMobileDeviceTags:
-        nextRequestType = RequestOneCallMetaSync;
-        break;
+            nextRequestType = RequestOneCallMetaSync;
+            break;
         case RequestOneCallMetaSync:
-        nextRequestType = RequestSFMPageData ;
-        break;
+            nextRequestType = RequestSFMPageData ;
+            break;
         case RequestSFMPageData:
-        nextRequestType = RequestObjectDefinition;
-        break;
+            nextRequestType = RequestObjectDefinition;
+            break;
         case RequestObjectDefinition:
-        nextRequestType = RequestGetPriceObjects;
-        break;
+            nextRequestType = RequestGetPriceObjects;
+            break;
         case RequestGetPriceObjects:
-        nextRequestType = RequestGetPriceCodeSnippet;
-        break;
+            nextRequestType = RequestGetPriceCodeSnippet;
+            break;
         case RequestGetPriceCodeSnippet:
-        nextRequestType =  RequestRecordType;
-        break;
+            nextRequestType =  RequestRecordType;
+            break;
         case RequestRecordType:
-        nextRequestType =  RequestDependantPickListRest;
-        break;
+            nextRequestType =  RequestDependantPickListRest;
+            break;
         case RequestDependantPickListRest:
-        nextRequestType =  RequestRTDependentPicklist;//RequestDocumentDownload;
-        break;
+            nextRequestType =  RequestRTDependentPicklist;//RequestDocumentDownload;
+            break;
         case RequestRTDependentPicklist:
-        nextRequestType =  RequestStaticResourceLibrary;
-        break;
+            nextRequestType =  RequestStaticResourceLibrary;
+            break;
         case RequestStaticResourceLibrary:
-        nextRequestType =  RequestStaticResourceDownload;
-        break;
+            nextRequestType =  RequestStaticResourceDownload;
+            break;
         case RequestStaticResourceDownload:
-        nextRequestType =  RequestAttachmentDownload;
-        break;
+            nextRequestType =  RequestAttachmentDownload;
+            break;
         case RequestAttachmentDownload:
-        nextRequestType =  RequestDocumentInfoFetch;
-        break;
+            nextRequestType =  RequestDocumentInfoFetch;
+            break;
         case RequestDocumentInfoFetch:
-        nextRequestType =  RequestDocumentDownload;
-        break;
+            nextRequestType =  RequestDocumentDownload;
+            break;
         case RequestDocumentDownload:
-        nextRequestType =  RequestEvents;
-        break;
+            nextRequestType =  RequestEvents;
+            break;
         case RequestEvents:
-        nextRequestType =  RequestTypeUserTrunk;
-        // TODO : krishna change to RequestDownloadCriteria
-        // Download criteria will only work after upgarading to latest server updates.
-        break;
-        
+            nextRequestType =  RequestTypeUserTrunk;
+            // TODO : krishna change to RequestDownloadCriteria
+            // Download criteria will only work after upgarading to latest server updates.
+            break;
+            
         case RequestTypeUserTrunk:
-        nextRequestType = RequestDownloadCriteria;
-        break;
+            nextRequestType = RequestDownloadCriteria;
+            break;
         case RequestDownloadCriteria:
-        nextRequestType = RequestAdvancedDownLoadCriteria;
-        break;
+            nextRequestType = RequestAdvancedDownLoadCriteria;
+            break;
         case RequestAdvancedDownLoadCriteria:
-        nextRequestType = RequestGetPriceDataTypeZero ;
-        break;
+            nextRequestType = RequestGetPriceDataTypeZero ;
+            break;
         case RequestGetPriceDataTypeZero:
-        nextRequestType = RequestGetPriceDataTypeOne;
-        break;
+            nextRequestType = RequestGetPriceDataTypeOne;
+            break;
         case RequestGetPriceDataTypeOne:
-        nextRequestType = RequestGetPriceDataTypeTwo;
-        break;
+            nextRequestType = RequestGetPriceDataTypeTwo;
+            break;
         case RequestGetPriceDataTypeTwo:
-        nextRequestType = RequestGetPriceDataTypeThree;
-        break;
+            nextRequestType = RequestGetPriceDataTypeThree;
+            break;
         case RequestGetPriceDataTypeThree:
-        nextRequestType = RequestTXFetch;
-        break;
+            nextRequestType = RequestTXFetch;
+            break;
         case RequestTXFetch:
-        nextRequestType = RequestCleanUp;
-        break;
+            nextRequestType = RequestCleanUp;
+            break;
         case RequestCleanUp:
         nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestSyncTimeLogs;
         break;
         case RequestProductIQUserConfiguration:  /** Product IQ **/
-        nextRequestType = RequestProductIQTranslations;
-        break;
+            nextRequestType = RequestProductIQTranslations;
+            break;
         case RequestProductIQTranslations:
-        nextRequestType = RequestSyncTimeLogs;
-        break;
+            nextRequestType = RequestProductIQObjectDescribe;
+            break;
+        case RequestProductIQObjectDescribe:
+            nextRequestType = RequestSyncTimeLogs;
+            break;
         case RequestSyncTimeLogs:
-        nextRequestType = RequestTypeNone;
-        break;
+            nextRequestType = RequestTypeNone;
+            break;
         default:
-        break;
+            break;
     }
     return nextRequestType;
 }
@@ -605,58 +610,61 @@
     
     switch (currentRequest.requestType) {
         case RequestMobileDeviceTags:
-        nextRequestType = RequestOneCallMetaSync;
-        break;
+            nextRequestType = RequestOneCallMetaSync;
+            break;
         case RequestOneCallMetaSync:
-        nextRequestType = RequestSFMPageData ;
-        break;
+            nextRequestType = RequestSFMPageData ;
+            break;
         case RequestSFMPageData:
-        nextRequestType = RequestObjectDefinition;
-        break;
+            nextRequestType = RequestObjectDefinition;
+            break;
         case RequestObjectDefinition:
-        nextRequestType = RequestGetPriceObjects;
-        break;
+            nextRequestType = RequestGetPriceObjects;
+            break;
         case RequestGetPriceObjects:
-        nextRequestType = RequestGetPriceCodeSnippet;
-        break;
+            nextRequestType = RequestGetPriceCodeSnippet;
+            break;
         case RequestGetPriceCodeSnippet:
-        nextRequestType =  RequestRecordType;
-        break;
+            nextRequestType =  RequestRecordType;
+            break;
         case RequestRecordType:
-        nextRequestType =  RequestDependantPickListRest;
-        break;
+            nextRequestType =  RequestDependantPickListRest;
+            break;
         case RequestDependantPickListRest:
-        nextRequestType =  RequestRTDependentPicklist;//RequestDocumentDownload;
-        break;
+            nextRequestType =  RequestRTDependentPicklist;//RequestDocumentDownload;
+            break;
         case RequestRTDependentPicklist:
-        nextRequestType =  RequestStaticResourceLibrary;
-        break;
+            nextRequestType =  RequestStaticResourceLibrary;
+            break;
         case RequestStaticResourceLibrary:
-        nextRequestType =  RequestStaticResourceDownload;
-        break;
+            nextRequestType =  RequestStaticResourceDownload;
+            break;
         case RequestStaticResourceDownload:
-        nextRequestType =  RequestAttachmentDownload;
-        break;
+            nextRequestType =  RequestAttachmentDownload;
+            break;
         case RequestAttachmentDownload:
-        nextRequestType =  RequestDocumentInfoFetch;
-        break;
+            nextRequestType =  RequestDocumentInfoFetch;
+            break;
         case RequestDocumentInfoFetch:
-        nextRequestType =  RequestDocumentDownload;
-        break;
+            nextRequestType =  RequestDocumentDownload;
+            break;
         case RequestDocumentDownload:
         nextRequestType =  ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestSyncTimeLogs;
         break;
         case RequestProductIQUserConfiguration: /** Product IQ **/
-        nextRequestType = RequestProductIQTranslations;
-        break;
+            nextRequestType = RequestProductIQTranslations;
+            break;
         case RequestProductIQTranslations:
-        nextRequestType = RequestSyncTimeLogs;
-        break;
+            nextRequestType = RequestProductIQObjectDescribe;
+            break;
+        case RequestProductIQObjectDescribe:
+            nextRequestType = RequestSyncTimeLogs;
+            break;
         case RequestSyncTimeLogs:
-        nextRequestType = RequestTypeNone;
-        break;
+            nextRequestType = RequestTypeNone;
+            break;
         default:
-        break;
+            break;
     }
     return nextRequestType;
 }

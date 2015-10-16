@@ -402,5 +402,9 @@
 }
 
 
+- (NSArray *)getProdIQRelatedObjects {
+    return  @[kInstalledProductTableName, kWorkOrderSite, KSubLocationTableName, kAccountTableName, KProductTable];
+}
+
 
 @end

@@ -153,8 +153,10 @@
                 /** Product IQ **/
             case RequestProductIQUserConfiguration:
             case RequestProductIQTranslations:
+            case RequestProductIQObjectDescribe:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
+                
             default:
                 break;
         }
