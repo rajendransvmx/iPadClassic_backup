@@ -14,10 +14,19 @@
 
 @interface ProductIQManager : NSObject
 
-+ (BOOL)isProductIQEnabledForSFMPage:(SFMPageViewModel*)sfmPageView;
-+ (NSMutableArray*)addProductIQWizardForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService;
-+ (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject;
-+ (BOOL)loadDataIntoInstalledBaseObject;
-+ (BOOL)isProductIQSettingEnable;
+@property(nonatomic, strong) NSMutableArray *recordIds;
+
+
++ (instancetype) alloc  __attribute__((unavailable("alloc not available, call sharedInstance instead")));
+- (instancetype) init   __attribute__((unavailable("init not available, call sharedInstance instead")));
++ (instancetype) new    __attribute__((unavailable("new not available, call sharedInstance instead")));
+
++ (instancetype)sharedInstance;
+
+- (BOOL)isProductIQEnabledForSFMPage:(SFMPageViewModel*)sfmPageView;
+- (NSMutableArray*)addProductIQWizardForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService;
+- (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject;
+- (BOOL)loadDataIntoInstalledBaseObject;
+- (BOOL)isProductIQSettingEnable;
 
 @end

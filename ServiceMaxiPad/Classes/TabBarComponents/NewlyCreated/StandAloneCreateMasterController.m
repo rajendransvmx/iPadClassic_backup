@@ -243,7 +243,7 @@
 {
     SFObjectModel *Object = [self.standAloneUniqueObjects objectAtIndex:index];
     
-    BOOL isProductIQEnabled = [ProductIQManager isProductIQEnabledForStandaAloneObject:Object];
+    BOOL isProductIQEnabled = [[ProductIQManager sharedInstance] isProductIQEnabledForStandaAloneObject:Object];
 
     StandAloneCreateDetailController *detailController = [self.smSplitViewController.viewControllers objectAtIndex:1];
     detailController.shouldProductIQEnabled = isProductIQEnabled;

@@ -13,8 +13,36 @@
 #import "WizardComponentModel.h"
 #import "SFMRecordFieldData.h"
 #import "CommonServices.h"
+#import "TransactionObjectModel.h"
+#import "TransactionObjectService.h"
+#import "SFMPageHelper.h"
+#import "FactoryDAO.h"
+#import "SFObjectFieldDAO.h"
 
 @implementation ProductIQManager
+
+#pragma mark Singleton Methods
+
++ (instancetype) sharedInstance {
+    static id sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[super alloc] initInstance];
+    });
+    return sharedInstance;
+}
+
+- (instancetype) initInstance {
+    self = [super init];
+    _recordIds = [[NSMutableArray alloc] initWithCapacity:0];
+    // Do any other initialisation stuff here
+    // ...
+    return self;
+}
+
+- (void)dealloc {
+    // Should never be called, but just here for clarity really.
+}
 
 /*
  Method Name:isProductIQEnabled
@@ -25,11 +53,11 @@
  2. SFM Page should have IB or Location as fields.
  
  */
-+ (BOOL)isProductIQEnabledForSFMPage:(SFMPageViewModel*)sfmPageView {
+- (BOOL)isProductIQEnabledForSFMPage:(SFMPageViewModel*)sfmPageView {
     BOOL productIQEnabled = NO;
     
-    if ([[self class] isProductIQSettingEnable]) {
-        if ([[self class] isProductIQRelatedFieldsAvailableOnSFMPageView:sfmPageView]) {
+    if ([self isProductIQSettingEnable]) {
+        if ([self isProductIQRelatedFieldsAvailableOnSFMPageView:sfmPageView]) {
             productIQEnabled = YES;
         }
     }
@@ -45,18 +73,18 @@
  2. SFM Page should have IB or Location as fields.
  */
 
-+ (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject {
+- (BOOL)isProductIQEnabledForStandaAloneObject:(SFObjectModel*)sfObject {
     BOOL productIQEnabled = NO;
     
-    if ([[self class] isProductIQSettingEnable]) {
-        if ([[self class] isProductIQRelatedFieldsAvailableForStandAloneObject:sfObject]) {
+    if ([self  isProductIQSettingEnable]) {
+        if ([self isProductIQRelatedFieldsAvailableForStandAloneObject:sfObject]) {
             productIQEnabled = YES;
         }
     }
     return productIQEnabled;
 }
 
-+ (BOOL)isProductIQSettingEnable {
+- (BOOL)isProductIQSettingEnable {
     BOOL settingEnabled = NO;
     MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
     MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"PRODIQ002_SET001"];
@@ -64,66 +92,44 @@
     
     return settingEnabled;
 }
-+ (BOOL)isProductIQRelatedFieldsAvailableOnSFMPageView:(SFMPageViewModel*)sfmPageView {
+- (BOOL)isProductIQRelatedFieldsAvailableOnSFMPageView:(SFMPageViewModel*)sfmPageView {
     BOOL productIQFieldsAvailable = NO;
+    
+    if (self.recordIds != nil && self.recordIds.count > 0) {
+        [self.recordIds removeAllObjects];
+    }
     
     NSMutableArray *fieldsArray = [[NSMutableArray alloc] initWithCapacity:0];
     [fieldsArray addObject:kWorkOrderSite]; // Location
     [fieldsArray addObject:kInstalledProductTableName]; //IB
     
 //    //Check view process object name. If view process for IB or Location then enable ProductIQ.
-//    
-//    if ([fieldsArray containsObject:sfmPageView.sfmPage.objectName]) {
-//        productIQFieldsAvailable = YES;
-//    }
     
-    if (productIQFieldsAvailable == NO) {
+    if ([fieldsArray containsObject:sfmPageView.sfmPage.objectName]) {
+        productIQFieldsAvailable = YES;
+        [self.recordIds addObject:[[sfmPageView.sfmPage.headerRecord objectForKey:@"Id"] internalValue]];
+    }
+    
+    //As per MFL app, ProductIQ will be enabled only for WorkOrder,IB,Location Objects.
+    if (productIQFieldsAvailable == NO && [sfmPageView.sfmPage.objectName isEqualToString:kWorkOrderTableName]) {
         //This logic for header records to verify that IB or Location has value on SFMPage.
-        NSArray *headerSections = sfmPageView.sfmPage.process.pageLayout.headerLayout.sections;
         
-        for (SFMHeaderSection *headerSection in headerSections) {
-            for (SFMPageField *pageField in headerSection.sectionFields) {
-                if ([fieldsArray containsObject:pageField.relatedObjectName]) {
-                    
-                    SFMRecordFieldData *recordFieldData = [sfmPageView.sfmPage.headerRecord objectForKey:pageField.fieldName];
-                    if (![StringUtil isStringEmpty:recordFieldData.displayValue]) {
-                        productIQFieldsAvailable = YES;
-                        break;
-                    }
-                }
-            }
-            if (productIQFieldsAvailable) {
-                break;
-            }
-        }
-    }
-    
-    //This logic for child lines to verify that IB or Location has value on SFMPage.
-    if (productIQFieldsAvailable == NO) {
+        NSDictionary *referenceDictionary = [self getReferenceFieldsFor:sfmPageView.sfmPage.objectName];
+        NSArray *allKeys = [referenceDictionary allKeys];
         
-        if (sfmPageView.sfmPage.detailsRecord.count > 0) {
-            
-            NSArray *detailSections = sfmPageView.sfmPage.process.pageLayout.detailLayouts;
-            for (SFMDetailLayout *detailSection in detailSections) {
-                NSInteger index = 0;
-                for (SFMPageField *pageField in detailSection.detailSectionFields) {
-                    if ([fieldsArray containsObject:pageField.relatedObjectName]) {
-                        
-                        SFMRecordFieldData *recordFieldData = [[self class] getRecordFieldForIndex:index andPageField:pageField andSFMPageView:sfmPageView andSFMDetailLayout:detailSection];
-                        
-                        if (![StringUtil isStringEmpty:recordFieldData.displayValue]) {
-                            productIQFieldsAvailable = YES;
-                            break;
-                        }
-                    }
-                    index++;
-                }
-                if (productIQFieldsAvailable) {
-                    break;
+        for (NSString *key in allKeys) {
+            NSString *value = [referenceDictionary objectForKey:key];
+            if ([fieldsArray containsObject:value]) {
+                NSString *recordId = [self getRecordIdForProductIQRelatedFiledForObject:sfmPageView.sfmPage.objectName withFieldName:key withLocalId:sfmPageView.sfmPage.recordId];
+                if (![StringUtil isStringEmpty:recordId]) {
+                    productIQFieldsAvailable = YES;
+                    //TODO:check this only for IB or need to include LocationId too.
+                    [self.recordIds addObject:recordId];
                 }
             }
         }
     }
+
     return productIQFieldsAvailable;
 }
 
@@ -136,7 +142,7 @@
  
  */
 
-+ (BOOL)isProductIQRelatedFieldsAvailableForStandAloneObject:(SFObjectModel*)sfObject {
+- (BOOL)isProductIQRelatedFieldsAvailableForStandAloneObject:(SFObjectModel*)sfObject {
     BOOL productIQFieldsAvailable = NO;
     
     NSMutableArray *fieldsArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -157,7 +163,7 @@
  
  */
 
-+ (SFMRecordFieldData *)getRecordFieldForIndex:(NSInteger)selectedIndex
+- (SFMRecordFieldData *)getRecordFieldForIndex:(NSInteger)selectedIndex
                                   andPageField:(SFMPageField *)pageField
                                 andSFMPageView:(SFMPageViewModel*)sfmPageView andSFMDetailLayout:(SFMDetailLayout*)detailLayout {
     
@@ -167,6 +173,26 @@
         NSArray * detailRecords = [detailDict objectForKey: detailLayout.processComponentId];
         for (NSDictionary * recordDict in detailRecords) {
             recordField = [recordDict objectForKey:pageField.fieldName];
+        }
+    }
+    
+    return recordField;
+}
+/*
+ Method Name:getRecordFieldForIndex
+ Description: This method will get the localId for matched child line for IB and Location objects.
+ 
+ */
+- (SFMRecordFieldData *)getLocalIdRecordFieldForIndex:(NSInteger)selectedIndex
+                                  andPageField:(SFMPageField *)pageField
+                                andSFMPageView:(SFMPageViewModel*)sfmPageView andSFMDetailLayout:(SFMDetailLayout*)detailLayout {
+    
+    SFMRecordFieldData * recordField = nil;
+    if (pageField.fieldName != nil) {
+        NSMutableDictionary * detailDict =  sfmPageView.sfmPage.detailsRecord;
+        NSArray * detailRecords = [detailDict objectForKey: detailLayout.processComponentId];
+        for (NSDictionary * recordDict in detailRecords) {
+            recordField = [recordDict objectForKey:kLocalId];
         }
     }
     
@@ -182,7 +208,7 @@
  4. Add ProductIQ wizard for ProductIQ.
  */
 
-+ (NSMutableArray*)addProductIQWizardForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService{
+- (NSMutableArray*)addProductIQWizardForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService{
     
     @autoreleasepool {
         NSMutableArray *sfmProcessIds = [[NSMutableArray alloc] initWithCapacity:0];
@@ -236,7 +262,7 @@
         }
         
         //Now add ProductIQ wizard to allWizard array.
-        SFWizardModel *wizardModel = [[self class] getSFWizardForProductIQ];
+        SFWizardModel *wizardModel = [self getSFWizardForProductIQ];
         if (allWizards.count == 0) {
             allWizards = [[NSMutableArray alloc] initWithCapacity:0];
             [allWizards addObject:wizardModel];
@@ -254,7 +280,7 @@
  
  */
 //TODO:replace hard coded values from Tags.
-+ (SFWizardModel*)getSFWizardForProductIQ {
+- (SFWizardModel*)getSFWizardForProductIQ {
     SFWizardModel *wizardModel = [[SFWizardModel alloc]init];
     wizardModel.wizardName = @"ProductIQ";
     
@@ -275,7 +301,7 @@
  Description: This method will load the data into InstallBaseObject table once Initial sync gets completes.
  
  */
-+ (BOOL)loadDataIntoInstalledBaseObject {
+- (BOOL)loadDataIntoInstalledBaseObject {
     
     @autoreleasepool {
         NSString *tableName = @"InstallBaseObject";
@@ -293,6 +319,86 @@
         return insertedRecords;
         
     }
+}
+
+/*
+ Method verifyProductIQRelatedFiledForObject
+ Description: This method will verify the field that will have the value in corresponding table.
+ Used to check, if sfm view process doesn have field but record has the value. Hence enable the ProductIQ.
+ */
+
+- (NSString*)getRecordIdForProductIQRelatedFiledForObject:(NSString*)tableName withFieldName:(NSString*)fieldName withLocalId:(NSString*)localId {
+    
+    
+    TransactionObjectService *services = [[TransactionObjectService alloc] init];
+    
+    TransactionObjectModel *transactionObject = [services getDataForObject:tableName fields:@[fieldName] recordId:localId];
+    
+    NSString *fieldValue = [[transactionObject getFieldValueDictionary] objectForKey:fieldName];
+    
+    return fieldValue;
+}
+
+- (BOOL)getAllFieldsForObject:(NSString*)tableName withId:(NSString*)localId {
+    
+    BOOL isSuccess = NO;
+    
+    NSMutableArray *fieldsArray = [[NSMutableArray alloc] initWithCapacity:0];
+    [fieldsArray addObject:kWorkOrderSite]; // Location
+    [fieldsArray addObject:kInstalledProductTableName]; //IB
+    
+    TransactionObjectService *services = [[TransactionObjectService alloc] init];
+    
+    TransactionObjectModel *transactionObject = [services getDataForObject:tableName fields:nil recordId:localId];
+    NSDictionary *dictionary = [transactionObject getFieldValueDictionary];
+    
+    NSArray *allKeys = [dictionary allKeys];
+    
+    for (NSString *fieldName in allKeys) {
+        
+        if (![StringUtil isStringEmpty:fieldName]) {
+             NSString *relatedObjectName = [SFMPageHelper getReferenceNameForObject:tableName fieldName:fieldName];
+            if ([fieldsArray containsObject:relatedObjectName]) {
+                
+                if (![StringUtil isStringEmpty:[dictionary objectForKey:fieldName]]) {
+                    isSuccess = YES;
+                }
+            }
+        }
+    }
+    return isSuccess;
+}
+
+/*
+ Method: getReferenceFieldsFor
+ Params: objectName
+ Description:
+ This method will get reference columns for specified table.
+ */
+- (NSDictionary *)getReferenceFieldsFor:(NSString *)objectName
+{
+    NSMutableDictionary *referenceToDict = [[NSMutableDictionary alloc] init];
+    
+    DBCriteria * criteia1 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
+    
+    
+    DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:@"referenceTo" operatorType:SQLOperatorNotEqual andFieldValue:@"\\"];
+    
+    DBCriteria * criteria3 = [[DBCriteria alloc] initWithFieldName:@"referenceTo" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+    
+    
+    id <SFObjectFieldDAO> objFieldDAO = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
+    
+    
+    //   NSArray * sfFieldObjects =   [objFieldDAO fetchSFObjectFieldsInfoByFields:[NSArray arrayWithObjects:@"fieldName", @"referenceTo" , nil] andCriteria:[NSArray arrayWithObjects:criteia1,criteria2,criteria3, nil]];
+    
+    NSArray * sfFieldObjects =   [objFieldDAO fetchSFObjectFieldsInfoByFields:[NSArray arrayWithObjects:@"fieldName", @"referenceTo" , nil] andCriteriaArray:[NSArray arrayWithObjects:criteia1,criteria2,criteria3, nil] advanceExpression:@"(1 AND 2 AND 3)"];
+    
+    for (SFObjectFieldModel * objField in sfFieldObjects) {
+        [referenceToDict setObject:objField.referenceTo forKey:objField.fieldName];
+    }
+    
+    return referenceToDict;
 }
 
 

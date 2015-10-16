@@ -1293,7 +1293,7 @@ static SyncManager *_instance;
 }
 - (void)loadDataIntoInstalledBaseObject {
     
-    [ProductIQManager loadDataIntoInstalledBaseObject];
+    [[ProductIQManager sharedInstance] loadDataIntoInstalledBaseObject];
 }
 
 - (void)currentInitialSyncFailedWithError:(NSError *)error

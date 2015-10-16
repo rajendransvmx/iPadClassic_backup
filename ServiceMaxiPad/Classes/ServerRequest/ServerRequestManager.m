@@ -488,7 +488,7 @@
         nextRequestType = RequestCleanUp;
         break;
         case RequestCleanUp:
-        nextRequestType = ([ProductIQManager isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestSyncTimeLogs;
+        nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestSyncTimeLogs;
         break;
         case RequestProductIQUserConfiguration:  /** Product IQ **/
         nextRequestType = RequestProductIQTranslations;
@@ -644,7 +644,7 @@
         nextRequestType =  RequestDocumentDownload;
         break;
         case RequestDocumentDownload:
-        nextRequestType =  ([ProductIQManager isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestSyncTimeLogs;
+        nextRequestType =  ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestSyncTimeLogs;
         break;
         case RequestProductIQUserConfiguration: /** Product IQ **/
         nextRequestType = RequestProductIQTranslations;
