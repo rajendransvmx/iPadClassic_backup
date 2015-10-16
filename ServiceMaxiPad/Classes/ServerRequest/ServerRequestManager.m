@@ -427,7 +427,7 @@
             nextRequestType = RequestObjectDefinition;
             break;
         case RequestObjectDefinition:
-            nextRequestType = RequestGetPriceObjects;
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQObjectDescribe:RequestGetPriceObjects;
             break;
         case RequestGetPriceObjects:
             nextRequestType = RequestGetPriceCodeSnippet;
@@ -448,7 +448,7 @@
             nextRequestType =  RequestStaticResourceDownload;
             break;
         case RequestStaticResourceDownload:
-            nextRequestType =  RequestAttachmentDownload;
+            nextRequestType =  ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestAttachmentDownload;
             break;
         case RequestAttachmentDownload:
             nextRequestType =  RequestDocumentInfoFetch;
@@ -490,16 +490,16 @@
             nextRequestType = RequestCleanUp;
             break;
         case RequestCleanUp:
-        nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestSyncTimeLogs;
-        break;
+            nextRequestType = RequestSyncTimeLogs;
+            break;
         case RequestProductIQUserConfiguration:  /** Product IQ **/
             nextRequestType = RequestProductIQTranslations;
             break;
         case RequestProductIQTranslations:
-            nextRequestType = RequestProductIQObjectDescribe;
+            nextRequestType = RequestAttachmentDownload;
             break;
         case RequestProductIQObjectDescribe:
-            nextRequestType = RequestSyncTimeLogs;
+            nextRequestType = RequestGetPriceObjects;
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
@@ -619,7 +619,7 @@
             nextRequestType = RequestObjectDefinition;
             break;
         case RequestObjectDefinition:
-            nextRequestType = RequestGetPriceObjects;
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQObjectDescribe:RequestGetPriceObjects;
             break;
         case RequestGetPriceObjects:
             nextRequestType = RequestGetPriceCodeSnippet;
@@ -640,7 +640,7 @@
             nextRequestType =  RequestStaticResourceDownload;
             break;
         case RequestStaticResourceDownload:
-            nextRequestType =  RequestAttachmentDownload;
+            nextRequestType =  ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestAttachmentDownload;
             break;
         case RequestAttachmentDownload:
             nextRequestType =  RequestDocumentInfoFetch;
@@ -649,16 +649,16 @@
             nextRequestType =  RequestDocumentDownload;
             break;
         case RequestDocumentDownload:
-        nextRequestType =  ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestSyncTimeLogs;
-        break;
+        nextRequestType = RequestSyncTimeLogs;
+            break;
         case RequestProductIQUserConfiguration: /** Product IQ **/
             nextRequestType = RequestProductIQTranslations;
             break;
         case RequestProductIQTranslations:
-            nextRequestType = RequestProductIQObjectDescribe;
+            nextRequestType = RequestAttachmentDownload;
             break;
         case RequestProductIQObjectDescribe:
-            nextRequestType = RequestSyncTimeLogs;
+            nextRequestType = RequestGetPriceObjects;
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
