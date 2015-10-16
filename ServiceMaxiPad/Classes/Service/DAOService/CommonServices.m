@@ -314,6 +314,7 @@
     __block BOOL returnValue = NO;
     
     DBRequestInsert *insert =  [[DBRequestInsert alloc] initWithTableName:tableName andFieldNames:[NSMutableArray arrayWithArray:fieldNames]];
+    [insert setInsertOrReplaceOption];
     
     NSString *query = [insert query];
     @autoreleasepool {

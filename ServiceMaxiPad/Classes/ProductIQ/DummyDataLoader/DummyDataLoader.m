@@ -24,7 +24,7 @@
     NSArray *lTableArray = @[@"ObjectDescribe",@"Configuration", @"RecordName", @"Translations"];
     
     for (NSString *tableName in lTableArray) {
-        [self loadDataForTable:tableName];
+//        [self loadDataForTable:tableName];
     }
 }
 

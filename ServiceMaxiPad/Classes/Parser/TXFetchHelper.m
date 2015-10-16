@@ -23,6 +23,7 @@
 #import "ObjectNameFieldValueService.h"
 #import "DataTypeUtility.h"
 #import "PerformanceAnalyser.h"
+#import "ProductIQManager.h"
 
 NSString *const kInsertQueryCache   = @"InsertQueryCache";
 NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
@@ -139,6 +140,8 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
     BOOL isSucces = NO;
     
     NSMutableArray *nameFieldObjects = [[NSMutableArray alloc] init];
+    NSMutableArray *pIQnameFieldObjects = [[NSMutableArray alloc] init];
+    
    for (TransactionObjectModel *transModel in objects) {
        
        NSMutableDictionary *valueDictionary = (NSMutableDictionary *)[transModel getFieldValueDictionary];
@@ -152,7 +155,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
       }
        [self updateDataBasedOnDataType:objectName andMutableDictionary:valueDictionary];
        
-       [self fillUpObjectNameFieldFrom:transModel intoObjectsArray:nameFieldObjects andObjectName:objectName];
+       [self fillUpObjectNameFieldFrom:transModel intoObjectsArray:nameFieldObjects andObjectName:objectName andpIQObjectsArray:pIQnameFieldObjects];
    }
     TransactionObjectService * transService = [[TransactionObjectService alloc] init];
     if (self.shouldCheckForDuplicateRecords) {
@@ -178,6 +181,11 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
         ObjectNameFieldValueService *service = [[ObjectNameFieldValueService alloc] init];
         [service saveRecordModels:nameFieldObjects];
     }
+    
+    if ([pIQnameFieldObjects count] > 0) {
+        [self insertNameFieldObjectsForPIQ:pIQnameFieldObjects];
+    }
+    
     //PA
     [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:context subContextName:subContextValue operationType:PAOperationTypeDBOperation andRecordCount:(int)[objects count]];
     
@@ -258,11 +266,15 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
 
 - (void)fillUpObjectNameFieldFrom:(TransactionObjectModel *)transModel
                  intoObjectsArray:(NSMutableArray *)objectsArray
-                    andObjectName:(NSString *)objectName {
+                    andObjectName:(NSString *)objectName
+               andpIQObjectsArray:(NSMutableArray *)pIQObjectsArray {
     
     NSDictionary *recordDictionary = (NSMutableDictionary *)[transModel getFieldValueDictionary];
     
     NSArray *allKeys = [recordDictionary allKeys];
+    
+    ProductIQManager *pIQInstance = [ProductIQManager sharedInstance];
+    
     for (NSString *eachKey in allKeys) {
         
         NSDictionary *referenceDictionary = [recordDictionary objectForKey:eachKey];
@@ -281,6 +293,13 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
             
             if (nameFieldModel.Id   != nil) {
                 [objectsArray addObject:nameFieldModel];
+            }
+            
+            if ([pIQInstance isProductIQSettingEnable] && [[pIQInstance getProdIQRelatedObjects] containsObject:objectName]) {
+                if (sfid != nil) {
+                    NSDictionary *nameFieldDict = [NSDictionary dictionaryWithObjects:@[sfid, value] forKeys:@[@"Id", @"Name"]];
+                    [pIQObjectsArray addObject:nameFieldDict];
+                }
             }
             
         }
@@ -347,6 +366,12 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
     [fieldsArray  addObject:kSplitDayEvents];
     [fieldsArray addObject:kTimeZone];
     
+}
+
+
+-(void)insertNameFieldObjectsForPIQ:(NSMutableArray *)pIQNameFieldObjects {
+    CommonServices *service = [[CommonServices alloc] init];
+    [service saveRecordsFromArray:pIQNameFieldObjects inTable:@"RecordName"];
 }
 
 @end
