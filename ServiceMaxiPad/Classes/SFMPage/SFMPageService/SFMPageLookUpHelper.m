@@ -672,17 +672,37 @@
         if (isCircularRefEnabled) {
             
             if (includeOfflineRecords) {
-                [advanceExpression appendFormat:@"( ((1 OR 2) AND 3)  AND (%@) )",searchFieldsCount];
+                if (searchFieldsCount.length == 0) {
+                    [advanceExpression appendFormat:@"( ( (1 OR 2) AND 3) "];
+
+                } else {
+                    [advanceExpression appendFormat:@"( ( (1 OR 2) AND 3)  AND (%@) )",searchFieldsCount];
+                }
             } else {
-                [advanceExpression appendFormat:@"( (1 OR 2)  AND (%@) )",searchFieldsCount];
+                
+                if (searchFieldsCount.length == 0) {
+                    [advanceExpression appendFormat:@"( (1 OR 2) "];
+
+                } else {
+                    [advanceExpression appendFormat:@"( (1 OR 2)  AND (%@) )",searchFieldsCount];
+                }
             }
 
         } else {
             
             if (includeOfflineRecords) {
-                [advanceExpression appendFormat:@"(1 AND (%@) )",searchFieldsCount];
+                if (searchFieldsCount.length == 0) {
+                    [advanceExpression appendFormat:@"( 1 )"];
+                } else {
+                    [advanceExpression appendFormat:@"(1 AND (%@) )",searchFieldsCount];
+                }
             } else {
-                [advanceExpression appendFormat:@"(%@)",searchFieldsCount];
+                
+                if (searchFieldsCount.length == 0) {
+                    [advanceExpression appendFormat:@""];
+                } else {
+                    [advanceExpression appendFormat:@"(%@)",searchFieldsCount];
+                }
             }
         }
     }
@@ -695,12 +715,15 @@
                 [advanceExpression appendFormat:@"(1 OR 2)"];
             }
         } else {
-            [advanceExpression appendFormat:@"(1 )"];
+            
+            if (includeOfflineRecords) {
+                [advanceExpression appendFormat:@"( 1 )"];
+            } else {
+                [advanceExpression appendFormat:@""];
+            }
         }
     }
     
-    isCircularRefEnabled = NO;
-    includeOfflineRecords = NO;
 
     [self updateExpressionCount:lookUpObj];
     
@@ -714,6 +737,12 @@
     if (lookUpObj.contextLookupFilter.lookupContext != nil && lookUpObj.contextLookupFilter.lookupContext.length > 0 && lookUpObj.contextLookupFilter.defaultOn ) {
         [self updateAdvancedExpressionForContextFilter:advanceExpression];
     }
+    
+    //Reset the values.
+    isCircularRefEnabled = NO;
+    includeOfflineRecords = NO;
+
+    
     return advanceExpression;
 }
 
@@ -1242,7 +1271,19 @@
 
 - (void)updateExpressionCount:(SFMLookUp *)lookUpObj
 {
-    NSInteger count = 1;
+//    NSInteger count = 1;
+    
+    NSInteger count = 0;
+    if (isCircularRefEnabled) {
+        count = 1;
+        if (includeOfflineRecords) {
+            count = 2;
+        }
+    }
+    if (includeOfflineRecords) {
+        count = 1;
+    }
+    
     if ([lookUpObj.searchFields count] >0 && ![StringUtil isStringEmpty:lookUpObj.searchString]) {
         NSUInteger c = [lookUpObj.searchFields count];
         count = c + 1;
@@ -1263,7 +1304,12 @@
             }
             NSString *expression = [self getAdvanceExpression:model.advanceExpression criteriaCount:self.expressionCount];
             if (![StringUtil isStringEmpty:expression]) {
-                [advanceexpression appendFormat:@" AND (%@)", expression];
+//                [advanceexpression appendFormat:@" AND (%@)", expression];
+                if (isCircularRefEnabled == NO && includeOfflineRecords == NO && advanceexpression.length == 0) {
+                    [advanceexpression appendFormat:@"(%@)", expression];
+                } else {
+                    [advanceexpression appendFormat:@" AND (%@)", expression];
+                }
             }
         }
     }
@@ -1291,7 +1337,12 @@
 //                              (int)(self.expressionCount +2)];
                 
                 NSString *expression = [NSString stringWithFormat:@" %d ", (int)self.expressionCount+1];
-                [advanceexpression appendFormat:@" AND  ( %@ )", expression];
+                if (isCircularRefEnabled == NO && includeOfflineRecords == NO && advanceexpression.length == 0) {
+                    [advanceexpression appendFormat:@" ( %@ )", expression];
+                } else {
+                    [advanceexpression appendFormat:@" AND  ( %@ )", expression];
+                }
+//                [advanceexpression appendFormat:@" AND  ( %@ )", expression];
                 self.expressionCount += 1;
             }
         }
@@ -1413,8 +1464,16 @@
 }
 - (void) updateAdvancedExpressionForContextFilter:(NSMutableString *)expression {
     
-    [expression appendFormat:@"AND ( %d )",(int)self.expressionCount+1];
-    
+//    [expression appendFormat:@"AND ( %d )",(int)self.expressionCount+1];
+    if (isCircularRefEnabled == NO && includeOfflineRecords == NO && expression.length == 0  ) {
+        if (self.expressionCount > 0) {
+            [expression appendFormat:@"( %d )",(int)self.expressionCount];
+        } else {
+            [expression appendFormat:@""];
+        }
+    } else {
+        [expression appendFormat:@"AND ( %d )",(int)self.expressionCount+1];
+    }
 }
 #pragma mark - END
 @end
