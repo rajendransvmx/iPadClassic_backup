@@ -125,10 +125,16 @@
                     //[NSArray arrayWithObjects:callBackValues, sfidsArray, nil];
                     
                     if ([partiallyExecutedObjectDictionary count] > 0) {
-                        callbackData.valueMap = [NSArray arrayWithObjects:[self getLastSyncTimeForRecords],partiallyExecutedObjectDictionary, nil];
+                        CategoryType type = [[requestParamModel.requestInformation objectForKey:@"categoryType"] intValue];
+                        if (type == CategoryTypeDataSync) {
+                            callbackData.valueMap = [NSArray arrayWithObjects:[self getLastSyncTimeForRecords],partiallyExecutedObjectDictionary, nil];
+                        }
+                        else {
+                            callbackData.valueMap = [NSArray arrayWithObjects:partiallyExecutedObjectDictionary, nil];
+                        }
                     }
                     callbk.callBackData = callbackData;
-                   
+                    
                 }
             }
             return callbk;

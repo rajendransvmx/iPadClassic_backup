@@ -103,7 +103,7 @@
 }
 
 - (NSArray*)getRequestParametersWithRequestCount:(NSInteger)requestCount {
-//Chinna : Time logs.
+    //Chinna : Time logs.
     NSArray * finalArray  = [super getRequestParametersWithRequestCount:requestCount];
     if(finalArray != nil)
     {
@@ -111,6 +111,11 @@
     }
     switch (self.requestType) {
         case RequestAdvancedDownLoadCriteria:
+        {
+            RequestParamModel *model = [[RequestParamModel alloc] init];
+            model.requestInformation = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:self.categoryType] forKey:@"categoryType"];
+            return @[model];
+        }
             break;
         case RequestGetPriceDataTypeZero:
             return [self getRequestParamModelForGetPriceData:RequestGetPriceDataTypeZero];
@@ -142,14 +147,14 @@
         case RequestGetPriceCodeSnippet:
             return [self getRequestParametersForGetPriceCodeSnippet];
             break;
-         case RequestTXFetch:
+        case RequestTXFetch:
             return [self getTxFetcRequestParamsForRequestCount:requestCount];
             break;
         case RequestStaticResourceDownload:
-            {
-                ResourceHandler *resourceHandler = [[ResourceHandler alloc]init];
-                return [resourceHandler getStaticeResourceRequestParameterForCount:requestCount];
-            }
+        {
+            ResourceHandler *resourceHandler = [[ResourceHandler alloc]init];
+            return [resourceHandler getStaticeResourceRequestParameterForCount:requestCount];
+        }
             break;
         case RequestAttachmentDownload:
         {
@@ -157,13 +162,13 @@
             return [resourceHandler getDownloadDocTemplateRequestparameterForCount:requestCount];
         }
             
-             break;
+            break;
         case RequestDocumentInfoFetch:
         {
             ResourceHandler *resourceHandler = [[ResourceHandler alloc]init];
             return [resourceHandler getRequestParamsForDocumentInformation];
         }
-             break;
+            break;
         case RequestDocumentDownload:
         {
             ResourceHandler *resourceHandler = [[ResourceHandler alloc]init];
@@ -175,12 +180,12 @@
             RequestParamModel *model = [[RequestParamModel alloc] init];
             return @[model];
         }
-        break;
+            break;
         default:
             break;
     }
     
-   // NSLog(@"Invalid request type");
+    // NSLog(@"Invalid request type");
     return nil;
     
 }
