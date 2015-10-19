@@ -47,6 +47,10 @@
 @synthesize cLeftButtonBorder;
 @synthesize cBottomButtonBorder;
 @synthesize eventIndex;
+//====== overlapingEvent======
+@synthesize xPosition;
+@synthesize wDivision;
+@synthesize intOverLapWith;
 
 @synthesize eventSubject; //Single Label For All. TODO:Check if the implementation is correct or else remove.
 
@@ -56,6 +60,12 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        
+        //====== overlapingEvent======
+        self.xPosition = 1;
+        self.wDivision = 1;
+        self.intOverLapWith= -1;
+        
         // Initialization code
         
         [self setBackgroundColor:[UIColor colorWithRed:228.0/255. green:228.0/255. blue:228.0/255. alpha:1.0]];
@@ -507,5 +517,14 @@
     self.borderView.backgroundColor = borderColor;//[UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
 }
 
-
+-(void)setSubViewFramw
+{
+    CGRect rect = cTopBorder.frame;
+    rect.size.width = self.frame.size.width;
+    cTopBorder.frame = rect;
+    if (wDivision>1)
+        self.thirdImageView.hidden = YES;
+    else
+        self.thirdImageView.hidden = NO;
+}
 @end

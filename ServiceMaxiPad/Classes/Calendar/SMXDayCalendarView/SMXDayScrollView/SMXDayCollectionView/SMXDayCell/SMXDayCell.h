@@ -33,6 +33,7 @@
 @property (nonatomic, assign) id CollectionViewDelegate;
 @property (nonatomic, strong) SMXBlueButton *cSelectedEventButton;
 @property (nonatomic,assign) int cellIndex;
+@property (nonatomic, assign) long paintedHeight;
 
 - (void)showEvents:(NSArray *)array;
 - (void)setCollectionViewDelegate:(id)CollectionViewDelegate;

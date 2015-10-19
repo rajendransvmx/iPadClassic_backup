@@ -43,6 +43,11 @@
 @property (nonatomic,assign) BOOL isMultiDayEvent;
 @property (nonatomic,assign) int eventIndex;
 
+//overlaping eventChange
+@property (nonatomic, assign) long xPosition;
+@property (nonatomic, assign) long wDivision;
+@property (nonatomic, assign) long intOverLapWith;
+
 @property (nonatomic, strong) UILabel *eventSubject;
 
 -(void)restContentFrames:(CGFloat )wirdth;
@@ -56,6 +61,6 @@
 -(void)setTheButtonForSelectedState;
 -(void)setTheButtonForDraggingState;
 -(void)setTheEventTitleForNormalState;
-
+-(void)setSubViewFramw;
 
 @end
