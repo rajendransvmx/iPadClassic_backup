@@ -112,6 +112,11 @@
     }
     switch (self.requestType) {
         case RequestAdvancedDownLoadCriteria:
+        {
+            RequestParamModel *model = [[RequestParamModel alloc] init];
+            model.requestInformation = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:self.categoryType] forKey:@"categoryType"];
+            return @[model];
+        }
             break;
         case RequestGetPriceDataTypeZero:
             return [self getRequestParamModelForGetPriceData:RequestGetPriceDataTypeZero];

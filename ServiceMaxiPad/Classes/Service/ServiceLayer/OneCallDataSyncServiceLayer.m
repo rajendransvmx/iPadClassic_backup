@@ -114,9 +114,10 @@
 }
 
 - (NSArray *)getParamterForAdvancedDownloadCriteria {
-     RequestParamModel *paramObj = [[RequestParamModel alloc]init];
-     NSDictionary *lastSyncTime = [self getLastSyncTimeForRecords];
-     paramObj.valueMap = @[lastSyncTime];
+    RequestParamModel *paramObj = [[RequestParamModel alloc]init];
+    NSDictionary *lastSyncTime = [self getLastSyncTimeForRecords];
+    paramObj.requestInformation = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:self.categoryType] forKey:@"categoryType"];
+    paramObj.valueMap = @[lastSyncTime];
     return @[paramObj];
 }
 
