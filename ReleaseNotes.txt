@@ -4,7 +4,7 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.017
+Version = 15.99.018
 
 ===========================================
 
@@ -12,7 +12,8 @@ Version = 15.99.017
 Features:
 
 Defects:
-023977
+removing RevordType Request
+
 
 -------------
 
