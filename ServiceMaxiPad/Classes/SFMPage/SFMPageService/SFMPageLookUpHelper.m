@@ -1427,6 +1427,11 @@
         SFMRecordFieldData *recordData = [self getFieldValueForFieldName:lookup.contextLookupFilter.lookupContext forHeaderField:lookup.contextLookupFilter.sourceObjectName];
         
         displayValue = (recordData.displayValue.length > 0) ? recordData.displayValue : @"";;
+        //Remvoe the white spaces from string.
+        if (displayValue.length > 0) {
+            displayValue = [displayValue stringByTrimmingCharactersInSet:
+                            [NSCharacterSet whitespaceCharacterSet]];;
+        }
         
         if (self.dataTypeUtil == nil) {
             self.dataTypeUtil = [[DataTypeUtility alloc] init];
@@ -1457,6 +1462,7 @@
         }
         
         DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:lookup.contextLookupFilter.lookupQuery operatorType:SQLOperatorEqual andFieldValue:filtervalue];
+        criteria.isCaseInsensitive = YES;
         return @[criteria];
     }
     return @[];
