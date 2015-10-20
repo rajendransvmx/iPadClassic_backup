@@ -188,7 +188,15 @@
         }
         if (temp) {
             if ([temp isKindOfClass:[NSDictionary class]]) {
-                temp = [temp objectForKey:@"WSNameResponse"]; //onUpdateBeforeAfterResponse
+               // temp = [temp objectForKey:@"WSNameResponse"]; //onUpdateBeforeAfterResponse
+               NSDictionary* tempClose = [temp objectForKey:@"closeWorkOrderResponse"];
+                if (!tempClose) {
+                    temp = [temp objectForKey:@"WSNameResponse"];
+                }
+                else
+                {
+                    temp = tempClose;
+                }
             }
             if (temp) {
                 if ([temp isKindOfClass:[NSDictionary class]]) {
