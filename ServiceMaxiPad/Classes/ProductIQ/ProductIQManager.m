@@ -119,7 +119,7 @@
         
         for (NSString *key in allKeys) {
             NSString *value = [referenceDictionary objectForKey:key];
-            if ([fieldsArray containsObject:value]) {
+            if ([value isEqualToString:kInstalledProductTableName]) {
                 NSString *recordId = [self getRecordIdForProductIQRelatedFiledForObject:sfmPageView.sfmPage.objectName withFieldName:key withLocalId:sfmPageView.sfmPage.recordId];
                 if (![StringUtil isStringEmpty:recordId]) {
                     productIQFieldsAvailable = YES;
