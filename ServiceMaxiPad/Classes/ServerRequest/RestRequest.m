@@ -1322,7 +1322,15 @@
     @autoreleasepool {
         CustomXMLParser *parser = [[CustomXMLParser alloc] initwithNSXMLParserObject:operation.responseObject andOperation:(id)operation];
         parser.customDelegate = self;
-        [parser parseRequestBody:operation.responseString];
+        if (self.requestType == RequestTypeCustomActionWebService)
+        {
+            [parser parseRequestBody:operation.responseString isAfterBefore:NO];
+        }
+        else if(self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
+        {
+            [parser parseRequestBody:operation.responseString isAfterBefore:YES];
+        }
+        
         if (self.requestType == RequestOneCallDataSync)
         {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"requestIdentifier"];

@@ -63,11 +63,14 @@
 {
     [self.parser parse];
 }
--(void)parseRequestBody:(NSString *)XMLString
+-(void)parseRequestBody:(NSString *)XMLString isAfterBefore:(BOOL)isAftrebefore
 {
     NSError *error = nil;
     if (XMLString) {
-         [self getJsonResponse: [XMLReader dictionaryForXMLString:XMLString error:&error]];
+        if (isAftrebefore)
+            [self getJsonResponse:[XMLReader dictionaryForXMLString:XMLString error:&error]];
+        else
+            [self getJsonResponseForCustomAction:[XMLReader dictionaryForXMLString:XMLString error:&error]];
     }
     self.status = 1;
 }
@@ -180,6 +183,7 @@
 }
 -(void)getJsonResponseForCustomAction:(NSDictionary *)responseData
 {
+    
 }
 -(void)getJsonResponse:(NSDictionary *)responseData
 {
