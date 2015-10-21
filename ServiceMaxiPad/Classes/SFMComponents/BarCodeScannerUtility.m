@@ -52,6 +52,8 @@
                        to: 0];
     
     // present and release the controller
+    // Madhusudhan #023777, UI distorted on orientation.
+    self.reader.modalPresentationStyle = UIModalPresentationOverCurrentContext;
     [viewController presentViewController:self.reader animated:YES completion:^{
         [self.reader.readerView stop];
         [self.reader.readerView flushCache];
