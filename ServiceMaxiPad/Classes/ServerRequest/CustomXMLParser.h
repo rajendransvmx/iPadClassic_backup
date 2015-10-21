@@ -22,4 +22,5 @@
 -(void)parse;
 -(void)parseRequestBody:(NSString *)XMLString;
 -(instancetype)initwithNSXMLParserObject:(NSXMLParser *)responseData andOperation:(id)operation;
+-(void)getJsonResponseForCustomAction:(NSDictionary *)responseData;
 @end

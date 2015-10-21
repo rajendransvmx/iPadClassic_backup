@@ -178,7 +178,9 @@
         self.elementName = nil;
     }
 }
-
+-(void)getJsonResponseForCustomAction:(NSDictionary *)responseData
+{
+}
 -(void)getJsonResponse:(NSDictionary *)responseData
 {
     NSDictionary *temp = [responseData objectForKey:@"soapenv:Envelope"];
@@ -188,15 +190,11 @@
         }
         if (temp) {
             if ([temp isKindOfClass:[NSDictionary class]]) {
-               // temp = [temp objectForKey:@"WSNameResponse"]; //onUpdateBeforeAfterResponse
                NSDictionary* tempClose = [temp objectForKey:@"closeWorkOrderResponse"];
-                if (!tempClose) {
+                if (!tempClose)
                     temp = [temp objectForKey:@"WSNameResponse"];
-                }
                 else
-                {
                     temp = tempClose;
-                }
             }
             if (temp) {
                 if ([temp isKindOfClass:[NSDictionary class]]) {
@@ -205,67 +203,29 @@
                 
                 //header parshing and update
                 if (temp) {
-                    NSDictionary *headerDict;
                     if ([temp isKindOfClass:[NSDictionary class]]) {
+                        /* for header record */
+                        NSDictionary *headerDict;
                         headerDict = [temp objectForKey:@"SFM_PageData:pageDataSet"];
-                    }
-                    if (headerDict) {
-                        if ([headerDict isKindOfClass:[NSDictionary class]]) {
-                            headerDict = [headerDict objectForKey:@"SFM_PageData:sobjectinfo"];
+                        if (headerDict) {
+                            [self parshingHeaderRecord:headerDict];
                         }
-                        NSDictionary *dict = [self getRecords:headerDict];
-                        NSString *objectName = [headerDict objectForKey:@"xsi:type"];
-                        if ([headerDict isKindOfClass:[NSDictionary class]]) {
-                            NSDictionary *id_temp = [headerDict objectForKey:@"Id"];
-                            if (id_temp) {
-                                NSString *sfId = [id_temp objectForKey:@"text"];
-                                TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
-                                [model setFieldValueDictionaryForFields:dict];
-                                NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
-                                if (![StringUtil isStringEmpty:sfId])
-                                    [objectrecords setObject:model forKey:sfId];
-                                [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
-                            }
-                        }
-                    }
-                }
-                
-                //Detail Line parshing and update
-                if (temp) {
-                    NSDictionary *detailDict;
-                    if ([temp isKindOfClass:[NSDictionary class]]) {
-                        detailDict = [temp objectForKey:@"SFM_PageData:detailDataSet"];
-                    }
-                    if (detailDict) {
-                        if ([detailDict isKindOfClass:[NSDictionary class]]) {
-                            detailDict = [detailDict objectForKey:@"SFM_PageData:sobjectinfo"];
-                        }
-                        else if ([detailDict isKindOfClass:[NSArray class]])
+                        
+                        /* for one child line */
+                        NSDictionary *detailDictValue;
+                        detailDictValue = [temp objectForKey:@"SFM_PageData:detailDataSet"];
+                        if ([detailDictValue isKindOfClass:[NSDictionary class]])
                         {
-                            NSArray *array = [temp objectForKey:@"SFM_PageData:detailDataSet"];
-                            for(NSDictionary *detailDictValue in array) {
-                                NSDictionary * detailDictValueTemp;
-                                if ([detailDictValue isKindOfClass:[NSDictionary class]]) {
-                                   detailDictValueTemp = [detailDictValue objectForKey:@"SFM_PageData:pageDataSet"];
-                                }
-                                if (detailDictValueTemp) {
-                                    if ([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
-                                        detailDictValueTemp = [detailDictValueTemp objectForKey:@"SFM_PageData:sobjectinfo"];
-                                    }
-                                    NSDictionary *dict = [self getRecords:detailDictValueTemp];
-                                    NSString *objectName = [detailDictValueTemp objectForKey:@"xsi:type"];
-                                    if ([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
-                                        NSDictionary *id_temp = [detailDictValueTemp objectForKey:@"Id"];
-                                        if (id_temp) {
-                                            NSString *sfId = [id_temp objectForKey:@"text"];
-                                            TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
-                                            [model setFieldValueDictionaryForFields:dict];
-                                            NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
-                                            if (![StringUtil isStringEmpty:sfId])
-                                                [objectrecords setObject:model forKey:sfId];
-                                            [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
-                                        }
-                                    }
+                            [self parshingChildRecord:detailDictValue];
+                        }
+                        else
+                        {
+                            /* for multiple child line */
+                            NSArray *detailDictValues = [temp objectForKey:@"SFM_PageData:detailDataSet"];
+                            if ([detailDictValues isKindOfClass:[NSArray class]])
+                            {
+                                for(NSDictionary *detailValueDict in detailDictValues) {
+                                    [self parshingChildRecord:detailValueDict];
                                 }
                             }
                         }
@@ -276,6 +236,54 @@
     }
     /* refresh all screens with new data*/
     [self sendNotification:kUpadteWebserviceData andUserInfo:nil];
+}
+
+-(void)parshingHeaderRecord:(NSDictionary *)detailDictValueTemp
+{
+    if ([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
+        detailDictValueTemp = [detailDictValueTemp objectForKey:@"SFM_PageData:sobjectinfo"];
+    }
+    NSDictionary *dict = [self getRecords:detailDictValueTemp];
+    NSString *objectName = [detailDictValueTemp objectForKey:@"xsi:type"];
+    if ([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *id_temp = [detailDictValueTemp objectForKey:@"Id"];
+        if (id_temp) {
+            NSString *sfId = [id_temp objectForKey:@"text"];
+            TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
+            [model setFieldValueDictionaryForFields:dict];
+            NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
+            if (![StringUtil isStringEmpty:sfId])
+                [objectrecords setObject:model forKey:sfId];
+            [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
+        }
+    }
+}
+-(void)parshingChildRecord:(NSDictionary *)detailDictValue
+{
+    NSDictionary *detailDictValueTemp;
+    if ([detailDictValue isKindOfClass:[NSDictionary class]]) {
+        detailDictValueTemp = [detailDictValue objectForKey:@"SFM_PageData:pageDataSet"];
+        if (detailDictValueTemp)
+        {
+            if ([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
+                detailDictValueTemp = [detailDictValueTemp objectForKey:@"SFM_PageData:sobjectinfo"];
+            }
+            NSDictionary *dict = [self getRecords:detailDictValueTemp];
+            NSString *objectName = [detailDictValueTemp objectForKey:@"xsi:type"];
+            if ([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *id_temp = [detailDictValueTemp objectForKey:@"Id"];
+                if (id_temp) {
+                    NSString *sfId = [id_temp objectForKey:@"text"];
+                    TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
+                    [model setFieldValueDictionaryForFields:dict];
+                    NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
+                    if (![StringUtil isStringEmpty:sfId])
+                        [objectrecords setObject:model forKey:sfId];
+                    [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
+                }
+            }
+        }
+    }
 }
 
 -(NSDictionary *)getRecords:(NSDictionary *)responseInfo
