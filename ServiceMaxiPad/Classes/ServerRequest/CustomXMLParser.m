@@ -183,7 +183,53 @@
 }
 -(void)getJsonResponseForCustomAction:(NSDictionary *)responseData
 {
-    
+    NSDictionary *temp = [responseData objectForKey:@"soapenv:Envelope"];
+    if (temp) {
+        if ([temp isKindOfClass:[NSDictionary class]]) {
+            temp = [temp objectForKey:@"soapenv:Body"];
+        }
+        if (temp) {
+            if ([temp isKindOfClass:[NSDictionary class]]) {
+                NSDictionary* tempClose = [temp objectForKey:@"takeWOOwnershipResponse"];
+                if (!tempClose)
+                    temp = [temp objectForKey:@"WSNameResponse"];
+                else
+                    temp = tempClose;
+            }
+            if (temp) {
+                if ([temp isKindOfClass:[NSDictionary class]]) {
+                    temp = [temp objectForKey:@"result"];
+                }
+                if (temp) {
+                    if ([temp isKindOfClass:[NSDictionary class]]) {
+                        temp = [temp objectForKey:@"INTF_Response:valueMap"];
+                        if (temp) {
+                             temp = [temp objectForKey:@"INTF_Response:record"];
+                            if ([temp isKindOfClass:[NSDictionary class]]) {
+                                 NSDictionary *dict = [self getRecords:temp];
+                                NSString *objectName = [temp objectForKey:@"xsi:type"];
+                                if ([temp isKindOfClass:[NSDictionary class]])
+                                {
+                                    NSDictionary *id_temp = [temp objectForKey:@"Id"];
+                                    if (id_temp) {
+                                        NSString *sfId = [id_temp objectForKey:@"text"];
+                                        TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
+                                        [model setFieldValueDictionaryForFields:dict];
+                                        NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
+                                        if (![StringUtil isStringEmpty:sfId])
+                                            [objectrecords setObject:model forKey:sfId];
+                                            [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /* refresh all screens with new data*/
+    [self sendNotification:kUpadteWebserviceData andUserInfo:nil];
 }
 -(void)getJsonResponse:(NSDictionary *)responseData
 {
