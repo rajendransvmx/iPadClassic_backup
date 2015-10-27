@@ -44,7 +44,6 @@
 #import "SFMPageHelper.h"
 #import "CacheConstants.h"
 #import "StringUtil.h"
-#import "DummyDataLoader.h"
 #import "ProductIQManager.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
@@ -1262,7 +1261,6 @@ static SyncManager *_instance;
 {
     [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncCompleted];
     
-    [self loadDummyData];
     [self loadDataIntoInstalledBaseObject];
     
     [self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
@@ -1283,14 +1281,6 @@ static SyncManager *_instance;
 }
 
 
--(void)loadDummyData
-
-{
-    
-    DummyDataLoader *ldummyDataLoader = [[DummyDataLoader alloc] init];
-    [ldummyDataLoader loadDataIntables];
-    
-}
 - (void)loadDataIntoInstalledBaseObject {
     
     [[ProductIQManager sharedInstance] loadDataIntoInstalledBaseObject];

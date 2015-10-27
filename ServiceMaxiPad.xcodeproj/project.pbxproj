@@ -892,11 +892,6 @@
 		8410153B1BA94CCA007DFAC8 /* checkbox-selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 841015371BA94CCA007DFAC8 /* checkbox-selected@2x.png */; };
 		8410153C1BA94CCA007DFAC8 /* checkbox-unselected.png in Resources */ = {isa = PBXBuildFile; fileRef = 841015381BA94CCA007DFAC8 /* checkbox-unselected.png */; };
 		8410153D1BA94CCA007DFAC8 /* checkbox-unselected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 841015391BA94CCA007DFAC8 /* checkbox-unselected@2x.png */; };
-		841121581B901775006C3668 /* Configuration.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121521B901775006C3668 /* Configuration.csv */; };
-		841121591B901775006C3668 /* DummyDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 841121541B901775006C3668 /* DummyDataLoader.m */; };
-		8411215A1B901775006C3668 /* ObjectDescribe.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121551B901775006C3668 /* ObjectDescribe.csv */; };
-		8411215B1B901775006C3668 /* RecordName.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121561B901775006C3668 /* RecordName.csv */; };
-		8411215C1B901775006C3668 /* Translations.csv in Resources */ = {isa = PBXBuildFile; fileRef = 841121571B901775006C3668 /* Translations.csv */; };
 		84127A9B1B8C8C1300CF8D61 /* Bridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A8F1B8C8C1300CF8D61 /* Bridge.m */; };
 		84127A9C1B8C8C1300CF8D61 /* Console.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A911B8C8C1300CF8D61 /* Console.m */; };
 		84127A9D1B8C8C1300CF8D61 /* DB.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A931B8C8C1300CF8D61 /* DB.m */; };
@@ -2714,12 +2709,6 @@
 		841015371BA94CCA007DFAC8 /* checkbox-selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-selected@2x.png"; sourceTree = "<group>"; };
 		841015381BA94CCA007DFAC8 /* checkbox-unselected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unselected.png"; sourceTree = "<group>"; };
 		841015391BA94CCA007DFAC8 /* checkbox-unselected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-unselected@2x.png"; sourceTree = "<group>"; };
-		841121521B901775006C3668 /* Configuration.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Configuration.csv; sourceTree = "<group>"; };
-		841121531B901775006C3668 /* DummyDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyDataLoader.h; sourceTree = "<group>"; };
-		841121541B901775006C3668 /* DummyDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DummyDataLoader.m; sourceTree = "<group>"; };
-		841121551B901775006C3668 /* ObjectDescribe.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ObjectDescribe.csv; sourceTree = "<group>"; };
-		841121561B901775006C3668 /* RecordName.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RecordName.csv; sourceTree = "<group>"; };
-		841121571B901775006C3668 /* Translations.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Translations.csv; sourceTree = "<group>"; };
 		84127A8E1B8C8C1300CF8D61 /* Bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
 		84127A8F1B8C8C1300CF8D61 /* Bridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bridge.m; sourceTree = "<group>"; };
 		84127A901B8C8C1300CF8D61 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Console.h; sourceTree = "<group>"; };
@@ -6153,19 +6142,6 @@
 			path = PushNotification;
 			sourceTree = "<group>";
 		};
-		841121511B901775006C3668 /* DummyDataLoader */ = {
-			isa = PBXGroup;
-			children = (
-				841121521B901775006C3668 /* Configuration.csv */,
-				841121531B901775006C3668 /* DummyDataLoader.h */,
-				841121541B901775006C3668 /* DummyDataLoader.m */,
-				841121551B901775006C3668 /* ObjectDescribe.csv */,
-				841121561B901775006C3668 /* RecordName.csv */,
-				841121571B901775006C3668 /* Translations.csv */,
-			);
-			path = DummyDataLoader;
-			sourceTree = "<group>";
-		};
 		84127A8D1B8C8C1300CF8D61 /* Native Call Handlers */ = {
 			isa = PBXGroup;
 			children = (
@@ -6193,7 +6169,6 @@
 		844F00B91B848BE3008BC652 /* ProductIQ */ = {
 			isa = PBXGroup;
 			children = (
-				841121511B901775006C3668 /* DummyDataLoader */,
 				84127A8D1B8C8C1300CF8D61 /* Native Call Handlers */,
 				844F00BD1B848CC4008BC652 /* ProductIQHomeViewController.h */,
 				844F00BE1B848CC4008BC652 /* ProductIQHomeViewController.m */,
@@ -6686,7 +6661,6 @@
 				18EFFC581B3D1C4200BE15A0 /* wizardComponentIcon@2x.png in Resources */,
 				184A9E0F19E7D592006DA6BE /* map_chat@2x.png in Resources */,
 				8B2F4BF71A0C8D0100D2A346 /* u259.png in Resources */,
-				8411215B1B901775006C3668 /* RecordName.csv in Resources */,
 				40CA1A0619FE4E9C0097F5A1 /* recapture.png in Resources */,
 				18FE08FD19EE827800CB8925 /* checkbox-disabled-checked@2x.png in Resources */,
 				183AA37219E6DA9600919345 /* PageContentViewController.xib in Resources */,
@@ -6743,7 +6717,6 @@
 				117656D81B3928A200BA0B63 /* selectEmpty@.png in Resources */,
 				184A9E1019E7D592006DA6BE /* map_CurrentLocation@2x.png in Resources */,
 				C3E890801A0CC52000A0653B /* Attachment-SelectionCheckempty@2x.png in Resources */,
-				841121581B901775006C3668 /* Configuration.csv in Resources */,
 				184A9E1519E7D592006DA6BE /* map_priorityflag@2x.png in Resources */,
 				184A9DEA19E7D592006DA6BE /* login-servicemax-logo@2x.png in Resources */,
 				8BA32EAA19EE3F9300BFA769 /* day_triangle-down.png in Resources */,
@@ -6881,14 +6854,12 @@
 				183A9E9219E6A11800919345 /* RuleBook.plist in Resources */,
 				4072530C19FF6C2900ACA729 /* com.servicemax.client.mvc.zip in Resources */,
 				18E522B51A6916C000FD9295 /* Sync_Error_White@2x.png in Resources */,
-				8411215A1B901775006C3668 /* ObjectDescribe.csv in Resources */,
 				184A9C0E19E7D591006DA6BE /* iOSMap-Retina-Orange@2x.png in Resources */,
 				4072530E19FF6C2900ACA729 /* com.servicemax.client.sal.sfmconsole.model.zip in Resources */,
 				407252FA19FF52C700ACA729 /* OutputDocs.js in Resources */,
 				40CA1A0419FE4B340097F5A1 /* OPDocViewController.xib in Resources */,
 				8B932E691A1098960002BBB2 /* Attachment-plus@2x.png in Resources */,
 				183AA37919E6DAFE00919345 /* LaunchViewController.xib in Resources */,
-				8411215C1B901775006C3668 /* Translations.csv in Resources */,
 				183AA1D719E6D26400919345 /* SFMPageShowAllViewController.xib in Resources */,
 				184A9CC119E7D591006DA6BE /* calendar@2x.png in Resources */,
 				183AA1B219E6D26400919345 /* PageEditMasterViewController.xib in Resources */,
@@ -7534,7 +7505,6 @@
 				183A9E1F19E69DB000919345 /* DocTemplateDetailModel.m in Sources */,
 				D752644819EB9278006AAC4C /* PageEditPickerFieldController.m in Sources */,
 				183AA04619E6C7E000919345 /* SyncProgressStatusHandler.m in Sources */,
-				841121591B901775006C3668 /* DummyDataLoader.m in Sources */,
 				186CDD841A025D6F00DC93DA /* LocalNotificationModel.m in Sources */,
 				184A8E9219E7A0BE006DA6BE /* TKSwitchCell.m in Sources */,
 				9E8DA0B71A63BD7100BC6ACB /* AsyncImageLoader.m in Sources */,
