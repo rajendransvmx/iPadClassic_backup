@@ -72,7 +72,6 @@
 #import "WebserviceResponseStatus.h"
 #import "SNetworkReachabilityManager.h"
 
-#import "ProductIQHomeViewController.h"
 #import "ProductIQPOCHomeViewController.h"
 #import "ProductIQManager.h"
 #import "MessageHandler.h"

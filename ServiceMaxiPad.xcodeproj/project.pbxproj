@@ -905,8 +905,6 @@
 		8416A6EC1B660E64000D5FE9 /* CustomXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8416A6EB1B660E64000D5FE9 /* CustomXMLParser.m */; };
 		8417EA141B9D9EF800D49EA5 /* SFMOnlineLookUpManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8417EA131B9D9EF800D49EA5 /* SFMOnlineLookUpManager.m */; };
 		8417EA171B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8417EA161B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.m */; };
-		844F00C01B848CC4008BC652 /* ProductIQHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 844F00BE1B848CC4008BC652 /* ProductIQHomeViewController.m */; };
-		844F00C11B848CC4008BC652 /* ProductIQHomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 844F00BF1B848CC4008BC652 /* ProductIQHomeViewController.xib */; };
 		84BEDC9919FA157800350B56 /* priority_Flag@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9619FA157800350B56 /* priority_Flag@2x.png */; };
 		84BEDC9A19FA157800350B56 /* sla_Indicator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9719FA157800350B56 /* sla_Indicator@2x.png */; };
 		84BEDC9B19FA157800350B56 /* sync_Error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9819FA157800350B56 /* sync_Error@2x.png */; };
@@ -2734,9 +2732,6 @@
 		8417EA131B9D9EF800D49EA5 /* SFMOnlineLookUpManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMOnlineLookUpManager.m; sourceTree = "<group>"; };
 		8417EA151B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMOnlineLookUpServiceLayer.h; sourceTree = "<group>"; };
 		8417EA161B9DAD0D00D49EA5 /* SFMOnlineLookUpServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMOnlineLookUpServiceLayer.m; sourceTree = "<group>"; };
-		844F00BD1B848CC4008BC652 /* ProductIQHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductIQHomeViewController.h; sourceTree = "<group>"; };
-		844F00BE1B848CC4008BC652 /* ProductIQHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductIQHomeViewController.m; sourceTree = "<group>"; };
-		844F00BF1B848CC4008BC652 /* ProductIQHomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductIQHomeViewController.xib; sourceTree = "<group>"; };
 		84BEDC9619FA157800350B56 /* priority_Flag@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "priority_Flag@2x.png"; sourceTree = "<group>"; };
 		84BEDC9719FA157800350B56 /* sla_Indicator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sla_Indicator@2x.png"; sourceTree = "<group>"; };
 		84BEDC9819FA157800350B56 /* sync_Error@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sync_Error@2x.png"; sourceTree = "<group>"; };
@@ -6170,9 +6165,6 @@
 			isa = PBXGroup;
 			children = (
 				84127A8D1B8C8C1300CF8D61 /* Native Call Handlers */,
-				844F00BD1B848CC4008BC652 /* ProductIQHomeViewController.h */,
-				844F00BE1B848CC4008BC652 /* ProductIQHomeViewController.m */,
-				844F00BF1B848CC4008BC652 /* ProductIQHomeViewController.xib */,
 				8412850C1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.h */,
 				8412850D1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m */,
 				8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */,
@@ -6673,7 +6665,6 @@
 				18A2178219E5841900F22EA6 /* Settings.bundle in Resources */,
 				184A9CBE19E7D591006DA6BE /* leftPanelBG@2x.png in Resources */,
 				183AA1EC19E6D36C00919345 /* WizardViewController.xib in Resources */,
-				844F00C11B848CC4008BC652 /* ProductIQHomeViewController.xib in Resources */,
 				40A06F3A1B06041400218162 /* STasks@1x.png in Resources */,
 				18779DC519EBEF200086A9B7 /* info.png in Resources */,
 				184A9D9219E7D592006DA6BE /* FormCheckBoxUnFilled@2x.png in Resources */,
@@ -7006,7 +6997,6 @@
 				183A9EFE19E6A15600919345 /* ZKDescribeLayout.m in Sources */,
 				184A8E6819E7A0BE006DA6BE /* SMXMonthCalendarView.m in Sources */,
 				183AA1A719E6D26400919345 /* SFMProcessComponent.m in Sources */,
-				844F00C01B848CC4008BC652 /* ProductIQHomeViewController.m in Sources */,
 				C3C22DCA1AB2EB4D0072396E /* AttachmentLocalModel.m in Sources */,
 				5732F0991A26FD8C009C2DFA /* TroubleshootingService.m in Sources */,
 				184A8EA719E7A0BE006DA6BE /* UIColor+SMXMoreColors.m in Sources */,
