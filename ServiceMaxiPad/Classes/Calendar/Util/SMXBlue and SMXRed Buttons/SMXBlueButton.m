@@ -519,9 +519,18 @@
 
 -(void)setSubViewFramw
 {
+    /* Here reducing width of the Line, equal to event size */
     CGRect rect = cTopBorder.frame;
     rect.size.width = self.frame.size.width;
     cTopBorder.frame = rect;
+    
+    /* Here reducing width of the label, equal to event size */
+    CGRect rectLabel = eventName.frame;
+    rectLabel.size.width = self.frame.size.width;
+    rectLabel.size.width = self.frame.size.width - eventName.frame.origin.x;
+    eventName.frame = rectLabel;
+    
+    /* For concurrent event, We are not showing the any flag */
     if (wDivision>1)
         self.thirdImageView.hidden = YES;
     else
