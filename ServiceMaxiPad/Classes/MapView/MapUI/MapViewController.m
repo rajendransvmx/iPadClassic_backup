@@ -394,8 +394,28 @@
     [self removeWOPopOver];
     SFMPageViewController *pageViewController = [[SFMPageViewController alloc] init];
     SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:kWorkOrderTableName recordId:woSummaryModel.localId];
-    pageViewController.sfmPageView = [pageManager sfmPageView];
-    [self.navigationController pushViewController:pageViewController animated:YES];
+    // pageViewController.sfmPageView = [pageManager sfmPageView];
+    //[self.navigationController pushViewController:pageViewController animated:YES];
+
+    //Madhusudhan #023628, From the Map pop over View SFM criteria is not respected for the Work order.
+    // ======================= //
+    NSError *error = nil;
+    BOOL isValidProcess = [pageManager isValidProcess:pageManager.processId objectName:nil recordId:nil error:&error];
+    if (isValidProcess) {
+        pageViewController.sfmPageView = [pageManager sfmPageView];
+        
+        [self.navigationController pushViewController:pageViewController animated:YES];
+    }
+    else
+    {
+        if (error) {
+            AlertMessageHandler *alertHandler = [AlertMessageHandler sharedInstance];
+            NSString * buttonLOC = [[TagManager sharedInstance] tagByName:kTagAlertErrorOk];
+            
+            [alertHandler showCustomMessage:[error localizedDescription] withDelegate:nil title:[[TagManager sharedInstance] tagByName:kTagAlertIpadError] cancelButtonTitle:nil andOtherButtonTitles:[[NSArray alloc] initWithObjects:buttonLOC, nil]];
+        }
+    }
+    // ========================== //
 }
 
 - (void)didReceiveMemoryWarning
