@@ -1,5 +1,5 @@
 //
-//  ProductIQPOCHomeViewController.h
+//  ProductIQHomeViewController.h
 //  ServiceMaxiPad
 //
 //  Created by Admin on 25/08/15.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "Bridge.h"
 
-@interface ProductIQPOCHomeViewController : UIViewController <UIWebViewDelegate, UINavigationControllerDelegate>
+@interface ProductIQHomeViewController : UIViewController <UIWebViewDelegate, UINavigationControllerDelegate>
 {
     NSString *clientId;
     NSString *callbackUrl;
@@ -25,7 +25,7 @@
 
 @property(nonatomic,retain) NSMutableDictionary *responseDictionary;
 
-+(ProductIQPOCHomeViewController *) getInstance;
++(ProductIQHomeViewController *) getInstance;
 -(NSString *) getAccessToken;
 -(NSString *) getInstanceUrl;
 -(UIWebView *) getBrowser;

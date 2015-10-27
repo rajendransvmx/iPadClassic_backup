@@ -7,13 +7,13 @@
 //
 
 #import "Utils.h"
-#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQHomeViewController.h"
 
 @implementation Utils
 
 -(void)respondWithLoginDetails:(NSString *)params {
-    NSString *accessToken = [[ProductIQPOCHomeViewController getInstance] getAccessToken];
-    NSString *instanceUrl = [[ProductIQPOCHomeViewController getInstance] getInstanceUrl];
+    NSString *accessToken = [[ProductIQHomeViewController getInstance] getAccessToken];
+    NSString *instanceUrl = [[ProductIQHomeViewController getInstance] getInstanceUrl];
     NSMutableDictionary *resp = [[NSMutableDictionary alloc] init];
     [resp setObject:accessToken forKey:@"access_token"];
     [resp setObject:instanceUrl forKey:@"instance_url"];
@@ -37,7 +37,7 @@
     NSData *data = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    UIWebView *browser = [[ProductIQPOCHomeViewController getInstance] getBrowser];
+    UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
     [browser stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", methodName, resp]];
 }
 

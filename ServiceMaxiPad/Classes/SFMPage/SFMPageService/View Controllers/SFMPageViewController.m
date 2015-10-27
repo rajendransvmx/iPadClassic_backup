@@ -50,7 +50,7 @@
 #import "SFMCustomActionHelper.h"
 #import "SFMCustomActionWebServiceHelper.h"
 #import "SNetworkReachabilityManager.h"
-#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQHomeViewController.h"
 #import "ProductIQManager.h"
 #import "MessageHandler.h"
 
@@ -568,7 +568,7 @@
      [self.navigationController presentViewController:navController animated:YES completion:nil];
      */
     
-    ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
+    ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
     lProductIQcontroller.responseDictionary = [MessageHandler getMessageHandlerResponeDictionaryForSFMPage:self.sfmPageView];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
     navController.delegate = lProductIQcontroller;

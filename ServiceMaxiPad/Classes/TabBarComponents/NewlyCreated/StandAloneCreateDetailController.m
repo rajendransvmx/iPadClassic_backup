@@ -14,7 +14,7 @@
 #import "SFMPageViewManager.h"
 #import "TagManager.h"
 #import "AlertMessageHandler.h"
-#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQHomeViewController.h"
 
 
 
@@ -168,7 +168,7 @@
 
 -(void)displayProductIQViewController;
 {
-    ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
+    ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
     navController.delegate = lProductIQcontroller;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;

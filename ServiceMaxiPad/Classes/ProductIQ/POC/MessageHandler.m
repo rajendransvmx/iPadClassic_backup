@@ -7,7 +7,7 @@
 //
 
 #import "MessageHandler.h"
-#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQHomeViewController.h"
 #import "SFMRecordFieldData.h"
 #import "StringUtil.h"
 #import "ProductIQManager.h"
@@ -25,7 +25,7 @@
         NSString *operation = requestParams[@"operation"];
         NSString *jsCallback = requestParams[@"jsCallback"];
         
-        NSDictionary *messageHandlerResponse = [ProductIQPOCHomeViewController getInstance].responseDictionary;
+        NSDictionary *messageHandlerResponse = [ProductIQHomeViewController getInstance].responseDictionary;
         
         //If messageHandlerResponse is nil, then try to avoid the call.
         if (messageHandlerResponse != nil && messageHandlerResponse.count > 0) {
@@ -58,7 +58,7 @@
     NSData *data = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    UIWebView *browser = [[ProductIQPOCHomeViewController getInstance] getBrowser];
+    UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
     NSLog(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];

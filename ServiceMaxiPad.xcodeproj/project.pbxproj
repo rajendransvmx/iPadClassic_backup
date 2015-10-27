@@ -898,8 +898,8 @@
 		84127A9E1B8C8C1300CF8D61 /* DBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A951B8C8C1300CF8D61 /* DBManager.m */; };
 		84127A9F1B8C8C1300CF8D61 /* HTTP.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A971B8C8C1300CF8D61 /* HTTP.m */; };
 		84127AA11B8C8C1300CF8D61 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 84127A9A1B8C8C1300CF8D61 /* Utils.m */; };
-		8412850F1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8412850D1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m */; };
-		841285101B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */; };
+		8412850F1B8C8D3B00CF8D61 /* ProductIQHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8412850D1B8C8D3B00CF8D61 /* ProductIQHomeViewController.m */; };
+		841285101B8C8D3B00CF8D61 /* ProductIQHomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8412850E1B8C8D3B00CF8D61 /* ProductIQHomeViewController.xib */; };
 		8413F5061B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413F5031B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m */; };
 		8413F5071B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 8413F5051B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.m */; };
 		8416A6EC1B660E64000D5FE9 /* CustomXMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8416A6EB1B660E64000D5FE9 /* CustomXMLParser.m */; };
@@ -2719,9 +2719,9 @@
 		84127A971B8C8C1300CF8D61 /* HTTP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTTP.m; sourceTree = "<group>"; };
 		84127A991B8C8C1300CF8D61 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
 		84127A9A1B8C8C1300CF8D61 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
-		8412850C1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductIQPOCHomeViewController.h; sourceTree = "<group>"; };
-		8412850D1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductIQPOCHomeViewController.m; sourceTree = "<group>"; };
-		8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductIQPOCHomeViewController.xib; sourceTree = "<group>"; };
+		8412850C1B8C8D3B00CF8D61 /* ProductIQHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductIQHomeViewController.h; sourceTree = "<group>"; };
+		8412850D1B8C8D3B00CF8D61 /* ProductIQHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductIQHomeViewController.m; sourceTree = "<group>"; };
+		8412850E1B8C8D3B00CF8D61 /* ProductIQHomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductIQHomeViewController.xib; sourceTree = "<group>"; };
 		8413F5021B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionAfterBeforeXMLRequestHelper.h; sourceTree = "<group>"; };
 		8413F5031B5CEE4D00A04D00 /* CustomActionAfterBeforeXMLRequestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionAfterBeforeXMLRequestHelper.m; sourceTree = "<group>"; };
 		8413F5041B5CEE4D00A04D00 /* CustomActionXMLRequestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionXMLRequestHelper.h; sourceTree = "<group>"; };
@@ -6165,9 +6165,9 @@
 			isa = PBXGroup;
 			children = (
 				84127A8D1B8C8C1300CF8D61 /* Native Call Handlers */,
-				8412850C1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.h */,
-				8412850D1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m */,
-				8412850E1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib */,
+				8412850C1B8C8D3B00CF8D61 /* ProductIQHomeViewController.h */,
+				8412850D1B8C8D3B00CF8D61 /* ProductIQHomeViewController.m */,
+				8412850E1B8C8D3B00CF8D61 /* ProductIQHomeViewController.xib */,
 				11596B541BBECD0D00C92872 /* ProductIQManager.h */,
 				11596B551BBECD0D00C92872 /* ProductIQManager.m */,
 				18105DCD1BCBD44500732BFD /* ProdIQObjectDescribeParser.h */,
@@ -6668,7 +6668,7 @@
 				40A06F3A1B06041400218162 /* STasks@1x.png in Resources */,
 				18779DC519EBEF200086A9B7 /* info.png in Resources */,
 				184A9D9219E7D592006DA6BE /* FormCheckBoxUnFilled@2x.png in Resources */,
-				841285101B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.xib in Resources */,
+				841285101B8C8D3B00CF8D61 /* ProductIQHomeViewController.xib in Resources */,
 				18EFFC591B3D1C4200BE15A0 /* wizardComponentIcon@3x.png in Resources */,
 				18A2173519E57C5A00F22EA6 /* Images.xcassets in Resources */,
 				184F1C3B1A1369DF00A2B985 /* BizRuleTableViewCell.xib in Resources */,
@@ -7328,7 +7328,7 @@
 				184A8EAC19E7A0BE006DA6BE /* SMXButtonWithDatePopover.m in Sources */,
 				183AA1A119E6D26400919345 /* SFMPage.m in Sources */,
 				183A9E9519E6A11800919345 /* SVMXOperationQueue.m in Sources */,
-				8412850F1B8C8D3B00CF8D61 /* ProductIQPOCHomeViewController.m in Sources */,
+				8412850F1B8C8D3B00CF8D61 /* ProductIQHomeViewController.m in Sources */,
 				183AA1CD19E6D26400919345 /* SFMPageHistoryHeaderSectionView.m in Sources */,
 				183A9F1719E6A15600919345 /* ZKRelatedListSort.m in Sources */,
 				183A9E2919E69DB000919345 /* MetaSyncStatusModel.m in Sources */,

@@ -72,7 +72,7 @@
 #import "WebserviceResponseStatus.h"
 #import "SNetworkReachabilityManager.h"
 
-#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQHomeViewController.h"
 #import "ProductIQManager.h"
 #import "MessageHandler.h"
 
@@ -2546,7 +2546,7 @@
     */
     
     
-    ProductIQPOCHomeViewController *lProductIQcontroller = [[ProductIQPOCHomeViewController alloc] initWithNibName:@"ProductIQPOCHomeViewController" bundle:nil];
+    ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
     lProductIQcontroller.responseDictionary = [MessageHandler getMessageHandlerResponeDictionaryForSFMPage:self.viewPageManager.sfmPageView];
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];

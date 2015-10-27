@@ -1,25 +1,25 @@
 //
-//  ProductIQPOCHomeViewController.m
+//  ProductIQHomeViewController.m
 //  ServiceMaxiPad
 //
 //  Created by Admin on 25/08/15.
 //  Copyright (c) 2015 ServiceMax Inc. All rights reserved.
 //
 
-#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQHomeViewController.h"
 #import "CustomerOrgInfo.h"
 #import "DBManager.h"
 #import "FileManager.h"
 #import "TagManager.h"
 
-@interface ProductIQPOCHomeViewController ()
+@interface ProductIQHomeViewController ()
 
 @end
 
-@implementation ProductIQPOCHomeViewController
+@implementation ProductIQHomeViewController
 
 
-static  ProductIQPOCHomeViewController *instance;
+static  ProductIQHomeViewController *instance;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -144,7 +144,7 @@ static  ProductIQPOCHomeViewController *instance;
     [self testLoadProductIQ];
 }
 
-+(ProductIQPOCHomeViewController *)getInstance {
++(ProductIQHomeViewController *)getInstance {
     return instance;
 }
 

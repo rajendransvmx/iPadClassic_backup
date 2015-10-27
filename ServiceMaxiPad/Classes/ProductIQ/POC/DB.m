@@ -8,7 +8,7 @@
 
 #import "DB.h"
 #import "DBManager.h"
-#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQHomeViewController.h"
 
 @implementation DB
 
@@ -46,7 +46,7 @@
     NSData *data = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    UIWebView *browser = [[ProductIQPOCHomeViewController getInstance] getBrowser];
+    UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
     NSLog(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];

@@ -7,13 +7,13 @@
 //
 
 #import "HTTP.h"
-#import "ProductIQPOCHomeViewController.h"
+#import "ProductIQHomeViewController.h"
 
 @implementation HTTP
 
 -(void)callServer:(NSString *)params {
-    NSString *accessToken = [[ProductIQPOCHomeViewController getInstance] getAccessToken];
-    NSString *instanceUrl = [[ProductIQPOCHomeViewController getInstance] getInstanceUrl];
+    NSString *accessToken = [[ProductIQHomeViewController getInstance] getAccessToken];
+    NSString *instanceUrl = [[ProductIQHomeViewController getInstance] getInstanceUrl];
     
     instanceUrl = [instanceUrl stringByReplacingOccurrencesOfString:@"+" withString:@" "];
     instanceUrl = [instanceUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -92,7 +92,7 @@
     NSData *data = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    UIWebView *browser = [[ProductIQPOCHomeViewController getInstance] getBrowser];
+    UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodNameLocal, resp];
     NSLog(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];
