@@ -49,6 +49,29 @@
     }
     return records;
 }
+- (NSMutableArray * )fetchSFRecordTypeByIdS
+{
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kSFRecordType andFieldNames:@[kRecordTypeId] ];
+    [requestSelect setDistinctRowsOnly];
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                SFRecordTypeModel * model = [[SFRecordTypeModel alloc] init];
+                [resultSet kvcMagic:model];
+                [records addObject:model.recordTypeId];
+            }
+            [resultSet close];
+        }];
+    }
+    return records;
+}
 
 - (NSArray * )fetchSFRecordTypeInfoByFields:(NSArray *)fieldNames
                              andCriteria:(NSArray *)criteria
