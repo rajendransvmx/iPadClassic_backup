@@ -586,6 +586,7 @@
         _button.wDivision = lOldButton.wDivision+1;
         _button.xPosition = lOldButton.xPosition + 1;
         _button.frame = [self updateFrame:_button];
+        [_button setSubViewFramw];
         [self rearrangeEvent:_button arrayOfTheEvents:arrayButtonsEvents];
     }
     else

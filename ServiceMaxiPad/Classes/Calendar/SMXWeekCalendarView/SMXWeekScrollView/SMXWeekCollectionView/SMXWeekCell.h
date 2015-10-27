@@ -35,7 +35,7 @@
 @property (nonatomic, assign) id CollectionViewDelegate;
 @property (nonatomic,assign) int cellIndex;
 @property (nonatomic,assign) id weekCalendarDelegate;
-
+@property (nonatomic, assign) long paintedHeight;
 
 
 - (void)clean;
