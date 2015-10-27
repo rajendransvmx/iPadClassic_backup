@@ -1286,5 +1286,9 @@
 	<string>Purge Data Progress</string>
 	<key>IPAD018_TAG215</key>
 	<string>last push logs</string>
+	<key>IPAD014_TAG140</key>
+	<string>ProductIQ</string>
+	<key>IPAD014_TAG141</key>
+	<string>Open tree view</string>
 </dict>
 </plist>

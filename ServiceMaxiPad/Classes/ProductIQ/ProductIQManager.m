@@ -18,6 +18,7 @@
 #import "SFMPageHelper.h"
 #import "FactoryDAO.h"
 #import "SFObjectFieldDAO.h"
+#import "TagManager.h"
 
 @implementation ProductIQManager
 
@@ -282,11 +283,11 @@
 //TODO:replace hard coded values from Tags.
 - (SFWizardModel*)getSFWizardForProductIQ {
     SFWizardModel *wizardModel = [[SFWizardModel alloc]init];
-    wizardModel.wizardName = @"ProductIQ";
+    wizardModel.wizardName = [[TagManager sharedInstance]tagByName:KWizardNameForProductIQ];
     
     WizardComponentModel *wizardCompModel = [[WizardComponentModel alloc]init];
     wizardCompModel.actionType = @"ProductIQ";
-    wizardCompModel.actionName = @"Open tree view";
+    wizardCompModel.actionName = [[TagManager sharedInstance]tagByName:KStepNameForProductIQ];
     wizardCompModel.isEntryCriteriaMatching = YES;
     if (wizardModel.wizardComponents == nil)
     {

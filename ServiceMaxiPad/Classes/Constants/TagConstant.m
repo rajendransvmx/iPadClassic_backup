@@ -620,6 +620,11 @@ NSString *const KTagSuccess = @"IPAD018_TAG060";
 NSString *const KTagFailed = @"IPAD018_TAG061";
 NSString *const KTagConflicts = @"IPAD018_TAG171";
 
+//ProductIQ tags
+NSString *const KWizardNameForProductIQ = @"IPAD014_TAG140";
+NSString *const KStepNameForProductIQ = @"IPAD014_TAG141";
+
+
 #define SERVICE_REPORT_EXPENSE_SECTION_TITLE    SUMMARY_REPORT_EXPENSES_TITLE //@"IPAD004_TAG009"
 
 #define SERVICE_REPORT_EXPENSES_LINE_PRICE  SUMMARY_REPORT_LINE_PRICE //@"IPAD004_TAG014"

@@ -879,5 +879,9 @@ extern NSString *const kPurgeWarningMessage ;
 extern NSString *const kSignIn ;
 extern NSString *const kPurgeDataLogs;
 
+//ProductIQ tags
+extern NSString *const KWizardNameForProductIQ;
+extern NSString *const KStepNameForProductIQ;
+
 
 //@end

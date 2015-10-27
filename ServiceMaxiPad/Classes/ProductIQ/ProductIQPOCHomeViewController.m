@@ -10,6 +10,7 @@
 #import "CustomerOrgInfo.h"
 #import "DBManager.h"
 #import "FileManager.h"
+#import "TagManager.h"
 
 @interface ProductIQPOCHomeViewController ()
 
@@ -77,7 +78,7 @@ static  ProductIQPOCHomeViewController *instance;
     UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"OPDocBackArrow.png"]];
     
     UILabel *backLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 180, arrow.frame.size.height)];
-    backLabel.text = @"Back";
+    backLabel.text = [[TagManager sharedInstance]tagByName:kTagtBackButtonTitle];
     backLabel.font = [UIFont systemFontOfSize:17];
     backLabel.textColor = [UIColor whiteColor];
     backLabel.backgroundColor = [UIColor clearColor];
