@@ -61,13 +61,6 @@
         }
          self.recordtypeLabel = recordTypeNameTemp;
         
-        NSString *newRecordType = [jsonDictionary objectForKey:@"value"];
-        if(![StringUtil isStringEmpty:newRecordType])
-        {
-            self.recordType = newRecordType;
-
-        }
-
 	}
 	return self;
 }

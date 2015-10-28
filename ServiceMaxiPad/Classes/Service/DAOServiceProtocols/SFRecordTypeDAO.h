@@ -17,6 +17,7 @@
                                 andCriteria:(NSArray *)criteria
                               andExpression:(NSString *)expression;
 - (SFRecordTypeModel *) getSFRecordTypeBySFId:(NSString *)sfId;
+- (NSMutableArray *)fetchSFRecordTypeByIdS;
 - (NSArray*)fetchObjectAPINames;
 -(void)updateRecordTypeLabels:(NSArray *)recordTypeModels;
 @end

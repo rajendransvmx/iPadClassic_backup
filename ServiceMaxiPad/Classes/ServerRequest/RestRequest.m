@@ -345,6 +345,8 @@
         if (httpPostDictionary != nil) {
             
             SXLogDebug(@"httpPostDictionary : %@", [httpPostDictionary description]);
+            NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
+
             
             NSData *someData = [NSJSONSerialization dataWithJSONObject:httpPostDictionary options:0 error:nil];
             [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Content-Encoding"];
@@ -498,6 +500,7 @@
             break;
         case RequestOneCallMetaSync:
         case RequestObjectDefinition:
+        case RequestRecordType:
             eventType = kMetaSync;
             break;
   /************* dataPurge requests ****************** */  
@@ -576,6 +579,8 @@
         case RequestStaticResourceLibrary:
         case RequestGetPriceCodeSnippet:
         case RequestGroupProfile:
+        case RequestRecordType:
+
             url = [self getUrlWithStringApppended:kMetaSyncUrlLink];
             break;
             
@@ -619,7 +624,6 @@
             break;
         case RequestDocumentInfoFetch:
         case RequestTroubleshooting:
-        case RequestRecordType:
         case RequestTroubleShootDocInfoFetch:
         case RequestProductManualDownload:
         case RequestProductManual:
@@ -712,7 +716,9 @@
 - (void)nameByType:(RequestType)type
 {
     switch (type)
-    {
+    {   case RequestRecordType:
+            self.eventName = recordType;
+            break;
         case RequestValidateProfile:
             self.eventName = validateProfile;
             break;
@@ -1035,7 +1041,6 @@
     
     if (self.requestType == RequestDependantPickListRest
         || self.requestType == RequestDocumentInfoFetch
-        || self.requestType == RequestRecordType
         || self.requestType == RequestTroubleshooting
         || self.requestType == RequestTroubleShootDocInfoFetch
         || self.requestType == RequestTechnicianDetails

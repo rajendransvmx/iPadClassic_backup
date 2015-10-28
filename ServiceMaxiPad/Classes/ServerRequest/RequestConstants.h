@@ -143,6 +143,7 @@ extern NSString *const kHttpMethodGet;
 extern NSString *const groupProfile;
 
 extern NSString *const validateProfile;
+extern NSString *const  recordType;
 
 extern NSString *const kMetaSync;
 extern NSString *const initialSync;

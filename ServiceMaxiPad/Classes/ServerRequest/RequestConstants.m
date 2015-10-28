@@ -12,6 +12,8 @@
 NSString *const groupProfile       = @"GROUP_PROFILE";
 
 NSString *const validateProfile    = @"VALIDATE_PROFILE";
+NSString *const  recordType        =  @"RECORD_TYPE";
+
 
 NSString *const kContentType        = @"application/json";
 NSString *const kHttpMethodPost     = @"POST";

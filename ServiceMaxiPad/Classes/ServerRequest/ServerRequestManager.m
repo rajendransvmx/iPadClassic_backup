@@ -433,7 +433,7 @@
             nextRequestType = RequestGetPriceCodeSnippet;
             break;
         case RequestGetPriceCodeSnippet:
-            nextRequestType =  RequestDependantPickListRest;
+            nextRequestType =  RequestRecordType;
             break;
         case RequestRecordType:
             nextRequestType =  RequestDependantPickListRest;
@@ -625,7 +625,7 @@
             nextRequestType = RequestGetPriceCodeSnippet;
             break;
         case RequestGetPriceCodeSnippet:
-            nextRequestType =  RequestDependantPickListRest; /* removing RequestRecordType  defect NUmber 023976*/
+            nextRequestType =  RequestRecordType; /* removing RequestRecordType  defect NUmber 023976*/
             break;
             
         case RequestRecordType:

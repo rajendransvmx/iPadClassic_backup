@@ -303,24 +303,44 @@
 
 -(NSArray *)getRequestParamModelForRecordType
 {
-    //ZKS : Query is added as part of value in RequestParamModel
+    NSMutableArray * recordTypeArray = nil;
     
+    id <SFRecordTypeDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
+    
+    
+    recordTypeArray = [picklistService fetchSFRecordTypeByIdS];
     NSMutableArray *requests = [[NSMutableArray alloc] initWithCapacity:0];
+
     
-    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
-    NSArray * objectsList = nil;
-    if ([daoService conformsToProtocol:@protocol(SFRecordTypeDAO)]) {
-        objectsList = [daoService fetchObjectAPINames];
-    }
-    if(objectsList > 0)
+    if(recordTypeArray > 0)
     {
         RequestParamModel * param = [[RequestParamModel alloc] init];
-        NSString *stringArray = [StringUtil getConcatenatedStringFromArray:objectsList withSingleQuotesAndBraces:YES];
-        NSString * query = [NSString stringWithFormat:@"SELECT Id, Name ,SobjectType FROM RecordType WHERE SobjectType in %@",stringArray];
-        param.value = query;
+        param.values = recordTypeArray;
         [requests addObject:param];
     }
     return requests;
+
+    
+    
+    return recordTypeArray;
+  //ZKS : Query is added as part of value in RequestParamModel
+    
+//    
+//    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
+//    NSArray * objectsList = nil;
+//    if ([daoService conformsToProtocol:@protocol(SFRecordTypeDAO)]) {
+//        objectsList = [daoService fetchObjectAPINames];
+//    }
+//    if(objectsList > 0)
+//    {
+//        RequestParamModel * param = [[RequestParamModel alloc] init];
+//        NSString *stringArray = [StringUtil getConcatenatedStringFromArray:objectsList withSingleQuotesAndBraces:YES];
+//        NSString * query = [NSString stringWithFormat:@"SELECT Id, Name ,SobjectType FROM RecordType WHERE SobjectType in %@",stringArray];
+//        param.value = query;
+//        param.values = 
+//        [requests addObject:param];
+//    }
+//    return requests;
 }
 
 
