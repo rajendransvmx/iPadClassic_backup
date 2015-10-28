@@ -97,8 +97,14 @@
 
     criteriaArray = [[NSArray alloc] initWithObjects:criteria1,criteria2,criteria3, nil];
 
-    NSString * advExpression = @"((1 OR 3) AND 2)";
-
+    NSString * advExpression = nil;
+    if (criteria3) {
+        advExpression = @"((1 OR 3) AND 2)";
+    }
+    else{
+        advExpression = @"(1 AND 2)";
+    }
+    
     NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"noOfLookupRecords",@"defaultLookupColumn",@"searchName", @"namedSearchId", @"isStandard", @"isDefault",nil];
 
     SFNamedSearchModel * namedSearchModel;
