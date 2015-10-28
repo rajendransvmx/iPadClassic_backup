@@ -103,15 +103,33 @@
   param: string in GMT / UTC format
   return : string in date format
   */
+// $UTILITY.dateForGMTString = function(DateString) {
+// 
+// var requiredString = DateString.split("+"); //+000 needs to be removed
+// var string = requiredString[0];
+// var localeDate = new Date(string);
+// var localDateStringWithTime = $UTILITY.dateStringFordate(localeDate);
+// return localDateStringWithTime;
+// 
+// }
+ 
  $UTILITY.dateForGMTString = function(DateString) {
  
- var requiredString = DateString.split("+"); //+000 needs to be removed
- var string = requiredString[0];
- var localeDate = new Date(string);
- var localDateStringWithTime = $UTILITY.dateStringFordate(localeDate);
- return localDateStringWithTime;
+ //Test1 DateString = "2014-07-25T09:24:17.000+0000";
+ //Test2 DateString = "2014-07-25T09:24:17.000";
+ //Test3 DateString = "2014-2-1";
+ 
+ //11934
+ 
+ if(DateString.length >= 10) {
+ DateString = DateString.substring(0, 10);
+ }
+ var dateComponents = DateString.split("-");
+ var tempDateString =  dateComponents[0] + "-" + dateComponents[1] + "-" + dateComponents[2];
+ return tempDateString;
  
  }
+
  
 /* get the date and time string based on locale
  param: string in GMT / UTC format
