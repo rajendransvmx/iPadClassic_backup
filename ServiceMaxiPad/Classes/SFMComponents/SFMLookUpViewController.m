@@ -863,8 +863,8 @@
     self.lookUpObject.contextLookupFilter = [advanceFilter firstObject];
     self.lookUpObject.advanceFilters = advanceFilter;
     
-    [self loadLookUpData];
-    [self removePreviouslySelectedData];
+//    [self loadLookUpData];
+//    [self removePreviouslySelectedData];
 //    [self.tableView reloadData];  apply button in the filters should not display any data. Only tapping on the Search button should display the results.
 
 }
