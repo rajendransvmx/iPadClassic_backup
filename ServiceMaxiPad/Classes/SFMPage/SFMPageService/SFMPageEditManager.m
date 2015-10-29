@@ -1234,6 +1234,10 @@
             }
             else{
                 recordData.internalValue = fieldValue;
+
+                if ([StringUtil isStringEmpty:model.sourceFieldName] && ([model.mappingValue isEqualToString:kLiteralCurrentUser] || [model.mappingValue isEqualToString:kLiteralCurrentUserId] || [model.mappingValue isEqualToString:kLiteralOwner])) {
+                    recordData.internalValue =  [[CustomerOrgInfo sharedInstance]currentUserId];
+                }
                 
                 NSString *pickListDisplayValue;
                 
