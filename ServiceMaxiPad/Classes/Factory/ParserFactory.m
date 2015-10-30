@@ -41,6 +41,7 @@
 #import "ProdIQUserConfigParser.h"
 #import "ProdIQTranslationsParser.h"
 #import "ProdIQObjectDescribeParser.h"
+#import "ProdIQDataParser.h"
 
 @implementation ParserFactory
 
@@ -153,6 +154,7 @@
                 break;
                 
             case RequestTXFetch:
+            case RequestProductIQTxFetch:
                 parser = [[TXFetchParser alloc] init];
                 break;
                 
@@ -367,6 +369,9 @@
                 break;
             case RequestProductIQObjectDescribe:
                 parser = [[ProdIQObjectDescribeParser alloc] init];
+                break;
+            case RequestProductIQData:
+                parser = [[ProdIQDataParser alloc] init];
                 break;
             default:
                 SXLogWarning(@"Invalid parser type requested");

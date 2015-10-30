@@ -451,6 +451,7 @@
             eventType = kSync;
             break;
         case RequestTXFetch:
+        case RequestProductIQTxFetch:
         case RequestAdvancedDownLoadCriteria:
         case RequestGetDelete:
         case RequestgetDeleteDownloadCriteria:
@@ -526,6 +527,9 @@
         case RequestTypeCustomActionWebServiceAfterBefore:
             eventType = kCustomWebServiceUrlLink;
             break;
+        case RequestProductIQData:
+            eventType = kSync;
+            break;
             
         default:
             break;
@@ -591,6 +595,7 @@
         case RequestGetPriceDataTypeTwo:
         case RequestGetPriceDataTypeThree:
         case RequestTXFetch:
+        case RequestProductIQTxFetch:
         case RequestAdvancedDownLoadCriteria:
         case RequestCleanUpSelect:
         case RequestCleanUp:
@@ -690,6 +695,9 @@
         case RequestProductIQObjectDescribe:
             url =  [self getURLStringForProductIQObjectDescribeRequest];
             break;
+        case RequestProductIQData:
+            url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
+            break;
         default:
             break;
     }
@@ -778,6 +786,7 @@
             self.eventName = getPriceData;
             break;
         case RequestTXFetch:
+        case RequestProductIQTxFetch:
             self.eventName = kTXFetch;
             break;
         case RequestSFMMetaDataInitialSync:
@@ -920,7 +929,9 @@
         case RequestTypeCustomActionWebServiceAfterBefore:
             self.eventName=[self getCustomWebserviceEventName];
             break;
-
+        case RequestProductIQData:
+            self.eventName = kProductIQSyncData;
+            break;
         default:
             break;
             

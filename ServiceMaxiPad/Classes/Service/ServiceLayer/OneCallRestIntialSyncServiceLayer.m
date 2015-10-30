@@ -33,6 +33,7 @@
 #import "ServerRequestManager.h"
 #import "TimeLogCacheManager.h"
 #import "ProductIQManager.h"
+#import "OneCallDataSyncHelper.h"
 
 @implementation OneCallRestIntialSyncServiceLayer
 
@@ -187,6 +188,16 @@
             return [self createParallelRequestsForProdIQObjectDescribe];
         }
             break;
+        case RequestProductIQTxFetch:
+        {
+            return [self getProdIQTxFetcRequestParamsForRequestCount:requestCount];
+        }
+            break;
+        case RequestProductIQData:
+        {
+            return [self getProdIQDataRequestParam];
+        }
+            break;
         default:
             break;
     }
@@ -196,17 +207,6 @@
     
 }
 
-
--(NSArray *)createParallelRequestsForProdIQObjectDescribe {
-    NSArray *objDescArray = [[ProductIQManager sharedInstance] getProdIQRelatedObjects];
-    NSMutableArray *requestParams = [NSMutableArray array];
-    for (int count = 0; count < [objDescArray count]; count++) {
-        RequestParamModel *model = [[RequestParamModel alloc] init];
-        model.value = [objDescArray objectAtIndex:count];
-        [requestParams addObject:model];
-    }
-    return requestParams;
-}
 
 -(NSArray*)getRequestParamModelForGetPriceData:(RequestType)getPriceDataType {
     
@@ -642,5 +642,81 @@
 {
     [CalenderHelper updateOriginalSfIdForSVMXEvent];
 }
+
+
+#pragma mark - Product IQ
+
+-(NSArray *)createParallelRequestsForProdIQObjectDescribe {
+    NSArray *objDescArray = [[ProductIQManager sharedInstance] getProdIQRelatedObjects];
+    NSMutableArray *requestParams = [NSMutableArray array];
+    for (int count = 0; count < [objDescArray count]; count++) {
+        RequestParamModel *model = [[RequestParamModel alloc] init];
+        model.value = [objDescArray objectAtIndex:count];
+        [requestParams addObject:model];
+    }
+    return requestParams;
+}
+
+
+- (NSArray *)getProdIQTxFetcRequestParamsForRequestCount:(NSInteger )requestCount {
+    @autoreleasepool {
+        
+        TXFetchHelper *helper = [[TXFetchHelper alloc] init];
+        NSMutableArray *requestParams = [[NSMutableArray alloc] init];
+        
+        NSString *locationObjName = kWorkOrderSite;
+        
+        id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+        DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:locationObjName operatorType:(SQLOperatorIsNotNull) andFieldValue:nil];
+        NSArray * transactionRecords =  [transObj fetchDataWithhAllFieldsAsStringObjects:kWorkOrderTableName fields:@[locationObjName] expression:nil criteria:@[criteria]];
+        
+        NSMutableDictionary *objectIdsDictionary = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *idsDict = [[NSMutableDictionary alloc] init];
+        
+        for (TransactionObjectModel *model in transactionRecords) {
+            NSString *sfID = [[model getFieldValueDictionary] objectForKey:locationObjName];
+            BOOL recordExist = [transObj doesRecordExistsForObject:locationObjName forRecordId:sfID];
+            if (!recordExist) {
+                [idsDict  setObject:sfID forKey:sfID];
+            }
+        }
+        
+        if ([idsDict count] > 0) {
+            
+            [objectIdsDictionary setObject:idsDict forKey:locationObjName];
+            
+            OneCallDataSyncHelper *syncHelper = [[OneCallDataSyncHelper alloc] init];
+            [syncHelper insertIdsIntoSyncHeapTable:objectIdsDictionary];
+            
+            for (int counter = 0; counter < requestCount; counter++) {
+                
+                NSDictionary *recordIdDict =  [helper getIdListFromSyncHeapTableWithLimit:kOverallIdLimit forParallelSyncType:nil];
+                if ([recordIdDict count] <= 0) {
+                    break;
+                }
+                
+                RequestParamModel *paramObj = [[RequestParamModel alloc]init];
+                paramObj.requestInformation = recordIdDict;
+                NSMutableArray *valueMap = [NSMutableArray arrayWithArray:[helper getValueMapDictionary:recordIdDict]];
+                paramObj.valueMap = valueMap;
+                [requestParams addObject:paramObj];
+            }
+        }
+        
+        return requestParams;
+    }
+}
+
+
+-(NSArray *)getProdIQDataRequestParam {
+    RequestParamModel *model = [[RequestParamModel alloc]init];
+    NSDictionary *lastIndexDict = [NSDictionary dictionaryWithObjects:@[[NSNull null], @"LAST_INDEX", [NSNull null], [NSNull null], [NSNull null], [NSNumber numberWithInt:0], @[], @[]] forKeys:@[@"data", @"key", @"lstInternal_Request", @"lstInternal_Response", @"record", @"value", @"valueMap", @"values"]];
+    model.valueMap = @[lastIndexDict];
+    model.values = @[];
+    return @[model];
+}
+
+#pragma mark - end
+
 
 @end

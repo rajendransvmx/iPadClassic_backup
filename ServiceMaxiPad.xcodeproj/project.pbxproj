@@ -639,6 +639,7 @@
 		1886B8AC1A05205800942638 /* DatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1886B8A71A05205800942638 /* DatabaseQueue.m */; };
 		1886B8AD1A05205800942638 /* SMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1886B8A91A05205800942638 /* SMDatabase.m */; };
 		1886B8AE1A05205800942638 /* SQLResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 1886B8AB1A05205800942638 /* SQLResultSet.m */; };
+		188810B61BD7B49C00E0BF91 /* ProdIQDataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 188810B51BD7B49C00E0BF91 /* ProdIQDataParser.m */; settings = {ASSET_TAGS = (); }; };
 		18897C8A1A00B004007F326B /* DataTypeUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 18897C891A00B004007F326B /* DataTypeUtility.m */; };
 		189234DD1A09F8D9002BD2FA /* ResolveConflictsHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 189234D81A09F8D9002BD2FA /* ResolveConflictsHelper.m */; };
 		189430521A48127800357320 /* SMObjectRelationModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 189430511A48127800357320 /* SMObjectRelationModel.m */; };
@@ -2302,6 +2303,8 @@
 		1886B8A91A05205800942638 /* SMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMDatabase.m; sourceTree = "<group>"; };
 		1886B8AA1A05205800942638 /* SQLResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLResultSet.h; sourceTree = "<group>"; };
 		1886B8AB1A05205800942638 /* SQLResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQLResultSet.m; sourceTree = "<group>"; };
+		188810B41BD7B49C00E0BF91 /* ProdIQDataParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProdIQDataParser.h; sourceTree = "<group>"; };
+		188810B51BD7B49C00E0BF91 /* ProdIQDataParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProdIQDataParser.m; sourceTree = "<group>"; };
 		18897C881A00B004007F326B /* DataTypeUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTypeUtility.h; sourceTree = "<group>"; };
 		18897C891A00B004007F326B /* DataTypeUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataTypeUtility.m; sourceTree = "<group>"; };
 		189234D71A09F8D9002BD2FA /* ResolveConflictsHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveConflictsHelper.h; sourceTree = "<group>"; };
@@ -6176,6 +6179,8 @@
 				18522A751BBA6F1800E9B4E0 /* ProdIQUserConfigParser.m */,
 				18522A771BBA6F6500E9B4E0 /* ProdIQTranslationsParser.h */,
 				18522A781BBA6F6500E9B4E0 /* ProdIQTranslationsParser.m */,
+				188810B41BD7B49C00E0BF91 /* ProdIQDataParser.h */,
+				188810B51BD7B49C00E0BF91 /* ProdIQDataParser.m */,
 			);
 			path = ProductIQ;
 			sourceTree = "<group>";
@@ -6937,6 +6942,7 @@
 				40CA19FF19FE4B340097F5A1 /* OPDocSignatureViewController.m in Sources */,
 				184A8EA819E7A0BE006DA6BE /* UIImage+SMXCustomMethods.m in Sources */,
 				181A4DD21B383D3D00549C38 /* SFMCustomActionWebServiceHelper.m in Sources */,
+				188810B61BD7B49C00E0BF91 /* ProdIQDataParser.m in Sources */,
 				183A9FCC19E6B18500919345 /* ModifiedRecordsService.m in Sources */,
 				183A9FD219E6B18500919345 /* SFExpressionComponentService.m in Sources */,
 				183A9FE419E6B18500919345 /* StaticResourceService.m in Sources */,

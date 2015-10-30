@@ -133,7 +133,9 @@ typedef NS_ENUM(NSUInteger, RequestType)
     /** Product IQ **/
     RequestProductIQUserConfiguration,
     RequestProductIQTranslations,
-    RequestProductIQObjectDescribe
+    RequestProductIQObjectDescribe,
+    RequestProductIQTxFetch,
+    RequestProductIQData
 };
 
 extern NSString *const kContentType;
@@ -324,3 +326,5 @@ extern NSString *const kRestUrlProductIQ;
 extern NSString *const kProductIQUserConfigUrl;
 extern NSString *const kProductIQTranslationsUrl;
 extern NSString *const kProductIQObjectDescribeUrl;
+extern NSString *const kProductIQSyncData;
+

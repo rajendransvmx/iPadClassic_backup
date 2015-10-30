@@ -484,10 +484,10 @@
             nextRequestType = RequestGetPriceDataTypeThree;
             break;
         case RequestGetPriceDataTypeThree:
-            nextRequestType = RequestTXFetch;
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQData:RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQTxFetch:RequestCleanUp;
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
@@ -501,8 +501,14 @@
         case RequestProductIQObjectDescribe:
             nextRequestType = RequestGetPriceObjects;
             break;
+        case RequestProductIQTxFetch:
+            nextRequestType = RequestCleanUp;
+            break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
+            break;
+        case RequestProductIQData:
+            nextRequestType = RequestTXFetch;
             break;
         default:
             break;
@@ -714,13 +720,16 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQTxFetch:RequestCleanUp;
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
+            break;
+        case RequestProductIQTxFetch:
+            nextRequestType = RequestCleanUp;
             break;
         default:
             break;

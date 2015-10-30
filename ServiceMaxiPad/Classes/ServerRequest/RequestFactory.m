@@ -50,6 +50,7 @@
             case RequestGetPriceDataTypeTwo:
             case RequestGetPriceDataTypeThree:
             case RequestTXFetch:
+            case RequestProductIQTxFetch:
             case RequestAdvancedDownLoadCriteria:
             case RequestGetDelete:                     //Initial Data Sync
             case RequestgetDeleteDownloadCriteria:
@@ -154,6 +155,7 @@
             case RequestProductIQUserConfiguration:
             case RequestProductIQTranslations:
             case RequestProductIQObjectDescribe:
+            case RequestProductIQData:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
                 
