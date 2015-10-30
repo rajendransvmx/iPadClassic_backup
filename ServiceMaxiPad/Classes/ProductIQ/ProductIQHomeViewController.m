@@ -11,8 +11,14 @@
 #import "DBManager.h"
 #import "FileManager.h"
 #import "TagManager.h"
+#import "BarCodeScannerUtility.h"
+#import "StyleGuideConstants.h"
+#import "StyleManager.h"
 
 @interface ProductIQHomeViewController ()
+
+@property (copy, nonatomic) NSString *focusedElementString;
+@property (strong, nonatomic) BarCodeScannerUtility *barCodeScanner;
 
 @end
 
@@ -56,6 +62,10 @@ static  ProductIQHomeViewController *instance;
     [self debugButtonForProductIQ];
     
 }
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self addKeyboardNotification];
+}
 - (void)createWebView {
     webview = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     webview.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -63,6 +73,11 @@ static  ProductIQHomeViewController *instance;
     webview.scalesPageToFit = YES;
     [self.view addSubview:webview];
 
+}
+
+- (void)addKeyboardNotification {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
 }
 
 
@@ -250,5 +265,121 @@ static  ProductIQHomeViewController *instance;
         [bridge invoke: url];
     });
 }
+
+#pragma mark - Keyboard input accessory view
+- (UIView *)barcodeView
+{
+    if ([self isCameraAvailable]) {
+        UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 46)];
+        barCodeView.backgroundColor = [UIColor colorWithHexString:@"B5B7BE"];
+        
+        
+        CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
+        
+        UIButton *barCodeButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        [barCodeButton setBackgroundImage:[UIImage imageNamed:@"barcode.png"] forState:UIControlStateNormal];
+        
+        CGFloat xPosition = CGRectGetWidth(barCodeView.frame) - 90;
+        buttonFrame.origin.x = xPosition;
+        
+        barCodeButton.frame = buttonFrame;
+        
+        barCodeButton.autoresizingMask =  UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+        [barCodeButton addTarget:self
+                          action:@selector(lauchBarCode)
+                forControlEvents:UIControlEventTouchUpInside];
+        [barCodeView addSubview:barCodeButton];
+        
+        return barCodeView;
+    }
+    
+    return nil;
+    
+}
+
+- (BOOL)isCameraAvailable
+{
+    return [UIImagePickerController isSourceTypeAvailable: UIImagePickerControllerSourceTypeCamera];
+}
+
+- (void)replaceKeyboardInputAccessoryView {
+    
+    NSInteger count = [[[UIApplication sharedApplication] windows] count];
+    if (count < 2) {
+        return;
+    }
+    
+    UIWindow *tempWindow = [[[UIApplication sharedApplication] windows] objectAtIndex:1];
+    
+    UIView *accessoryView = [self traverseSubViews:tempWindow];
+    if ([accessoryView.description hasPrefix:@"<UIWebFormAccessory"]) {
+        //Found the inputAccessoryView UIView.
+        if (accessoryView.subviews.count > 0) {
+            [self addNewAccessoryView:accessoryView];
+        }
+    }
+    
+}
+- (void)addNewAccessoryView:(UIView*)oldAccessoryView {
+    [oldAccessoryView addSubview:[self barcodeView]];
+}
+
+- (UIView*)traverseSubViews:(UIView*)vw {
+    UIView *tempView = nil;
+    if ([vw.description hasPrefix:@"<UIWebFormAccessory"]) {
+        return vw;
+    }
+    
+    for (UIView *subView in vw.subviews) {
+        if (subView.subviews.count > 0) {
+            tempView = [self traverseSubViews:subView];
+            if ([tempView.description hasPrefix:@"<UIWebFormAccessory"]) {
+                return tempView;
+            }
+        }
+    }
+    return tempView;
+}
+
+#pragma mark - Action methods
+
+- (void)lauchBarCode
+{
+    NSString *javaScript = @"document.activeElement.id";
+    self.focusedElementString = [webview stringByEvaluatingJavaScriptFromString:javaScript];
+    if (self.barCodeScanner == nil) {
+        self.barCodeScanner = [[BarCodeScannerUtility alloc] init];
+        self.barCodeScanner.scannerDelegate = self;
+    }
+    [self.barCodeScanner loadScannerOnViewController:self];
+    
+    //    javaScript = [NSString stringWithFormat:@"document.getElementById(%@).value = %@",self.focusString, @"1000"];
+    //    [self.scannerWebview stringByEvaluatingJavaScriptFromString:javaScript];
+}
+
+
+#pragma mark - Keyboard Notifications
+
+- (void)keyboardDidShow:(NSNotification*)notification {
+    [self replaceKeyboardInputAccessoryView];
+    
+}
+
+
+#pragma mark - BarcodeScannerDelegate methods
+
+- (void)barcodeSuccessfullyDecodedWithData:(NSString *)decodedData {
+    
+    NSString *javaScript = [NSString stringWithFormat:@"document.getElementById('%@').value = %@",self.focusedElementString, decodedData];
+    [webview stringByEvaluatingJavaScriptFromString:javaScript];
+    self.focusedElementString = nil;
+}
+
+- (void)barcodeCaptureCancelled
+{
+    
+}
+
+
 
 @end

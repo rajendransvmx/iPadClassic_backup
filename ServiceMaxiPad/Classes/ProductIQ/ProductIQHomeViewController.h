@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "Bridge.h"
+#import "BarCodeScannerUtility.h"
 
-@interface ProductIQHomeViewController : UIViewController <UIWebViewDelegate, UINavigationControllerDelegate>
+
+@interface ProductIQHomeViewController : UIViewController <UIWebViewDelegate, UINavigationControllerDelegate,BarCodeScannerProtocol>
 {
     NSString *clientId;
     NSString *callbackUrl;
