@@ -169,7 +169,7 @@
         self.barcodeScannerUtil = [[BarCodeScannerUtility alloc] init];
         self.barcodeScannerUtil.scannerDelegate = self;
     }
-    [ self.barcodeScannerUtil loadScannerOnViewController:self];
+    [ self.barcodeScannerUtil loadScannerOnViewController:self forModalPresentationStyle:UIModalPresentationOverCurrentContext];
 }
 
 -(void)noRecordsToDisplay

@@ -524,7 +524,7 @@
         self.barCodeScanner = [[BarCodeScannerUtility alloc] init];
         self.barCodeScanner.scannerDelegate = self;
     }
-    [self.barCodeScanner loadScannerOnViewController:self];
+    [self.barCodeScanner loadScannerOnViewController:self forModalPresentationStyle:0];
 }
 - (void)barcodeSuccessfullyDecodedWithData:(NSString *)decodedData
 {

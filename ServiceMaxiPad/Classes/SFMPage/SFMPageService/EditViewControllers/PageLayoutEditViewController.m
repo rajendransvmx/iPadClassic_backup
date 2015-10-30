@@ -516,7 +516,7 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
         self.barcodeScanner.scannerDelegate = self;
     }
     self.barcodeScanner.indexPath = indexPath;
-    [self.barcodeScanner loadScannerOnViewController:self];
+    [self.barcodeScanner loadScannerOnViewController:self forModalPresentationStyle:0];
 }
 
 #pragma mark End

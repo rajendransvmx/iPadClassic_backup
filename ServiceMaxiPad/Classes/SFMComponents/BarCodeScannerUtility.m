@@ -34,7 +34,7 @@
  *
  *
  */
-- (void)loadScannerOnViewController:(UIViewController *)viewController {
+- (void)loadScannerOnViewController:(UIViewController *)viewController forModalPresentationStyle:(NSInteger)presentationStyle {
     
     SXLogDebug(@"\n\n\n Loaded scanner");
     // ADD: present a barcode reader that scans from the camera feed
@@ -53,7 +53,8 @@
     
     // present and release the controller
     // Madhusudhan #023777, UI distorted on orientation.
-    self.reader.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    if(presentationStyle)
+    self.reader.modalPresentationStyle = presentationStyle;
     [viewController presentViewController:self.reader animated:YES completion:^{
         [self.reader.readerView stop];
         [self.reader.readerView flushCache];
