@@ -76,7 +76,7 @@
                 [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, timeLogDict, lastIndexDict]];
                 newRequestModel.valueMap = callBackValueMapArray;
                 newRequestModel.values = @[];
-                return callbk;
+//                return callbk;
             }
             else {
                 if (lastIndexDict != nil && [[lastIndexDict objectForKey:kSVMXValue] integerValue] == 1) {
@@ -84,7 +84,7 @@
                     callbk.callBack = YES;
                     newRequestModel.valueMap = callBackValueMapArray;
                     newRequestModel.values = @[];
-                    return callbk;
+//                    return callbk;
                 }
             }
             return nil;
