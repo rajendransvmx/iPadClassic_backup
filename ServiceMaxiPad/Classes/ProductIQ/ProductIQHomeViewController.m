@@ -353,8 +353,6 @@ static  ProductIQHomeViewController *instance;
     }
     [self.barCodeScanner loadScannerOnViewController:self];
     
-    //    javaScript = [NSString stringWithFormat:@"document.getElementById(%@).value = %@",self.focusString, @"1000"];
-    //    [self.scannerWebview stringByEvaluatingJavaScriptFromString:javaScript];
 }
 
 
