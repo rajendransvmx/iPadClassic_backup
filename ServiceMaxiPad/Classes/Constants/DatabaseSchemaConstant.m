@@ -62,7 +62,7 @@ NSString *const kTableMobileDeviceSettingsSchema = @"CREATE TABLE IF NOT EXISTS 
 
 NSString *const kTableMobileDeviceTagsSchema = @"CREATE TABLE IF NOT EXISTS MobileDeviceTags ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'tagId' VARCHAR, 'value' VARCHAR)";
 
-NSString *const kTableModifiedRecordsSchema = @"CREATE TABLE IF NOT EXISTS ModifiedRecords ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'recordLocalId' VARCHAR, 'sfId' VARCHAR, 'recordType' VARCHAR, 'operation' VARCHAR, 'objectName' VARCHAR, 'syncFlag' BOOL, 'parentObjectName' VARCHAR, 'parentLocalId' VARCHAR, 'recordSent' VARCHAR, 'webserviceName' VARCHAR, 'className' VARCHAR, 'syncType' VARCHAR, 'headerLocalId' VARCHAR, 'requestData' VARCHAR, 'requestId' VARCHAR,'timeStamp' DATETIME,'fieldsModified' VARCHAR)";
+NSString *const kTableModifiedRecordsSchema = @"CREATE TABLE IF NOT EXISTS ModifiedRecords ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'recordLocalId' VARCHAR, 'sfId' VARCHAR, 'recordType' VARCHAR, 'operation' VARCHAR, 'objectName' VARCHAR, 'syncFlag' BOOL, 'parentObjectName' VARCHAR, 'parentLocalId' VARCHAR, 'recordSent' VARCHAR, 'webserviceName' VARCHAR, 'className' VARCHAR, 'syncType' VARCHAR, 'headerLocalId' VARCHAR, 'requestData' VARCHAR, 'requestId' VARCHAR,'Pending' VARCHAR, 'timeStamp' DATETIME,'fieldsModified' VARCHAR )";
 
 /*NSString *const kTableObjectNameFieldValueSchema = @"CREATE TABLE IF NOT EXISTS ObjectNameFieldValue ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'object_name' VARCHAR, 'Id' VARCHAR, 'value' VARCHAR)";*/
 
