@@ -862,7 +862,8 @@
     if (show) {
       
         if (!self.loadingHUD) {
-            self.loadingHUD = [[MBProgressHUD alloc] initWithView:self.view.window];
+            //Madhusudhan, App crash. View mush not be nill, So changed to app's key window from self.view.window.
+            self.loadingHUD = [[MBProgressHUD alloc] initWithView:[[UIApplication sharedApplication] keyWindow]];
         }
         [self.view.window addSubview:self.loadingHUD];
         self.loadingHUD.mode = MBProgressHUDModeIndeterminate;
