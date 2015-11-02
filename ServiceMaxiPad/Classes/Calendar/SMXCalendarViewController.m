@@ -75,6 +75,7 @@
 #import "ProductIQHomeViewController.h"
 #import "ProductIQManager.h"
 #import "MessageHandler.h"
+#import "StringUtil.h"
 
 //#import "FileManager.h"
 //#import "UnzipUtility.h"
@@ -871,7 +872,7 @@
         SMXEvent *lEvent;
         NSMutableDictionary *theDict = (NSMutableDictionary *) [lModel getFieldValueDictionary];
         /* making multiday event after checking its a multiday event or not */
-        if (lModel.isItMultiDay) {
+        if (lModel.isItMultiDay && [StringUtil isStringNotNULL:[theDict objectForKey:@"SplitDayEvents"]]) {
            lEvent=[[SMXEvent alloc] initWithEventWithKeyValue:theDict EventTransactionObjectModel:lModel];
             [self makeEvent:lEvent withArray:lEventCollectionArray objectList:[theDict objectForKey:@"SplitDayEvents"]];
         }else{
@@ -2524,6 +2525,7 @@
     [alert show];
 }
 -(void)reloadWizardComponentActionAccordingToNetworkChangeNotification:(NSNotification *)notification{
+    [self removeActivityAndLoadingLabel];
     if (self.tempViewController != nil) {
         [self.tempViewController reloadTableView];
     }
