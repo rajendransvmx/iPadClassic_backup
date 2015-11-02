@@ -985,6 +985,7 @@
 }
 
 -(void)reloadWizardComponentActionAccordingToNetworkChangeNotification:(NSNotification *)notification{
+    [self removeActivityAndLoadingLabel];
     if (self.tempViewController != nil) {
         [self.tempViewController reloadTableView];
     }
