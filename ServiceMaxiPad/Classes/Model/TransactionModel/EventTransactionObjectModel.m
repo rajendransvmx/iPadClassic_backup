@@ -153,7 +153,7 @@
         return;
     
 
-    int numberOfDays = [self numberOfDaysFromDate:startDate andEndDate:endDate];
+    int numberOfDays = [NSDate numberOfDaysFromStartDate:startDate andEndDate:endDate];
     NSDate *newStartDate;
     NSDate *newEndDate;
     
@@ -187,9 +187,6 @@
 
 -(void)createObjectForStartDate:(NSDate *)startDate andEndDate:(NSDate *)endDate andDuration:(float) duration number:(int)number index:(int)index
 {
-//    NSString *startDateString = [DateUtil stringFromDate:startDate inFormat:kDateFormatType1];
-//    NSString *endDateString = [DateUtil stringFromDate:endDate inFormat:kDateFormatType1];
-
     NSString *startDateString = [self dateForTheString:startDate];
     NSString *endDateString = [self dateForTheString:endDate];
     
@@ -201,13 +198,10 @@
     if (endDateString != nil) {
         [eventObject setObject:endDateString forKey:keyEndDateTime];
     }
-//    [eventObject setObject:startDateString forKey:keyStartDateTime];
-//    [eventObject setObject:endDateString forKey:keyEndDateTime];
     [eventObject setObject:[NSString stringWithFormat:@"%d",number] forKey:keyNumberofevent];
     [eventObject setObject:[NSString stringWithFormat:@"%d",index] forKey:keyIndex];
     [eventObject setObject:[NSString stringWithFormat:@"%f", duration] forKey:keyDuration];
     [self.jsonEventArray addObject:eventObject];
-
 }
 
 -(NSString *)dateForTheString:(NSDate *)date

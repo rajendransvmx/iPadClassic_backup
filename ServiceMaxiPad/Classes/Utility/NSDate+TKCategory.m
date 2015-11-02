@@ -413,5 +413,46 @@
 + (NSString*) dateInformationDescriptionWithInformation:(TKDateInformation)info{
 	return [NSString stringWithFormat:@"%d %d %d %d:%d:%d",info.month,info.day,info.year,info.hour,info.minute,info.second];
 }
+/*This method giving number of day diffrence beteen two date*/
++(int )numberOfDaysFromStartDate:(NSDate *)startDate andEndDate:(NSDate *)endDate
+{
+    startDate=[self changeTime:startDate];
+    endDate=[self changeTime:endDate];
+    if ((startDate !=nil) && (endDate!=nil)) {
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
+                                                            fromDate:startDate
+                                                              toDate:endDate
+                                                             options:0];
+        int i=(int)components.day;
+        if(i==0){
+            NSDateComponents *Scomp = [self componentsOfDate:startDate];
+            NSDateComponents *Ecomp = [self componentsOfDate:endDate];
+            if (Scomp.day!=Ecomp.day) {
+                return 1;
+            }
+        }
+        return i;   //TODO:NEED TO CHECK THIS FOR EVENT WHICH IS JUST CROSSING THE MIDNIGHT MARK. Eg: 1130PM to 1230AM
+    }
+    return 0;
+}
++(NSDate *)changeTime:(NSDate *)date {
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
+    comp.hour = 00;
+    comp.minute = 00;
+    comp.second = 00;
+    //NSDate *sevenDaysAgo = [[cal dateFromComponents:comp] dateByAddingTimeInterval:numberOfDay*24*60*60];
+    return [cal dateFromComponents:comp];
+}
++(NSDateComponents *)componentsOfDate:(NSDate *)date {
+    
+    //Time zone change for weekview change, here we are considering system reagion.
+    NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    //  NSCalendar *calender = [NSCalendar currentCalendar];
+    NSDateComponents *comp0 = [calender components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitWeekOfMonth| NSHourCalendarUnit |
+                               NSMinuteCalendarUnit fromDate:date];
+    return comp0;
+}
 
 @end
