@@ -568,6 +568,15 @@
      [self.navigationController presentViewController:navController animated:YES completion:nil];
      */
     
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    if (orientation == UIInterfaceOrientationPortrait || orientation == UIInterfaceOrientationPortraitUpsideDown) {
+        NSNumber *value = [NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight];
+        [[UIDevice currentDevice] setValue:value forKey:@"orientation"];
+    }
+    
+    
+
     ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
     lProductIQcontroller.responseDictionary = [MessageHandler getMessageHandlerResponeDictionaryForSFMPage:self.sfmPageView];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];

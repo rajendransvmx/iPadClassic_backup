@@ -378,6 +378,16 @@ static  ProductIQHomeViewController *instance;
     
 }
 
+#pragma mark - Rotation methods
 
+-(BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+-(NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskLandscape;
+}
 
 @end
