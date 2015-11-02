@@ -16,6 +16,7 @@
 #import "SFMPageEditManager.h"
 #import "StringUtil.h"
 #import "SFMPageHelper.h"
+#import "StringUtil.h"
 
 @implementation SFMCustomActionWebServiceHelper
 
@@ -54,11 +55,16 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
 -(void)initiateCustomWebServiceForAfterBeforeWithDelegate:(id)delegate
 {
     /* Adding category name for Webservice call, based on category we are making requestType */
-    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceAfterBeforeCall
-                                             requestParam:nil
-                                           callerDelegate:delegate];
-    
-    [[TaskManager sharedInstance] addTask:taskModel];
+    /* checking condition for SFID, If sf id is null then will not call after before save call*/
+    NSString *headerId = [self.sfmPage getHeaderSalesForceId];
+    BOOL childSFIDPresent = [self.sfmPage areChildRecordsSynced];
+    if (!childSFIDPresent && [StringUtil isStringNotNULL:headerId]) {
+        TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceAfterBeforeCall
+                                                 requestParam:nil
+                                               callerDelegate:delegate];
+        
+        [[TaskManager sharedInstance] addTask:taskModel];
+    }
 }
 
 -(id)initWithSFMPageRequestData:(NSString *)requestData requestType:(int)requestType
