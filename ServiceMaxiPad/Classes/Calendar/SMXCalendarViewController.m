@@ -739,24 +739,24 @@
     
     //TODO:Testing The ProductIQ START.
     
-    SFWizardModel *wizardModelProductIQ = [[SFWizardModel alloc]init];
-    wizardModelProductIQ.wizardName = @"PRODUCTIQ";
-    
-    WizardComponentModel *wizardCompModelProductIQ = [[WizardComponentModel alloc]init];
-    wizardCompModelProductIQ.actionType = @"ProductIQ";
-    wizardCompModelProductIQ.actionName = @"ProductIQActionName";
-    wizardCompModelProductIQ.isEntryCriteriaMatching = YES;
-    if (wizardModelProductIQ.wizardComponents == nil)
-    {
-        wizardModelProductIQ.wizardComponents = [[NSMutableArray alloc]init];
-    }
-    [wizardModelProductIQ.wizardComponents addObject:wizardCompModelProductIQ];
-    
-    if ([wizardModelProductIQ.wizardComponents count] >0)
-    {
-        [allWizards insertObject:wizardModelProductIQ atIndex:1];
-    }
-    
+//    SFWizardModel *wizardModelProductIQ = [[SFWizardModel alloc]init];
+//    wizardModelProductIQ.wizardName = @"PRODUCTIQ";
+//    
+//    WizardComponentModel *wizardCompModelProductIQ = [[WizardComponentModel alloc]init];
+//    wizardCompModelProductIQ.actionType = @"ProductIQ";
+//    wizardCompModelProductIQ.actionName = @"ProductIQActionName";
+//    wizardCompModelProductIQ.isEntryCriteriaMatching = YES;
+//    if (wizardModelProductIQ.wizardComponents == nil)
+//    {
+//        wizardModelProductIQ.wizardComponents = [[NSMutableArray alloc]init];
+//    }
+//    [wizardModelProductIQ.wizardComponents addObject:wizardCompModelProductIQ];
+//    
+//    if ([wizardModelProductIQ.wizardComponents count] >0)
+//    {
+//        [allWizards insertObject:wizardModelProductIQ atIndex:1];
+//    }
+//    
     //TODO:Testing The ProductIQ END.
 
 }
