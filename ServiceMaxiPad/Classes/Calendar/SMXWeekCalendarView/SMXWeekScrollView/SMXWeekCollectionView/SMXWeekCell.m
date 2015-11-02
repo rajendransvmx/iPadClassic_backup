@@ -537,6 +537,7 @@ static UIImage *lineImage;
         if (lOldButton.wDivision >= 1)
         {
             _button.frame = CGRectMake(lOldButton.frame.origin.x, _button.frame.origin.y, lOldButton.frame.size.width,_button.frame.size.height);
+            [_button setSubViewFramw];
         }
         else
         {
