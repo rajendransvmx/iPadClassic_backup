@@ -105,6 +105,7 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestDataPurgeGetPriceDataTypeOne,
     RequestDataPurgeGetPriceDataTypeTwo,
     RequestDataPurgeGetPriceDataTypeThree,
+    RequestDataPurgeProductIQData,
     /* ********************************* */
     
    

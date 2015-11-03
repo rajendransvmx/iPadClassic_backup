@@ -97,6 +97,15 @@
 
         }
             break;
+            
+        case RequestDataPurgeProductIQData:
+        {
+            if (!callback.callBack) {
+                [[SMDataPurgeManager sharedInstance] manageDataPurge];
+            }
+        }
+            break;
+            
         default:
             break;
     }

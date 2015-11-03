@@ -512,6 +512,7 @@
         case RequestDataPurgeGetPriceDataTypeOne:
         case RequestDataPurgeGetPriceDataTypeTwo:
         case RequestDataPurgeGetPriceDataTypeThree:
+        case RequestDataPurgeProductIQData:
             eventType = kSync;
             break ;
 
@@ -665,6 +666,7 @@
         case RequestDataPurgeGetPriceDataTypeOne:
         case RequestDataPurgeGetPriceDataTypeTwo:
         case RequestDataPurgeGetPriceDataTypeThree:
+        case RequestDataPurgeProductIQData:
             url =  [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
         case RequestDataPurgeFrequency:
@@ -920,6 +922,11 @@
         case RequestDataPurgeGetPriceDataTypeThree:
             self.eventName = getPriceData;
             break;
+            
+        case RequestDataPurgeProductIQData:
+            self.eventName = kProductIQSyncData;
+            break;
+            
             /******************************************************/
             
         case RequestTypeCustomActionWebService:

@@ -328,6 +328,7 @@
             case RequestDataPurgeGetPriceDataTypeOne:
             case RequestDataPurgeGetPriceDataTypeTwo:
             case RequestDataPurgeGetPriceDataTypeThree:
+            case RequestDataPurgeProductIQData:
                 parser = [[DataPurgeParser alloc] init];
                 break;
             case RequestProductManual:

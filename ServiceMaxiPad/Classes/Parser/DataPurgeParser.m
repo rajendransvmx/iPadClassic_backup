@@ -80,6 +80,14 @@
                     callback = [self saveLastconfigSyncTimeFromResponseData:responseData];
                 }
                     break;
+                    
+                case RequestDataPurgeProductIQData:
+                {
+                    //TODO: implement parser logic for ProductIQData.
+                    callback = [self parseAnaAddaIdsForProductIQDataResponse:responseData];
+                }
+                    break;
+
                 default:
                     break;
             }
@@ -401,7 +409,11 @@
     return callBack;
 }
 
-
+-(ResponseCallback*)parseAnaAddaIdsForProductIQDataResponse:(NSDictionary *)rawResponseData {
+    ResponseCallback * callBack;
+    
+    return callBack;
+}
 
 - (NSDictionary*)getCallBackValueMap:(NSDictionary *)rawResponseData
 {

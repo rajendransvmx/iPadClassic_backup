@@ -142,6 +142,7 @@
             case RequestDataPurgeGetPriceDataTypeOne:
             case RequestDataPurgeGetPriceDataTypeTwo:
             case RequestDataPurgeGetPriceDataTypeThree:
+            case RequestDataPurgeProductIQData:
                 
                 requestClass = [self getRestRequestByType:requestType];
                 break;
