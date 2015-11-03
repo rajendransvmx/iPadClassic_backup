@@ -8,8 +8,16 @@
 
 #import "DBManager.h"
 #import "DatabaseManager.h"
+#import "ProductIQManager.h"
+#import "StringUtil.h"
+#import "FactoryDAO.h"
+#import "ModifiedRecordsDAO.h"
+#import "SyncErrorConflictService.h"
+
 
 static DBManager *sharedInstance = nil;
+static sqlite3 *database = nil;
+static sqlite3_stmt *statement = nil;
 
 @implementation DBManager
 
@@ -107,7 +115,12 @@ static DBManager *sharedInstance = nil;
     
     NSLog(@"query:%@",query);
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
-    @autoreleasepool {
+       @autoreleasepool {
+//          if ([query hasPrefix:@"UPDATE"])
+//           {
+//               [self parseQuery:query];
+//           }
+
         DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
         
         [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
@@ -185,5 +198,205 @@ static DBManager *sharedInstance = nil;
      
      */
 }
+- (void)parseQuery:(NSString *)query
+{
+    NSMutableDictionary *jsonDict = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *beforeSaveDict = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *afterSaveDict = [[NSMutableDictionary alloc] init];
+    
+    NSArray *items = [query componentsSeparatedByString:@"UPDATE"];
+    NSArray *array2 = [[items objectAtIndex:1] componentsSeparatedByString:@"SET"];
+    NSString *tableName = [array2 objectAtIndex:0];
+    NSString *str3 = [array2 objectAtIndex:1];
+    NSArray *array3 = [str3 componentsSeparatedByString:@"WHERE"];
+    NSArray *tempSfId = [[array3 objectAtIndex:1] componentsSeparatedByString:@"="];
+    NSString *sFID = [tempSfId objectAtIndex:1];
+    
+    NSString *stringToParse = [array3 objectAtIndex:0];
+    NSArray *keyValueArray = [stringToParse componentsSeparatedByString:@","];
+    
+    NSMutableDictionary *keyValueDict = [[NSMutableDictionary alloc] init];
+    for(NSString *stringValue in keyValueArray)
+    {
+        NSArray *tempArray = [stringValue componentsSeparatedByString:@"="];
+        if([tempArray count] >1)
+        {
+            NSString *valueString = [tempArray objectAtIndex:1];
+            NSString *keyString = [tempArray objectAtIndex:0];
+            
+            NSString *newValue =[valueString stringByReplacingOccurrencesOfString:@"'" withString:@""];
+            [keyValueDict setObject:newValue forKey:keyString];
+            
+        }
+        
+    }
+    NSArray *keyArray = [keyValueDict allKeys];
+    // NSString *stringQuery = [keyArray componentsJoinedByString:@","];
+    NSString *sfIdNew = [sFID stringByReplacingOccurrencesOfString:@"'" withString:@""];
+    sfIdNew = [sfIdNew stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    // NSString *finalQuery = [NSString stringWithFormat:@"SELECT %@ , FROM %@ Where Id = %@", stringQuery,tableName,sfIdNew];
+    // NSString *strQuery = finalQuery;
+    NSString *newTableName = [tableName  stringByReplacingOccurrencesOfString:@"`" withString:@""];
+    newTableName = [newTableName stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSDictionary *newKeyValueDict =  [self getRecordsForFields:keyArray forObjectname:newTableName andSFId:sfIdNew];
+    if([keyArray count] >0)
+    {
+        [beforeSaveDict setObject:sfIdNew forKey:@"Id"];
+        [afterSaveDict setObject:sfIdNew forKey:@"Id"];
+    }
+    for (NSString *tempstring in keyArray)
+    {
+        NSString *beforeSaveValue = [keyValueDict objectForKey:tempstring];
+        NSString *afterSaveValue = [newKeyValueDict objectForKey:tempstring];
+        if(![beforeSaveValue isEqualToString:afterSaveValue])
+        {
+            [beforeSaveDict setObject:beforeSaveValue forKey:tempstring];
+            [afterSaveDict setObject:afterSaveValue forKey:tempstring];
+        }
+        
+    }
+    if([beforeSaveDict count] >0)
+    {
+        [jsonDict setObject:beforeSaveDict forKey:@"BEFORE_SAVE"];
+        [jsonDict setObject:afterSaveDict forKey:@"AFTER_SAVE"];
+        
+        
+    }
+    
+    
+    NSDictionary *previousDict = [self checkFormodifiedFiledJsonString:nil withSFId:sfIdNew andObjectName:newTableName];
+    if(previousDict != nil)
+    {
+        [self compareAndinsertDict:jsonDict andOldDict:previousDict withSFId:sfIdNew];
+    }
+    else
+    {
+        NSError * err;
+        NSData * jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:&err];
+        NSString * myJsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    }
+    
+}
+- (void)compareAndinsertDict:(NSDictionary *)jsonDict andOldDict:(NSDictionary *)previousDict withSFId:(NSString *)sfID
+{
+    NSMutableDictionary *currentDict = [[NSMutableDictionary alloc] init];
+    
+    NSDictionary *beforeNewModification = [jsonDict objectForKey:@"BEFORE_SAVE"];
+    NSDictionary *beforPrevModification = [previousDict objectForKey:@"BEFORE_SAV"];
+    NSMutableDictionary *currentBeforeModification = [[NSMutableDictionary alloc] init];
+    NSArray *allkeys = [beforeNewModification allKeys];
+    NSArray *beforeoldKeys = [beforPrevModification allKeys];
+    for(NSString *key in allkeys)
+    {
+        if([beforeoldKeys containsObject:key])
+        {
+            [currentBeforeModification setObject:[beforPrevModification objectForKey:key]  forKey:key];
+        }
+        else
+        {
+            [currentBeforeModification setObject:[beforeNewModification objectForKey:key] forKey:key];
+        }
+    }
+    
+    
+    
+    NSDictionary *afterNewModification = [jsonDict objectForKey:@"AFTER_SAVE"];
+    NSDictionary *afterPrevModification = [previousDict objectForKey:@"AFTER_SAVE"];
+    
+    NSMutableDictionary *currentAfterModification = [[NSMutableDictionary alloc] init];
+    
+    NSArray *afterNewAllkeys = [afterNewModification allKeys];
+    NSArray *afterOldKeys = [afterPrevModification allKeys];
+    
+    for(NSString *keys in afterNewAllkeys)
+    {
+        if([afterOldKeys containsObject:keys])
+        {
+            [currentAfterModification setObject:[afterNewModification objectForKey:keys] forKey:keys];
+            
+        }
+        
+        else
+        {
+            [currentAfterModification setObject:[afterPrevModification objectForKey:keys] forKey:keys];
+            
+        }
+        
+    }
+    
+    [currentDict setObject:currentBeforeModification forKey:@"BEFORE_SAVE"];
+    [currentDict setObject:afterNewModification forKey:@"AFTER_SAVE"];
+    
+    
+    NSError * err;
+    NSData * jsonData = [NSJSONSerialization dataWithJSONObject:currentDict options:0 error:&err];
+    NSString * myJsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    
+    
+}
+- (NSDictionary *)checkFormodifiedFiledJsonString:(NSString *)jsonString withSFId:(NSString *)sfid andObjectName:(NSString *)objName
+{
+    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    // If there are earlier changes in trailor table fetch them also.. will use for merging
+    NSString *existingModifiedFields = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:sfid andSfId:sfid];
+    NSDictionary *jsonDictionary;
+    NSError * error = nil;
+    
+    if(![StringUtil isStringEmpty:existingModifiedFields])
+    {
+        
+        jsonDictionary    = [NSJSONSerialization JSONObjectWithData:[existingModifiedFields dataUsingEncoding:NSUTF8StringEncoding]
+                                                            options:NSJSONReadingMutableContainers
+                                                              error:&error];
+    }
+    else
+    {
+        BOOL hasConflictRecordFound = NO;
+        
+        SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc]init];
+        hasConflictRecordFound = [conflictService isConflictFoundForObject:objName withSfId:sfid];
+        
+        if (hasConflictRecordFound)
+        {
+            // Found conflict mark on existing records. Lets consider conflict record as previous change
+            existingModifiedFields = [conflictService fetchExistingModifiedFieldsJsonFromConflictTableForSfId:sfid andObjectName:objName];
+            jsonDictionary    = [NSJSONSerialization JSONObjectWithData:[existingModifiedFields dataUsingEncoding:NSUTF8StringEncoding]
+                                                                options:NSJSONReadingMutableContainers
+                                                                  error:&error];
+            
+        }
+    }
+    if([jsonDictionary count] >0)
+    {
+        return jsonDictionary;
+    }
+    else
+    {
+        return nil;
+    }
+    
+}
+
+- (void)insertDictionary:(NSDictionary *)dict withSFId:(NSString *)sfId
+{
+    
+}
+- (NSArray *)getFiledsforQuery:(NSString *)query
+{
+    return nil;
+}
+
+- (NSDictionary *)getRecordsForFields:(NSArray *)fields
+                   forObjectname:(NSString *)tableName
+                  andSFId:(NSString *)andSFId
+{
+    
+    ProductIQManager *model = [ProductIQManager sharedInstance];
+    NSDictionary *dict = [model getProdIQTxFetcRequestParamsForRequestCount1:fields andTableName:tableName andId:andSFId];
+    return dict;
+    
+}
+
+
 
 @end

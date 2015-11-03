@@ -407,5 +407,26 @@
     return  @[kInstalledProductTableName, kWorkOrderSite, KSubLocationTableName, kAccountTableName, KProductTable];
 }
 
+- (NSDictionary *)getProdIQTxFetcRequestParamsForRequestCount1:(NSArray *)fileds andTableName:(NSString *)tableName andId:(NSString *)sfId {
+    @autoreleasepool {
+        
+        
+        id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+        DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:(SQLOperatorEqual) andFieldValue:sfId];
+        DBCriteria *criteri2 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sfId];
+        NSArray * transactionRecords =  [transObj fetchDataWithhAllFieldsAsStringObjects:tableName fields:fileds expression:@"(1 OR 2)" criteria:@[criteria,criteri2]];
+      
+        if([transactionRecords count ]>0)
+        {
+            TransactionObjectModel *model = [transactionRecords objectAtIndex:0];
+            return [model  getFieldValueDictionary];
+            
+        }
+        return nil;
+    }
+    
+    
+    
+}
 
 @end

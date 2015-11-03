@@ -29,4 +29,5 @@
 - (BOOL)loadDataIntoInstalledBaseObject;
 - (BOOL)isProductIQSettingEnable;
 - (NSArray *)getProdIQRelatedObjects;
+- (NSDictionary *)getProdIQTxFetcRequestParamsForRequestCount1:(NSArray *)fileds andTableName:(NSString *)tableName andId:(NSString *)sfId ;
 @end

@@ -267,6 +267,8 @@
     [self updateEachRecord:model withFields:fieldsArray withCriteria:[NSArray arrayWithObject:criteria1]];
 }
 
+
+
 -(void)updateFieldsModifed:(ModifiedRecordModel *)model {
     NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"fieldsModified", nil];
     DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:model.recordLocalId];
