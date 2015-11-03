@@ -4,11 +4,18 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.024
+Version = 15.99.025
 
 ===========================================
 
-Integrated Barcode scanner code in Product IQ app.
+Product IQ:
+- Prod IQ data fetch during initial sync.
+- Restricting ProductIQ only for landscape mode.
+
+
+
+Defects:
+023841
 
 -------------
 NOTE:
