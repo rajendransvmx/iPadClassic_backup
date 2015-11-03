@@ -720,7 +720,7 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQTxFetch:RequestCleanUp;
+            nextRequestType = RequestCleanUp;
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
