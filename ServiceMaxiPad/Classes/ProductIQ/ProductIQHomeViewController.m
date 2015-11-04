@@ -59,7 +59,7 @@ static  ProductIQHomeViewController *instance;
 
     [self populateNavigationBar];
     [self testLoadProductIQ];
-    [self debugButtonForProductIQ];
+    //[self debugButtonForProductIQ];
     
 }
 - (void)viewDidAppear:(BOOL)animated {
