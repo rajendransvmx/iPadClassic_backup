@@ -454,7 +454,11 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
     BOOL isHeapSizeError = [StringUtil containsStringinErrorMsg:heapSizeErrorString inString:[error description]];
     BOOL isCocoaError = [StringUtil containsStringinErrorMsg:cocoaErrorString inString:[error description]];
     
-    if (requestObject.requestType == RequestObjectDefinition && isHeapSizeError && requestObject.requestParameter.heapSizeRetryCount > 0 && requestObject.requestParameter.heapSizeRetryCount <= MAX_RETRY_COUNT) {
+    if (requestObject.requestType == RequestProductIQObjectDescribe) {
+        // this request returns single json string - don't retry if it fails because of 3840 error.
+    }
+    
+    else if (requestObject.requestType == RequestObjectDefinition && isHeapSizeError && requestObject.requestParameter.heapSizeRetryCount > 0 && requestObject.requestParameter.heapSizeRetryCount <= MAX_RETRY_COUNT) {
         
         NSLog(@"Heap size error retry count : %ld\n\n",(long)requestObject.requestParameter.heapSizeRetryCount);
         

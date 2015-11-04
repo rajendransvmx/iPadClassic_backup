@@ -909,7 +909,8 @@
         || (type == RequestTypeChatterrProductData)
         || (type == RequestTypeChatterUserImage)
         || (type == RequestStaticResourceLibrary)
-        || (type == RequestTypeUserTrunk))
+        || (type == RequestTypeUserTrunk)
+        || (type == RequestProductIQObjectDescribe))
         
         //PA Static resource to avoid crash in SVMX_LIbrary TODO : Remove it
     {
