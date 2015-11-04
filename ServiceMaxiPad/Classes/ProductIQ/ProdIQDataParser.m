@@ -40,56 +40,67 @@
             RequestParamModel *newRequestModel = [[RequestParamModel alloc] init];
             callbk.callBackData = newRequestModel;
             
-            NSDictionary *levelDict, *callBackDict, *timeLogDict, *lastIndexDict;
+            NSDictionary *levelDict, *callBackDict, *timeLogDict, *lastIndexDict, *lastSyncTimeDict;
             
             NSArray *valueMapArray = [responseDictionary objectForKey:kSVMXSVMXMap];
             
-            for (NSDictionary *valueMapDict in valueMapArray) {
-                NSString *key = [valueMapDict objectForKey:kSVMXKey];
-                
-                if ([StringUtil isStringEmpty:key]) {
-                    
-                }
-                else if ([key isEqualToString:@"LEVEL"]) {
-                    levelDict = valueMapDict;
-                }
-                else if ([key isEqualToString:kWorkOrderSite]) {
-                    NSArray *values = [valueMapDict objectForKey:kSVMXValues];
-                    if ([values count] > 0) {
-                        [self addFirstIndexEntriesInHeapTableForObject:key andValues:values];
-                    }
-                    else {
-                        siteIdsExist = NO;
+            if ([valueMapArray count] <= 1) {
+                if ([valueMapArray count] == 1) {
+                    lastSyncTimeDict = [valueMapArray objectAtIndex:0];
+                    if ([[lastSyncTimeDict objectForKey:kSVMXKey] isEqualToString:@"PRODUCTIQ_LAST_SYNC"]) {
+                        // no call back.. one of objects' permission is disabled..
+                        // don't call PIQ TxFetch during initial sync if object permission is disbaled..
+                        [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:@"kProdIQDataPermissionFailed"];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
                     }
                 }
-                else if ([key isEqualToString:kInstalledProductTableName]) {
-                    NSString *value = [valueMapDict objectForKey:kSVMXValue];
-                    NSData *jsonData = [value dataUsingEncoding:NSUTF8StringEncoding];
-                    NSError *e = nil;;
-                    NSArray *valueArray = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&e]
-                    ;
-                    
-                    if ([valueArray count] > 0) {
-                        [self addSecondIndexEntriesToHeapTable:valueArray];
-                    }
-                    else {
-                        ibIdsExist = NO;
-                    }
-                }
-                else if ([key isEqualToString:kSVMXCallBack]) {
-                    callbk.callBack = [[valueMapDict objectForKey:kSVMXValue] boolValue];
-                    callBackDict = valueMapDict;
-                }
-                else if ([key isEqualToString:kTimeLogId]) {
-                    timeLogDict = valueMapDict;
-                }
-                else if ([key isEqualToString:@"LAST_INDEX"]) {
-                    lastIndexDict = valueMapDict;
-                }
+                // no call back..
             }
-            
-            
-            if([valueMapArray count] > 0) {
+            else {
+                
+                for (NSDictionary *valueMapDict in valueMapArray) {
+                    NSString *key = [valueMapDict objectForKey:kSVMXKey];
+                    
+                    if ([StringUtil isStringEmpty:key]) {
+                        
+                    }
+                    else if ([key isEqualToString:@"LEVEL"]) {
+                        levelDict = valueMapDict;
+                    }
+                    else if ([key isEqualToString:kWorkOrderSite]) {
+                        NSArray *values = [valueMapDict objectForKey:kSVMXValues];
+                        if ([values count] > 0) {
+                            [self addFirstIndexEntriesInHeapTableForObject:key andValues:values];
+                        }
+                        else {
+                            siteIdsExist = NO;
+                        }
+                    }
+                    else if ([key isEqualToString:kInstalledProductTableName]) {
+                        NSString *value = [valueMapDict objectForKey:kSVMXValue];
+                        NSData *jsonData = [value dataUsingEncoding:NSUTF8StringEncoding];
+                        NSError *e = nil;;
+                        NSArray *valueArray = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&e]
+                        ;
+                        
+                        if ([valueArray count] > 0) {
+                            [self addSecondIndexEntriesToHeapTable:valueArray];
+                        }
+                        else {
+                            ibIdsExist = NO;
+                        }
+                    }
+                    else if ([key isEqualToString:kSVMXCallBack]) {
+                        callbk.callBack = [[valueMapDict objectForKey:kSVMXValue] boolValue];
+                        callBackDict = valueMapDict;
+                    }
+                    else if ([key isEqualToString:kTimeLogId]) {
+                        timeLogDict = valueMapDict;
+                    }
+                    else if ([key isEqualToString:@"LAST_INDEX"]) {
+                        lastIndexDict = valueMapDict;
+                    }
+                }
                 
                 if (callbk.callBack) {
                     // make call back
@@ -119,6 +130,7 @@
                         return callbk;
                     }
                 }
+                
             }
             return nil;
         }

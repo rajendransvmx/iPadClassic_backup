@@ -486,8 +486,10 @@
         case RequestGetPriceDataTypeThree:
             nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQData:RequestTXFetch;
             break;
-        case RequestTXFetch:
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQTxFetch:RequestCleanUp;
+        case RequestTXFetch: {
+            BOOL permissionFailed = [[NSUserDefaults standardUserDefaults] boolForKey:@"kProdIQDataPermissionFailed"];
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable] && !permissionFailed)?RequestProductIQTxFetch:RequestCleanUp;
+        }
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
@@ -727,9 +729,6 @@
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
-            break;
-        case RequestProductIQTxFetch:
-            nextRequestType = RequestCleanUp;
             break;
         default:
             break;
