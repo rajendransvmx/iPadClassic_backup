@@ -115,8 +115,7 @@
     
     if([modelArray count] >0)
     {
-        [self updateRecords:modelArray withFields:@[@"className",@"methodName",@"customActionType",@"actionName",@"actionDescription",@"customUrl"] withCriteria:@[criteria1]];
-       // [self updateRecords:modelArray withFields:@[@"className",@"methodName",@"customActionType",@"customUrl"] withCriteria:@[criteria1]];
+        [self updateRecords:modelArray withFields:@[@"className",@"methodName",@"customActionType",@"actionDescription",@"customUrl"] withCriteria:@[criteria1]];
     }
 }
 
