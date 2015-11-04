@@ -216,6 +216,7 @@ static sqlite3_stmt *statement = nil;
     NSArray *keyValueArray = [stringToParse componentsSeparatedByString:@","];
     
     NSMutableDictionary *keyValueDict = [[NSMutableDictionary alloc] init];
+    NSString *lastKey = nil;
     for(NSString *stringValue in keyValueArray)
     {
         NSArray *tempArray = [stringValue componentsSeparatedByString:@"="];
@@ -225,7 +226,21 @@ static sqlite3_stmt *statement = nil;
             NSString *keyString = [tempArray objectAtIndex:0];
             
             NSString *newValue =[valueString stringByReplacingOccurrencesOfString:@"'" withString:@""];
+            keyString = [keyString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+            keyString =[keyString stringByReplacingOccurrencesOfString:@"'" withString:@""];
+
             [keyValueDict setObject:newValue forKey:keyString];
+            lastKey = stringValue;
+            
+        }
+        else
+        {
+            NSString *lastValue = [keyValueDict objectForKey:lastKey];
+            lastValue = [NSString stringWithFormat:@"%@, %@",lastValue,stringValue];
+            [keyValueDict setObject:lastValue forKey:stringValue];
+
+            
             
         }
         
@@ -246,8 +261,8 @@ static sqlite3_stmt *statement = nil;
     }
     for (NSString *tempstring in keyArray)
     {
-        NSString *beforeSaveValue = [keyValueDict objectForKey:tempstring];
-        NSString *afterSaveValue = [newKeyValueDict objectForKey:tempstring];
+        NSString *afterSaveValue = [keyValueDict objectForKey:tempstring];
+        NSString *beforeSaveValue = [newKeyValueDict objectForKey:tempstring];
         if(![beforeSaveValue isEqualToString:afterSaveValue])
         {
             [beforeSaveDict setObject:beforeSaveValue forKey:tempstring];
@@ -255,7 +270,7 @@ static sqlite3_stmt *statement = nil;
         }
         
     }
-    if([beforeSaveDict count] >0)
+    if([beforeSaveDict count] >1)
     {
         [jsonDict setObject:beforeSaveDict forKey:@"BEFORE_SAVE"];
         [jsonDict setObject:afterSaveDict forKey:@"AFTER_SAVE"];
@@ -274,6 +289,13 @@ static sqlite3_stmt *statement = nil;
         NSError * err;
         NSData * jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:&err];
         NSString * myJsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        NSString *strJsonString = myJsonString;
+     NSDictionary   *jsonDictionary1    = [NSJSONSerialization JSONObjectWithData:[myJsonString dataUsingEncoding:NSUTF8StringEncoding]
+                                                            options:NSJSONReadingMutableContainers
+                                                              error:&err];
+        NSString *str1 = myJsonString;
+        [self insertDictionary:myJsonString withSFId:sfIdNew];
+
     }
     
 }
@@ -282,7 +304,7 @@ static sqlite3_stmt *statement = nil;
     NSMutableDictionary *currentDict = [[NSMutableDictionary alloc] init];
     
     NSDictionary *beforeNewModification = [jsonDict objectForKey:@"BEFORE_SAVE"];
-    NSDictionary *beforPrevModification = [previousDict objectForKey:@"BEFORE_SAV"];
+    NSDictionary *beforPrevModification = [previousDict objectForKey:@"BEFORE_SAVE"];
     NSMutableDictionary *currentBeforeModification = [[NSMutableDictionary alloc] init];
     NSArray *allkeys = [beforeNewModification allKeys];
     NSArray *beforeoldKeys = [beforPrevModification allKeys];
@@ -331,6 +353,8 @@ static sqlite3_stmt *statement = nil;
     NSError * err;
     NSData * jsonData = [NSJSONSerialization dataWithJSONObject:currentDict options:0 error:&err];
     NSString * myJsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    [self updateFields:myJsonString andSfId:sfID];
+    
     
     
 }
@@ -377,9 +401,27 @@ static sqlite3_stmt *statement = nil;
     
 }
 
-- (void)insertDictionary:(NSDictionary *)dict withSFId:(NSString *)sfId
+- (void)insertDictionary:(NSString * )jsonString withSFId:(NSString *)sfId
 {
+    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    ModifiedRecordModel *model = [[ModifiedRecordModel alloc] init];
     
+    model.sfId = sfId;
+    model.fieldsModified = jsonString;
+    model.operation = @"UPDATE";
+
+     BOOL resultStatus = [modifiedRecordService saveRecordModel:model];
+}
+-(void)updateFields:(NSString *)jsonString andSfId:(NSString *)sfid
+{
+    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    ModifiedRecordModel *model = [[ModifiedRecordModel alloc] init];
+    DBCriteria *criteria = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfid];
+    model.fieldsModified = jsonString;
+    model.sfId = sfid;
+    model.operation = @"UPDATE";
+    [modifiedRecordService updateRecords:@[model] withFields:@[@"sfId",@"operation", @"fieldsModified"] withCriteria:@[criteria]];
+
 }
 - (NSArray *)getFiledsforQuery:(NSString *)query
 {
