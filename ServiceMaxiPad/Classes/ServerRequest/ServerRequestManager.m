@@ -1031,9 +1031,10 @@
             nextRequestType = RequestDataPurgeGetPriceDataTypeThree;
             break;
         case RequestDataPurgeGetPriceDataTypeThree:
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQData:RequestTypeNone;
+//            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestDataPurgeProductIQData:RequestTypeNone;
+            nextRequestType = RequestTypeNone;
             break;
-        case RequestProductIQData:
+        case RequestDataPurgeProductIQData:
             nextRequestType = RequestTypeNone;
             break;
         default:

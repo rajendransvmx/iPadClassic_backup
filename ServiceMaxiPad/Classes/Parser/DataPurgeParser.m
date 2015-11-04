@@ -16,6 +16,7 @@
 #import "SVMXSystemConstant.h"
 #import "SMDataPurgeManager.h"
 #import "PlistManager.h"
+#import "SFObjectFieldDAO.h"
 
 @interface DataPurgeParser ()
 
@@ -409,11 +410,161 @@
     return callBack;
 }
 
--(ResponseCallback*)parseAnaAddaIdsForProductIQDataResponse:(NSDictionary *)rawResponseData {
-    ResponseCallback * callBack;
+-(ResponseCallback*)parseAnaAddaIdsForProductIQDataResponse:(NSDictionary *)responseData {
     
-    return callBack;
+    @synchronized([self class]){
+        @autoreleasepool {
+            
+            if (![responseData isKindOfClass:[NSDictionary class]]) {
+                return nil;
+            }
+            
+            if (![[responseData objectForKey:@"success"] isKindOfClass:[NSNull class]] &&[[responseData objectForKey:@"success"] intValue] == 0) {
+                return nil;
+            }
+            
+            NSDictionary *responseDictionary = (NSDictionary *)responseData;
+            
+            BOOL siteIdsExist = YES, ibIdsExist = YES;
+            NSMutableArray *callBackValueMapArray = [[NSMutableArray alloc] init];
+            ResponseCallback *callbk = [[ResponseCallback alloc] init];
+            callbk.callBack = NO;
+            
+            RequestParamModel *newRequestModel = [[RequestParamModel alloc] init];
+            callbk.callBackData = newRequestModel;
+            
+            NSDictionary *levelDict, *callBackDict, *timeLogDict, *lastIndexDict;
+            
+            NSArray *valueMapArray = [responseDictionary objectForKey:kSVMXSVMXMap];
+            
+            for (NSDictionary *valueMapDict in valueMapArray) {
+                NSString *key = [valueMapDict objectForKey:kSVMXKey];
+                
+                if ([StringUtil isStringEmpty:key]) {
+                    
+                }
+                else if ([key isEqualToString:@"LEVEL"]) {
+                    levelDict = valueMapDict;
+                }
+                else if ([key isEqualToString:kWorkOrderSite]) {
+                    NSArray *values = [valueMapDict objectForKey:kSVMXValues];
+                    if ([values count] > 0) {
+                        [self addFirstIndexEntriesInDataPurgeTableForObject:key andValues:values];
+                    }
+                    else {
+                        siteIdsExist = NO;
+                    }
+                }
+                else if ([key isEqualToString:kInstalledProductTableName]) {
+                    NSString *value = [valueMapDict objectForKey:kSVMXValue];
+                    NSData *jsonData = [value dataUsingEncoding:NSUTF8StringEncoding];
+                    NSError *e = nil;;
+                    NSArray *valueArray = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:&e]
+                    ;
+                    
+                    if ([valueArray count] > 0) {
+                        [self addSecondIndexEntriesDataPurgeTable:valueArray];
+                    }
+                    else {
+                        ibIdsExist = NO;
+                    }
+                }
+                else if ([key isEqualToString:kSVMXCallBack]) {
+                    callbk.callBack = [[valueMapDict objectForKey:kSVMXValue] boolValue];
+                    callBackDict = valueMapDict;
+                }
+                else if ([key isEqualToString:kTimeLogId]) {
+                    timeLogDict = valueMapDict;
+                }
+                else if ([key isEqualToString:@"LAST_INDEX"]) {
+                    lastIndexDict = valueMapDict;
+                }
+            }
+            
+            
+            if (callbk.callBack) {
+                // make call back
+                [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, timeLogDict, lastIndexDict]];
+                newRequestModel.valueMap = callBackValueMapArray;
+                newRequestModel.values = @[];
+                return callbk;
+            }
+            else {
+                // transition phase..
+                if (siteIdsExist == NO  && [[lastIndexDict objectForKey:kSVMXValue] integerValue] == 1) {
+                    siteIdsExist = YES; //  resetting - so this block won't get called again..
+                    [callBackValueMapArray addObjectsFromArray:@[lastIndexDict, timeLogDict]];
+                    callbk.callBack = YES;
+                    newRequestModel.valueMap = callBackValueMapArray;
+                    newRequestModel.values = @[];
+                    return callbk;
+                }
+                else if (ibIdsExist == NO) {
+                    // stop - no call back - request ends here..
+                }
+                else {
+                    // ib call back..
+                    [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, timeLogDict, lastIndexDict]];
+                    newRequestModel.valueMap = callBackValueMapArray;
+                    newRequestModel.values = @[];
+                    return callbk;
+                }
+            }
+            return nil;
+        }
+    }
 }
+
+-(void)addFirstIndexEntriesInDataPurgeTableForObject:(NSString *)objectName andValues:(NSArray *)values {
+    NSMutableArray *dataPurgeArray = [[NSMutableArray alloc] init];
+    for (NSString *sfID in values) {
+        
+        DataPurgeModel *model = [DataPurgeModel new];
+        model.sfId = sfID;
+        model.objectName = objectName;
+        
+        [dataPurgeArray addObject:model];
+    }
+    
+    if([dataPurgeArray count] > 0) {
+        [self saveModelsToDataPurgeTable:dataPurgeArray];
+    }
+}
+
+-(void)addSecondIndexEntriesDataPurgeTable:(NSArray *)valuesArray {
+    
+    NSArray *fieldsArray = @[kId, kProductField, kWorkOrderCompanyId, kWorkOrderSite, KSubLocationTableName, kTopLevelId];
+    id <SFObjectFieldDAO> objectFieldService = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
+    NSMutableArray *dataPurgeArray = [NSMutableArray array];
+    
+    for (NSDictionary *recordDict in valuesArray) {
+        for (NSString *fieldName in recordDict) {
+            if ([fieldsArray containsObject:fieldName]) {
+                NSString *objectName = nil;
+                if ([fieldName isEqualToString:kId]) {
+                    objectName = kInstalledProductTableName;
+                }
+                else {
+                    objectName = [objectFieldService getFieldLabelFromFieldName:fieldName andObjectName:kInstalledProductTableName];
+                }
+                
+                if (![StringUtil isStringEmpty:objectName]) {
+                    
+                    DataPurgeModel *model = [DataPurgeModel new];
+                    model.sfId = [recordDict objectForKey:fieldName];;
+                    model.objectName = objectName;
+                    [dataPurgeArray addObject:model];
+                }
+                
+            }
+        }
+    }
+    
+    if ([dataPurgeArray count] > 0) {
+        [self saveModelsToDataPurgeTable:dataPurgeArray];
+    }
+}
+
 
 - (NSDictionary*)getCallBackValueMap:(NSDictionary *)rawResponseData
 {

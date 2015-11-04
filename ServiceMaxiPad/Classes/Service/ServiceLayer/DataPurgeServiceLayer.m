@@ -128,6 +128,9 @@
         case RequestDataPurgeGetPriceDataTypeThree:
             return [self getRequestParamModelForGetPriceData:RequestDataPurgeGetPriceDataTypeThree];
             break;
+        case RequestDataPurgeProductIQData:
+            return [self getProdIQDataRequestParam];
+            break;
         default:
             break;
     }
@@ -137,6 +140,13 @@
     
 }
 
+-(NSArray *)getProdIQDataRequestParam {
+    RequestParamModel *model = [[RequestParamModel alloc]init];
+    NSDictionary *lastIndexDict = [NSDictionary dictionaryWithObjects:@[[NSNull null], @"LAST_INDEX", [NSNull null], [NSNull null], [NSNull null], [NSNumber numberWithInt:0], @[], @[]] forKeys:@[@"data", @"key", @"lstInternal_Request", @"lstInternal_Response", @"record", @"value", @"valueMap", @"values"]];
+    model.valueMap = @[lastIndexDict];
+    model.values = @[];
+    return @[model];
+}
 
 
 -(NSArray*)getRequestParamModelForGetPriceData:(RequestType)getPriceDataType {
