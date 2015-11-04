@@ -89,32 +89,35 @@
             }
             
             
-            if (callbk.callBack) {
-            // make call back
-                [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, timeLogDict, lastIndexDict]];
-                newRequestModel.valueMap = callBackValueMapArray;
-                newRequestModel.values = @[];
-                return callbk;
-            }
-            else {
-                // transition phase..
-                if (siteIdsExist == NO  && [[lastIndexDict objectForKey:kSVMXValue] integerValue] == 1) {
-                    siteIdsExist = YES; //  resetting - so this block won't get called again..
-                    [callBackValueMapArray addObjectsFromArray:@[lastIndexDict, timeLogDict]];
-                    callbk.callBack = YES;
+            if([valueMapArray count] > 0) {
+                
+                if (callbk.callBack) {
+                    // make call back
+                    [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, lastIndexDict]];
                     newRequestModel.valueMap = callBackValueMapArray;
                     newRequestModel.values = @[];
                     return callbk;
-                }
-                else if (ibIdsExist == NO) {
-                    // stop - no call back - request ends here..
                 }
                 else {
-                    // ib call back..
-                    [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, timeLogDict, lastIndexDict]];
-                    newRequestModel.valueMap = callBackValueMapArray;
-                    newRequestModel.values = @[];
-                    return callbk;
+                    // transition phase..
+                    if (siteIdsExist == NO  && [[lastIndexDict objectForKey:kSVMXValue] integerValue] == 1) {
+                        siteIdsExist = YES; //  resetting - so this block won't get called again..
+                        [callBackValueMapArray addObjectsFromArray:@[lastIndexDict]];
+                        callbk.callBack = YES;
+                        newRequestModel.valueMap = callBackValueMapArray;
+                        newRequestModel.values = @[];
+                        return callbk;
+                    }
+                    else if (ibIdsExist == NO) {
+                        // stop - no call back - request ends here..
+                    }
+                    else {
+                        // ib call back..
+                        [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, lastIndexDict]];
+                        newRequestModel.valueMap = callBackValueMapArray;
+                        newRequestModel.values = @[];
+                        return callbk;
+                    }
                 }
             }
             return nil;
