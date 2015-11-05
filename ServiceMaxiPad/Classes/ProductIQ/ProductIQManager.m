@@ -95,7 +95,7 @@
     MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"PRODIQ002_SET001"];
     settingEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
     
-    return YES;// settingEnabled;
+    return settingEnabled;
 }
 - (BOOL)isProductIQRelatedFieldsAvailableOnSFMPageView:(SFMPageViewModel*)sfmPageView {
     BOOL productIQFieldsAvailable = NO;
