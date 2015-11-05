@@ -19,6 +19,10 @@
 #import "FactoryDAO.h"
 #import "SFObjectFieldDAO.h"
 #import "TagManager.h"
+#import "TaskModel.h"
+#import "TaskGenerator.h"
+#import "TaskManager.h"
+#import "WebserviceResponseStatus.h"
 
 @implementation ProductIQManager
 
@@ -91,7 +95,7 @@
     MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"PRODIQ002_SET001"];
     settingEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
     
-    return settingEnabled;
+    return YES;// settingEnabled;
 }
 - (BOOL)isProductIQRelatedFieldsAvailableOnSFMPageView:(SFMPageViewModel*)sfmPageView {
     BOOL productIQFieldsAvailable = NO;
@@ -410,7 +414,6 @@
 - (NSDictionary *)getProdIQTxFetcRequestParamsForRequestCount1:(NSArray *)fileds andTableName:(NSString *)tableName andId:(NSString *)sfId {
     @autoreleasepool {
         
-        
         id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
         DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:(SQLOperatorEqual) andFieldValue:sfId];
         DBCriteria *criteri2 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sfId];
@@ -424,9 +427,42 @@
         }
         return nil;
     }
-    
-    
-    
 }
+
+
+#pragma mark - Prod IQ Data Sync
+
+-(void)initiateProdIQDataSync {
+    if (!self.isProdIQSyncInProgress) {
+        self.isProdIQSyncInProgress = YES;
+        TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeProductIQData requestParam:nil callerDelegate:self];
+        self.prodIQTaskId = taskModel.taskId;
+        [[TaskManager sharedInstance] addTask:taskModel];
+    }
+}
+
+-(void)cancelProdIQDataSync {
+    if (self.prodIQTaskId != nil) {
+        [[TaskManager  sharedInstance] cancelFlowNodeWithId:self.prodIQTaskId];
+        [[TaskManager  sharedInstance] removeFlowNodeWithId:self.prodIQTaskId];
+    }
+}
+
+
+- (void)flowStatus:(id)status {
+    if ([status isKindOfClass:[WebserviceResponseStatus class]]) {
+        WebserviceResponseStatus *wsResponseStatus = (WebserviceResponseStatus*)status;
+        if (wsResponseStatus.category == CategoryTypeProductIQData) {
+            if(wsResponseStatus.syncStatus == SyncStatusInQueue || wsResponseStatus.syncStatus == SyncStatusInProgress) {
+                self.isProdIQSyncInProgress = YES;
+            }
+            else {
+                    self.isProdIQSyncInProgress = NO;
+                    self.prodIQTaskId = nil;
+            }
+        }
+    }
+}
+
 
 @end

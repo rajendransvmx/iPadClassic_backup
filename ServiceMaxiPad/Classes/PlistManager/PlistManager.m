@@ -118,7 +118,8 @@ static NSString *const kPersistantStorageOneCallSyncPutUpdateTime     = @"one_ca
 static NSString *const kPersistantStorageOneCallSyncTemporaryTime     = @"one_call_sync_temp_time";
 static NSString *const kOneCallLastLocalid                            = @"kOneCallLastLocalid";
 static NSString *const kPersistantStorageInitialSyncTime              = @"InitailSyncTime";
-static NSString *const kPersistantStorageGetPriceSyncTime                    = @"GetPriceSyncTime";
+static NSString *const kPersistantStorageGetPriceSyncTime             = @"GetPriceSyncTime";
+static NSString *const kPersistantStorageProdIQSyncTime               = @"ProdIQSyncTime";
 
 static NSString *const kRefreshToken    = @"rfrt";
 
@@ -1422,6 +1423,21 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
 {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:kPreferenceAccessToken] boolValue];
     
+}
+
+
+
+#pragma mark - Product IQ
+
++(NSString *)getProdIQDataSyncTime {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:kPersistantStorageProdIQSyncTime];
+}
+
++(void)storeProdIQDataSyncTime:(NSString *)time {
+    if (time != nil) {
+        [[NSUserDefaults standardUserDefaults] setObject:time forKey:kPersistantStorageProdIQSyncTime];
+        [[NSUserDefaults standardUserDefaults]  synchronize];
+    }
 }
 
 

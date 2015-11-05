@@ -12,6 +12,7 @@
 #import "FactoryDAO.h"
 #import "SyncHeapDAO.h"
 #import "SFObjectFieldDAO.h"
+#import "PlistManager.h"
 
 @implementation ProdIQDataParser
 
@@ -52,9 +53,11 @@
                         // don't call PIQ TxFetch during initial sync if object permission is disbaled..
                         [[NSUserDefaults standardUserDefaults] setBool:TRUE forKey:@"kProdIQDataPermissionFailed"];
                         [[NSUserDefaults standardUserDefaults] synchronize];
+                        
+                        [self updateProdIQLastSyncTime:lastSyncTimeDict];
                     }
                 }
-                // no call back..
+                // no call back.. end the request
             }
             else {
                 
@@ -100,11 +103,25 @@
                     else if ([key isEqualToString:@"LAST_INDEX"]) {
                         lastIndexDict = valueMapDict;
                     }
+                    else if ([key isEqualToString:@"PRODUCTIQ_LAST_SYNC"]) {
+                        lastSyncTimeDict = valueMapDict;
+                    }
                 }
+                
+                // end of loop..
+                
+               NSDictionary *currentSyncTimeDict = [self getProdIQDataLastSyncTime];
                 
                 if (callbk.callBack) {
                     // make call back
-                    [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, lastIndexDict]];
+                    NSArray *tempArray = nil;
+                    if (self.categoryType == CategoryTypeProductIQData) {
+                        tempArray = @[levelDict, callBackDict, lastIndexDict, currentSyncTimeDict];
+                    }
+                    else {
+                        tempArray = @[levelDict, callBackDict, lastIndexDict];
+                    }
+                    [callBackValueMapArray addObjectsFromArray:tempArray];
                     newRequestModel.valueMap = callBackValueMapArray;
                     newRequestModel.values = @[];
                     return callbk;
@@ -113,7 +130,16 @@
                     // transition phase..
                     if (siteIdsExist == NO  && [[lastIndexDict objectForKey:kSVMXValue] integerValue] == 1) {
                         siteIdsExist = YES; //  resetting - so this block won't get called again..
-                        [callBackValueMapArray addObjectsFromArray:@[lastIndexDict]];
+                        
+                        NSArray *tempArray = nil;
+                        if (self.categoryType == CategoryTypeProductIQData) {
+                            tempArray = @[lastIndexDict, currentSyncTimeDict];
+                        }
+                        else {
+                            tempArray = @[lastIndexDict];
+                        }
+                        
+                        [callBackValueMapArray addObjectsFromArray:tempArray];
                         callbk.callBack = YES;
                         newRequestModel.valueMap = callBackValueMapArray;
                         newRequestModel.values = @[];
@@ -121,10 +147,21 @@
                     }
                     else if (ibIdsExist == NO) {
                         // stop - no call back - request ends here..
+                        if (lastSyncTimeDict) {
+                            [self updateProdIQLastSyncTime:lastSyncTimeDict];
+                        }
                     }
                     else {
                         // ib call back..
-                        [callBackValueMapArray addObjectsFromArray:@[levelDict, callBackDict, lastIndexDict]];
+                        
+                        NSArray *tempArray = nil;
+                        if (self.categoryType == CategoryTypeProductIQData) {
+                            tempArray = @[levelDict, callBackDict, lastIndexDict, currentSyncTimeDict];
+                        }
+                        else {
+                            tempArray = @[levelDict, callBackDict, lastIndexDict];
+                        }
+                        [callBackValueMapArray addObjectsFromArray:tempArray];
                         newRequestModel.valueMap = callBackValueMapArray;
                         newRequestModel.values = @[];
                         return callbk;
@@ -170,7 +207,7 @@
                     objectName = kInstalledProductTableName;
                 }
                 else {
-                    objectName = [objectFieldService getFieldLabelFromFieldName:fieldName andObjectName:kInstalledProductTableName];
+                    objectName = [objectFieldService getReferenceToFromFieldName:fieldName andObjectName:kInstalledProductTableName];
                 }
                 
                 if (![StringUtil isStringEmpty:objectName]) {
@@ -194,5 +231,26 @@
     }
 }
 
+
+-(NSDictionary *)getProdIQDataLastSyncTime {
+    NSMutableDictionary *syncTimeDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    [syncTimeDict setObject:kProdIQLastSyncTime forKey:kSVMXRequestKey];
+    NSString *lastSyncTime = [PlistManager getProdIQDataSyncTime];
+    
+    if (lastSyncTime == nil) {
+        lastSyncTime = [PlistManager getOneCallSyncTime];
+    }
+    
+    if (lastSyncTime == nil) {
+        lastSyncTime = @"";
+    }
+    [syncTimeDict setObject:lastSyncTime forKey:kSVMXRequestValue];
+    return syncTimeDict;
+}
+
+
+-(void)updateProdIQLastSyncTime:(NSDictionary *)syncTimeDict {
+    [PlistManager storeProdIQDataSyncTime:[syncTimeDict objectForKey:kSVMXRequestValue]];
+}
 
 @end

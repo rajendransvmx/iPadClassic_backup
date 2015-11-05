@@ -717,6 +717,7 @@
 		18BB0A6F19E9088600162524 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6919E9088600162524 /* zbar-helpicons.png */; };
 		18BB0A7019E9088600162524 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6A19E9088600162524 /* zbar-samples.png */; };
 		18BF243D1BC3AEE200D92B64 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BF243C1BC3AEE200D92B64 /* XMLReader.m */; };
+		18CA5A241BEA28DB00885F5E /* ProdIQDataServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CA5A231BEA28DB00885F5E /* ProdIQDataServiceLayer.m */; settings = {ASSET_TAGS = (); }; };
 		18DE885619E5872E0011E9EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18DE885419E5872E0011E9EE /* Main.storyboard */; };
 		18DE885A19E58A130011E9EE /* PlistManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE885919E58A130011E9EE /* PlistManager.m */; };
 		18DE8B9A1A00C1FD001A602E /* DataMigrationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE8B991A00C1FD001A602E /* DataMigrationHelper.m */; };
@@ -2434,6 +2435,8 @@
 		18BB0A6A19E9088600162524 /* zbar-samples.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "zbar-samples.png"; sourceTree = "<group>"; };
 		18BF243B1BC3AEE200D92B64 /* XMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLReader.h; sourceTree = "<group>"; };
 		18BF243C1BC3AEE200D92B64 /* XMLReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLReader.m; sourceTree = "<group>"; };
+		18CA5A221BEA28DB00885F5E /* ProdIQDataServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProdIQDataServiceLayer.h; sourceTree = "<group>"; };
+		18CA5A231BEA28DB00885F5E /* ProdIQDataServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProdIQDataServiceLayer.m; sourceTree = "<group>"; };
 		18DE885519E5872E0011E9EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		18DE885819E58A130011E9EE /* PlistManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlistManager.h; sourceTree = "<group>"; };
 		18DE885919E58A130011E9EE /* PlistManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlistManager.m; sourceTree = "<group>"; };
@@ -6194,6 +6197,8 @@
 				18522A781BBA6F6500E9B4E0 /* ProdIQTranslationsParser.m */,
 				188810B41BD7B49C00E0BF91 /* ProdIQDataParser.h */,
 				188810B51BD7B49C00E0BF91 /* ProdIQDataParser.m */,
+				18CA5A221BEA28DB00885F5E /* ProdIQDataServiceLayer.h */,
+				18CA5A231BEA28DB00885F5E /* ProdIQDataServiceLayer.m */,
 			);
 			path = ProductIQ;
 			sourceTree = "<group>";
@@ -7332,6 +7337,7 @@
 				183A9A7F19E6949800919345 /* DBRequestInsert.m in Sources */,
 				183A9A9319E694D400919345 /* CacheManager.m in Sources */,
 				40A06F0C1B05D41500218162 /* BadgeStyle.m in Sources */,
+				18CA5A241BEA28DB00885F5E /* ProdIQDataServiceLayer.m in Sources */,
 				184A8EFC19E7A535006DA6BE /* ContactCell.m in Sources */,
 				183A9B1019E69B5200919345 /* SyncDelegateHandler.m in Sources */,
 				183AA03119E6BDB300919345 /* MobileDeviceTagParser.m in Sources */,

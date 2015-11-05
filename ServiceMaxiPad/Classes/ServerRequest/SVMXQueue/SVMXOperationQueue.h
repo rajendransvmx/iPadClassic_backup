@@ -22,7 +22,7 @@
 @property(nonatomic,strong)NSOperationQueue     *locationOpQueue;
 @property(nonatomic,strong)NSOperationQueue     *getPriceOpQueue;
 @property(nonatomic,strong)NSOperationQueue     *cusWsOpQueue;
-
+@property(nonatomic,strong)NSOperationQueue     *prodIQOpQueue;
 
 + (SVMXOperationQueue *)sharedSVMXOperationQueObject;
 

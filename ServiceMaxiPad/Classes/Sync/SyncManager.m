@@ -307,6 +307,10 @@ static SyncManager *_instance;
                         self.isGetPriceCallEnabled = NO;
                         [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
                     }
+                    
+                    if([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
+                        [self performSelectorInBackground:@selector(initiateProdIQDataSync) withObject:nil];
+                    }
                 }
             }
             break;
@@ -448,6 +452,8 @@ static SyncManager *_instance;
 - (void)performInitialSync
 {
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
+    [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
+    
     [self enableAllParallelSync:NO];
     self.initialSyncStatus = SyncStatusInProgress;
     [self prepareDatabaseForInitialSync];
@@ -463,6 +469,8 @@ static SyncManager *_instance;
 - (void)performResetApp
 {
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
+    [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
+
     [self prepareDatabaseForInitialSync];
     [SMDataPurgeHelper startedConfigSyncTime];
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeResetApp requestParam:nil callerDelegate:self];
@@ -472,6 +480,8 @@ static SyncManager *_instance;
 - (void)performConfigSync
 {
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
+    [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
+
     self.configSyncStatus = SyncStatusInProgress;
     [SMDataPurgeHelper startedConfigSyncTime];
     [self enableAllParallelSync:NO];
@@ -2164,4 +2174,16 @@ static SyncManager *_instance;
     
     return (insertedRecords.count?YES:NO);
 }
+
+
+#pragma mark - Product IQ
+
+-(void)initiateProdIQDataSync {
+    [[ProductIQManager sharedInstance] initiateProdIQDataSync];
+}
+
+-(void)cancelProdIQDataSync {
+    [[ProductIQManager sharedInstance] cancelProdIQDataSync];
+}
+
 @end

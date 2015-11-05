@@ -195,4 +195,11 @@ extern  NSString *const kPreferenceOrganizationCustom;
 
 //017609
 + (BOOL) shouldValidateAccessToken;
+
+
+#pragma mark - Product IQ
+
++ (NSString *)getProdIQDataSyncTime;
++ (void)storeProdIQDataSyncTime:(NSString *)time;
+
 @end

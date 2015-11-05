@@ -63,6 +63,9 @@ typedef NS_ENUM(NSUInteger, CategoryType) {
     
     /*** Lookup Online Search ***/
      CategoryTypeLookupSearch,
+    
+    /** Product IQ **/
+    CategoryTypeProductIQData
 };
 
 typedef NS_ENUM(NSUInteger, SyncType) {

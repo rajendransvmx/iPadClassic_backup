@@ -328,4 +328,4 @@ extern NSString *const kProductIQUserConfigUrl;
 extern NSString *const kProductIQTranslationsUrl;
 extern NSString *const kProductIQObjectDescribeUrl;
 extern NSString *const kProductIQSyncData;
-
+extern NSString *const kProdIQLastSyncTime;

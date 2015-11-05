@@ -100,7 +100,7 @@
         case CategoryTypeCustomWebServiceAfterBeforeCall:
             isapplicable = NO;
             break;
-        
+
         default:
             isapplicable = NO;
             break;
@@ -363,8 +363,9 @@
         case CategoryTypeCustomWebServiceAfterBeforeCall:
             requestType = [self getNextRequestForCustomWebServiceAfterBefore:currentRequest andPreviousRequst:previousRequest];
             break;
-            
-            
+        case CategoryTypeProductIQData:
+            requestType = [self getNextRequestForProductIQData:currentRequest andPreviousRequest:previousRequest];
+            break;
         default:
             break;
     }
@@ -1275,6 +1276,35 @@
         nextReuestType = RequestTypeNone;
     }
     return nextReuestType;
+}
+
+
+#pragma mark - Product IQ
+
+- (RequestType)getNextRequestForProductIQData:(SVMXServerRequest *)currentRequest andPreviousRequest:(SVMXServerRequest *)previousRequest {
+    
+    RequestType nextRequestType = 0;
+    
+    if (currentRequest == nil) {
+        nextRequestType = RequestProductIQData;
+    }
+    
+    switch (currentRequest.requestType) {
+        case RequestProductIQData:
+            nextRequestType = RequestCleanUpSelect;
+            break;
+        case RequestCleanUpSelect:
+            nextRequestType = RequestTXFetch;
+            break;
+        case RequestTXFetch:
+            nextRequestType = RequestCleanUp;
+            break;
+        case RequestCleanUp:
+            nextRequestType = RequestTypeNone;
+        default:
+            break;
+    }
+    return nextRequestType;
 }
 
 @end
