@@ -229,11 +229,10 @@
 -(BOOL)hasTimeZoneChanged
 {
     NSMutableDictionary *theDict = (NSMutableDictionary *) [self getFieldValueDictionary];
-
     NSString *timeZoneValue = [theDict objectForKey:@"TimeZone"];
-
     long offsetFromGMT = (long)[timeZoneValue longLongValue];
-    if ((offsetFromGMT != (long)[self secondsFromTheGMT]) && [self isItMultiDay]) {
+    if (((offsetFromGMT != (long)[self secondsFromTheGMT]) && [self isItMultiDay] ) || timeZoneValue ==nil)
+    {
         [self updateTable];
         return YES;
     }
@@ -243,7 +242,6 @@
 -(void)updateTable
 {
     [self splittingTheEvent];
-
     NSMutableDictionary *eventDict = (NSMutableDictionary *) [self getFieldValueDictionary];
     [eventDict setObject:[NSNumber numberWithBool:[self isMultiDay]] forKey:@"isMultiDay"];
     [eventDict setObject:[self convertToJsonString] forKey:@"SplitDayEvents"];

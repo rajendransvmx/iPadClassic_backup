@@ -871,10 +871,11 @@
     for ( EventTransactionObjectModel *lModel in lEventArray) {
         SMXEvent *lEvent;
         NSMutableDictionary *theDict = (NSMutableDictionary *) [lModel getFieldValueDictionary];
+        NSString *SplitDayEvents = [theDict objectForKey:@"SplitDayEvents"];
         /* making multiday event after checking its a multiday event or not */
-        if (lModel.isItMultiDay && [StringUtil isStringNotNULL:[theDict objectForKey:@"SplitDayEvents"]]) {
+        if (lModel.isItMultiDay && ![StringUtil checkIfStringEmpty:SplitDayEvents]) {
            lEvent=[[SMXEvent alloc] initWithEventWithKeyValue:theDict EventTransactionObjectModel:lModel];
-            [self makeEvent:lEvent withArray:lEventCollectionArray objectList:[theDict objectForKey:@"SplitDayEvents"]];
+            [self makeEvent:lEvent withArray:lEventCollectionArray objectList:SplitDayEvents];
         }else{
             SMXEvent * lEvent = [[SMXEvent alloc] initWithEventTransactionObjectModel:lModel];
             [lEventCollectionArray addObject:lEvent];
