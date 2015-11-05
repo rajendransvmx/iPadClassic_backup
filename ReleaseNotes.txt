@@ -4,18 +4,16 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.025
+Version = 15.99.026
 
 ===========================================
 
 Product IQ:
-- Prod IQ data fetch during initial sync.
-- Restricting ProductIQ only for landscape mode.
-
+- Prod IQ data sync (parallel). - only client side implementation.
 
 
 Defects:
-023841
+
 
 -------------
 NOTE:
