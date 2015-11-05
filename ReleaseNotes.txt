@@ -4,15 +4,18 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.027
+Version = 15.99.028
 
 ===========================================
 
 Product IQ:
-- Prod IQ setting was enabled by default - reverted the code.
+
+1. Added later JS files to ProductIQ.
+2. Fixed offline issue for ProductIQ.
+3. Reduced native call handler time. So that it will improves the performance.
+
 
 Defects:
-
 
 -------------
 NOTE:
