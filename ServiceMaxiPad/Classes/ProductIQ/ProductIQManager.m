@@ -411,7 +411,9 @@
     return  @[kInstalledProductTableName, kWorkOrderSite, KSubLocationTableName, kAccountTableName, KProductTable];
 }
 
-- (NSDictionary *)getProdIQTxFetcRequestParamsForRequestCount1:(NSArray *)fileds andTableName:(NSString *)tableName andId:(NSString *)sfId {
+- (NSDictionary *)getProdIQTxFetcRequestParamsForRequestCount1:(NSArray *)fileds
+                                                  andTableName:(NSString *)tableName
+                                                         andId:(NSString *)sfId {
     @autoreleasepool {
         
         id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];

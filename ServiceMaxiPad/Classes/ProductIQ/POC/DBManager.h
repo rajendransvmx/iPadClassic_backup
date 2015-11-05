@@ -8,11 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "sqlite3.h"
+#import "ModifiedRecordModel.h"
 
 @interface DBManager : NSObject
 {
     NSString *databasePath;
 }
+@property (nonatomic, assign) BOOL isfieldMergeEnabled;
 
 +(DBManager*)getSharedInstance;
 -(BOOL)createDB;

@@ -298,6 +298,24 @@
     }
     return nil;
 }
+- (ModifiedRecordModel *)fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordIdForProductIQ:(NSString*)recordId andSfId:(NSString*)sfId
+{
+   // DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:recordId];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"UPDATE"];
+    DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfId];
+    
+    NSArray *tempArray = [self fetchDataForFields:@[@"fieldsModified"]
+                                        criterias:@[criteriaTwo,criteriaThree]
+                                       objectName:@"ModifiedRecords"
+                               advancedExpression:@"(1 and 2)"
+                                    andModelClass:[ModifiedRecordModel class]];
+    if ([tempArray count] > 0) {
+        ModifiedRecordModel *modifiedRecordModel = [tempArray objectAtIndex:0];
+        return modifiedRecordModel;
+    }
+    return nil;
+}
+
 
 
 - (BOOL)doesRecordExistForId:(NSString *)recordId andOperationType:(NSString *)operationType {

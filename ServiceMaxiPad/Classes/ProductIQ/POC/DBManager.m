@@ -13,13 +13,17 @@
 #import "FactoryDAO.h"
 #import "ModifiedRecordsDAO.h"
 #import "SyncErrorConflictService.h"
-
+#import "CacheManager.h"
+#import "MobileDeviceSettingService.h"
+#import "ModifiedRecordsDAO.h"
 
 static DBManager *sharedInstance = nil;
 static sqlite3 *database = nil;
 static sqlite3_stmt *statement = nil;
 
+
 @implementation DBManager
+
 
 +(DBManager*)getSharedInstance{
     if (!sharedInstance) {
@@ -115,12 +119,20 @@ static sqlite3_stmt *statement = nil;
     
     NSLog(@"query:%@",query);
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
-       @autoreleasepool {
-//          if ([query hasPrefix:@"UPDATE"])
-//           {
-//               [self parseQuery:query];
-//           }
-
+    @autoreleasepool {
+        if ([query hasPrefix:@"UPDATE"])
+        {
+            MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+            MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET016"];
+            self.isfieldMergeEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+            if(self.isfieldMergeEnabled)
+            {
+                [self parseQuery:query];
+                
+            }
+            
+        }
+        
         DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
         
         [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
@@ -135,66 +147,81 @@ static sqlite3_stmt *statement = nil;
                     
                 }
                 [resultSet close];
-
+                
             }
             
         }];
+        
+        if([query hasPrefix:@"INSERT OR REPLACE INTO `ModifiedRecords`"])
+        {
+            MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+            MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET016"];
+            self.isfieldMergeEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+            if(self.isfieldMergeEnabled)
+            {
+                [self updateTheModifieDrecords];
+                
+            }
+            
+            
+        }
+        
     }
     return records;
     
     /*
-
-    sqlite3 *database = nil;
-    NSMutableArray *results = [[NSMutableArray alloc]init];
-    
-    const char *dbpath = [databasePath UTF8String];
-    sqlite3_stmt *statement = nil;
-    const char *query_stmt = [query UTF8String];
-    
-    if (sqlite3_open(dbpath, &database) == SQLITE_OK) {
-        
-        int executeStatus = 0;
-        
-        if([query hasPrefix:@"DROP"]){
-            executeStatus = sqlite3_exec(database, query_stmt, NULL, NULL, NULL);
-        }else{
-            executeStatus = sqlite3_prepare_v2(database, query_stmt, -1, &statement, NULL);
-            if (executeStatus == SQLITE_OK) {
-                
-                // query is successfully executed
-                int stepResult = sqlite3_step(statement), i = 0, cc = sqlite3_column_count(statement);
-                NSString *name, *value;
-                NSMutableDictionary *row = nil;
-                while (stepResult == SQLITE_ROW) {
-                    row = [[NSMutableDictionary alloc] init];
-                    for(i = 0; i < cc; i++){
-                        name = [[NSString alloc] initWithUTF8String:sqlite3_column_name(statement, i)];
-                        value = [[NSString alloc] initWithUTF8String:sqlite3_column_text(statement, i)];
-                        [row setObject: value forKey: name];
-                    }
-                    
-                    [results addObject:row];
-                    
-                    // read next row data
-                    stepResult = sqlite3_step(statement);
-                }
-                
-                sqlite3_finalize(statement);
-            }
-        }
-        
-        if(executeStatus != SQLITE_OK){
-            NSLog(@"Error %s while executing the statement", sqlite3_errmsg(database));
-        }
-        
-        sqlite3_close(database);
-    }else{
-        NSLog(@"Could not open database while executing the query!");
-    }
-    
-    NSLog(@"records:%@", recordsTest);
-    NSLog(@"results:%@",results);
-    return results;
+     
+     sqlite3 *database = nil;
+     NSMutableArray *results = [[NSMutableArray alloc]init];
+     
+     const char *dbpath = [databasePath UTF8String];
+     sqlite3_stmt *statement = nil;
+     const char *query_stmt = [query UTF8String];
+     
+     if (sqlite3_open(dbpath, &database) == SQLITE_OK) {
+     
+     int executeStatus = 0;
+     
+     if([query hasPrefix:@"DROP"]){
+     executeStatus = sqlite3_exec(database, query_stmt, NULL, NULL, NULL);
+     }else{
+     executeStatus = sqlite3_prepare_v2(database, query_stmt, -1, &statement, NULL);
+     if (executeStatus == SQLITE_OK) {
+     
+     // query is successfully executed
+     int stepResult = sqlite3_step(statement), i = 0, cc = sqlite3_column_count(statement);
+     NSString *name, *value;
+     NSMutableDictionary *row = nil;
+     while (stepResult == SQLITE_ROW) {
+     row = [[NSMutableDictionary alloc] init];
+     for(i = 0; i < cc; i++){
+     name = [[NSString alloc] initWithUTF8String:sqlite3_column_name(statement, i)];
+     value = [[NSString alloc] initWithUTF8String:sqlite3_column_text(statement, i)];
+     [row setObject: value forKey: name];
+     }
+     
+     [results addObject:row];
+     
+     // read next row data
+     stepResult = sqlite3_step(statement);
+     }
+     
+     sqlite3_finalize(statement);
+     }
+     }
+     
+     if(executeStatus != SQLITE_OK){
+     NSLog(@"Error %s while executing the statement", sqlite3_errmsg(database));
+     }
+     
+     sqlite3_close(database);
+     }else{
+     NSLog(@"Could not open database while executing the query!");
+     }
+     
+     NSLog(@"records:%@", recordsTest);
+     NSLog(@"results:%@",results);
+     return results;
      
      */
 }
@@ -240,8 +267,6 @@ static sqlite3_stmt *statement = nil;
             lastValue = [NSString stringWithFormat:@"%@, %@",lastValue,stringValue];
             [keyValueDict setObject:lastValue forKey:stringValue];
 
-            
-            
         }
         
     }
@@ -253,7 +278,8 @@ static sqlite3_stmt *statement = nil;
     // NSString *strQuery = finalQuery;
     NSString *newTableName = [tableName  stringByReplacingOccurrencesOfString:@"`" withString:@""];
     newTableName = [newTableName stringByReplacingOccurrencesOfString:@" " withString:@""];
-    NSDictionary *newKeyValueDict =  [self getRecordsForFields:keyArray forObjectname:newTableName andSFId:sfIdNew];
+    NSDictionary *newKeyValueDict =  [self getRecordsForFields:keyArray forObjectname:newTableName
+                                                       andSFId:sfIdNew];
     if([keyArray count] >0)
     {
         [beforeSaveDict setObject:sfIdNew forKey:@"Id"];
@@ -290,7 +316,7 @@ static sqlite3_stmt *statement = nil;
         NSData * jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:&err];
         NSString * myJsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         NSString *strJsonString = myJsonString;
-     NSDictionary   *jsonDictionary1    = [NSJSONSerialization JSONObjectWithData:[myJsonString dataUsingEncoding:NSUTF8StringEncoding]
+        NSDictionary   *jsonDictionary1    = [NSJSONSerialization JSONObjectWithData:[myJsonString dataUsingEncoding:NSUTF8StringEncoding]
                                                             options:NSJSONReadingMutableContainers
                                                               error:&err];
         NSString *str1 = myJsonString;
@@ -353,7 +379,7 @@ static sqlite3_stmt *statement = nil;
     NSError * err;
     NSData * jsonData = [NSJSONSerialization dataWithJSONObject:currentDict options:0 error:&err];
     NSString * myJsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    [self updateFields:myJsonString andSfId:sfID];
+    [self insertDictionary:myJsonString withSFId:sfID];
     
     
     
@@ -361,8 +387,9 @@ static sqlite3_stmt *statement = nil;
 - (NSDictionary *)checkFormodifiedFiledJsonString:(NSString *)jsonString withSFId:(NSString *)sfid andObjectName:(NSString *)objName
 {
     id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-    // If there are earlier changes in trailor table fetch them also.. will use for merging
-    NSString *existingModifiedFields = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:sfid andSfId:sfid];
+    
+    ModifiedRecordModel *model = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordIdForProductIQ:sfid andSfId:sfid];
+   NSString  *existingModifiedFields = model.fieldsModified;
     NSDictionary *jsonDictionary;
     NSError * error = nil;
     
@@ -373,23 +400,23 @@ static sqlite3_stmt *statement = nil;
                                                             options:NSJSONReadingMutableContainers
                                                               error:&error];
     }
-    else
-    {
-        BOOL hasConflictRecordFound = NO;
-        
-        SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc]init];
-        hasConflictRecordFound = [conflictService isConflictFoundForObject:objName withSfId:sfid];
-        
-        if (hasConflictRecordFound)
-        {
-            // Found conflict mark on existing records. Lets consider conflict record as previous change
-            existingModifiedFields = [conflictService fetchExistingModifiedFieldsJsonFromConflictTableForSfId:sfid andObjectName:objName];
-            jsonDictionary    = [NSJSONSerialization JSONObjectWithData:[existingModifiedFields dataUsingEncoding:NSUTF8StringEncoding]
-                                                                options:NSJSONReadingMutableContainers
-                                                                  error:&error];
-            
-        }
-    }
+//    else
+//    {
+//        BOOL hasConflictRecordFound = NO;
+//        
+//        SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc]init];
+//        hasConflictRecordFound = [conflictService isConflictFoundForObject:objName withSfId:sfid];
+//        
+//        if (hasConflictRecordFound)
+//        {
+//            // Found conflict mark on existing records. Lets consider conflict record as previous change
+//            existingModifiedFields = [conflictService fetchExistingModifiedFieldsJsonFromConflictTableForSfId:sfid andObjectName:objName];
+//            jsonDictionary    = [NSJSONSerialization JSONObjectWithData:[existingModifiedFields dataUsingEncoding:NSUTF8StringEncoding]
+//                                                                options:NSJSONReadingMutableContainers
+//                                                                  error:&error];
+//            
+//        }
+   // }
     if([jsonDictionary count] >0)
     {
         return jsonDictionary;
@@ -398,29 +425,33 @@ static sqlite3_stmt *statement = nil;
     {
         return nil;
     }
-    
 }
 
 - (void)insertDictionary:(NSString * )jsonString withSFId:(NSString *)sfId
 {
-    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-    ModifiedRecordModel *model = [[ModifiedRecordModel alloc] init];
-    
-    model.sfId = sfId;
-    model.fieldsModified = jsonString;
-    model.operation = @"UPDATE";
-
-     BOOL resultStatus = [modifiedRecordService saveRecordModel:model];
+    CacheManager *cache = [CacheManager sharedInstance];
+    [cache  pushToCache:sfId byKey:@"currentSFID"];
+    [cache pushToCache:jsonString byKey:@"modifiedString"];
+//    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+//    ModifiedRecordModel *model = [[ModifiedRecordModel alloc] init];
+//    
+//    model.sfId = sfId;
+//    model.fieldsModified = jsonString;
+//    model.operation = @"UPDATE";
+//
+//     BOOL resultStatus = [modifiedRecordService saveRecordModel:model];
 }
 -(void)updateFields:(NSString *)jsonString andSfId:(NSString *)sfid
 {
     id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
     ModifiedRecordModel *model = [[ModifiedRecordModel alloc] init];
-    DBCriteria *criteria = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfid];
+    DBCriteria *criteria = [[DBCriteria alloc]initWithFieldName:@"sfId"
+                                                   operatorType:SQLOperatorEqual
+                                                  andFieldValue:sfid];
     model.fieldsModified = jsonString;
-    model.sfId = sfid;
-    model.operation = @"UPDATE";
-    [modifiedRecordService updateRecords:@[model] withFields:@[@"sfId",@"operation", @"fieldsModified"] withCriteria:@[criteria]];
+
+    [modifiedRecordService updateRecords:@[model] withFields:@[@"fieldsModified"]
+                            withCriteria:@[criteria]];
 
 }
 - (NSArray *)getFiledsforQuery:(NSString *)query
@@ -434,11 +465,27 @@ static sqlite3_stmt *statement = nil;
 {
     
     ProductIQManager *model = [ProductIQManager sharedInstance];
-    NSDictionary *dict = [model getProdIQTxFetcRequestParamsForRequestCount1:fields andTableName:tableName andId:andSFId];
+    NSDictionary *dict = [model getProdIQTxFetcRequestParamsForRequestCount1:fields
+                                                                andTableName:tableName andId:andSFId];
     return dict;
     
 }
+- (void)updateTheModifieDrecords
+{
+    CacheManager *cache = [CacheManager sharedInstance];
+    NSString *sfID = [cache getCachedObjectByKey:@"currentSFID"];
+    NSString *modifiedString = [cache getCachedObjectByKey:@"modifiedString"];
+    [self updateFields:modifiedString andSfId:sfID];
+    [self clearCache];
+    
+}
+- (void)clearCache
+{
+    CacheManager *cache = [CacheManager sharedInstance];
+    [cache clearCacheByKey:@"currentSFID"];
+    [cache clearCacheByKey:@"modifiedString"];
 
+}
 
 
 @end

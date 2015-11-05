@@ -82,6 +82,7 @@ NSString *const kDatabaseEncryptedDBName       = @"encrypted";
     // Encryption data base file path
     NSString *encryptedDataBasePath = [self encryptionDatabasePath];
     
+    
     // Attach encrypted database Query
     const char* dbAttachQuery = [[NSString stringWithFormat:@"ATTACH DATABASE '%@' AS encrypted KEY '%@';", encryptedDataBasePath, [self dbSecretKey]] UTF8String];
     
@@ -192,6 +193,8 @@ NSString *const kDatabaseEncryptedDBName       = @"encrypted";
     NSError  *error = NULL;
     
     self.databasePath = [self primaryDatabasePath];
+    NSLog(@"path %@",self.databasePath);
+    
     
     BOOL hasValidDatabaseFile = NO;
     
