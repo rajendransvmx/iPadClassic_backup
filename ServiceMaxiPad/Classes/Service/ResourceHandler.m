@@ -338,7 +338,13 @@
             
             NSString *documentsDir = [FileManager getCoreLibSubDirectoryPath]; // Get CoreLibrary directory
             
+            if ([fileModel.fileName isEqualToString:@"com_servicemax_client_lib.zip"]) {
+                NSString *clientLibPath = [documentsDir stringByDeletingLastPathComponent];
+                [UnzipUtility unzipFileAtPath:filepath toFolder:clientLibPath];
+            }
+            else {
             [UnzipUtility unzipFileAtPath:filepath toFolder:documentsDir];
+            }
             
             [FileManager deleteFileAtPath:filepath];
         }
