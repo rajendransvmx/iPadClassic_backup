@@ -126,6 +126,7 @@ extern NSString *const KTableObjectDescribe;
 extern NSString *const KTableConfiguration;
 extern NSString *const KTableInstallBaseObject;
 extern NSString *const KTableClientSyncLogTransient;
+extern NSString *const kTableDescribeLayout;
 
 @interface DatabaseSchemaConstant : NSObject
 

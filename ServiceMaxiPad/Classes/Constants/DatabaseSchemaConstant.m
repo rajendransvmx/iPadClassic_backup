@@ -214,6 +214,10 @@ NSString *const KTableInstallBaseObject = @"CREATE TABLE IF NOT EXISTS 'InstallB
 
 NSString *const KTableClientSyncLogTransient =@"CREATE TABLE IF NOT EXISTS 'ClientSyncLogTransient' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Id' VARCHAR UNIQUE ,'ObjectName' VARCHAR,'Operation' VARCHAR,'LastModifiedDate' VARCHAR,'Pending' VARCHAR )";
 
+NSString *const kTableDescribeLayout = @"CREATE TABLE IF NOT EXISTS 'DescribeLayout' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'ObjectName' VARCHAR,'DescribeLayoutResult' VARCHAR )";
+
+
+
 
 @implementation DatabaseSchemaConstant
 
