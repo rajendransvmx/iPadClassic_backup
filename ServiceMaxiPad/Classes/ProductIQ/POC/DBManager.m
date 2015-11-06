@@ -45,7 +45,7 @@ static sqlite3_stmt *statement = nil;
     
     // Build the path to the database file
     databasePath = [[NSString alloc] initWithString:[docsDir stringByAppendingPathComponent: @"priq.db"]];
-    NSLog(@"databasePath:%@", databasePath);
+    SXLogDebug(@"databasePath:%@", databasePath);
     BOOL isSuccess = YES;
     NSFileManager *filemgr = [NSFileManager defaultManager];
     if ([filemgr fileExistsAtPath: databasePath ] == NO) {

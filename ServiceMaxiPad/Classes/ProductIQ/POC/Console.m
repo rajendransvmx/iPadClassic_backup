@@ -38,7 +38,7 @@
 }
 
 -(void)logMessage:(NSDictionary *) details {
-    NSLog(@"%@::%@", details[@"type"], details[@"message"]);
+    SXLogDebug(@"%@::%@", details[@"type"], details[@"message"]);
 }
 
 

@@ -13,8 +13,8 @@
 
 - (void)invoke:(NSString *)input {
     if ([StringUtil containsString:@"SELECT" inString:input]) {
-        NSLog(@"input:%@",input);
-        NSLog(@"Testing");
+        SXLogDebug(@"input:%@",input);
+        SXLogDebug(@"Testing");
     }
     input = [input substringFromIndex:[@"native-call://" length]];
     NSRange r1 = [input rangeOfString:@"/"];

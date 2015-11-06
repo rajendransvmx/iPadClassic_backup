@@ -48,7 +48,7 @@
         [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)[bodyAsData length]]
                                 forHTTPHeaderField:@"Content-Length"];
     }else{
-        NSLog(@"Unsupported method! %@", method);
+        SXLogError(@"Unsupported method! %@", method);
         return;
     }
     
@@ -63,12 +63,12 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    NSLog(@"HTTP Error! %@", [error localizedDescription]);
+    SXLogError(@"HTTP Error! %@", [error localizedDescription]);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     NSString *responseText = [[NSString alloc] initWithData:self->responseData encoding:NSUTF8StringEncoding];
-    NSLog(@"didfinishLoading: %@",responseText);
+    SXLogDebug(@"didfinishLoading: %@",responseText);
     
     NSMutableDictionary *resp = [[NSMutableDictionary alloc] init];
     [resp setObject:self->requestId forKey:@"requestId"];
@@ -94,7 +94,7 @@
     
     UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodNameLocal, resp];
-    NSLog(@"&&& %@", js);
+    SXLogDebug(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];
 }
 @end

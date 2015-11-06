@@ -188,7 +188,7 @@ static  ProductIQHomeViewController *instance;
     NSString *url = request.URL.absoluteString;
     
     // Testing purposes
-    NSLog(@"Loading URL :%@",url);
+    SXLogDebug(@"Loading URL :%@",url);
     
     
     // if this is a native call
@@ -203,7 +203,7 @@ static  ProductIQHomeViewController *instance;
     
     BOOL isSuccess = [url hasPrefix:[callbackUrl lowercaseString]];
     
-    NSLog(@"Checking for the callback prefix :%d", isSuccess);
+    SXLogDebug(@"Checking for the callback prefix :%d", isSuccess);
     
     if(isSuccess == false){
         return YES;
@@ -217,7 +217,7 @@ static  ProductIQHomeViewController *instance;
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    NSLog(@"Failed to load with error :%@",[error debugDescription]);
+    SXLogError(@"Failed to load with error :%@",[error debugDescription]);
     
 }
 // END - webview events
