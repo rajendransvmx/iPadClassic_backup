@@ -32,6 +32,7 @@
 - (BOOL)isProductIQSettingEnable;
 - (NSArray *)getProdIQRelatedObjects;
 - (NSDictionary *)getProdIQTxFetcRequestParamsForRequestCount1:(NSArray *)fileds andTableName:(NSString *)tableName andId:(NSString *)sfId ;
+- (NSMutableArray*)disableCreateOrEditProcessOfLocationOrIBForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService;
 
 -(void)initiateProdIQDataSync;
 -(void)cancelProdIQDataSync;

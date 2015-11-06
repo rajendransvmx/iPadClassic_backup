@@ -146,9 +146,16 @@
     
     //show or hide ProductIQ
     
-    if ([[ProductIQManager sharedInstance] isProductIQEnabledForSFMPage:self.sfmPageView]) {
-        allWizards = [[ProductIQManager sharedInstance] addProductIQWizardForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
+    if ([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
+        
+        //Disable create or edit process of IB or location objects.
+        allWizards = [[ProductIQManager sharedInstance] disableCreateOrEditProcessOfLocationOrIBForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
+        
+        if ([[ProductIQManager sharedInstance] isProductIQEnabledForSFMPage:self.sfmPageView]) {
+            allWizards = [[ProductIQManager sharedInstance] addProductIQWizardForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
+        }
     }
+    
     
     SFProcessService *processService = [[SFProcessService alloc]init];
     

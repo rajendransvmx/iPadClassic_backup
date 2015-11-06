@@ -207,15 +207,33 @@
 /*
  Method addProductIQWizardForAllWizardArray
  Description:
- 1. Get the all the process Ids(SFM,OUTPUT_DOCUMENT) from allWizardArray for each compoent.
- 2. Compare the process Id. If matched then diasable the IB/Location creat/edit processes.
- 3. Disable create/edit processes only for two objects i.e IB or Location as of now.
- 4. Add ProductIQ wizard for ProductIQ.
+ Add ProductIQ wizard for ProductIQ.
  */
 
 - (NSMutableArray*)addProductIQWizardForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService{
     
     @autoreleasepool {
+        //add ProductIQ wizard to allWizard array.
+        SFWizardModel *wizardModel = [self getSFWizardForProductIQ];
+        if (allWizards.count == 0) {
+            allWizards = [[NSMutableArray alloc] initWithCapacity:0];
+            [allWizards addObject:wizardModel];
+        } else {
+            [allWizards insertObject:wizardModel atIndex:0];
+        }
+        
+        return allWizards;
+    }
+}
+/*
+ Method disableCreateOrEditProcessOfLocationOrIBForAllWizardArray
+ Description:
+ 1. Get the all the process Ids(SFM,OUTPUT_DOCUMENT) from allWizardArray for each compoent.
+ 2. Compare the process Id. If matched then diasable the IB/Location creat/edit processes.
+ 3. Disable create/edit processes only for two objects i.e IB or Location as of now.
+ */
+- (NSMutableArray*)disableCreateOrEditProcessOfLocationOrIBForAllWizardArray:(NSMutableArray*)allWizards withWizardComponetService:(SFMWizardComponentService*)wizardComponentService {
+    {
         NSMutableArray *sfmProcessIds = [[NSMutableArray alloc] initWithCapacity:0];
         NSMutableArray *outputDocProcessIds = [[NSMutableArray alloc] initWithCapacity:0];
         
@@ -265,16 +283,6 @@
                 }
             }
         }
-        
-        //Now add ProductIQ wizard to allWizard array.
-        SFWizardModel *wizardModel = [self getSFWizardForProductIQ];
-        if (allWizards.count == 0) {
-            allWizards = [[NSMutableArray alloc] initWithCapacity:0];
-            [allWizards addObject:wizardModel];
-        } else {
-            [allWizards insertObject:wizardModel atIndex:0];
-        }
-        
         return allWizards;
     }
 }
