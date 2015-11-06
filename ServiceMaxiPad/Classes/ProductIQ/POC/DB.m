@@ -14,7 +14,6 @@
 
 -(void)executeQuery:(NSString *)params {
     
-    NSLog(@"===========================================In DB===========================================");
     NSDictionary *d = [self parse:params];
     NSString *callback = d[@"nativeCallbackHandler"];
     NSString *requestId = d[@"requestId"];
@@ -22,7 +21,6 @@
     NSString *methodName = d[@"methodName"];
     NSString *jsCallback = d[@"jsCallback"];
     NSString *query = d[@"query"];
-    NSLog(@"query:%@", query);
     NSMutableArray *rows = [[DBManager getSharedInstance] executeQuery:query];
     NSMutableDictionary *resp = [[NSMutableDictionary alloc] init];
     [resp setObject:requestId forKey:@"requestId"];

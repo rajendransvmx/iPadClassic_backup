@@ -117,7 +117,7 @@ static sqlite3_stmt *statement = nil;
 
 -(NSMutableArray *)executeQuery:(NSString *)query {
     
-    NSLog(@"query:%@",query);
+    SXLogDebug(@"query:%@",query);
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {
         if ([query hasPrefix:@"UPDATE"])
