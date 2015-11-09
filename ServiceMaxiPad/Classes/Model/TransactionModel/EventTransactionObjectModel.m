@@ -245,7 +245,10 @@
     NSString *timeZoneValue = [theDict objectForKey:@"TimeZone"];
 
     long offsetFromGMT = (long)[timeZoneValue longLongValue];
-    if ((offsetFromGMT != (long)[self secondsFromTheGMT]) && [self isItMultiDay]) {
+    
+    //null check for time zone. if time zone is not there then split event according to current time zone
+    if (((offsetFromGMT != (long)[self secondsFromTheGMT]) && [self isItMultiDay] ) || timeZoneValue ==nil)
+    {
         [self updateTable];
         return YES;
     }
