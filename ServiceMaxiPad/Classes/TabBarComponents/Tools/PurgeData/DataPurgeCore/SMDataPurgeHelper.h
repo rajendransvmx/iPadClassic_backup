@@ -116,5 +116,8 @@
 
 + (NSMutableDictionary *)populatePurgeMapFromDataPurgeTable;
 
+//For ProductIQ
++ (void)saveLocationSfIdsFromDataPurgeTableForWorkOrderObject;
+
 + (void)clearDataPurgeTableContents;
 @end

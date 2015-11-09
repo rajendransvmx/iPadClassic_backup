@@ -25,6 +25,7 @@
 #import "SMLocalNotificationManager.h"
 #import "AlertMessageHandler.h"
 #import "NonTagConstant.h"
+#import "ProductIQManager.h"
 
 const int percentage = 5;
 const float progress = 0.05;
@@ -152,6 +153,12 @@ const float progress = 0.05;
                 
             case DataPurgeStatusWSForCleanup:
             {
+                
+                if ([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
+                    [SMDataPurgeHelper saveLocationSfIdsFromDataPurgeTableForWorkOrderObject];
+                }
+                
+                
                 self.purgeStatus = DataPurgeStatusDataProcessing;
                 self.purgeMap = [SMDataPurgeHelper populatePurgeMapFromDataPurgeTable];
                 double delayInSeconds = 0.5;

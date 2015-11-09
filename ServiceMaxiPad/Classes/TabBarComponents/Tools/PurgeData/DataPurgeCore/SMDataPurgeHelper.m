@@ -1347,5 +1347,65 @@
     }
     return purgeMap;
 }
+#pragma mark - ProductIQ related methods
++ (void)saveLocationSfIdsFromDataPurgeTableForWorkOrderObject {
+    
+    @autoreleasepool {
+        
+        id service = [FactoryDAO serviceByServiceType:ServiceTypeDataPurge];
+        
+        if ([service conformsToProtocol:@protocol(DataPurgeDAO)]) {
+            NSArray *workOrderSfIds = [service fetchSfIdsForObjectName:kWorkOrderTableName];
+            
+            if ([workOrderSfIds count]) {
+                NSMutableArray *listOfSfids = [[NSMutableArray alloc]initWithCapacity:0];
+                for (DataPurgeModel *sfIdModel in workOrderSfIds) {
+                    if (sfIdModel.sfId.length) {
+                        [listOfSfids addObject:sfIdModel.sfId];
+                    }
+                }
+                
+                if (listOfSfids.count > 0) {
+                    
+                    NSString *locationObjName = kWorkOrderSite;
+                    
+                    id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+                    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:locationObjName operatorType:SQLOperatorIn andFieldValues:listOfSfids];
+                    
+                    NSArray * transactionRecords =  [transObj fetchDataWithhAllFieldsAsStringObjects:kWorkOrderTableName fields:@[locationObjName] expression:nil criteria:@[criteria]];
 
+                    NSMutableArray *dataPurgeArray = [[NSMutableArray alloc] initWithCapacity:0];
+                    
+                    for (TransactionObjectModel *model in transactionRecords) {
+                        NSString *sfID = [[model getFieldValueDictionary] objectForKey:locationObjName];
+                        DataPurgeModel *model = [DataPurgeModel new];
+                        model.sfId = sfID;
+                        model.objectName = locationObjName;
+                        
+                        [dataPurgeArray addObject:model];
+                    }
+                    
+                    if (dataPurgeArray.count > 0) {
+                        [[self class] saveModelsToDataPurgeTable:dataPurgeArray];
+                    }
+                }
+            }
+            
+        }
+    }
+}
++ (BOOL)saveModelsToDataPurgeTable:(NSMutableArray *)models {
+    
+    BOOL status = NO;
+    if ([models count]) {
+        id service = [FactoryDAO serviceByServiceType:ServiceTypeDataPurge];
+        if ([service conformsToProtocol:@protocol(DataPurgeDAO)]) {
+            status = [service saveRecordModels:models];
+            if (status) {
+                /** Success **/
+            }
+        }
+    }
+    return status;
+}
 @end
