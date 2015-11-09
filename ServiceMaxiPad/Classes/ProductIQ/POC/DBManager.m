@@ -291,8 +291,19 @@ static sqlite3_stmt *statement = nil;
         NSString *beforeSaveValue = [newKeyValueDict objectForKey:tempstring];
         if(![beforeSaveValue isEqualToString:afterSaveValue])
         {
-            [beforeSaveDict setObject:beforeSaveValue forKey:tempstring];
-            [afterSaveDict setObject:afterSaveValue forKey:tempstring];
+            if(![StringUtil isStringEmpty:beforeSaveValue])
+            {
+                {
+                   if(![StringUtil isStringEmpty:afterSaveValue])
+                   {
+                       [beforeSaveDict setObject:beforeSaveValue forKey:tempstring];
+                       [afterSaveDict setObject:afterSaveValue forKey:tempstring];
+                   }
+
+                }
+               
+            }
+           
         }
         
     }
