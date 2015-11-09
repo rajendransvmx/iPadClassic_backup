@@ -91,16 +91,28 @@
     UIImage *checkboxImage = [UIImage imageNamed:@"checkbox-unselected.png"];
     [self.includeOnlineButton setImage:checkboxImage  forState:UIControlStateNormal];
     [self.includeOnlineButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
-    [self.includeOnlineButton setTitle:@"Include Online" forState:UIControlStateNormal];
-    [self.includeOnlineButton setImageEdgeInsets:UIEdgeInsetsMake(0.0, -15.0, 0.0, 0.0)];
-    [self.includeOnlineButton setTitleEdgeInsets:UIEdgeInsetsMake(0.0, checkboxImage.size.width-10, 0.0, 0.0)];
-
-
+    
+    NSString *includeOnlineTitle = [[TagManager sharedInstance]tagByName:kTag_IncludeOnline];
+    if (!includeOnlineTitle) {
+        includeOnlineTitle = @"include online";
+    }
+    [self.includeOnlineButton setTitle:includeOnlineTitle forState:UIControlStateNormal];
+    
+    CGFloat spacing = 5; // the amount of spacing to appear between image and title
+    self.includeOnlineButton.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, spacing);
+    self.includeOnlineButton.titleEdgeInsets = UIEdgeInsetsMake(0, spacing, 0, 0);
+    
 }
 
 -(void)setUpFilterButton
 {
-    [self.filterButton setTitle:@"Add/Edit Filters" forState:UIControlStateNormal];
+//    [self.filterButton setTitle:@"Add/Edit Filters" forState:UIControlStateNormal];
+
+    NSString *addEditFilters = [[TagManager sharedInstance]tagByName:kTag_AddEditFilters];
+    if (!addEditFilters) {
+        addEditFilters = @"Add/Edit Filters";
+    }
+    [self.filterButton setTitle:addEditFilters forState:UIControlStateNormal];
     [self.filterButton setTitleEdgeInsets:UIEdgeInsetsMake(-5.0, 0.0, 0.0, 0.0)];
 }
 
@@ -109,8 +121,7 @@
     [self.searchButton.layer setBorderColor:[[UIColor colorWithHexString:@"#FF6633"] CGColor]];
     [self.searchButton.layer setBorderWidth:1.0];
     [self.searchButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
-    [self.searchButton setTitle:@"Search" forState:UIControlStateNormal];
-    
+    [self.searchButton setTitle:[[TagManager sharedInstance]tagByName:kTag_search] forState:UIControlStateNormal];
 }
 
 -(BOOL)isValidContextString:(NSString *)contextString {
@@ -178,7 +189,12 @@
       if([self.lookUpObject.dataArray count] == 0 )
       {
           self.tableView.hidden = YES;
-          [self.singleAddButton setTitle:@"Click here to add a single line" forState:UIControlStateNormal];
+          
+          NSString *clickToaddSingleLine = [[TagManager sharedInstance]tagByName:kTag_AddSingleLine];
+          if (!clickToaddSingleLine) {
+              clickToaddSingleLine = @"Click here to add a single line";
+          }
+          [self.singleAddButton setTitle:clickToaddSingleLine forState:UIControlStateNormal];
           self.singleAddButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
       }
@@ -240,7 +256,13 @@
 
 -(NSString *)getLookUpTitleLabel
 {  NSString * objectLabel = [ self.lookUpHelper getObjectLabel:self.objectName];
-    NSString *lookUpTag = @"Lookup";
+    
+    NSString *lookUpTag = [[TagManager sharedInstance] tagByName:kTag_LookUpTitle];
+    
+    if(!lookUpTag) {
+        lookUpTag = @"Lookup";
+    }
+    
     NSString * titleStr = nil;
     if([objectLabel length] > 0 ){
        titleStr = [[NSString alloc] initWithFormat:@"%@ %@",objectLabel,lookUpTag];
@@ -863,9 +885,13 @@
     self.lookUpObject.contextLookupFilter = [advanceFilter firstObject];
     self.lookUpObject.advanceFilters = advanceFilter;
     
-//    [self loadLookUpData];
-//    [self removePreviouslySelectedData];
-//    [self.tableView reloadData];  apply button in the filters should not display any data. Only tapping on the Search button should display the results.
+    if (!self.isOnlineLookUpSelected) {
+        
+        [self loadLookUpData];
+        [self removePreviouslySelectedData];
+        [self.tableView reloadData];
+        [self noRecordsToDisplay];
+    }
 
 }
 #pragma mark - End
