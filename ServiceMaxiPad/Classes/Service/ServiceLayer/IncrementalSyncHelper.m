@@ -165,7 +165,14 @@
                         aRecord.overrideFlag = @"CLIENT_OVERRIDE";
                     }
                 }
-                NSData * jsonData = [NSJSONSerialization dataWithJSONObject:recordDictionary options:0 error:&error];
+                
+                NSData * jsonData = nil;
+                
+                if([recordDictionary count] > 0)
+                {
+                     jsonData = [NSJSONSerialization dataWithJSONObject:recordDictionary options:0 error:&error];
+                }
+              
 
                 if (!jsonData) {
                 } else {
