@@ -120,18 +120,18 @@ static sqlite3_stmt *statement = nil;
     SXLogDebug(@"query:%@",query);
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {
-        if ([query hasPrefix:@"UPDATE"])
-        {
-            MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
-            MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET016"];
-            self.isfieldMergeEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
-            if(self.isfieldMergeEnabled)
-            {
-                [self parseQuery:query];
-                
-            }
-            
-        }
+//        if ([query hasPrefix:@"UPDATE"])
+//        {
+//            MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+//            MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET016"];
+//            self.isfieldMergeEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+//            if(self.isfieldMergeEnabled)
+//            {
+//                [self parseQuery:query];
+//                
+//            }
+//            
+//        }
         
         DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
         
@@ -152,20 +152,20 @@ static sqlite3_stmt *statement = nil;
             
         }];
         
-        if([query hasPrefix:@"INSERT OR REPLACE INTO `ModifiedRecords`"])
-        {
-            MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
-            MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET016"];
-            self.isfieldMergeEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
-            if(self.isfieldMergeEnabled)
-            {
-                [self updateTheModifieDrecords];
-                
-            }
-            
-            
-        }
-        
+//        if([query hasPrefix:@"INSERT OR REPLACE INTO `ModifiedRecords`"])
+//        {
+//            MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+//            MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET016"];
+//            self.isfieldMergeEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+//            if(self.isfieldMergeEnabled)
+//            {
+//                [self updateTheModifieDrecords];
+//                
+//            }
+//            
+//            
+//        }
+//        
     }
     return records;
     
