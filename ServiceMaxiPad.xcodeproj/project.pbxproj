@@ -717,7 +717,7 @@
 		18BB0A6F19E9088600162524 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6919E9088600162524 /* zbar-helpicons.png */; };
 		18BB0A7019E9088600162524 /* zbar-samples.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6A19E9088600162524 /* zbar-samples.png */; };
 		18BF243D1BC3AEE200D92B64 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BF243C1BC3AEE200D92B64 /* XMLReader.m */; };
-		18CA5A241BEA28DB00885F5E /* ProdIQDataServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CA5A231BEA28DB00885F5E /* ProdIQDataServiceLayer.m */; settings = {ASSET_TAGS = (); }; };
+		18CA5A241BEA28DB00885F5E /* ProdIQDataServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 18CA5A231BEA28DB00885F5E /* ProdIQDataServiceLayer.m */; };
 		18DE885619E5872E0011E9EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18DE885419E5872E0011E9EE /* Main.storyboard */; };
 		18DE885A19E58A130011E9EE /* PlistManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE885919E58A130011E9EE /* PlistManager.m */; };
 		18DE8B9A1A00C1FD001A602E /* DataMigrationHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 18DE8B991A00C1FD001A602E /* DataMigrationHelper.m */; };

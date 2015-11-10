@@ -4,15 +4,14 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.031
+Version = 15.99.032
 
 ===========================================
 
 ProductIQ:
-1.Included DescribeLayout changes for ProductIQ.
+1.Data purge for Product IQ.
+2.Fixed scroll issue and drag and drop issue.
 
-Defects:
-023839
 
 -------------
 NOTE:
