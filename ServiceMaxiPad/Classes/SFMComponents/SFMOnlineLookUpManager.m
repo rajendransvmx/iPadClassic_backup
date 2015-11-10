@@ -133,8 +133,10 @@
         [displayObjectDict setValue:searchObjectmodel.fieldRelationshipName forKey:@"fieldRelationshipName"];
         [displayObjectDict setValue:searchObjectmodel.fieldDataType forKey:@"dataType"];
         [displayObjectDict setValue:searchObjectmodel.fieldName forKey:@"apiName"];
-        [displayFieldForQueryColumnArray addObject:searchObjectmodel.fieldName];
         
+        if (![displayFieldForQueryColumnArray containsObject:searchObjectmodel.fieldName]) {
+            [displayFieldForQueryColumnArray addObject:searchObjectmodel.fieldName];
+        }
         [displayFieldArray addObject:displayObjectDict];
     }
     
