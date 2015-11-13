@@ -98,7 +98,18 @@ static NSString *const kTechnicianLastLocationStatus    = @"TechnicianLastLocati
 /* Login URLs for different platform */
 static NSString *const kProductionOrg     = @"https://login.salesforce.com";
 static NSString *const kSandboxOrg        = @"https://test.salesforce.com";
-static NSString *const kDefaultBaseOrg    = @"https://www.salesforce.com";
+/*
+ 
+ Fixed Issue :023391
+ 
+ HS 7Oct2016 Changed BaseURL from "www.salesforce.com" to "https://login.salesforce.com" as per Salesforce confirmation under below statement
+ 
+ As of January 1, 2016, the internal routing will be retired, and any API endpoints will need to be changed if from www.salesforce.com to https://login.salesforce.com.
+ 
+ */
+//static NSString *const kDefaultBaseOrg    = @"https://www.salesforce.com";
+static NSString *const kDefaultBaseOrg    = @"https://login.salesforce.com";
+
 
 static NSString *const kPersistantStorageOneCallSyncTime              = @"one_call_sync_time";
 static NSString *const kPersistantStorageOneCallSyncPutUpdateTime     = @"one_call_sync_put_update_time";
