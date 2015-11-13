@@ -15,10 +15,13 @@
 #import "StyleGuideConstants.h"
 #import "StyleManager.h"
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
 @interface ProductIQHomeViewController ()
 
 @property (copy, nonatomic) NSString *focusedElementString;
 @property (strong, nonatomic) BarCodeScannerUtility *barCodeScanner;
+@property (strong, nonatomic) UIView *barCodeView;
 
 @end
 
@@ -66,6 +69,10 @@ static  ProductIQHomeViewController *instance;
     [super viewDidAppear:animated];
     [self addKeyboardNotification];
 }
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [self removeKeyBoardNotifications];
+}
 - (void)createWebView {
     webview = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     webview.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -77,7 +84,22 @@ static  ProductIQHomeViewController *instance;
 
 - (void)addKeyboardNotification {
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0")) {
+        [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(addKeyboardTopBar:) name:UIKeyboardWillShowNotification object:nil];
+        
+        [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(hideKeyBoard:) name:UIKeyboardWillHideNotification object:nil];
+
+    } else {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+
+    }
+    
+}
+
+- (void)removeKeyBoardNotifications {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
 }
 
 
@@ -273,7 +295,6 @@ static  ProductIQHomeViewController *instance;
         UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 46)];
         barCodeView.backgroundColor = [UIColor colorWithHexString:@"B5B7BE"];
         
-        
         CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
         
         UIButton *barCodeButton = [[UIButton alloc] initWithFrame:CGRectZero];
@@ -296,6 +317,37 @@ static  ProductIQHomeViewController *instance;
     return nil;
     
 }
+
+- (UIView *)barcodeViewWithFrame:(CGRect)frame
+{
+    if ([self isCameraAvailable]) {
+        self.barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, frame.origin.y, frame.size.width, 46)];
+        self.barCodeView.userInteractionEnabled = YES;
+        self.barCodeView.tag = 101;
+        
+        self.barCodeView.backgroundColor = [UIColor colorWithHexString:@"B5B7BE"];
+        
+        CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
+        
+        UIButton *barCodeButton = [[UIButton alloc] initWithFrame:CGRectZero];
+        [barCodeButton setBackgroundImage:[UIImage imageNamed:@"barcode.png"] forState:UIControlStateNormal];
+        
+        CGFloat xPosition = CGRectGetWidth(self.barCodeView.frame) - 90;
+        buttonFrame.origin.x = xPosition;
+        
+        barCodeButton.frame = buttonFrame;
+        
+        barCodeButton.autoresizingMask =  UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleBottomMargin;
+        [barCodeButton addTarget:self
+                          action:@selector(lauchBarCode)
+                forControlEvents:UIControlEventTouchUpInside];
+        [self.barCodeView addSubview:barCodeButton];
+        
+        return self.barCodeView;
+    }
+    return nil;
+}
+
 
 - (BOOL)isCameraAvailable
 {
@@ -362,20 +414,69 @@ static  ProductIQHomeViewController *instance;
     [self replaceKeyboardInputAccessoryView];
     
 }
+- (void) addKeyboardTopBar:(NSNotification*)notify{
+    
+    // Locate non-UIWindow.
+    NSDictionary* keyboardInfo = [notify userInfo];
+    NSValue* keyboardFrameBegin = [keyboardInfo valueForKey:UIKeyboardFrameBeginUserInfoKey];
+    CGRect keyboardFrameBeginRect = [keyboardFrameBegin CGRectValue];
+    
+    UIWindow *keyboardWindow = nil;
+    NSArray* windows = [[UIApplication sharedApplication] windows];
+    for (UIWindow *possibleWindow in windows) {
+        if (![[possibleWindow class] isEqual:[UIWindow class]]) {
+            keyboardWindow = possibleWindow;
+            break;
+        }
+    }
+    CGRect frm = keyboardWindow.frame;
+    CGRect toolbarFrame = CGRectMake(0.0f, frm.size.height, frm.size.width, 46.0f);
+    
+    if (self.barCodeView == nil) {
+        [keyboardWindow addSubview:[self barcodeViewWithFrame:toolbarFrame]];
+        [UIView animateWithDuration:0.25 animations:^{
+            self.barCodeView.frame = CGRectMake(0.0f, keyboardFrameBeginRect.origin.y - keyboardFrameBeginRect.size.height - 46, toolbarFrame.size.width, 46);
+        }];
+        
+        UIView *keyView = [[keyboardWindow subviews] objectAtIndex:0];
+        [keyView addSubview:self.barCodeView];
+        keyboardWindow = nil;
+    }
+    
+    
+}
+
+- (void)hideKeyBoard:(NSNotification*)notify {
+    
+    if (self.barCodeView != nil) {
+        [self.barCodeView removeFromSuperview];
+        self.barCodeView = nil;
+    }
+}
 
 
 #pragma mark - BarcodeScannerDelegate methods
 
 - (void)barcodeSuccessfullyDecodedWithData:(NSString *)decodedData {
     
-    NSString *javaScript = [NSString stringWithFormat:@"document.getElementById('%@').value = %@",self.focusedElementString, decodedData];
+    //Remove the barcode if its exits.
+    if (self.barCodeView != nil) {
+        [self.barCodeView removeFromSuperview];
+        self.barCodeView = nil;
+    }
+    
+    NSString *javaScript = [NSString stringWithFormat:@"document.getElementById('%@').value = \"%@\"",self.focusedElementString, decodedData];
     [webview stringByEvaluatingJavaScriptFromString:javaScript];
     self.focusedElementString = nil;
 }
 
 - (void)barcodeCaptureCancelled
 {
-    
+    //Remove the barcode if its exits.
+    if (self.barCodeView != nil) {
+        [self.barCodeView removeFromSuperview];
+        self.barCodeView = nil;
+    }
 }
 
 #pragma mark - Rotation methods
