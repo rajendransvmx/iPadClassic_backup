@@ -657,7 +657,15 @@ PageManagerErrorType;
 
 - (NSString *)getReferenceValueForObject:(NSString *)objectName andsfId:(NSString *)sfId
 {
-    return [SFMPageHelper getRefernceFieldValueForObject:objectName andId:sfId];
+    //Madhusudhan, #024488 Record type value should be displayed in user language.
+    if([objectName isEqualToString:@"RecordType"])
+    {
+        return [SFMPageHelper getRecordTypeDisplayValueForsfId:sfId];
+    }else
+    {
+      return [SFMPageHelper getRefernceFieldValueForObject:objectName andId:sfId];
+    }
+    
 }
 
 - (NSDictionary *)getReferenceFieldValueFromLookUpTable:(NSMutableSet *)remainingIds

@@ -32,6 +32,8 @@
 + (NSArray *)getPicklistValuesForObject:(NSString *)objectName pickListFields:(NSArray *)fields;
 + (NSArray *)getRecordTypeValuesForObject:(NSString *)objectName;
 + (NSString *)getRefernceFieldValueForObject:(NSString *)objectName andId:(NSString *)sfId;
+//Madhusudhan, #024488 Record type value should be displayed in user language.
++ (NSString *)getRecordTypeDisplayValueForsfId:(NSString *)sfId;
 + (NSDictionary *)getValuesFromReferenceTable:(NSArray *)ids;
 + (NSArray *)getDetialsRecord:(SFMDetailFieldData *)detailData;
 + (NSString *)getObjectLabelForObjectName:(NSString *)objectName;
