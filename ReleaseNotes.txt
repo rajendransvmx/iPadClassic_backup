@@ -3,12 +3,12 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.032
+Version = 15.40.033
 ===========================================
 -------------
 Fixed Defects
 -------------
-Fix - last sync time issue in ADC request during initial sync.
+End-Point changes
 -------------
 Known Issues
 -------------
