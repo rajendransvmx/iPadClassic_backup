@@ -453,7 +453,8 @@ PageManagerErrorType;
                 if (![StringUtil isStringEmpty:internalValue]) {
                     
                     [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
-                    
+                    displayValue = [PlistManager getLoggedInUserName];
+                
                     if (aPageField.relatedObjectName != nil) {
                         [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
                     }
@@ -502,10 +503,15 @@ PageManagerErrorType;
             [self updateReferenceFieldDisplayValues:fieldNameAndInternalValue andFieldObjectNames:fieldNameAndObjectApiName];
             for (NSString *fieldName in fieldNameAndObjectApiName) {
                 SFMRecordFieldData *fieldData = [fieldValueData objectForKey:fieldName];
-                NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
-                if (displayValue != nil && ![displayValue isEqualToString:@""]) {
-                    fieldData.displayValue = displayValue;
+                if([StringUtil isStringEmpty:fieldData.displayValue])
+                {
+                    NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
+                    if (displayValue != nil && ![displayValue isEqualToString:@""]) {
+                        fieldData.displayValue = displayValue;
+                    }
+
                 }
+                
                 //Check Also if refernce record exists for object
                 NSString *relatedObjectName = [fieldNameAndObjectApiName objectForKey:fieldName];
                 if ([relatedObjectName length] > 0 && [fieldData.internalValue length] > 0){

@@ -1181,6 +1181,8 @@
     for (SFObjectMappingComponentModel *model in fieldMappings) {
         
         NSString *fieldValue = nil;
+        NSString *internalValue = @"";
+        
         if (model.sourceFieldName.length < 1) {
             //Check for currentrecord literal
             if ([StringUtil containsString:kLiteralCurrentRecord inString:model.mappingValue]) {
@@ -1189,16 +1191,28 @@
                 }
                 fieldValue = [self getCurrentRecordValue:currentHeaderData targetRecord:recordDcitionary
                                             mappingValue:model.mappingValue];
+                internalValue = fieldValue;
             }
             else {
                 //Checking for literals
                 NSString *type = [fieldinfo objectForKeyedSubscript:model.targetFieldName];
                 NSString *lietralvalue = [self getLiteralValue:model.mappingValue forType:type];
+                
+                
+                
+                
                 if (![StringUtil isStringEmpty:lietralvalue]) {
                     fieldValue = lietralvalue;
                 }
                 else {
                     fieldValue = model.mappingValue;
+                }
+                if([type isEqualToString:@"reference"] && (([model.mappingValue caseInsensitiveCompare:kLiteralCurrentUser] == NSOrderedSame)|| ([model.mappingValue caseInsensitiveCompare:kLiteralCurrentUserId] == NSOrderedSame) || ([model.mappingValue caseInsensitiveCompare:kLiteralOwner] == NSOrderedSame)))
+                {
+                    internalValue = [[CustomerOrgInfo sharedInstance]currentUserId];
+                }
+                else{
+                    internalValue = fieldValue;
                 }
             }
         }
@@ -1206,10 +1220,12 @@
             fieldValue = [sourceDcitionary objectForKey:model.sourceFieldName];
             if ([model.sourceFieldName isEqualToString:kId] && fieldValue.length < 5) {
                 fieldValue =  [sourceDcitionary objectForKey:kLocalId];
+                internalValue = fieldValue;
             }
             if ([fieldValue isKindOfClass:[NSNumber class]]) {
                 NSNumber *number = (NSNumber *)fieldValue;
                 fieldValue = [number stringValue];
+                internalValue = [number stringValue];;
             }
             
             if (fieldValue.length <= 0) {
@@ -1217,6 +1233,7 @@
                     fieldValue = [sourceDcitionary objectForKey:model.preference2];
                     if (fieldValue.length <= 0 && ![StringUtil isStringEmpty:model.preference3]) {
                         fieldValue = [sourceDcitionary objectForKey:model.preference3];
+                        internalValue = fieldValue;
                     }
                 }
             }
@@ -1225,16 +1242,17 @@
             if ([fieldValue isKindOfClass:[NSNumber class]]) {
                 NSNumber *number = (NSNumber *)fieldValue;
                 fieldValue = [number stringValue];
+                internalValue = fieldValue;
             }
             
             SFMRecordFieldData *recordData = [recordDcitionary objectForKey:model.targetFieldName];
             if (recordData == nil) {
-                recordData = [[SFMRecordFieldData alloc] initWithFieldName:model.targetFieldName value:fieldValue andDisplayValue:fieldValue];
+                recordData = [[SFMRecordFieldData alloc] initWithFieldName:model.targetFieldName value:internalValue andDisplayValue:fieldValue];
                 [recordDcitionary setObject:recordData forKey:model.targetFieldName];
             }
             else{
                 recordData.internalValue = fieldValue;
-
+                
                 if ([StringUtil isStringEmpty:model.sourceFieldName] && ([model.mappingValue isEqualToString:kLiteralCurrentUser] || [model.mappingValue isEqualToString:kLiteralCurrentUserId] || [model.mappingValue isEqualToString:kLiteralOwner])) {
                     recordData.internalValue =  [[CustomerOrgInfo sharedInstance]currentUserId];
                 }

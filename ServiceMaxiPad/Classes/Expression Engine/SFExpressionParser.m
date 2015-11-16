@@ -295,64 +295,69 @@
 
 - (NSString *)valueOfLiteral:(NSString *)literal dataType:(NSString *)dataType
 {
-    NSString *literalValue = nil;
-    if (([dataType caseInsensitiveCompare:kSfDTDate] == NSOrderedSame) || ([dataType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame))
+    if(![StringUtil isStringEmpty:literal])
     {
-        BOOL isDateOnly = NO;
-        if ([dataType isEqualToString:kSfDTDate])
+        
+        NSString *literalValue = nil;
+        if (([dataType caseInsensitiveCompare:kSfDTDate] == NSOrderedSame) || ([dataType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame))
         {
-            isDateOnly = YES;
-        }
-        if([literal caseInsensitiveCompare:kLiteralNow]== NSOrderedSame)
-        {
-            literalValue = [Utility today:0 andJusDate:isDateOnly];
-        }
-        else if([literal caseInsensitiveCompare:kLiteralToday]== NSOrderedSame ||
-                [literal caseInsensitiveCompare:kLiteralSVMXNow]== NSOrderedSame )
-        {
-            literalValue = [Utility today:0 andJusDate:YES];
-            if ([literalValue length] >= 10 ) {
-                literalValue = [literalValue substringToIndex:10];
+            BOOL isDateOnly = NO;
+            if ([dataType isEqualToString:kSfDTDate])
+            {
+                isDateOnly = YES;
             }
-
+            if([literal caseInsensitiveCompare:kLiteralNow]== NSOrderedSame)
+            {
+                literalValue = [Utility today:0 andJusDate:isDateOnly];
+            }
+            else if([literal caseInsensitiveCompare:kLiteralToday]== NSOrderedSame ||
+                    [literal caseInsensitiveCompare:kLiteralSVMXNow]== NSOrderedSame )
+            {
+                literalValue = [Utility today:0 andJusDate:YES];
+                if ([literalValue length] >= 10 ) {
+                    literalValue = [literalValue substringToIndex:10];
+                }
+                
+            }
+            else if([literal caseInsensitiveCompare:kLiteralTomorrow]== NSOrderedSame)
+            {
+                literalValue = [Utility today:1 andJusDate:YES];
+                if ([literalValue length] >= 10 ) {
+                    literalValue = [literalValue substringToIndex:10];
+                }
+                
+            }
+            else if([literal caseInsensitiveCompare:kLiteralYesterday]== NSOrderedSame)
+            {
+                literalValue = [Utility today:-1 andJusDate:YES];
+                if ([literalValue length] >= 10 ) {
+                    literalValue = [literalValue substringToIndex:10];
+                }
+                
+            }
+            if ([dataType caseInsensitiveCompare:kSfDTDate] == NSOrderedSame){
+                if ([literalValue length] >= 10 ) {
+                    literalValue = [literalValue substringToIndex:10];
+                }
+            }
         }
-        else if([literal caseInsensitiveCompare:kLiteralTomorrow]== NSOrderedSame)
+        else
         {
-            literalValue = [Utility today:1 andJusDate:YES];
-            if ([literalValue length] >= 10 ) {
-                literalValue = [literalValue substringToIndex:10];
+            if(([literal caseInsensitiveCompare:kLiteralCurrentUser]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralOwner]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralCurrentUserId]== NSOrderedSame))
+            {
+                literalValue = [PlistManager getLoggedInUserName];
             }
-
-        }
-        else if([literal caseInsensitiveCompare:kLiteralYesterday]== NSOrderedSame)
-        {
-            literalValue = [Utility today:-1 andJusDate:YES];
-            if ([literalValue length] >= 10 ) {
-                literalValue = [literalValue substringToIndex:10];
+            else if(([literal caseInsensitiveCompare:kLiteralCurrentRecord]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralCurrentRecordHeader] == NSOrderedSame))
+            {
             }
-
-        }
-        if ([dataType caseInsensitiveCompare:kSfDTDate] == NSOrderedSame){
-            if ([literalValue length] >= 10 ) {
-                literalValue = [literalValue substringToIndex:10];
+            else if([literal caseInsensitiveCompare:kLiteralUserTrunk] == NSOrderedSame)
+            {
+                literalValue = [PlistManager getTechnicianLocation];
             }
         }
+        return literalValue;
     }
-    else
-    {
-        if(([literal caseInsensitiveCompare:kLiteralCurrentUser]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralOwner]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralCurrentUserId]== NSOrderedSame))
-        {
-            literalValue = [PlistManager getLoggedInUserName];
-        }
-        else if(([literal caseInsensitiveCompare:kLiteralCurrentRecord]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralCurrentRecordHeader] == NSOrderedSame))
-        {
-        }
-        else if([literal caseInsensitiveCompare:kLiteralUserTrunk] == NSOrderedSame)
-        {
-            literalValue = [PlistManager getTechnicianLocation];
-        }
-    }
-    return literalValue;
+    return nil;
 }
 
 
