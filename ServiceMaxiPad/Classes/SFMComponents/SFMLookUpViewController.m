@@ -21,6 +21,7 @@
 #import "CacheManager.h"
 #import "TransactionObjectModel.h"
 #import "CacheConstants.h"
+#import "StringUtil.h"
 
 @interface SFMLookUpViewController () <LookUpFilterDelegate>
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -692,15 +693,19 @@
 -( SFMRecordFieldData *)getRecordFieldForIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
+    
+    /*  this change for record-Id or record-localId */
+    
 //    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+    /*
     SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
     BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
     
     if (isOnlineRecord == YES) {
         recordField = [dictionary objectForKey:@"Id"];
     }
-
-    return recordField;
+     */
+    return [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
 }
 -( SFMRecordFieldData *)getNameFieldForIndexPath:(NSIndexPath *)indexPath
 {
@@ -1008,6 +1013,28 @@
 {
     self.searchButton.enabled = YES;
 
+}
+
++(SFMRecordFieldData *)getSfIdOrLocalIdOfTheRecord:(NSDictionary *)dictionary
+{
+    /* here we are checking for sfId, If id is there then we are sending sfId otherwise sending localId of the record */
+    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+    if (recordField)
+    {
+        if (![StringUtil checkIfStringEmpty:recordField.internalValue])
+        {
+            return recordField;
+        }
+    }
+    
+    /* if sfid is not there then sending local id of the record */
+    recordField = [dictionary objectForKey:@"localId"];
+    if (recordField) {
+        return recordField;
+    }
+    
+    /* else sending blanck string */
+    return nil;
 }
 
 
