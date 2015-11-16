@@ -2,13 +2,13 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.037
+Version = 15.20.038
 ===========================================
 -------------
 Fixed Defects
 -------------
 
-017486 iPad app - Unable to login through VPN on Winter 15 SP
+En point changes
 
 -------------
 Known Issues
