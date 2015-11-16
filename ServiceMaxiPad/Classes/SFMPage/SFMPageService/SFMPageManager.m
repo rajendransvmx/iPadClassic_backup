@@ -880,7 +880,12 @@ PageManagerErrorType;
         else
         {
             SXLogWarning(@"Entry criteria is not matching");
-            [self fillError:error withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria message:nil];
+            //[self fillError:error withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria message:nil];
+           
+            //Defect Fix:024475
+            [self fillError:error withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria message:[internalError localizedDescription]];
+            
+            
         }
     }
     else
