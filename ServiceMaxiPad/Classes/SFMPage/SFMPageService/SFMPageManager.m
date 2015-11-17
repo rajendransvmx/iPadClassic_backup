@@ -503,14 +503,19 @@ PageManagerErrorType;
             [self updateReferenceFieldDisplayValues:fieldNameAndInternalValue andFieldObjectNames:fieldNameAndObjectApiName];
             for (NSString *fieldName in fieldNameAndObjectApiName) {
                 SFMRecordFieldData *fieldData = [fieldValueData objectForKey:fieldName];
-                if([StringUtil isStringEmpty:fieldData.displayValue])
-                {
-                    NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
-                    if (displayValue != nil && ![displayValue isEqualToString:@""]) {
-                        fieldData.displayValue = displayValue;
-                    }
+//                if([StringUtil isStringEmpty:fieldData.displayValue])
+//                {
+//                    NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
+//                    if (displayValue != nil && ![displayValue isEqualToString:@""]) {
+//                        fieldData.displayValue = displayValue;
+//                    }
+//
+//                }
+                NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
+                                    if (displayValue != nil && ![displayValue isEqualToString:@""]) {
+                                        fieldData.displayValue = displayValue;
+                                   }
 
-                }
                 
                 //Check Also if refernce record exists for object
                 NSString *relatedObjectName = [fieldNameAndObjectApiName objectForKey:fieldName];
@@ -640,6 +645,9 @@ PageManagerErrorType;
             if (![StringUtil isStringEmpty:displayValue]) {
                 [foundRefernceValues addObject:value];
                 [fieldNameAndInternalValue setObject:displayValue forKey:objectName];
+            }
+            else{
+                [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
             }
         }
     }
