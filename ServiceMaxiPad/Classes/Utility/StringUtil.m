@@ -84,7 +84,7 @@ const NSString *utility_org_namespace = ORG_NAME_SPACE;
     }
     else
     {
-        NSRange range = [metaString rangeOfString:subString];
+        NSRange range = [metaString rangeOfString:subString options:NSCaseInsensitiveSearch];
         if (NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
         {
             containString = NO;

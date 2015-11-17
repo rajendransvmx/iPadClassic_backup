@@ -35,8 +35,7 @@
     [self setUpUI];
     [self.filterTableView registerNib:[UINib nibWithNibName:@"SFMLookUpFilterCell" bundle:nil] forCellReuseIdentifier:@"LookUpFilterCellIdentifier"];
 
-     self.theFilterArray = [NSKeyedUnarchiver unarchiveObjectWithData:
-     [NSKeyedArchiver archivedDataWithRootObject:self.dataSource]];
+     self.theFilterArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:self.dataSource]];
 }
 
 - (void)setUpUI

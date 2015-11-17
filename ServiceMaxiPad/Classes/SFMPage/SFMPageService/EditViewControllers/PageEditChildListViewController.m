@@ -232,9 +232,13 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     SFMDetailLayout *detailLayout = [self detailLayout];
     lookUp.objectName = detailLayout.multiAddSearhObject;
     for (SFMPageField *pageField in detailLayout.detailSectionFields) {
-        if ([pageField.fieldName isEqualToString:detailLayout.multiAddSearchField]) {
-            lookUp.lookUpId = pageField.namedSearch;
-            lookUp.callerFieldName = detailLayout.multiAddSearchField;
+        if ([pageField.fieldName isEqualToString:detailLayout.multiAddSearchField]) {          
+            lookUp.lookUpId =  pageField.namedSearch;
+            lookUp.objectName = pageField.relatedObjectName;
+            lookUp.callerFieldName = pageField.fieldName;
+            lookUp.pageField = pageField;
+            lookUp.contextObjectName = [self getsourceObjectName:pageField];
+            
             break;
         }
     }
@@ -243,6 +247,75 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     [self presentViewController:lookUp animated:YES completion:^{
     }];
 }
+
+- (SFMRecordFieldData *)getInternalValueForLiteralForLookUp:(NSString *)lietral
+{
+    SFMDetailLayout * layout = [self.sfmPage.process.pageLayout.detailLayouts
+                                objectAtIndex:self.selectedIndexPath.section];
+    NSString *compId = layout.processComponentId;
+    
+    NSArray *detailArray = [self.sfmPage.detailsRecord objectForKey:compId];
+    NSDictionary *recordDataDict = [detailArray objectAtIndex:self.selectedIndexPath.row];
+    
+    SFMPageEditManager *pageManager = [[SFMPageEditManager alloc] init];
+    
+    ValueMappingModel * mappingModel = [[ValueMappingModel alloc] init];
+    mappingModel.currentRecord = [NSMutableDictionary dictionaryWithDictionary:recordDataDict];
+    mappingModel.headerRecord = self.sfmPage.headerRecord;
+    mappingModel.currentObjectName = layout.objectName;
+    mappingModel.headerObjectName = self.sfmPage.objectName;
+    
+    SFMRecordFieldData *recordData = [pageManager getDisplayValueForLiteral:lietral mappingObject:mappingModel];
+    
+    return recordData;
+}
+
+- (SFMRecordFieldData *)filterCriteriaForContextFilter:(NSString *)fieldName forHeaderObject:(NSString *)headerValue {
+    
+    if([headerValue isEqualToString:kcurrentRecordContextFilter ] || [headerValue length] == 0 || [headerValue isEqualToString:@""]) {
+        
+        SFMDetailLayout * layout = [self.sfmPage.process.pageLayout.detailLayouts
+                                    objectAtIndex:self.selectedIndexPath.section];
+        NSString *compId = layout.processComponentId;
+        
+        NSArray *detailArray = [self.sfmPage.detailsRecord objectForKey:compId];
+        NSDictionary *recordDataDict = [detailArray objectAtIndex:self.selectedIndexPath.row];
+        
+        SFMRecordFieldData *recordData = [recordDataDict objectForKey:fieldName];
+        return recordData;
+        
+    }
+    else {
+        
+        SFMRecordFieldData *recordData = [self.sfmPage getHeaderFieldDataForName:fieldName];
+        return recordData;
+    }
+    return nil;
+}
+
+- (NSString *)getsourceObjectName:(SFMPageField *)pageField {
+    
+    if ([pageField.sourceObjectField isEqualToString:kcurrentRecordContextFilter] || [pageField.sourceObjectField length] == 0 || [pageField.sourceObjectField isEqualToString:@""] ) {
+        
+        SFMDetailLayout *detailLayout = [self detaillayout];
+        return  detailLayout.objectName;
+        
+    }
+    return self.sfmPage.objectName;
+}
+
+-(SFMDetailLayout *)detaillayout
+{
+    SFMDetailLayout *detailLayout = nil;
+    NSArray *detailLayoutArray = self.sfmPage.process.pageLayout.detailLayouts;
+    if ([detailLayoutArray count] > self.selectedIndexPath.section) {
+        
+        detailLayout = [detailLayoutArray objectAtIndex:self.selectedIndexPath.section];
+    }
+    return detailLayout;
+    
+}
+
 //9794 : is Billable flag respecting setting 15-16
 - (NSString *) getHeaderBillingType {
     

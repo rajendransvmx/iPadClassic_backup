@@ -15,6 +15,7 @@
 - (void)onlineLookupSearchSuccessfullwithResponse:(NSMutableArray *)dataArray;
 - (void)onlineLookupSearchFailedwithError:(NSError *)error ;
 -(id)getValueForContextFilterThroughDelegateForfieldName:(NSString *)fieldName forHeaderObject:(NSString *)headerValue;
+-(id)getLiteralValueThroughDelegateForLiteral:(NSString *)literal;
 
 
 @end

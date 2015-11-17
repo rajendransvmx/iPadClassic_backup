@@ -23,6 +23,8 @@
 #import "CacheConstants.h"
 #import "StringUtil.h"
 
+#import "PageEditChildListViewController.h"
+
 @interface SFMLookUpViewController () <LookUpFilterDelegate>
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
 @property (nonatomic, strong) SFMLookUp *lookUpObject;
@@ -79,7 +81,7 @@
     [self noRecordsToDisplay];
     [self setGestureForBarcode];
     
-    [self configureFilterBuuton];
+    [self configureFilterButton];
     [self setSearchBarBackGround];
     [self registerForPopOverDismissNotification];
 }
@@ -216,9 +218,9 @@
                                                object:nil];
 }
 
-- (void)configureFilterBuuton
+- (void)configureFilterButton
 {
-    if (self.selectionMode == singleSelectionMode) {
+    if (self.selectionMode == singleSelectionMode || self.selectionMode == multiSelectionMode) {
         if ([self.lookUpObject.advanceFilters count] > 0  || (self.lookUpObject.contextLookupFilter.lookupContext != nil && ![self.lookUpObject.contextLookupFilter.lookupContext isEqualToString:@""] && self.lookUpObject.contextLookupFilter.allowOverride)) {
             self.filterButton.userInteractionEnabled = YES;
         }
@@ -833,7 +835,7 @@
         self.lookUpObject.preFilters = preFilters;
     }
     
-    if (self.selectionMode == singleSelectionMode) {
+    if (self.selectionMode == singleSelectionMode || self.selectionMode == multiSelectionMode) {
         NSArray *advnaceFilter = [self getAdvanceFilterInfo];
         if (advnaceFilter != nil) {
             self.lookUpObject.advanceFilters = advnaceFilter;
@@ -874,8 +876,16 @@
 }
 -(id)getValueForContextFilterThroughDelegateForfieldName:(NSString *)fieldName forHeaderObject:(NSString *)headerValue{
     return [self.delegate filterCriteriaForContextFilter:fieldName forHeaderObject:headerValue];
-
 }
+
+-(id)getLiteralValueThroughDelegateForLiteral:(NSString *)literal;
+{
+    if ([self.delegate isKindOfClass:[PageEditChildListViewController class]])
+        return [self.delegate getInternalValueForLiteralForLookUp:literal];
+    else
+        return [self.delegate getInternalValueForLiteral:literal];
+}
+
 - (void)applyFilterChanges:(NSArray *)advanceFilter
 {
     [self dismissPoPover];

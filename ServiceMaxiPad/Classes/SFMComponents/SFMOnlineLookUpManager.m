@@ -26,6 +26,7 @@
 
 #import "StringUtil.h"
 #import "SFMRecordFieldData.h"
+#import "PlistManager.h"
 
 @interface SFMOnlineLookUpManager ()
 //@property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -243,6 +244,9 @@
         for (SFNamedSearchFilterModel *model in resultset) {
             prefilterString = model.parentObjectCriteria;
         }
+        if (prefilterString!=nil)
+            prefilterString = [self checkForLiterals:prefilterString];
+
         return prefilterString;
     }
     
@@ -289,6 +293,10 @@
                 }
                 NSString *advanceCriteriaString = [self getTheAdvanceCriteriaStringForLookUpFilter:model];
                 
+                if (advanceCriteriaString !=nil) {
+                    advanceCriteriaString = [self checkForLiterals:advanceCriteriaString];
+                }
+
                 [lOutermostLayer setValue:advanceCriteriaString forKey:@"filterCriteria"];
                 [lOutermostLayer setValue:filterCriteriaArray forKey:@"filterCriteriaFields"];
             }
@@ -299,4 +307,71 @@
     return filterArray;
 }
 
+-(NSString *)checkForLiterals:(NSString *)criteriaString
+{
+//    NSArray *literalArray = @[kLiteralNow, kLiteralToday, kLiteralSVMXNow, kLiteralTomorrow, kLiteralYesterday, kLiteralCurrentUser, kLiteralOwner, kLiteralCurrentUserId, kLiteralCurrentRecord, kLiteralCurrentRecordHeader, kLiteralUserTrunk];
+    
+    NSArray *literalArray = @[kLiteralCurrentUser, kLiteralOwner, kLiteralCurrentUserId, kLiteralCurrentRecord, kLiteralCurrentRecordHeader, kLiteralUserTrunk];
+
+    for (NSString *literal in literalArray) {
+        if ([StringUtil containsString:literal inString:criteriaString]) {
+            NSString *literalValue = [self valueOfLiteral:literal];
+            
+            criteriaString = [criteriaString stringByReplacingOccurrencesOfString:literal withString:[NSString stringWithFormat:@"'%@'",literalValue] options:NSCaseInsensitiveSearch range:NSMakeRange(0, [criteriaString length])];
+        }
+    }
+    criteriaString = [criteriaString stringByReplacingOccurrencesOfString:@"''" withString:@"'"];
+    return criteriaString;
+}
+
+- (NSString *)valueOfLiteral:(NSString *)literal
+{
+    NSString *literalValue = literal;
+    
+    if([literal caseInsensitiveCompare:kLiteralNow]== NSOrderedSame)
+    {
+        literalValue = [Utility today:0 andJusDate:NO];
+    }
+    else if([literal caseInsensitiveCompare:kLiteralToday]== NSOrderedSame ||
+            [literal caseInsensitiveCompare:kLiteralSVMXNow]== NSOrderedSame )
+    {
+        literalValue = [Utility today:0 andJusDate:YES];
+        if ([literalValue length] >= 10 ) {
+            literalValue = [literalValue substringToIndex:10];
+        }
+        
+    }
+    else if([literal caseInsensitiveCompare:kLiteralTomorrow]== NSOrderedSame)
+    {
+        literalValue = [Utility today:1 andJusDate:YES];
+        if ([literalValue length] >= 10 ) {
+            literalValue = [literalValue substringToIndex:10];
+        }
+        
+    }
+    else if([literal caseInsensitiveCompare:kLiteralYesterday]== NSOrderedSame)
+    {
+        literalValue = [Utility today:-1 andJusDate:YES];
+        if ([literalValue length] >= 10 ) {
+            literalValue = [literalValue substringToIndex:10];
+        }
+        
+    }
+    else if(([literal caseInsensitiveCompare:kLiteralCurrentUser]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralOwner]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralCurrentUserId]== NSOrderedSame))
+    {
+        literalValue = [PlistManager getLoggedInUserName];
+    }
+    else if(([literal caseInsensitiveCompare:kLiteralCurrentRecord]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralCurrentRecordHeader] == NSOrderedSame))
+    {
+        SFMRecordFieldData *recordData = [self.delegate getLiteralValueThroughDelegateForLiteral:literal];
+        literalValue = recordData.internalValue;
+    }
+    else if([literal caseInsensitiveCompare:kLiteralUserTrunk] == NSOrderedSame)
+    {
+//        literalValue = [PlistManager getTechnicianLocation];
+        literalValue = [PlistManager getTechnicianLocationId]; //for online search send location ID.
+    }
+    
+    return literalValue;
+}
 @end

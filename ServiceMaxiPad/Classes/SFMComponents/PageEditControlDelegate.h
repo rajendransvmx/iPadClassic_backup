@@ -19,5 +19,6 @@
 - (void)clearDependentFields:(NSArray *)pageFields dataDict:(NSDictionary *)defaultValueDict;
 - (SFMRecordFieldData *)getInternalValueForLiteral:(NSString *)lietral;
 - (SFMRecordFieldData *)filterCriteriaForContextFilter:(NSString *)fieldName forHeaderObject:(NSString *)headerValue;
+- (SFMRecordFieldData *)getInternalValueForLiteralForLookUp:(NSString *)lietral;
 
 @end
