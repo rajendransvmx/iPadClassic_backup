@@ -311,20 +311,25 @@
 {
 //    NSArray *literalArray = @[kLiteralNow, kLiteralToday, kLiteralSVMXNow, kLiteralTomorrow, kLiteralYesterday, kLiteralCurrentUser, kLiteralOwner, kLiteralCurrentUserId, kLiteralCurrentRecord, kLiteralCurrentRecordHeader, kLiteralUserTrunk];
     
-    NSArray *literalArray = @[kLiteralCurrentUser, kLiteralOwner, kLiteralCurrentUserId, kLiteralCurrentRecord, kLiteralCurrentRecordHeader, kLiteralUserTrunk];
+    NSArray *literalArray = @[kLiteralCurrentUser, kLiteralOwner, kLiteralCurrentUserId, kLiteralCurrentRecordHeader, kLiteralCurrentRecord, kLiteralUserTrunk];
 
     for (NSString *literal in literalArray) {
         if ([StringUtil containsString:literal inString:criteriaString]) {
-            NSString *literalValue = [self valueOfLiteral:literal];
-            
-            criteriaString = [criteriaString stringByReplacingOccurrencesOfString:literal withString:[NSString stringWithFormat:@"'%@'",literalValue] options:NSCaseInsensitiveSearch range:NSMakeRange(0, [criteriaString length])];
+            NSString *literalValue = [self valueOfLiteral:literal forCriteria:criteriaString];
+            if ([literal isEqualToString:kLiteralCurrentRecordHeader]|| [literal isEqualToString:kLiteralCurrentRecord])
+            {
+                criteriaString = literalValue;
+            }
+            else{
+                criteriaString = [criteriaString stringByReplacingOccurrencesOfString:literal withString:[NSString stringWithFormat:@"'%@'",literalValue] options:NSCaseInsensitiveSearch range:NSMakeRange(0, [criteriaString length])];
+            }
         }
     }
     criteriaString = [criteriaString stringByReplacingOccurrencesOfString:@"''" withString:@"'"];
     return criteriaString;
 }
 
-- (NSString *)valueOfLiteral:(NSString *)literal
+- (NSString *)valueOfLiteral:(NSString *)literal forCriteria:(NSString *)criteriaString
 {
     NSString *literalValue = literal;
     
@@ -363,8 +368,14 @@
     }
     else if(([literal caseInsensitiveCompare:kLiteralCurrentRecord]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralCurrentRecordHeader] == NSOrderedSame))
     {
-        SFMRecordFieldData *recordData = [self.delegate getLiteralValueThroughDelegateForLiteral:literal];
-        literalValue = recordData.internalValue;
+        
+        while ([StringUtil containsString:literal inString:criteriaString]) {
+            criteriaString = [self currentHeaderLiteralHandlingforCriteriaString:criteriaString andLiteral:literal];
+        }
+
+        literalValue = criteriaString;
+
+
     }
     else if([literal caseInsensitiveCompare:kLiteralUserTrunk] == NSOrderedSame)
     {
@@ -374,4 +385,17 @@
     
     return literalValue;
 }
+
+-(NSString *)currentHeaderLiteralHandlingforCriteriaString:(NSString *)criteriaString andLiteral:(NSString *)literal
+{
+    NSString *subcriteria = [criteriaString substringFromIndex:[criteriaString rangeOfString:literal].location];
+    subcriteria = [subcriteria substringToIndex:[subcriteria rangeOfString:@"]"].location];
+    
+    SFMRecordFieldData *recordData = [self.delegate getLiteralValueThroughDelegateForLiteral:subcriteria];
+    NSString *literalValue = recordData.internalValue;
+    
+    criteriaString =[criteriaString stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"[%@]",subcriteria] withString:literalValue];
+    return criteriaString;
+}
+
 @end
