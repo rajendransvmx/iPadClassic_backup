@@ -4,14 +4,14 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.034
+Version = 15.99.035
 
 ===========================================
 
-ProductIQ:
+fixed effects
+25041
 
-Literals for field mapping is fixed
--------------
+——————
 NOTE:
 Namespace: SVMXDEV
 
