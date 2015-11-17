@@ -4,14 +4,13 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.033
+Version = 15.99.034
 
 ===========================================
 
 ProductIQ:
 
-Fixed: Barcode icon is missing on native keyboard when user runs PrIQ in iPad app on iOS 9
-(024915)
+Literals for field mapping is fixed
 -------------
 NOTE:
 Namespace: SVMXDEV
