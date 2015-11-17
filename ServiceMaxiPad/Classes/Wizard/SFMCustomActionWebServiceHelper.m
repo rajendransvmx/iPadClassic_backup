@@ -58,7 +58,7 @@ static CustomActionWebserviceModel *customActionWebserviceModel;
     /* checking condition for SFID, If sf id is null then will not call after before save call*/
     NSString *headerId = [self.sfmPage getHeaderSalesForceId];
     BOOL childSFIDPresent = [self.sfmPage areChildRecordsSynced];
-    if (!childSFIDPresent && [StringUtil isStringNotNULL:headerId]) {
+    if (childSFIDPresent && ![StringUtil checkIfStringEmpty:headerId]) {
         TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeCustomWebServiceAfterBeforeCall
                                                  requestParam:nil
                                                callerDelegate:delegate];
