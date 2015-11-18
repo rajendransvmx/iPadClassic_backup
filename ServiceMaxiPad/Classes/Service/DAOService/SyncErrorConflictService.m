@@ -79,4 +79,22 @@
     }
     return nil;
 }
+
+//Fix:020834
+- (BOOL)isConflictFoundOnHoldForLocalRecordWithObject:(NSString*)objectName withLocalId:(NSString*)aLocalId {
+    DBCriteria *criteria1 = [[DBCriteria alloc]initWithFieldName:@"operationType" operatorType:SQLOperatorEqual andFieldValue:@"INSERT"];
+    DBCriteria *criteria2 = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
+    DBCriteria *criteria3 = [[DBCriteria alloc]initWithFieldName:@"localId" operatorType:SQLOperatorEqual andFieldValue:aLocalId];
+    DBCriteria *criteria4 = [[DBCriteria alloc] initWithFieldName:@"overrideFlag" operatorType:SQLOperatorEqual andFieldValue:@"hold"];
+    NSInteger count = [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria1,criteria2,criteria3,criteria4] andAdvancedExpression:nil];
+    
+    BOOL hasRecordFound = NO;
+    if (count > 0)
+    {
+        hasRecordFound = YES;
+    }
+    return hasRecordFound;
+}
+//Fix ends here
+
 @end

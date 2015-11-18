@@ -16,4 +16,6 @@
 
 
 - (NSString *)fetchExistingModifiedFieldsJsonFromConflictTableForSfId:(NSString*)sfId andObjectName:(NSString *)objectName;
+
+- (BOOL)isConflictFoundOnHoldForLocalRecordWithObject:(NSString*)objectName withLocalId:(NSString*)aLocalId;
 @end

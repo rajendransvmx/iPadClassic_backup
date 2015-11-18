@@ -445,4 +445,43 @@
     
     return flag;
 }
+
+//Method for Fix:020834
+-(BOOL)checkIfNonInsertRecordsExist {
+    BOOL recordsExist = NO;
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kSyncRecordOperation operatorType:SQLOperatorNotEqual andFieldValue:@"INSERT"];
+    NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria] andAdvancedExpression:nil];
+    
+    if(totalCount > 0) {
+        recordsExist = YES;
+    }
+    
+    return recordsExist;
+}
+-(NSArray *)getInsertRecordsAsArray {
+    DBCriteria *criteria = [[DBCriteria alloc]initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"INSERT"];
+    DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteria] andAdvanceExpression:nil];
+    
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectQuery query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
+                NSDictionary *dict = [resultSet resultDictionary];
+                [ParserUtility parseJSON:dict toModelObject:model withMappingDict:nil];
+                [records addObject:model];
+            }
+            [resultSet close];
+        }];
+    }
+    return records;
+}
+//Fix:020834 ends here
+
 @end
