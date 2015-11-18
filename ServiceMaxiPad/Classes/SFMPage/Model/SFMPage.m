@@ -76,10 +76,14 @@
                     {
                         
                     }
-                    else
+                    else //field is there, but no value
                     {
                         return NO;
                     }
+                }
+                else //If id is not there
+                {
+                    return NO;
                 }
             }
         }
