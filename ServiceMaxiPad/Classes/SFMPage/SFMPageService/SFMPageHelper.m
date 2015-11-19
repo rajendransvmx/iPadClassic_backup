@@ -324,18 +324,7 @@
     }
     return nil;
 }
-//Madhusudhan, #024488 Record type value should be displayed in user language.
-+ (NSString *)getRecordTypeDisplayValueForsfId:(NSString *)sfId
-{
-   
-    NSString * displayName = nil;
-    id <SFRecordTypeDAO> recordTypeService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
-    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kRecordTypeId operatorType:SQLOperatorEqual andFieldValue:sfId];
-    displayName = (NSString *)[recordTypeService fetchSFRecordTypeDisplayName:[NSArray arrayWithObjects:kRecordtypeLabel,nil] andCriteria:criteria];
-    return displayName;
-    
-   
-}
+
 + (NSString *)getNameFieldForObject:(NSString *)objectName
 {
     NSString * nameField = nil;

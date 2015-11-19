@@ -21,6 +21,4 @@
 - (NSMutableArray *)fetchSFRecordTypeByIdS;
 
 -(void)updateRecordTypeLabels:(NSArray *)recordTypeModels;
-//Madhusudhan, #024488 Record type value should be displayed in user language.
-- (NSString * )fetchSFRecordTypeDisplayName:(NSArray *)fieldNames andCriteria:(DBCriteria *)criteria;
 @end
