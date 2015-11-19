@@ -4,15 +4,14 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.60.012
+Version = 15.60.013
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-024346
-
+reverting 23973
 Note:
 ____
 Namespace - SVMXC
