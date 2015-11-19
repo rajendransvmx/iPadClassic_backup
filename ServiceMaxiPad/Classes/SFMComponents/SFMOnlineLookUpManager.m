@@ -138,6 +138,17 @@
         if (![displayFieldForQueryColumnArray containsObject:searchObjectmodel.fieldName]) {
             [displayFieldForQueryColumnArray addObject:searchObjectmodel.fieldName];
         }
+        NSString *fieldRelationshipName = nil;
+        
+        if ([searchObjectmodel.fieldRelationshipName length] > 0 && [searchObjectmodel.keyNameField length] > 0)
+        {
+            fieldRelationshipName = [NSString stringWithFormat:@"%@.%@",searchObjectmodel.fieldRelationshipName,searchObjectmodel.keyNameField];
+        }
+        
+        if (![displayFieldForQueryColumnArray containsObject:fieldRelationshipName] && [fieldRelationshipName length] > 0) {
+            [displayFieldForQueryColumnArray addObject:fieldRelationshipName];
+        }
+        
         [displayFieldArray addObject:displayObjectDict];
     }
     

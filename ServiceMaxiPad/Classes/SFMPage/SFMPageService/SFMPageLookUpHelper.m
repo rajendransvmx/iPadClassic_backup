@@ -224,7 +224,7 @@
         
         NSArray * localRecordsArray = [self getRecordArrayFromTransactionModel:dataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
         
-        NSArray * onlineRecordsArray = [self getRecordArrayFromTransactionModel:onlineDataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
+        NSArray * onlineRecordsArray = [self getRecordArrayFromTransactionModelForOnline:onlineDataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
         
         [self updateLocalIdsForOnlineData:onlineRecordsArray withLocalData:localRecordsArray];
         if (onlineRecordsArray.count > 0) {
@@ -478,6 +478,137 @@
            }
 
            [eachDataDict setObject:fieldDataObj forKey:eachField];
+        }
+        
+        /*Update each dict with picklist ,  multi picklist and  recordTypeId display values */
+        [self updatePicklistDisplayValues:eachDataDict picklistFields:[dataTypeVsFieldsDict objectForKey:kSfDTPicklist] multiPicklistFields:[dataTypeVsFieldsDict objectForKey:kSfDTMultiPicklist] ];
+        
+        [self updateRecordTypeDisplayValue:eachDataDict];
+        
+        if ([fieldNameAndInternalValue count] > 0)
+        {
+            [self updateReferenceFieldDisplayValues:fieldNameAndInternalValue andFieldObjectNames:fieldNameAndObjectApiName];
+            for (NSString *fieldName in fieldNameAndObjectApiName) {
+                SFMRecordFieldData *fieldData = [eachDataDict objectForKey:fieldName];
+                NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
+                if (displayValue != nil && ![displayValue isEqualToString:@""]) {
+                    fieldData.displayValue = displayValue;
+                }
+            }
+        }
+        
+        [recordArray addObject:eachDataDict];
+    }
+    return recordArray;
+}
+
+-(NSArray *)getRecordArrayFromTransactionModelForOnline:(NSArray *)dataArray  lookUpObject:(SFMLookUp *)lookUpObject forDisplayFields:(NSArray *)displayFields
+{
+    NSMutableDictionary * dataTypeVsFieldsDict =[self getFieldDataTypeMap:[lookUpObject.fieldInfoDict allValues]];
+    
+    [self fillPickPickListAndRecordTypeInfo:dataTypeVsFieldsDict andObjectName:lookUpObject.objectName];
+    
+    
+    NSMutableArray *recordArray = [[NSMutableArray alloc]init];
+    for(TransactionObjectModel * model in dataArray)
+    {
+        NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
+        NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
+        
+        NSMutableDictionary * eachDataDict = [[NSMutableDictionary alloc] init];
+        NSDictionary * dict =  [model getFieldValueDictionary];
+        
+        for ( NSString * eachField in displayFields) {
+            
+            SFMRecordFieldData * fieldDataObj = [[SFMRecordFieldData alloc] initWithFieldName:eachField value:[dict objectForKey:eachField] andDisplayValue:[dict objectForKey:eachField]];
+            
+            SFObjectFieldModel * aPageField =  [lookUpObject.fieldInfoDict objectForKey:eachField];
+            
+            NSString * displayValue = nil;
+            
+            if ([aPageField.type isEqualToString:kSfDTReference]) {
+                if (![StringUtil isStringEmpty:fieldDataObj.internalValue]) {
+//                    [fieldNameAndInternalValue setObject:fieldDataObj.internalValue forKey:aPageField.fieldName];
+//                    if (aPageField.referenceTo != nil) {
+//                        [fieldNameAndObjectApiName setObject:aPageField.referenceTo forKey:aPageField.fieldName];
+//                    }
+                }
+                
+                //Logic to update online reference records.
+                
+                if ([aPageField.fieldName isEqualToString:eachField]) {
+                    NSString * nameField = [SFMPageHelper getNameFieldForObject:aPageField.referenceTo];
+                    NSDictionary *relationNameDictioanry = [dict objectForKey:aPageField.relationName];
+                    NSString *referenceId = [relationNameDictioanry objectForKey:kId];
+                    if (![StringUtil isStringEmpty:referenceId]) {
+                        fieldDataObj.internalValue = referenceId;
+                    }
+                    NSString *nameString = [relationNameDictioanry objectForKey:nameField];
+                    if (![StringUtil isStringEmpty:referenceId]) {
+                        fieldDataObj.displayValue = nameString;
+                    }
+                }
+                
+                
+            }
+            else if ([aPageField.type isEqualToString:kSfDTDateTime]) {
+                if (![StringUtil isStringEmpty:fieldDataObj.internalValue]) {
+                    NSString *dateTime =[self getUserReadableDateTime:fieldDataObj.internalValue];
+                    if (dateTime != nil) {
+                        displayValue = dateTime;
+                    }
+                }
+            }
+            else if ([aPageField.type isEqualToString:kSfDTDate]) {
+                if (![StringUtil isStringEmpty:fieldDataObj.internalValue]) {
+                    NSString *dateString = [self getUserReadableDate:fieldDataObj.internalValue];
+                    if (dateString != nil) {
+                        displayValue = dateString;
+                    }
+                }
+            }
+            else if ([aPageField.type isEqualToString:kSfDTBoolean]) {
+                
+                if ([fieldDataObj.internalValue isKindOfClass:[NSString class]]) {
+                    if ([fieldDataObj.internalValue isEqualToString:@"1"]) {
+                        displayValue = kTrue;
+                    }
+                    else if ([fieldDataObj.internalValue isEqualToString:@"0"]) {
+                        displayValue = kFalse;
+                    }
+                } else {
+                    if ([fieldDataObj.internalValue isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = (NSNumber*) fieldDataObj.internalValue ;
+                        displayValue = number.stringValue;
+                        if ([displayValue isEqualToString:@"1"]) {
+                            displayValue = kTrue;
+                        }
+                        else if ([displayValue isEqualToString:@"0"]) {
+                            displayValue = kFalse;
+                        }
+                    }
+                }
+                
+            } else if([aPageField.type isEqualToString:kSfDTCurrency]
+                      || [aPageField.type isEqualToString:kSfDTDouble]
+                      || [aPageField.type isEqualToString:kSfDTPercent]
+                      || [aPageField.type isEqualToString:kSfDTInteger]) {
+                
+                if ([fieldDataObj.internalValue isKindOfClass:[NSString class]]) {
+                    displayValue = fieldDataObj.internalValue;
+                } else {
+                    if ([fieldDataObj.internalValue isKindOfClass:[NSNumber class]]) {
+                        NSNumber *number = (NSNumber*) fieldDataObj.internalValue ;
+                        displayValue = number.stringValue;
+                    }
+                }
+            }
+            if(![StringUtil isStringEmpty:displayValue])
+            {
+                fieldDataObj.displayValue = displayValue;
+            }
+            
+            [eachDataDict setObject:fieldDataObj forKey:eachField];
         }
         
         /*Update each dict with picklist ,  multi picklist and  recordTypeId display values */
