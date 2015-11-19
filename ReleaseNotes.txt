@@ -4,13 +4,12 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.037
+Version = 15.99.038
 
 ===========================================
 
-Product IQ:
-—————————————
-Added latest JS files for ProductIQ.
+Defects:
+1.024052
 
 ——————
 NOTE:
