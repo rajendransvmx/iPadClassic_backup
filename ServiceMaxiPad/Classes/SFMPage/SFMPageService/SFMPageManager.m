@@ -448,23 +448,42 @@ PageManagerErrorType;
             }
             NSString *displayValue = internalValue;
             
-            if ([aPageField.dataType isEqualToString:kSfDTReference]) {
-                
-                if (![StringUtil isStringEmpty:internalValue]) {
+            if ([aPageField.dataType isEqualToString:kSfDTReference])
+            {
+                if (aPageField.relatedObjectName != nil)
+                {
+                    [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
                     
-                    [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
-                    displayValue = [PlistManager getLoggedInUserName];
-                
-                    if (aPageField.relatedObjectName != nil) {
-                        [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                    
+                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
+                    {
+                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
+                    }
+                }
+                else
+                {
+                    if (![StringUtil isStringEmpty:internalValue]) {
+                        
+                        
+                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                        
+                        
+                        displayValue = [PlistManager getLoggedInUserName];
+                        
+                        if (aPageField.relatedObjectName != nil) {
+                            [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                        }
                     }
                 }
             }
+            
+            
+            
             else if ([aPageField.dataType isEqualToString:kSfDTDateTime]) {
                 if (![StringUtil isStringEmpty:internalValue]) {
                     
                     //BSP-1-Apr-2015. Changes to account for the All Day Event.
-                     NSString *dateTime =   [self checkAllDayAndReturnDateTime:aPageField andInternalValue:internalValue];
+                    NSString *dateTime =   [self checkAllDayAndReturnDateTime:aPageField andInternalValue:internalValue];
                     
                     if (dateTime != nil) {
                         displayValue = dateTime;
@@ -503,26 +522,26 @@ PageManagerErrorType;
             [self updateReferenceFieldDisplayValues:fieldNameAndInternalValue andFieldObjectNames:fieldNameAndObjectApiName];
             for (NSString *fieldName in fieldNameAndObjectApiName) {
                 SFMRecordFieldData *fieldData = [fieldValueData objectForKey:fieldName];
-//                if([StringUtil isStringEmpty:fieldData.displayValue])
-//                {
-//                    NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
-//                    if (displayValue != nil && ![displayValue isEqualToString:@""]) {
-//                        fieldData.displayValue = displayValue;
-//                    }
-//
-//                }
+                //                if([StringUtil isStringEmpty:fieldData.displayValue])
+                //                {
+                //                    NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
+                //                    if (displayValue != nil && ![displayValue isEqualToString:@""]) {
+                //                        fieldData.displayValue = displayValue;
+                //                    }
+                //
+                //                }
                 NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
-                                    if (displayValue != nil && ![displayValue isEqualToString:@""]) {
-                                        fieldData.displayValue = displayValue;
-                                   }
-
+                if (displayValue != nil && ![displayValue isEqualToString:@""]) {
+                    fieldData.displayValue = displayValue;
+                }
+                
                 
                 //Check Also if refernce record exists for object
                 NSString *relatedObjectName = [fieldNameAndObjectApiName objectForKey:fieldName];
                 if ([relatedObjectName length] > 0 && [fieldData.internalValue length] > 0){
                     fieldData.isReferenceRecordExist  = [self isViewProcessExistsForObject:relatedObjectName recordId:fieldData.internalValue];
                 }
-             }
+            }
         }
     }
     return fieldValueData;
@@ -645,10 +664,20 @@ PageManagerErrorType;
             if (![StringUtil isStringEmpty:displayValue]) {
                 [foundRefernceValues addObject:value];
                 [fieldNameAndInternalValue setObject:displayValue forKey:objectName];
+                
+               
             }
-            else{
-                [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
-            }
+//            else
+//            {
+//                if(self.isEditProcess)
+//                {
+//                    [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
+//                    
+//                }
+//            }
+//            else{
+//                [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
+//            }
         }
     }
     

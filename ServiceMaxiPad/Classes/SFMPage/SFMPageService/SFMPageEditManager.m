@@ -629,6 +629,12 @@
             mappingValue = literalField.internalValue;
             displayValue = literalField.displayValue;
         }
+        if(([mappingValue caseInsensitiveCompare:kLiteralCurrentUserId] == NSOrderedSame) || ([mappingValue caseInsensitiveCompare:kLiteralCurrentUser] == NSOrderedSame) || ([mappingValue caseInsensitiveCompare:kLiteralOwner] == NSOrderedSame))
+        {
+            SFMRecordFieldData * literalField = [self getDisplayValueForLiteral:mappingValue mappingObject:modelObj];
+            mappingValue = literalField.internalValue;
+            displayValue = literalField.displayValue;
+        }
         SFMRecordFieldData * fieldObj = [modelObj.currentRecord objectForKey:targetFieldName];
         if(fieldObj != nil)
         {
