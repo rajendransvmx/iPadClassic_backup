@@ -492,7 +492,7 @@
             break;
         case RequestOneCallMetaSync:
         case RequestObjectDefinition:
-        case RequestRecordType:
+       // case RequestRecordType:
 
             eventType = kMetaSync;
             break;
@@ -572,7 +572,7 @@
         case RequestStaticResourceLibrary:
         case RequestGetPriceCodeSnippet:
         case RequestGroupProfile:
-        case RequestRecordType:
+       // case RequestRecordType:
            
             url = [self getUrlWithStringApppended:kMetaSyncUrlLink];
             break;
@@ -617,6 +617,7 @@
             break;
         case RequestDocumentInfoFetch:
         case RequestTroubleshooting:
+        case RequestRecordType:
         case RequestTroubleShootDocInfoFetch:
         case RequestProductManualDownload:
         case RequestProductManual:
@@ -696,9 +697,9 @@
 {
     switch (type)
     {
-        case RequestRecordType:
-            self.eventName = @"RECORD_TYPE";
-            break;
+//        case RequestRecordType:
+//            self.eventName = @"RECORD_TYPE";
+//            break;
         case RequestValidateProfile:
             self.eventName = validateProfile;
             break;
@@ -1022,6 +1023,7 @@
     if (self.requestType == RequestDependantPickListRest
         || self.requestType == RequestDocumentInfoFetch
         || self.requestType == RequestTroubleshooting
+        || self.requestType == RequestRecordType
         || self.requestType == RequestTroubleShootDocInfoFetch
         || self.requestType == RequestTechnicianDetails
         || self.requestType == RequestTechnicianAddress
