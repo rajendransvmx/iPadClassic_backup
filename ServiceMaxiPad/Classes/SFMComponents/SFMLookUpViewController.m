@@ -637,13 +637,16 @@
 -(BOOL)isSelectedAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
-//    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"Id"];
-    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"localId"];
+ //   SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"Id"];
+//    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"localId"];
+//    
+//    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:selectedIndexPath];
+//    if (isOnlineRecord == YES) {
+//        selectedIndexPath = [dictionary objectForKey:@"Id"];
+//    }
     
-    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:selectedIndexPath];
-    if (isOnlineRecord == YES) {
-        selectedIndexPath = [dictionary objectForKey:@"Id"];
-    }
+    /*  this change for record-Id or record-localId */
+    SFMRecordFieldData * selectedIndexPath = [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
 
     for (int counter = 0; counter < [self.selectedRecords count]; counter ++)
     {
@@ -661,12 +664,15 @@
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
 //    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
-    SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
-    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
+//    SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
+//    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
+//    
+//    if (isOnlineRecord == YES) {
+//        recordField = [dictionary objectForKey:@"Id"];
+//    }
     
-    if (isOnlineRecord == YES) {
-        recordField = [dictionary objectForKey:@"Id"];
-    }
+    /*  this change for record-Id or record-localId */
+    SFMRecordFieldData * recordField = [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
     [self.selectedRecords addObject:recordField];
 }
 
@@ -677,13 +683,17 @@
     for (int counter = 0; counter < [self.lookUpObject.dataArray count]; counter ++)
     {
         NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:counter];
-//        SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
-        SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
-        BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
+////        SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+//        SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
+//        BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
+//        
+//        if (isOnlineRecord == YES) {
+//            recordField = [dictionary objectForKey:@"Id"];
+//        }
         
-        if (isOnlineRecord == YES) {
-            recordField = [dictionary objectForKey:@"Id"];
-        }
+        
+        /*  this change for record-Id or record-localId */
+        SFMRecordFieldData * recordField = [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
          if([recordField.internalValue isEqualToString:fieldData.internalValue])
          {
              indexPath =[NSIndexPath indexPathForRow:counter inSection:0];
@@ -696,8 +706,6 @@
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
     
-    /*  this change for record-Id or record-localId */
-    
 //    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
     /*
     SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
@@ -707,6 +715,8 @@
         recordField = [dictionary objectForKey:@"Id"];
     }
      */
+    
+    /*  this change for record-Id or record-localId */
     return [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
 }
 -( SFMRecordFieldData *)getNameFieldForIndexPath:(NSIndexPath *)indexPath
@@ -1025,6 +1035,8 @@
 
 }
 
+
+/* In this function i am checking for sfid and localId */
 +(SFMRecordFieldData *)getSfIdOrLocalIdOfTheRecord:(NSDictionary *)dictionary
 {
     /* here we are checking for sfId, If id is there then we are sending sfId otherwise sending localId of the record */
