@@ -452,26 +452,16 @@ PageManagerErrorType;
             {
                 if (aPageField.relatedObjectName != nil)
                 {
-                    if([StringUtil isStringEmpty:internalValue])
-                    {
-                        aPageField.internalValue = @"";
-                    }
-                    else
-                    {
-                        aPageField.internalValue = internalValue;
-                    }
                     [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
-                    [fieldNameAndInternalValue setObject:aPageField forKey:aPageField.fieldName];
-
                     
                     
-//                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
-//                    {
-//                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
-//                    }
-//                    else{
-//                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
-//                    }
+                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
+                    {
+                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
+                    }
+                    else{
+                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                    }
                     
                 }
                 else
@@ -661,50 +651,25 @@ PageManagerErrorType;
     
     NSMutableSet *foundRefernceValues = [[NSMutableSet alloc] initWithCapacity:0];
     
-    NSMutableArray *array = [[NSMutableArray alloc] init];
-    // NSArray *keys = [fieldNameAndInternalValue allKeys];
-    //    for(NSString *str in keys)
+    NSArray *array = [fieldNameAndInternalValue allValues];
     
-    // NSMutableSet *set  = [[NSMutableSet alloc] initWithArray:[NSArray arrayWithArray:array]];
+    NSMutableSet *set  = [[NSMutableSet alloc] initWithArray:[NSArray arrayWithArray:array]];
     
     for (NSString *objectName in [fieldNameAndInternalValue allKeys]) {
-        SFMPageField *object = [fieldNameAndInternalValue objectForKey:objectName];
-        if ([StringUtil isStringEmpty:object.internalValue])
-        {
-            [fieldNameAndInternalValue setObject:@"" forKey:objectName];
+        NSString * value = [fieldNameAndInternalValue objectForKey:objectName];
+        if ([StringUtil isStringEmpty:value])
             continue;
-            
-            
-        }
-        [array  addObject:object.internalValue];
-        // SFMPageField *relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
-        // NSString * relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
-        if (object.internalValue!= nil) {
-            
-            
+        NSString * relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
+        if ([relatedObjectName length] > 0) {
             //Get the value form the transactionmodel
-            NSString * displayValue = [self getReferenceValueForObject:object.internalValue andsfId:object.internalValue];
+            NSString * displayValue = [self getReferenceValueForObject:relatedObjectName andsfId:value];
             //Check Also if record exists
             
             if (![StringUtil isStringEmpty:displayValue]) {
-                [foundRefernceValues addObject:object.internalValue];
+                [foundRefernceValues addObject:value];
                 [fieldNameAndInternalValue setObject:displayValue forKey:objectName];
                 
                 
-            }
-            else{
-                if([object.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
-                {
-                    [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
-                    
-                }
-                else
-                {
-                    [fieldNameAndInternalValue setObject:object.internalValue forKey:objectName];
-                }
-                //                    {
-                //                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
-                //                    }
             }
             //            else
             //            {
@@ -719,8 +684,6 @@ PageManagerErrorType;
             //            }
         }
     }
-    NSMutableSet *set  = [[NSMutableSet alloc] initWithArray:[NSArray arrayWithArray:array]];
-    
     
     //check for remaning id
     NSMutableSet *remainigIds = [NSMutableSet setWithSet:set]; //To test
