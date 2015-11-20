@@ -29,6 +29,7 @@
 @property(nonatomic, strong) NSString *controlerField;
 @property(nonatomic, assign) BOOL isReadOnly;
 @property(nonatomic, assign) BOOL isRequired;
+@property (nonatomic, strong) NSString *internalValue;
 
 /**
  string which represents whether the picklist is dependant on any other field value

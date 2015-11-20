@@ -452,16 +452,26 @@ PageManagerErrorType;
             {
                 if (aPageField.relatedObjectName != nil)
                 {
-                    [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
-                    
-                    
-                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
+                    if([StringUtil isStringEmpty:internalValue])
                     {
-                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
+                        aPageField.internalValue = @"";
                     }
-                    else{
-                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                    else
+                    {
+                        aPageField.internalValue = internalValue;
                     }
+                    [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                    [fieldNameAndInternalValue setObject:aPageField forKey:aPageField.fieldName];
+
+                    
+                    
+//                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
+//                    {
+//                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
+//                    }
+//                    else{
+//                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+//                    }
                     
                 }
                 else
@@ -659,10 +669,13 @@ PageManagerErrorType;
         NSString * value = [fieldNameAndInternalValue objectForKey:objectName];
         if ([StringUtil isStringEmpty:value])
             continue;
-        NSString * relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
-        if ([relatedObjectName length] > 0) {
+        SFMPageField *relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
+       // NSString * relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
+        if (relatedObjectName!= nil) {
+            
+            
             //Get the value form the transactionmodel
-            NSString * displayValue = [self getReferenceValueForObject:relatedObjectName andsfId:value];
+            NSString * displayValue = [self getReferenceValueForObject:relatedObjectName.internalValue andsfId:value];
             //Check Also if record exists
             
             if (![StringUtil isStringEmpty:displayValue]) {
@@ -670,6 +683,16 @@ PageManagerErrorType;
                 [fieldNameAndInternalValue setObject:displayValue forKey:objectName];
                 
                
+            }
+            else{
+                if([relatedObjectName.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
+                {
+                    [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
+
+                }
+                    //                    {
+                    //                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
+                    //                    }
             }
 //            else
 //            {
