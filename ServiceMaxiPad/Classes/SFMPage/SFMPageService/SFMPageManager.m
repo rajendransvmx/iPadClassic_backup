@@ -459,6 +459,10 @@ PageManagerErrorType;
                     {
                         [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
                     }
+                    else{
+                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                    }
+                    
                 }
                 else
                 {
