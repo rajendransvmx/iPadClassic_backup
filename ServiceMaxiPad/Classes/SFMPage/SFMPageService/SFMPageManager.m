@@ -661,52 +661,66 @@ PageManagerErrorType;
     
     NSMutableSet *foundRefernceValues = [[NSMutableSet alloc] initWithCapacity:0];
     
-    NSArray *array = [fieldNameAndInternalValue allValues];
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    // NSArray *keys = [fieldNameAndInternalValue allKeys];
+    //    for(NSString *str in keys)
     
-    NSMutableSet *set  = [[NSMutableSet alloc] initWithArray:[NSArray arrayWithArray:array]];
+    // NSMutableSet *set  = [[NSMutableSet alloc] initWithArray:[NSArray arrayWithArray:array]];
     
     for (NSString *objectName in [fieldNameAndInternalValue allKeys]) {
-        NSString * value = [fieldNameAndInternalValue objectForKey:objectName];
-        if ([StringUtil isStringEmpty:value])
+        SFMPageField *object = [fieldNameAndInternalValue objectForKey:objectName];
+        if ([StringUtil isStringEmpty:object.internalValue])
+        {
+            [fieldNameAndInternalValue setObject:@"" forKey:objectName];
             continue;
-        SFMPageField *relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
-       // NSString * relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
-        if (relatedObjectName!= nil) {
+            
+            
+        }
+        [array  addObject:object.internalValue];
+        // SFMPageField *relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
+        // NSString * relatedObjectName = [fieldNameAndObjectNames objectForKey:objectName];
+        if (object.internalValue!= nil) {
             
             
             //Get the value form the transactionmodel
-            NSString * displayValue = [self getReferenceValueForObject:relatedObjectName.internalValue andsfId:value];
+            NSString * displayValue = [self getReferenceValueForObject:object.internalValue andsfId:object.internalValue];
             //Check Also if record exists
             
             if (![StringUtil isStringEmpty:displayValue]) {
-                [foundRefernceValues addObject:value];
+                [foundRefernceValues addObject:object.internalValue];
                 [fieldNameAndInternalValue setObject:displayValue forKey:objectName];
                 
-               
+                
             }
             else{
-                if([relatedObjectName.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
+                if([object.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
                 {
                     [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
-
+                    
                 }
-                    //                    {
-                    //                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
-                    //                    }
+                else
+                {
+                    [fieldNameAndInternalValue setObject:object.internalValue forKey:objectName];
+                }
+                //                    {
+                //                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
+                //                    }
             }
-//            else
-//            {
-//                if(self.isEditProcess)
-//                {
-//                    [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
-//                    
-//                }
-//            }
-//            else{
-//                [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
-//            }
+            //            else
+            //            {
+            //                if(self.isEditProcess)
+            //                {
+            //                    [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
+            //
+            //                }
+            //            }
+            //            else{
+            //                [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:objectName];
+            //            }
         }
     }
+    NSMutableSet *set  = [[NSMutableSet alloc] initWithArray:[NSArray arrayWithArray:array]];
+    
     
     //check for remaning id
     NSMutableSet *remainigIds = [NSMutableSet setWithSet:set]; //To test
