@@ -205,7 +205,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
 
 + (instancetype)defaultPolicy {
     AFSecurityPolicy *securityPolicy = [[self alloc] init];
-    securityPolicy.SSLPinningMode = AFSSLPinningModeCertificate; // Case 28546
+    securityPolicy.SSLPinningMode = AFSSLPinningModeNone; 
     
     return securityPolicy;
 }
