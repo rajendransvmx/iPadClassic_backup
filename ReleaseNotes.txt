@@ -4,16 +4,15 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.041
+Version = 15.99.042
 
 ===========================================
 
 Defects:
-literals fix  for sfdcid
 
 ——————
 NOTE:
-Namespace: SVMXDEV
+Namespace: SVMXC
 
 
 
