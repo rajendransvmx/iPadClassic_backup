@@ -1423,7 +1423,7 @@
     
     if ([lookUpObj.searchFields count] >0 && ![StringUtil isStringEmpty:lookUpObj.searchString]) {
         NSUInteger c = [lookUpObj.searchFields count];
-        count = c + 1;
+        count = c;// + 1; Defect#024967
     }
     self.expressionCount = count;
 }

@@ -778,6 +778,13 @@
     
 }
 
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText;   // called when text changes (including clear)
+{
+    if (!self.isOnlineLookUpSelected) {
+        [self searchButtonActionMethod:nil];
+    }
+}
+
 - (BOOL)disablesAutomaticKeyboardDismissal {
     return NO;
 }
