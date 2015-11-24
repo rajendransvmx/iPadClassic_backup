@@ -222,8 +222,13 @@
          }
          default:
          {
-             
+             if (rhsValue.length) {
+
              criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@' %@)",tableName,dbCriteria.lhsValue,operatorString,rhsValue,collateNocase];
+             }
+             else{
+                 criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@%%'  OR %@%@ IS NULL OR trim(%@%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,tableName,dbCriteria.lhsValue,tableName,dbCriteria.lhsValue];
+             }
          }
      }
     
