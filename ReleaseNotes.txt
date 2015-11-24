@@ -4,11 +4,12 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.042
+Version = 15.99.043
 
 ===========================================
 
-Defects:
+1. Changed name space to SVMXC for ProductIQ JS file.
+2. Added latest JS Files for ProductIQ.
 
 ——————
 NOTE:
