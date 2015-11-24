@@ -46,9 +46,11 @@
  var temp_month = Date.getMonth() + 1;
  var temp_year = Date.getFullYear();
  
- var tempDateString =  temp_year + "-" + temp_month + "-" + temp_date;
- //8584: changed to yyyy-MM-dd format from temp_date + "/" + temp_month + "/" + temp_year;
-
+ var tempDateString =  temp_year + "/" + temp_month + "/" + temp_date;
+ 
+//019534: changed to yyyy/MM/dd format from  var tempDateString =  temp_year + "-" + temp_month + "-" + temp_date;
+ 
+//8584: changed to yyyy-MM-dd format from temp_date + "/" + temp_month + "/" + temp_year;
  return tempDateString;
  
  }
@@ -66,7 +68,10 @@
  var temp_month = d.getMonth() + 1;
  var temp_year = d.getFullYear();
  
- var tempDateString = temp_year + "-" + temp_month + "-" + temp_date;
+ var tempDateString = temp_year + "/" + temp_month + "/" + temp_date;
+ 
+ //019534: changed to yyyy/MM/dd format from  var tempDateString = temp_year + "-" + temp_month + "-" + temp_date;
+ 
  //8584: changed to yyyy-MM-dd format from temp_date + "/" + temp_month + "/" + temp_year;
 
  return tempDateString;
@@ -85,7 +90,10 @@
  var temp_month = d.getMonth() + 1;
  var temp_year = d.getFullYear();
  
- var tempDateString =  temp_year + "-" + temp_month + "-" + temp_date;
+ var tempDateString =  temp_year + "/" + temp_month + "/" + temp_date;
+ 
+ //019534: changed to yyyy/MM/dd from var tempDateString =  temp_year + "-" + temp_month + "-" + temp_date;
+ 
   //8584: changed to yyyy-MM-dd format from temp_date + "/" + temp_month + "/" + temp_year;
  
  return tempDateString;
@@ -95,15 +103,33 @@
   param: string in GMT / UTC format
   return : string in date format
   */
+// $UTILITY.dateForGMTString = function(DateString) {
+// 
+// var requiredString = DateString.split("+"); //+000 needs to be removed
+// var string = requiredString[0];
+// var localeDate = new Date(string);
+// var localDateStringWithTime = $UTILITY.dateStringFordate(localeDate);
+// return localDateStringWithTime;
+// 
+// }
+ 
  $UTILITY.dateForGMTString = function(DateString) {
  
- var requiredString = DateString.split("+"); //+000 needs to be removed
- var string = requiredString[0];
- var localeDate = new Date(string);
- var localDateStringWithTime = $UTILITY.dateStringFordate(localeDate);
- return localDateStringWithTime;
+ //Test1 DateString = "2014-07-25T09:24:17.000+0000";
+ //Test2 DateString = "2014-07-25T09:24:17.000";
+ //Test3 DateString = "2014-2-1";
+ 
+ //11934
+ 
+ if(DateString.length >= 10) {
+ DateString = DateString.substring(0, 10);
+ }
+ var dateComponents = DateString.split("-");
+ var tempDateString =  dateComponents[0] + "-" + dateComponents[1] + "-" + dateComponents[2];
+ return tempDateString;
  
  }
+
  
 /* get the date and time string based on locale
  param: string in GMT / UTC format
@@ -167,13 +193,13 @@ $UTILITY.dateWithTimeStringForDate = function (Date) {
  //hours = hours ? hours : 12; // the hour '0' should be '12'
  minutes = minutes < 10 ? "0"+minutes : minutes;
  
- var todayDate =  curr_year + "-" + curr_month + "-" + curr_date + " " + hours + ":" + minutes +" " + ampm;
-  //8584: changed to yyyy-MM-dd hh:mm a format from curr_date + "/" + curr_month + "/" + curr_year + " " + hours + ":" + minutes + " " + ampm;
+ var todayDate =  curr_year + "/" + curr_month + "/" + curr_date + " " + hours + ":" + minutes;
+ 
+ //019534: changed to yyyy/MM/dd HH:mm var todayDate =  curr_year + "-" + curr_month + "-" + curr_date + " " + hours + ":" + minutes +" " + ampm;
+ 
+//8584: changed to yyyy-MM-dd hh:mm a format from curr_date + "/" + curr_month + "/" + curr_year + " " + hours + ":" + minutes + " " + ampm;
  
  return todayDate;
  }
  
  })();
-
-
-
