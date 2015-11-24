@@ -1873,12 +1873,22 @@ static SyncManager *_instance;
                 self.isBeforeUpdate = YES;
                 self.isAfterInsert = NO;
                 self.isAfterUpdate = NO;
-
-               BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
-                if (!status) {
-                    [self customCallDidNotInitiateDuetoSomeRaeason];
-                }
                 
+                /* condition is for insert record checking, If is there any record for insert then perform PUT_INSERT first then make WS call */
+                if ([self isThereAnyRecordForInsertion]) {
+                    
+                    // If all the insert records are already uploaded to server, then no need of initiating the sync again.
+                    [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap];
+                    self.isDataSyncRunning = NO;
+                    self.isBeforeUpdate = NO;
+                    [self checkNetworkReachabilityAndInitiateDataSync];
+                }
+                else{
+                    BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
+                    if (!status) {
+                        [self customCallDidNotInitiateDuetoSomeRaeason];
+                    }
+                }
                 break;
             }
             else
