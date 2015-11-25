@@ -271,7 +271,7 @@
             /* It is local Id , so get the sfid */
             NSString *sfIdValue =   [transObj getSfIdForLocalId:referenceId forObjectName:referenceTo];  //[self sfIdForLocalId:referenceId inTable:referenceTo];
             
-            if (sfIdValue.length > 3) {
+            if (sfIdValue.length > 3) {   //sfId is there
                 
                 /* Sfid exist and can be replaced */
                 [recordDictionary setObject:sfIdValue forKey:key];
@@ -287,6 +287,12 @@
             }
             else {
                 /* TO BE DONE: Conflict handling need to be done */
+                //
+                if ([StringUtil checkIfStringEmpty:sfIdValue])
+                {
+                    /* If is there not sfId of refrence field,Then not making update call for this record */
+                     allReferenceFields = NO;
+                }
                 
                 BOOL recordExist  =  [transObj isRecordExistsForObject:referenceTo forRecordLocalId:referenceId ];// [self isRecordExist:referenceId inTable:referenceTo];
                 if (recordExist) {
