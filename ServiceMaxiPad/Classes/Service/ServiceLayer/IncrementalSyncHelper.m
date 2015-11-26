@@ -161,6 +161,9 @@
                     recordDictionary = [jsonDictionary objectForKey:@"AFTER_SAVE"];
                     [recordDictionary setObject:aRecord.sfId forKey:@"Id"];
                     
+                    /* replacing localId with sfId */
+                    [self replaceLookUpIds:recordDictionary objectName:objectName];
+                    
                     if([[jsonDictionary allKeys] containsObject:@"CLIENT_OVERRIDE"]) {
                         aRecord.overrideFlag = @"CLIENT_OVERRIDE";
                     }
@@ -180,13 +183,38 @@
                     NSString *JSONString = [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding];
                     aRecord.jsonRecord = JSONString;
                 }
-                
             }
         }
-
     }
-    
+
 }
+
+-(void)replaceLookUpIds:(NSMutableDictionary *)recordDictionary objectName:(NSString *)objectName
+{
+    NSDictionary * referenceDictionary = [self getReferenceFieldsFor:objectName];
+    id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    for (NSString *key in referenceDictionary)
+    {
+        NSString *tempReferenceId = [recordDictionary objectForKey:key];
+        NSString *referenceId = nil;
+        if(![StringUtil isStringEmpty:tempReferenceId])
+        {
+            referenceId = tempReferenceId;
+        }
+        NSString *referenceTo = [referenceDictionary objectForKey:key];
+        if (referenceId.length > 30 && referenceTo.length > 1)
+        {
+            /* It is local Id , so get the sfid */
+            NSString *sfIdValue =   [transObj getSfIdForLocalId:referenceId forObjectName:referenceTo];
+            if (sfIdValue.length > 3) //sfId is there
+            {
+                /* Sfid exist and can be replaced */
+                [recordDictionary setObject:sfIdValue forKey:key];
+            }
+        }
+    }
+}
+
 
 -(NSArray *)getRecordForObjectName:(NSString *)objectName  withFieldsArray:(NSArray *)fieldsArray expression:(NSString *)expresseion criteria:(NSArray *)criteria
 {
