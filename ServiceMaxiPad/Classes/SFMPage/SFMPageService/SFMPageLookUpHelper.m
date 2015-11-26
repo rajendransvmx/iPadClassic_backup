@@ -66,6 +66,7 @@
     
     
    lookUpObj.fieldInfoDict = [self getFieldInformation:lookUpObj];
+   lookUpObj.defaultColumsnFieldRelationships = [self getFieldInformationForDefaultColumns:lookUpObj];
     
     /*fill up look up filtes*/
     
@@ -132,6 +133,11 @@
     lookUpObj.recordLimit = [namedSearchModel.noOfLookupRecords intValue];
     lookUpObj.defaultColoumnName = namedSearchModel.defaultLookupColumn;
     lookUpObj.serachName = namedSearchModel.searchName;
+    
+    //Get the defaultColumn Name for the selected lookup object.This is requried for include online item.
+    
+    lookUpObj.defaultObjectColumnName  = [SFMPageHelper getNameFieldForObject:lookUpObj.objectName];
+    
 
     if([StringUtil isStringEmpty:lookUpObj.defaultColoumnName])
     {
@@ -665,6 +671,10 @@
     {
         [displayFields addObject:lookUpObj.defaultColoumnName];
     }
+    if(![StringUtil isStringEmpty:lookUpObj.defaultObjectColumnName])
+    {
+        [displayFields addObject:lookUpObj.defaultObjectColumnName];
+    }
     [displayFields addObject:@"Id"];
     [displayFields addObject:@"localId"]; 
     
@@ -946,7 +956,7 @@
     for ( int counter = 0 ; counter <  [lookUpObject.searchFields count]; counter ++)
     {
         SFNamedSearchComponentModel * compModel  =   [lookUpObject.searchFields objectAtIndex:counter];
-        if(compModel.fieldName != nil){
+        if(compModel.fieldName != nil && ![displayFields containsObject:compModel.fieldName]){
             [displayFields addObject:compModel.fieldName];
         }
     }
@@ -954,6 +964,12 @@
     {
             [displayFields addObject:lookUpObject.defaultColoumnName];
     }
+    
+    if(![StringUtil isStringEmpty:lookUpObject.defaultObjectColumnName] && ![displayFields containsObject:lookUpObject.defaultObjectColumnName])
+    {
+        [displayFields addObject:lookUpObject.defaultObjectColumnName];
+    }
+    
     DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:lookUpObject.objectName];
     
     DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:kfieldname operatorType:SQLOperatorIn andFieldValues:displayFields];
@@ -972,6 +988,32 @@
         }
     }
     return fieldLabelDict;
+}
+
+-(NSArray *)getFieldInformationForDefaultColumns:(SFMLookUp *)lookUpObject
+{
+    NSMutableArray * displayFields = [[NSMutableArray alloc] init];
+    
+    
+    if(![StringUtil isStringEmpty:lookUpObject.defaultColoumnName] && ![displayFields containsObject:lookUpObject.defaultColoumnName])
+    {
+        [displayFields addObject:lookUpObject.defaultColoumnName];
+    }
+    
+    if(![StringUtil isStringEmpty:lookUpObject.defaultObjectColumnName] && ![displayFields containsObject:lookUpObject.defaultObjectColumnName])
+    {
+        [displayFields addObject:lookUpObject.defaultObjectColumnName];
+    }
+    
+    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:lookUpObject.objectName];
+    
+    DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:kfieldname operatorType:SQLOperatorIn andFieldValues:displayFields];
+    
+    id <SFObjectFieldDAO> sfObjectField = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
+    
+    NSArray * resultSet =   [sfObjectField fetchSFObjectFieldsInfoByFields:nil andCriteriaArray:[NSArray arrayWithObjects:criteria1,criteria2, nil] advanceExpression:@"( 1 AND 2 )"];
+    
+    return resultSet;
 }
 
 - (NSMutableDictionary *)getFieldDataTypeMap:(NSArray *)fields

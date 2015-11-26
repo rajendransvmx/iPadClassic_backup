@@ -27,6 +27,7 @@
 #import "StringUtil.h"
 #import "SFMRecordFieldData.h"
 #import "PlistManager.h"
+#import "SFMPageHelper.h"
 
 @interface SFMOnlineLookUpManager ()
 //@property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -149,8 +150,36 @@
             [displayFieldForQueryColumnArray addObject:fieldRelationshipName];
         }
         
+        
         [displayFieldArray addObject:displayObjectDict];
     }
+    
+    //Get field relationship name for defaultColumn and defaultObjectColumnName.
+    
+    for (SFObjectFieldModel *objectField in self.lookUpObject.defaultColumsnFieldRelationships) {
+        
+        
+        if ([objectField.type isEqualToString:kSfDTReference] && objectField.referenceTo != nil) {
+            NSString *keyFieldName = [SFMPageHelper getNameFieldForObject:objectField.referenceTo];
+            NSString *fieldRelationshipName = nil;
+            if ([objectField.relationName length] > 0 && [keyFieldName length] > 0)
+            {
+                fieldRelationshipName = [NSString stringWithFormat:@"%@.%@",objectField.relationName,keyFieldName];
+                if (![displayFieldForQueryColumnArray containsObject:fieldRelationshipName] ) {
+                    [displayFieldForQueryColumnArray addObject:fieldRelationshipName];
+                }
+            }
+        }
+        
+    }
+    if (![displayFieldForQueryColumnArray containsObject:self.lookUpObject.defaultColoumnName]) {
+        [displayFieldForQueryColumnArray addObject:self.lookUpObject.defaultColoumnName];
+    }
+    if (![displayFieldForQueryColumnArray containsObject:self.lookUpObject.defaultObjectColumnName]) {
+        [displayFieldForQueryColumnArray addObject:self.lookUpObject.defaultObjectColumnName];
+    }
+
+
     
     NSMutableDictionary *lookupDefDetailDict = [[NSMutableDictionary alloc]init];
     [lookupDefDetailDict setValue:searchFieldArray forKey:@"searchFields"];

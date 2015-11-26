@@ -36,6 +36,9 @@
 @property (nonatomic, strong) NSArray *preFilters;
 @property (nonatomic, strong) NSArray *advanceFilters;
 @property (strong, nonatomic) SFMLookUpFilter *contextLookupFilter;
+
+@property (strong, nonatomic) NSString *defaultObjectColumnName; // Used this for include online Item to show default Object table name, if defaultColumnName value does not exits.
+@property (strong, nonatomic) NSArray *defaultColumsnFieldRelationships;// Used this for include online Item.
  
 
 @end
