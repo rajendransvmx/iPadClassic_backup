@@ -157,6 +157,11 @@ static NSString *asterik = @"*";
     
 }
 
+- (void)setLengthVariable:(NSInteger)lenght
+{
+    
+}
+
 - (void)showSuperScript:(BOOL)shouldShow {
     _shouldShowAsteric = shouldShow;
 }

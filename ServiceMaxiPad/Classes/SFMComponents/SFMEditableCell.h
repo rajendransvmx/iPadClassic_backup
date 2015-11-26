@@ -13,4 +13,5 @@
 @property (nonatomic, strong) NSString *dataType;
 @property (nonatomic, assign)  NSInteger precision;
 @property (nonatomic, assign)  NSInteger scale;
+@property (nonatomic, assign)  NSInteger lenght;
 @end

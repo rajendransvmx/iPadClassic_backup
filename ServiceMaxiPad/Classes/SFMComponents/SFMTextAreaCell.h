@@ -9,5 +9,7 @@
 #import "SFMCollectionViewCell.h"
 
 @interface SFMTextAreaCell : SFMCollectionViewCell <UITextViewDelegate>
+@property (nonatomic, strong) NSString *dataType;
+@property (nonatomic, assign)  NSInteger lenght;
 
 @end

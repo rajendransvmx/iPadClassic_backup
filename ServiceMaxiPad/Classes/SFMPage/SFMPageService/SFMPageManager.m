@@ -182,14 +182,25 @@ PageManagerErrorType;
     
     for (SFMHeaderSection * eachSection in headerSections) {
         for(SFMPageField * pageField in  eachSection.sectionFields){
-            if([pageField.dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
-               || [pageField.dataType isEqualToString:kSfDTDouble]
-               || [pageField.dataType isEqualToString:kSfDTPercent])
-            {
-                SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:headerLayout.objectName];
-                pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
-                pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
-            }
+//            if([pageField.dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
+//               || [pageField.dataType isEqualToString:kSfDTDouble]
+//               || [pageField.dataType isEqualToString:kSfDTPercent])
+//            {
+//                SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:headerLayout.objectName];
+//                pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
+//                pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
+//            }
+            
+            
+            SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:headerLayout.objectName];
+                            pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
+                            pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
+            pageField.lengthValue = objectFieldModel.length;
+            
+
+            
+            
+
         }
     }
     
@@ -202,14 +213,21 @@ PageManagerErrorType;
     for (SFMDetailLayout * detailLayout in detailLayouts) {
     
         for (SFMPageField * pageField in detailLayout.detailSectionFields) {
-            if([pageField.dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
-               || [pageField.dataType isEqualToString:kSfDTDouble]
-               || [pageField.dataType isEqualToString:kSfDTPercent])
-            {
-                SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:detailLayout.objectName];
-                pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
-                pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
-            }
+//            if([pageField.dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
+//               || [pageField.dataType isEqualToString:kSfDTDouble]
+//               || [pageField.dataType isEqualToString:kSfDTPercent])
+//            {
+//                SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:detailLayout.objectName];
+//                pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
+//                pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
+//            }
+            
+            
+            SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:detailLayout.objectName];
+            pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
+            pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
+            pageField.lengthValue = objectFieldModel.length;
+
         }
     }
 }
@@ -454,14 +472,15 @@ PageManagerErrorType;
                 {
                     [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
                     
-                    
-                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
-                    {
-                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
-                    }
-                    else{
-                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
-                    }
+                    [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+
+//                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
+//                    {
+//                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
+//                    }
+//                    else{
+//                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+//                    }
                     
                 }
                 else

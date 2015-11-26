@@ -52,6 +52,7 @@ typedef enum {
 - (void)showSuperScript:(BOOL)shouldShow;
 
 -(void)setPrecision:(double)precision scale:(double)scale;
+- (void)setLengthVariable:(NSInteger)lenght;
 
 - (void)setFieldNameForeText:(NSString *)fieldName;
 

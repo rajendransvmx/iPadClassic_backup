@@ -209,7 +209,7 @@
 -(NSArray *)getSFObjectFieldsForObject:(NSString *)objectName
 {
     DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
-    NSArray * fieldsArray = [self fetchSFObjectFieldsInfoByFields:[NSArray arrayWithObjects:@"objectName",@"fieldName",@"type",@"referenceTo",@"label",@"precision",@"scale", nil] andCriteria:criteria];
+    NSArray * fieldsArray = [self fetchSFObjectFieldsInfoByFields:[NSArray arrayWithObjects:@"objectName",@"fieldName",@"type",@"referenceTo",@"label",@"precision",@"scale",@"length", nil] andCriteria:criteria];
     
     return fieldsArray;
 }

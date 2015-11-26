@@ -45,6 +45,7 @@
 
 @property(nonatomic, strong) NSNumber *precision;
 @property(nonatomic, strong) NSNumber *scale;
+@property (nonatomic, assign) NSInteger lengthValue;
 
 - (id)initWithDictionary:(NSDictionary *)pageFieldDict;
 

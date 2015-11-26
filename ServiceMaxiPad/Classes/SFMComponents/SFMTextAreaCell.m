@@ -133,6 +133,20 @@
         [self.delegate cellValue:self.value didChangeForIndexpath:self.indexPath];
     }
 }
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+     if(textView.text.length < self.lenght)
+     {
+         return YES;
+
+     }
+     else{
+         return NO;
+     }
+    
+    
+}
+
 
 - (void)layoutSubviews {
     
@@ -248,6 +262,15 @@
     }
 }
 
+- (void)setTextFieldDataType:(NSString*)dataType
+{
+    //self.valueField.keyboardType = [SMXiPad_Utility getKeyBoardTypeForDataType:dataType];
+    self.dataType = dataType;
+}
+- (void)setLengthVariable:(NSInteger)lenght
+{
+    self.lenght = lenght;
+}
 
 
 /*

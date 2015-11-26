@@ -141,6 +141,7 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
     
     [cell setTextFieldDataType:pageField.dataType];
     [cell setPrecision:pageField.precision.doubleValue scale:pageField.scale.doubleValue];
+    [cell setLengthVariable:pageField.lengthValue];
     [cell setFieldNameForeText:pageField.label];
     return cell;
 }

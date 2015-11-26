@@ -12,6 +12,7 @@
 #import "NumberUtility.h"
 #import "EditableDataValidator.h"
 #import "SMXiPad_Utility.h"
+#import "SFMEditableCell.h"
 
 @interface SFMEditableCell (Private)
 @property (nonatomic, strong) TextField *valueField;
@@ -86,11 +87,20 @@
 
 - (BOOL)textField:(TextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
-    if(isTextAllowed){
-        return  [EditableDataValidator precisionHandlingNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType precision:self.precision scale:self.scale];
+   
+    if(textField.text.length>= self.lenght)
+    {
+        return NO;
     }
-  return isTextAllowed;
+    else{
+        BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
+        if(isTextAllowed){
+            return  [EditableDataValidator precisionHandlingNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType precision:self.precision scale:self.scale];
+        }
+        return isTextAllowed;
+    }
+    
+   
 }
 
 - (void)didTapBarcodeButton
@@ -123,6 +133,11 @@
 {
    self.precision = precision_;
    self.scale = scale_;
+}
+- (void)setLengthVariable:(NSInteger)lenght
+{
+   
+    self.lenght = lenght;
 }
 /*
 // Only override drawRect: if you perform custom drawing.
