@@ -33,6 +33,10 @@
 -(NSString *)advanceExpression:(SFMLookUp *)lookUpObj;
 - (NSArray *)getCriteriaObjectForfilter:(SFMLookUpFilter *)filter;
 
+// Below methods are used to lookup display field issue.023314 and 023783
+-(void)fillLookUpMetaDataLookUp:(SFMLookUp *)lookUpObj;
+-(NSDictionary*)getDefaultColumnNameDataForLookup:(SFMLookUp*)lookupObject withSfId:(NSString*)sfId;
+
 @end
 
 

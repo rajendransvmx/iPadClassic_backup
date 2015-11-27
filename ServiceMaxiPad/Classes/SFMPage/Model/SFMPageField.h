@@ -47,6 +47,8 @@
 @property(nonatomic, strong) NSNumber *scale;
 @property (nonatomic, assign) NSInteger lengthValue;
 
+@property(nonatomic, strong) NSString *defaultColumnName; //required for tracking default column name.
+
 - (id)initWithDictionary:(NSDictionary *)pageFieldDict;
 
 @end

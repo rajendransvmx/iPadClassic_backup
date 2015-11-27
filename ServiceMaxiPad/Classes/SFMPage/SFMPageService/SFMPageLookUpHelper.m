@@ -193,6 +193,76 @@
 }
 
 /*
+ Method: getDefaultColumnNameDataForLookup
+ Defect fixed: 023314 and 023783
+ Description: This method will display the default lookup values on edit sfm.
+ */
+
+- (NSDictionary*)getDefaultColumnNameDataForLookup:(SFMLookUp*)lookupObject withSfId:(NSString*)sfId  {
+    
+    NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
+    NSArray *fieldsArray = @[lookupObject.defaultColoumnName];
+    
+    
+    if (sfId != nil ) {
+        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sfId];
+        
+        [criteriaArray addObject:criteria1];
+    }
+    id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    NSArray * dataArray = [transactionModel fetchDataForObject:lookupObject.objectName fields:fieldsArray expression:nil criteria:criteriaArray recordsLimit:1];
+    
+    NSArray *fieldInfo = [self getFieldInformationForDefaultColumns:lookupObject];
+    
+    NSString *fieldRelationshipName = nil;
+
+    NSString *referenceTo = nil;
+    for (SFObjectFieldModel *objectField in fieldInfo) {
+        
+        if ([objectField.fieldName isEqualToString:lookupObject.defaultColoumnName]) {
+            referenceTo = objectField.referenceTo;
+            NSString *keyFieldName = [SFMPageHelper getNameFieldForObject:objectField.referenceTo];
+            if ([objectField.relationName length] > 0 && [keyFieldName length] > 0)
+            {
+                fieldRelationshipName = [NSString stringWithFormat:@"%@.%@",objectField.relationName,keyFieldName];
+            }
+            break;
+        }
+    }
+    
+    NSDictionary *dictioanry = [[dataArray firstObject] getFieldValueDictionary];;
+
+    if (![StringUtil isStringEmpty:fieldRelationshipName]) {
+        
+        
+        NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
+        NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
+        
+        if (![StringUtil isStringEmpty:[dictioanry objectForKey:lookupObject.defaultColoumnName]]) {
+            [fieldNameAndInternalValue setObject:[dictioanry objectForKey:lookupObject.defaultColoumnName] forKey:lookupObject.defaultColoumnName];
+            if (![StringUtil isStringEmpty:referenceTo]) {
+                [fieldNameAndObjectApiName setObject:referenceTo forKey:lookupObject.defaultColoumnName];
+            }
+            
+            if ([fieldNameAndInternalValue count] > 0)
+            {
+                [self updateReferenceFieldDisplayValues:fieldNameAndInternalValue andFieldObjectNames:fieldNameAndObjectApiName];
+                for (NSString *fieldName in fieldNameAndObjectApiName) {
+                    NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
+                    if (![Utility isStringEmpty:displayValue]) {
+                        [dictioanry setValue:displayValue forKey:lookupObject.defaultColoumnName];
+                    }
+                }
+            }
+        }
+        
+    }
+
+    return dictioanry;
+}
+
+/*
   Method:fillOnlineLookupData:forLookupObject
   Params:onlineDataArray,lookUpObj
   Description:

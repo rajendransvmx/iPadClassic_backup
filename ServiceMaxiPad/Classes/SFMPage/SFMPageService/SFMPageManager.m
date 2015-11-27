@@ -30,6 +30,8 @@
 #import "DataTypeUtility.h"
 
 #import "SVMXSystemConstant.h"
+#import "SFMPageLookUpHelper.h"
+#import "SFMLookUp.h"
 
 
 typedef enum PageManagerErrorType : NSUInteger
@@ -445,6 +447,31 @@ PageManagerErrorType;
     }
 }
 
+/*
+ Method: getDefaultColumnNameForField
+ Defect fixed: 023314 and 023783
+ */
+
+- (NSDictionary*)getDefaultColumnNameForField:(SFMPageField*)aPageField withFieldSfId:(NSString*)sfId{
+    NSDictionary *dictionary = nil;
+    SFMPageLookUpHelper *lookUpHelper   = [[SFMPageLookUpHelper alloc] init];
+    SFMLookUp *lookUpObject   = [[SFMLookUp alloc] init];
+    
+    lookUpObject.lookUpId   = aPageField.namedSearch;
+    lookUpObject.objectName = aPageField.relatedObjectName;
+    
+    [lookUpHelper fillLookUpMetaDataLookUp:lookUpObject]; // get the default column Name.
+    
+    if (![StringUtil isStringEmpty:lookUpObject.defaultColoumnName]) {
+        aPageField.defaultColumnName = lookUpObject.defaultColoumnName;
+
+        //Now get the value or sfid for this.
+        dictionary = [lookUpHelper getDefaultColumnNameDataForLookup:lookUpObject withSfId:sfId ];
+    }
+    
+    return dictionary;
+}
+
 - (NSMutableDictionary *)fillDataDictForHeaderOrDetail:(NSDictionary *)dataDict fields:(NSArray *)fields
 {
     NSMutableDictionary *fieldNameAndInternalValue = [[NSMutableDictionary alloc] init];
@@ -466,13 +493,33 @@ PageManagerErrorType;
             }
             NSString *displayValue = internalValue;
             
+            NSString *keyField = aPageField.fieldName;
+            
             if ([aPageField.dataType isEqualToString:kSfDTReference])
             {
+                
                 if (aPageField.relatedObjectName != nil)
                 {
-                    [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                    /*
+Below logic is used to get the default column name and value of the lookup fields.
+*/
+                    NSMutableDictionary *defaultColumnDictionary = [self getDefaultColumnNameForField:aPageField withFieldSfId:internalValue];
                     
-                    [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                    if (defaultColumnDictionary.count > 0) {
+                        keyField = aPageField.defaultColumnName;
+                        displayValue = [defaultColumnDictionary objectForKey:aPageField.defaultColumnName];
+                        
+                    } else {
+                        [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                        
+                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+
+                    }
+                    
+//                    [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+//                    
+//                    [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                    
 
 //                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
 //                    {
