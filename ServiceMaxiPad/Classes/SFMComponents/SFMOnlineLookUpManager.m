@@ -28,6 +28,7 @@
 #import "SFMRecordFieldData.h"
 #import "PlistManager.h"
 #import "SFMPageHelper.h"
+#import "DataTypeUtility.h"
 
 @interface SFMOnlineLookUpManager ()
 //@property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -241,8 +242,24 @@
     
      SFMRecordFieldData *recordData = [self.delegate getValueForContextFilterThroughDelegateForfieldName:self.lookUpObject.contextLookupFilter.lookupContext forHeaderObject:self.lookUpObject.contextLookupFilter.sourceObjectName];
 
+        DataTypeUtility *fieldUtil = [[DataTypeUtility alloc] init];
     
-        displayValue = (recordData.displayValue.length > 0) ? recordData.displayValue : @"";
+        //RHS
+        SFObjectFieldModel *fieldModel = [fieldUtil getField:self.lookUpObject.contextLookupFilter.lookupContext objectName:self.lookUpObject.contextLookupFilter.lookupContextParentObject];
+        
+        //LHS
+        SFObjectFieldModel *lhsFieldModel = [fieldUtil getField:self.lookUpObject.contextLookupFilter.lookupQuery objectName:self.lookUpObject.objectName];
+        
+        
+        //check if its reference. then check for Id else just check with what is displayed
+        if ([lhsFieldModel.type isEqualToString:kSfDTReference] || [fieldModel.type isEqualToString:kSfDTDate] ||   [fieldModel.type isEqualToString:kSfDTDateTime]  || ([lhsFieldModel.type caseInsensitiveCompare:kId] == NSOrderedSame)) {
+            
+            displayValue = (recordData.internalValue.length > 0) ? recordData.internalValue : @"";
+        }
+        else {
+            displayValue = (recordData.displayValue.length > 0) ? recordData.displayValue : @"";
+        }
+        
     }
     
     return displayValue;
