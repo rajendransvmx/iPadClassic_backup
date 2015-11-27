@@ -1253,7 +1253,9 @@
             
             SFMRecordFieldData *recordData = [recordDcitionary objectForKey:model.targetFieldName];
             if (recordData == nil) {
-                recordData = [[SFMRecordFieldData alloc] initWithFieldName:model.targetFieldName value:internalValue andDisplayValue:fieldValue];
+//                recordData = [[SFMRecordFieldData alloc] initWithFieldName:model.targetFieldName value:internalValue andDisplayValue:fieldValue];
+                recordData = [[SFMRecordFieldData alloc] initWithFieldName:model.targetFieldName value:(internalValue.length?internalValue:fieldValue) andDisplayValue:fieldValue]; //Defect #024344 -27/Nov/2015
+
                 [recordDcitionary setObject:recordData forKey:model.targetFieldName];
             }
             else{
