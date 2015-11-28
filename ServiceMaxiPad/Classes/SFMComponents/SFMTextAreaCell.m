@@ -135,7 +135,7 @@
 }
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-     if(textView.text.length < self.lenght)
+    if(range.length +range.location +text.length <= self.lenght)
      {
          return YES;
 

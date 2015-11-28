@@ -87,19 +87,30 @@
 
 - (BOOL)textField:(TextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-   
-    if(textField.text.length>= self.lenght)
+    if(range.length +range.location +string.length <= self.lenght)
     {
-        return NO;
-    }
-    else{
         BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
         if(isTextAllowed){
             return  [EditableDataValidator precisionHandlingNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType precision:self.precision scale:self.scale];
         }
         return isTextAllowed;
     }
-    
+    else{
+        return NO;
+    }
+
+//    if(textField.text.length>= self.lenght)
+//    {
+//        return NO;
+//    }
+//    else{
+//        BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
+//        if(isTextAllowed){
+//            return  [EditableDataValidator precisionHandlingNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType precision:self.precision scale:self.scale];
+//        }
+//        return isTextAllowed;
+//    }
+//    
    
 }
 
