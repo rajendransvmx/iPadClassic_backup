@@ -112,7 +112,10 @@
     
     if ([fieldsArray containsObject:sfmPageView.sfmPage.objectName]) {
         productIQFieldsAvailable = YES;
-        [self.recordIds addObject:[[sfmPageView.sfmPage.headerRecord objectForKey:@"Id"] internalValue]];
+        NSString *sfId = [[sfmPageView.sfmPage.headerRecord objectForKey:@"Id"] internalValue];
+        if (![StringUtil isStringEmpty:sfId]) {
+            [self.recordIds addObject:sfId];
+        }
     }
     
     //As per MFL app, ProductIQ will be enabled only for WorkOrder,IB,Location Objects.
