@@ -18,6 +18,8 @@
 #import "SFChildRelationshipDAO.h"
 #import "StringUtil.h"
 #import "PlistManager.h"
+#import "CacheManager.h"
+#import "RequestConstants.h"
 
 @implementation IncrementalSyncHelper
 
@@ -135,6 +137,9 @@
                                                         andSyncRecord:aRecord];
                 if (!canContinue) {
                     aRecord.cannotSendToServer = YES;
+                    
+                    [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap]; // Nothing To do with after insert. This is to break the flow of the Data sync in case where the unsynced record is a reference to existing record. Defect#23785
+
                     continue;
                 }
                 
@@ -143,6 +148,9 @@
                    aRecord.sfId = [self getSfIDForRecord:aRecord];
                     if([StringUtil isStringEmpty:aRecord.sfId]){
                     aRecord.cannotSendToServer = YES;
+                        
+                    [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap]; // Nothing To do with after insert. This is to break the flow of the Data sync in case where the unsynced record is a reference to existing record. Defect#23785
+                        
                     continue;
                     }
                     else
