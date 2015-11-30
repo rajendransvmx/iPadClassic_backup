@@ -27,4 +27,7 @@
 
 + (BOOL)isStringNumber:(NSString *)string;
 + (BOOL)containsStringinErrorMsg:(NSString *)subString inString:(NSString *)metaString;
+
++ (BOOL)isBackSpace:(NSString*)string;
+
 @end

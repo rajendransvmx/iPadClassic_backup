@@ -135,6 +135,14 @@
 }
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
+    
+    BOOL isBackSpace =  [StringUtil isBackSpace:text];
+    
+    if(isBackSpace)
+    {
+        return YES;
+    }
+
     if(range.length +range.location +text.length <= self.lenght)
      {
          return YES;

@@ -13,6 +13,7 @@
 #import "EditableDataValidator.h"
 #import "SMXiPad_Utility.h"
 #import "SFMEditableCell.h"
+#import "StringUtil.h"
 
 @interface SFMEditableCell (Private)
 @property (nonatomic, strong) TextField *valueField;
@@ -87,7 +88,25 @@
 
 - (BOOL)textField:(TextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    if(range.length +range.location +string.length <= self.lenght)
+    BOOL isBackSpace =  [StringUtil isBackSpace:string];
+    
+    if(isBackSpace)
+    {
+        return YES;
+    }
+    
+    NSInteger currentLenght;
+    
+    if(self.lenght == 0)
+    {
+        currentLenght = self.precision;
+    }
+    
+    else{
+        currentLenght = self.lenght;
+    }
+    
+    if(range.length +range.location +string.length <= currentLenght)
     {
         BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
         if(isTextAllowed){
