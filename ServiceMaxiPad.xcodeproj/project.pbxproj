@@ -422,6 +422,7 @@
 		183AA38019E6DC4800919345 /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA37F19E6DC4800919345 /* Utility.m */; };
 		183AA38319E6DC9300919345 /* DynamicTableCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA38219E6DC9300919345 /* DynamicTableCreator.m */; };
 		183AA38719E6DDF800919345 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA38619E6DDF800919345 /* Base64.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		183B031E1C0C44B2002099F3 /* ProdIQDeleteDataParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 183B031D1C0C44B2002099F3 /* ProdIQDeleteDataParser.m */; };
 		183B9F131B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 183B9F121B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.m */; };
 		1847E4771A403CA400B3A846 /* DataPurgeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1847E4761A403CA400B3A846 /* DataPurgeModel.m */; };
 		1847E47A1A403CB900B3A846 /* DataPurgeService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1847E4791A403CB900B3A846 /* DataPurgeService.m */; };
@@ -1931,6 +1932,8 @@
 		183AA38219E6DC9300919345 /* DynamicTableCreator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicTableCreator.m; sourceTree = "<group>"; };
 		183AA38519E6DDF800919345 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		183AA38619E6DDF800919345 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		183B031C1C0C44B2002099F3 /* ProdIQDeleteDataParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProdIQDeleteDataParser.h; sourceTree = "<group>"; };
+		183B031D1C0C44B2002099F3 /* ProdIQDeleteDataParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProdIQDeleteDataParser.m; sourceTree = "<group>"; };
 		183B9F111B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFMPageUrlFieldCollectionViewCell.h; sourceTree = "<group>"; };
 		183B9F121B46A6E9004ED74F /* SFMPageUrlFieldCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SFMPageUrlFieldCollectionViewCell.m; sourceTree = "<group>"; };
 		1847E4751A403CA400B3A846 /* DataPurgeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPurgeModel.h; sourceTree = "<group>"; };
@@ -6199,6 +6202,8 @@
 				188810B51BD7B49C00E0BF91 /* ProdIQDataParser.m */,
 				18CA5A221BEA28DB00885F5E /* ProdIQDataServiceLayer.h */,
 				18CA5A231BEA28DB00885F5E /* ProdIQDataServiceLayer.m */,
+				183B031C1C0C44B2002099F3 /* ProdIQDeleteDataParser.h */,
+				183B031D1C0C44B2002099F3 /* ProdIQDeleteDataParser.m */,
 			);
 			path = ProductIQ;
 			sourceTree = "<group>";
@@ -7123,6 +7128,7 @@
 				183A9E9A19E6A11800919345 /* ZKSRequest.m in Sources */,
 				183AA1A419E6D26400919345 /* SFMPageLayout.m in Sources */,
 				184A8E7319E7A0BE006DA6BE /* SMXWeekCell.m in Sources */,
+				183B031E1C0C44B2002099F3 /* ProdIQDeleteDataParser.m in Sources */,
 				57BA2CDB1A1105080081389B /* ProductManualDataHelper.m in Sources */,
 				184A8F0719E7A5B6006DA6BE /* NSArray+JSONString.m in Sources */,
 				183AA1C419E6D26400919345 /* SFMPageDetailViewController.m in Sources */,

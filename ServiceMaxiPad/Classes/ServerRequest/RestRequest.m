@@ -527,6 +527,7 @@
             eventType = kCustomWebServiceUrlLink;
             break;
         case RequestProductIQData:
+        case RequestProductIQDeleteData:
             eventType = kSync;
             break;
             
@@ -696,6 +697,7 @@
             url =  [self getURLStringForProductIQObjectDescribeRequest];
             break;
         case RequestProductIQData:
+        case RequestProductIQDeleteData:
             url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
         default:
@@ -769,7 +771,7 @@
         case RequestEvents:
             self.eventName = eventSync ;
             break;
-        //TEMP : request event name is SYNC_DOWNLOAD_CRITERIA as of v3
+            //TEMP : request event name is SYNC_DOWNLOAD_CRITERIA as of v3
         case RequestDownloadCriteria:
             self.eventName = downloadCriteriaSyncV3;
             break;
@@ -842,7 +844,7 @@
             self.eventName = @"";
             break;
         case RequestGroupProfile:
-
+            
             self.eventName = @"VALIDATE_PROFILE";
             break;
         case RequestGetAttachment:
@@ -894,7 +896,7 @@
         case RequestSyncTimeLogs:
             self.eventName = kSyncTimeLog;
             break;
-
+            
         case RequestTypeOPDocHTMLAndSignatureSubmit:
             self.eventName = kSubmitDocument;
             
@@ -907,7 +909,7 @@
         case RequestDatPurgeDownloadCriteria:
             self.eventName = downloadCriteriaSyncV3;
             break;
-
+            
         case RequestTypeOPDocGeneratePDF:
             self.eventName = kGeneratePDF;
             break;
@@ -936,6 +938,9 @@
             break;
         case RequestProductIQData:
             self.eventName = kProductIQSyncData;
+            break;
+        case RequestProductIQDeleteData:
+            self.eventName = kProdIQGetDeleteData;
             break;
         default:
             break;

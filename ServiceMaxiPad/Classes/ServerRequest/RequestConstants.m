@@ -196,4 +196,5 @@ NSString *const kProductIQTranslationsUrl = @"getTranslations/9.0/";
 NSString *const kProductIQObjectDescribeUrl = @"/services/data/v34.0/sobjects/%@/describe";
 NSString *const kProductIQSyncData = @"SYNC_PRODUCTIQ_DATA";
 NSString *const kProdIQLastSyncTime = @"PRODUCTIQ_LAST_SYNC";
+NSString *const kProdIQGetDeleteData = @"GET_DELETE_PRODUCTIQ_DATA";
 

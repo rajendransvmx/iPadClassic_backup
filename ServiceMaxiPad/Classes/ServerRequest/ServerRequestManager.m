@@ -1285,10 +1285,13 @@
     RequestType nextRequestType = 0;
     
     if (currentRequest == nil) {
-        nextRequestType = RequestProductIQData;
+        nextRequestType = RequestProductIQDeleteData;
     }
     
     switch (currentRequest.requestType) {
+        case RequestProductIQDeleteData:
+            nextRequestType = RequestProductIQData;
+            break;
         case RequestProductIQData:
             nextRequestType = RequestCleanUpSelect;
             break;

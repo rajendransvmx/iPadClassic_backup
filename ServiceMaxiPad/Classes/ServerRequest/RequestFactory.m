@@ -157,6 +157,7 @@
             case RequestProductIQTranslations:
             case RequestProductIQObjectDescribe:
             case RequestProductIQData:
+            case RequestProductIQDeleteData:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
                 

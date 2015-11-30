@@ -47,6 +47,9 @@
         case RequestTXFetch:
             return [self getTxFetcRequestParamsForRequestCount:count];
             break;
+        case RequestProductIQDeleteData:
+            return [self getProdIQDeleteDataRequestParam];
+            break;
         default:
             break;
     }
@@ -64,6 +67,14 @@
     return @[model];
 }
 
+
+-(NSArray *)getProdIQDeleteDataRequestParam {
+    RequestParamModel *model = [[RequestParamModel alloc]init];
+    NSDictionary *lastSyncTimeDict = [self getProdIQDataLastSyncTime];
+    model.valueMap = @[lastSyncTimeDict];
+    model.values = @[];
+    return @[model];
+}
 
 - (NSDictionary *)getProdIQDataLastSyncTime {
     NSMutableDictionary *lastSyncTimeDict = [[NSMutableDictionary alloc] initWithCapacity:0];

@@ -136,7 +136,8 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestProductIQTranslations,
     RequestProductIQObjectDescribe,
     RequestProductIQTxFetch,
-    RequestProductIQData
+    RequestProductIQData,
+    RequestProductIQDeleteData
 };
 
 extern NSString *const kContentType;
@@ -329,3 +330,4 @@ extern NSString *const kProductIQTranslationsUrl;
 extern NSString *const kProductIQObjectDescribeUrl;
 extern NSString *const kProductIQSyncData;
 extern NSString *const kProdIQLastSyncTime;
+extern NSString *const kProdIQGetDeleteData;

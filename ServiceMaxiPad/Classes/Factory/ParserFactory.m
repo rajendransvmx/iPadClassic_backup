@@ -42,6 +42,7 @@
 #import "ProdIQTranslationsParser.h"
 #import "ProdIQObjectDescribeParser.h"
 #import "ProdIQDataParser.h"
+#import "ProdIQDeleteDataParser.h"
 
 @implementation ParserFactory
 
@@ -373,6 +374,9 @@
                 break;
             case RequestProductIQData:
                 parser = [[ProdIQDataParser alloc] init];
+                break;
+            case RequestProductIQDeleteData:
+                parser = [[ProdIQDeleteDataParser alloc] init];
                 break;
             default:
                 SXLogWarning(@"Invalid parser type requested");
