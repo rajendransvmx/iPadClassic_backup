@@ -334,9 +334,14 @@
     NSMutableSet *addedRecords = [NSMutableSet set];
     NSPredicate *dupRecordPred = [NSPredicate predicateWithBlock: ^BOOL(id obj, NSDictionary *bind) {
         NSDictionary *e = (NSDictionary*)obj;
-        BOOL seen = [addedRecords containsObject:[[e objectForKey:@"localId"] internalValue]];
+        
+        id object = [[e objectForKey:@"localId"] internalValue];
+        if (!object) {
+            object = [[e objectForKey:@"Id"] internalValue];
+        }
+        BOOL seen = [addedRecords containsObject:object];
         if (!seen) {
-            [addedRecords addObject:[[e objectForKey:@"localId"] internalValue]];
+            [addedRecords addObject:object];
         }
         return !seen;
     }];
