@@ -330,7 +330,20 @@
         }
     }
     
-    lookUpObj.dataArray = finalArray;
+    
+    NSMutableSet *addedRecords = [NSMutableSet set];
+    NSPredicate *dupRecordPred = [NSPredicate predicateWithBlock: ^BOOL(id obj, NSDictionary *bind) {
+        NSDictionary *e = (NSDictionary*)obj;
+        BOOL seen = [addedRecords containsObject:[[e objectForKey:@"localId"] internalValue]];
+        if (!seen) {
+            [addedRecords addObject:[[e objectForKey:@"localId"] internalValue]];
+        }
+        return !seen;
+    }];
+    
+    NSArray *filtered = [finalArray filteredArrayUsingPredicate:dupRecordPred];
+    
+    lookUpObj.dataArray = filtered;
 }
 
 /*
@@ -344,7 +357,7 @@
     
     NSArray *lookupArray = nil;
     NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
-    NSArray * criteriaArray = [self getWhereclause:lookUpObj forLocalRecords:YES];
+    NSArray * criteriaArray = [self getWhereclause:lookUpObj forLocalRecords:NO];
     NSString * advanceExpression = [self advanceExpression:lookUpObj];
     
     id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
@@ -356,6 +369,7 @@
     return recordsArray;
     
 }
+
 /*
  Method: getReferenceFieldsFor
  Params: objectName
