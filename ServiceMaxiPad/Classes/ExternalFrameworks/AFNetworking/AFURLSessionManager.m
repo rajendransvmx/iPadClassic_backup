@@ -318,7 +318,7 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
 
     self.mutableTaskDelegatesKeyedByTaskIdentifier = [[NSMutableDictionary alloc] init];
 
-    self.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
 
     self.reachabilityManager = [AFNetworkReachabilityManager sharedManager];
 

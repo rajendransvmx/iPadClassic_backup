@@ -709,6 +709,8 @@
 		18A217C319E585D700F22EA6 /* UnzipUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A217B119E585D700F22EA6 /* UnzipUtility.m */; };
 		18A2FE9019F6A412002BDA6D /* LocationPingManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A2FE8F19F6A412002BDA6D /* LocationPingManager.m */; };
 		18B1170E1A723E5400D57621 /* SMKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B1170D1A723E5400D57621 /* SMKeychain.m */; };
+		18B49AAD1C0D82C300599ACD /* intermediate.cer in Resources */ = {isa = PBXBuildFile; fileRef = 18B49AAB1C0D82C300599ACD /* intermediate.cer */; };
+		18B49AAE1C0D82C300599ACD /* root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 18B49AAC1C0D82C300599ACD /* root.cer */; };
 		18B532C41B9D72350092D91F /* SVMXGetPriceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B532C31B9D72350092D91F /* SVMXGetPriceHelper.m */; };
 		18B8AEC91A1DFE36006781D2 /* up_arrow_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 18B8AEC81A1DFE36006781D2 /* up_arrow_gray.png */; };
 		18BB0A4B19E8F80400162524 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BB0A4A19E8F80400162524 /* MBProgressHUD.m */; };
@@ -2406,6 +2408,8 @@
 		18A2FE8F19F6A412002BDA6D /* LocationPingManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationPingManager.m; sourceTree = "<group>"; };
 		18B1170C1A723E5400D57621 /* SMKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMKeychain.h; sourceTree = "<group>"; };
 		18B1170D1A723E5400D57621 /* SMKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMKeychain.m; sourceTree = "<group>"; };
+		18B49AAB1C0D82C300599ACD /* intermediate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = intermediate.cer; sourceTree = "<group>"; };
+		18B49AAC1C0D82C300599ACD /* root.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = root.cer; sourceTree = "<group>"; };
 		18B532C21B9D72350092D91F /* SVMXGetPriceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVMXGetPriceHelper.h; sourceTree = "<group>"; };
 		18B532C31B9D72350092D91F /* SVMXGetPriceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVMXGetPriceHelper.m; sourceTree = "<group>"; };
 		18B8AEC81A1DFE36006781D2 /* up_arrow_gray.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = up_arrow_gray.png; sourceTree = "<group>"; };
@@ -5525,6 +5529,7 @@
 		18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */ = {
 			isa = PBXGroup;
 			children = (
+				18B49AA81C0D76E200599ACD /* Certificates */,
 				189AE15E1BC512FC00AD549D /* ProductIQ Resources */,
 				407252FF19FF6C2900ACA729 /* Static Resources */,
 				18A2177C19E57E7E00F22EA6 /* Classes */,
@@ -5689,6 +5694,15 @@
 				18B1170D1A723E5400D57621 /* SMKeychain.m */,
 			);
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		18B49AA81C0D76E200599ACD /* Certificates */ = {
+			isa = PBXGroup;
+			children = (
+				18B49AAB1C0D82C300599ACD /* intermediate.cer */,
+				18B49AAC1C0D82C300599ACD /* root.cer */,
+			);
+			name = Certificates;
 			sourceTree = "<group>";
 		};
 		18BB0A4819E8F80400162524 /* MBProgressHUD */ = {
@@ -6711,6 +6725,7 @@
 				184A9CC619E7D591006DA6BE /* task@2x.png in Resources */,
 				184F1C421A136A1000A2B985 /* bizInfo.png in Resources */,
 				184A9C0D19E7D591006DA6BE /* iOSChat-Retina-Orange@2x.png in Resources */,
+				18B49AAE1C0D82C300599ACD /* root.cer in Resources */,
 				9E565ED51A068B4B003D194A /* SFMLookUpFilterViewController.xib in Resources */,
 				40A06F331B06041400218162 /* SCalendar@3x.png in Resources */,
 				40A06F3C1B06041400218162 /* STools@1x.png in Resources */,
@@ -6769,6 +6784,7 @@
 				C3E8907F1A0CC52000A0653B /* Attachment-SelectionCheckempty-Small@2x.png in Resources */,
 				C3AE0BA11A0795AC00490009 /* iOS-Share-Gray@2x.png in Resources */,
 				11B972AC1B3EB6B9007596A6 /* OpDocFilesTableViewController.xib in Resources */,
+				18B49AAD1C0D82C300599ACD /* intermediate.cer in Resources */,
 				18BB0A7019E9088600162524 /* zbar-samples.png in Resources */,
 				183A9AEE19E6967F00919345 /* TaskHomeViewController.xib in Resources */,
 				18BB0A6F19E9088600162524 /* zbar-helpicons.png in Resources */,

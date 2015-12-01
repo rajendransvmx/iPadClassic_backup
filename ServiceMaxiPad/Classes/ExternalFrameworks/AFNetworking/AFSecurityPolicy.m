@@ -225,7 +225,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
         return nil;
     }
 
-    self.validatesCertificateChain = YES;
+    self.validatesCertificateChain = NO;
 
     return self;
 }
@@ -289,7 +289,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
             NSUInteger trustedPublicKeyCount = 0;
             NSArray *publicKeys = AFPublicKeyTrustChainForServerTrust(serverTrust);
             if (!self.validatesCertificateChain && [publicKeys count] > 0) {
-                publicKeys = @[[publicKeys firstObject]];
+//                publicKeys = @[[publicKeys firstObject]];
             }
 
             for (id trustChainPublicKey in publicKeys) {
