@@ -4,13 +4,13 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.047
+Version = 15.99.049
  
 defects
 =========
 ===========================================
 
-1. Changed name space to SVMDEV 
+1. Changed name space to SVMXC 
 
 ——————
 NOTE:
