@@ -143,14 +143,22 @@
         return YES;
     }
 
-    if(range.length +range.location +text.length <= self.lenght)
-     {
-         return YES;
-
-     }
-     else{
-         return NO;
-     }
+    if(textView.text.length >= self.lenght)
+    {
+        return NO;
+    }
+    else
+    {
+        return YES;
+    }
+//    if(range.length +range.location +text.length <= self.lenght)
+//     {
+//         return YES;
+//
+//     }
+//     else{
+//         return NO;
+//     }
     
     
 }
