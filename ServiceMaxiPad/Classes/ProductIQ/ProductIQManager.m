@@ -125,6 +125,11 @@
         NSDictionary *referenceDictionary = [self getReferenceFieldsFor:sfmPageView.sfmPage.objectName];
         NSArray *allKeys = [referenceDictionary allKeys];
         
+        //get all Ibs from child to top level like (compoent,parent,top level)
+        NSSortDescriptor* sortOrder = [NSSortDescriptor sortDescriptorWithKey:nil ascending: YES];
+        allKeys =  [allKeys sortedArrayUsingDescriptors: [NSArray arrayWithObject: sortOrder]];
+        
+        
         for (NSString *key in allKeys) {
             NSString *value = [referenceDictionary objectForKey:key];
             if ([value isEqualToString:kInstalledProductTableName]) {
