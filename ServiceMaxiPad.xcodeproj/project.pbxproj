@@ -13,6 +13,9 @@
 		117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D51B3928A200BA0B63 /* selectEmpty@2x.png */; };
 		117656DA1B3928A200BA0B63 /* selectFilled@.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D61B3928A200BA0B63 /* selectFilled@.png */; };
 		117656DB1B3928A200BA0B63 /* selectFilled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D71B3928A200BA0B63 /* selectFilled@2x.png */; };
+		119554481C0E702800F1989B /* CustomActionURLHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 119554471C0E702800F1989B /* CustomActionURLHandler.m */; };
+		1195544C1C0E7F2F00F1989B /* ProductIQCustomActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1195544A1C0E7F2F00F1989B /* ProductIQCustomActionViewController.m */; };
+		1195544D1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1195544B1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib */; };
 		11B972AB1B3EB6B9007596A6 /* OpDocFilesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 11B972A91B3EB6B9007596A6 /* OpDocFilesTableViewController.m */; };
 		11B972AC1B3EB6B9007596A6 /* OpDocFilesTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 11B972AA1B3EB6B9007596A6 /* OpDocFilesTableViewController.xib */; };
 		11DF96E91BE68071006A5242 /* UINavigationController+Rotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 11DF96E81BE68071006A5242 /* UINavigationController+Rotation.m */; };
@@ -1094,6 +1097,11 @@
 		117656D51B3928A200BA0B63 /* selectEmpty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectEmpty@2x.png"; sourceTree = "<group>"; };
 		117656D61B3928A200BA0B63 /* selectFilled@.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@.png"; sourceTree = "<group>"; };
 		117656D71B3928A200BA0B63 /* selectFilled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selectFilled@2x.png"; sourceTree = "<group>"; };
+		119554461C0E702800F1989B /* CustomActionURLHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomActionURLHandler.h; sourceTree = "<group>"; };
+		119554471C0E702800F1989B /* CustomActionURLHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomActionURLHandler.m; sourceTree = "<group>"; };
+		119554491C0E7F2F00F1989B /* ProductIQCustomActionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductIQCustomActionViewController.h; sourceTree = "<group>"; };
+		1195544A1C0E7F2F00F1989B /* ProductIQCustomActionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductIQCustomActionViewController.m; sourceTree = "<group>"; };
+		1195544B1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductIQCustomActionViewController.xib; sourceTree = "<group>"; };
 		11B972A81B3EB6B9007596A6 /* OpDocFilesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpDocFilesTableViewController.h; sourceTree = "<group>"; };
 		11B972A91B3EB6B9007596A6 /* OpDocFilesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpDocFilesTableViewController.m; sourceTree = "<group>"; };
 		11B972AA1B3EB6B9007596A6 /* OpDocFilesTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OpDocFilesTableViewController.xib; sourceTree = "<group>"; };
@@ -6191,6 +6199,8 @@
 				11596B5B1BBEF96600C92872 /* Misc.m */,
 				11F5B31A1BC5023700C8C209 /* MessageHandler.h */,
 				11F5B31B1BC5023700C8C209 /* MessageHandler.m */,
+				119554461C0E702800F1989B /* CustomActionURLHandler.h */,
+				119554471C0E702800F1989B /* CustomActionURLHandler.m */,
 			);
 			name = "Native Call Handlers";
 			path = POC;
@@ -6218,6 +6228,9 @@
 				18CA5A231BEA28DB00885F5E /* ProdIQDataServiceLayer.m */,
 				183B031C1C0C44B2002099F3 /* ProdIQDeleteDataParser.h */,
 				183B031D1C0C44B2002099F3 /* ProdIQDeleteDataParser.m */,
+				119554491C0E7F2F00F1989B /* ProductIQCustomActionViewController.h */,
+				1195544A1C0E7F2F00F1989B /* ProductIQCustomActionViewController.m */,
+				1195544B1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib */,
 			);
 			path = ProductIQ;
 			sourceTree = "<group>";
@@ -6675,6 +6688,7 @@
 				C3EF97891A036CAE00476293 /* DocumentsViewController.xib in Resources */,
 				184A9C0C19E7D591006DA6BE /* iOS-Email-Retina-Orange@2x.png in Resources */,
 				57A321001AB7196A00A172E0 /* SCalendar@2x.png in Resources */,
+				1195544D1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib in Resources */,
 				57A320E81AB7178C00A172E0 /* NavBarCal@2x.png in Resources */,
 				184A9CC519E7D591006DA6BE /* recentlyCreated@2x.png in Resources */,
 				40CA19FE19FE4B340097F5A1 /* OPDoc.html in Resources */,
@@ -7347,6 +7361,7 @@
 				183AA36219E6DA2500919345 /* AFURLConnectionOperation.m in Sources */,
 				183AA1B519E6D26400919345 /* PageLayoutEditViewController.m in Sources */,
 				6BDC50E11AA70EB700200DC0 /* TroubleshootingDetailViewController.m in Sources */,
+				119554481C0E702800F1989B /* CustomActionURLHandler.m in Sources */,
 				57BA2CE71A1105770081389B /* ProductManualService.m in Sources */,
 				183A9FE319E6B18500919345 /* SourceUpdateService.m in Sources */,
 				C3EF978E1A036CC600476293 /* AttachmentTXModel.m in Sources */,
@@ -7584,6 +7599,7 @@
 				183A9F0E19E6A15600919345 /* ZKParser.m in Sources */,
 				18A217BF19E585D700F22EA6 /* StringUtil.m in Sources */,
 				183A9F0919E6A15600919345 /* ZKGetUpdatedResult.m in Sources */,
+				1195544C1C0E7F2F00F1989B /* ProductIQCustomActionViewController.m in Sources */,
 				84E89F891A09FD090000F2A8 /* OpDocSyncDataManager.m in Sources */,
 				183A9E2719E69DB000919345 /* LookUpFieldValueModel.m in Sources */,
 				183A9E6519E6A03400919345 /* NSDictionary+Merge.m in Sources */,
