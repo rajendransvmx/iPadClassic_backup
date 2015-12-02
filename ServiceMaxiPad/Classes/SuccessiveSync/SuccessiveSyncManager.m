@@ -91,6 +91,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
         if (existingSyncRecord == nil) {
             ModifiedRecordModel *successiveSyncModel = [[ModifiedRecordModel alloc] init];
             [self copyModifiedRecordDataFrom:syncRecord toModel:successiveSyncModel];
+            successiveSyncModel.recordDictionary = syncRecord.recordDictionary; // C - 28124
             [self.succSyncRecords setObject:successiveSyncModel forKey:syncRecord.recordLocalId];
         }
         else{
@@ -265,6 +266,11 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
         {
             fieldValue = [record objectForKey:fieldName];
         }
+        
+        // C -28124
+        if (fieldValue == nil) {
+            fieldValue = @"";
+        }
 
         if (fieldValue != nil) {
             [eachRecord setObject:fieldValue forKey:fieldName];
@@ -301,7 +307,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
     successiveSyncModel.cannotSendToServer = syncRecord.cannotSendToServer;
     successiveSyncModel.jsonRecord = syncRecord.jsonRecord;
     successiveSyncModel.overrideFlag = syncRecord.overrideFlag;
-    successiveSyncModel.recordDictionary = syncRecord.recordDictionary;
+//    successiveSyncModel.recordDictionary = syncRecord.recordDictionary; // 28124
 }
 
 -(ModifiedRecordModel *)getSyncRecordModelFromSuccessiveSyncRecords:(NSString *)localId {
