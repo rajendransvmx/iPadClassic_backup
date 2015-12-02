@@ -202,8 +202,7 @@
                  
                  [self displayRequest:operation];
                  
-                 
-                 if (self.requestType ==    RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
+                 if ((self.requestType ==    RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore) && operation.responseObject !=nil)
                  {
                      CustomXMLParser *parser = [[CustomXMLParser alloc] initwithNSXMLParserObject:(NSXMLParser *)operation.responseObject andError:error andOperation:(id)operation];
                      parser.customDelegate = self;
