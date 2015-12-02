@@ -4,16 +4,17 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.60.014
+Version = 15.60.015
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-Case 00028546 - Security issue: data changed before to synch to server side
-Note:
+Defect 013386
+Case 28124
 ____
+
 Namespace - SVMXC
 
 
