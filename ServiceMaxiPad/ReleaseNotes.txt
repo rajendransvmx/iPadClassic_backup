@@ -2,13 +2,13 @@
 ServiceMax Win 15 SP iPad Release
 
 *******************************************
-Version = 15.20.038
+Version = 15.20.039
 ===========================================
 -------------
 Fixed Defects
 -------------
 
-En point changes
+013386 - iPad Sync issues with low connectivity
 
 -------------
 Known Issues
