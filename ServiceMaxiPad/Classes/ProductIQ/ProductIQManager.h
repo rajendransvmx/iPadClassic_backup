@@ -18,6 +18,7 @@
 @property(nonatomic, strong) NSMutableArray *recordIds;
 @property(nonatomic, assign) BOOL isProdIQSyncInProgress;
 @property(nonatomic, assign) NSString *prodIQTaskId;
+@property(nonatomic, assign) BOOL isRecordDeleted;
 
 + (instancetype) alloc  __attribute__((unavailable("alloc not available, call sharedInstance instead")));
 - (instancetype) init   __attribute__((unavailable("init not available, call sharedInstance instead")));

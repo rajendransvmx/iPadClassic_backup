@@ -16,6 +16,7 @@
 #import "CacheManager.h"
 #import "MobileDeviceSettingService.h"
 #import "ModifiedRecordsDAO.h"
+#import "ProductIQManager.h"
 
 static DBManager *sharedInstance = nil;
 static sqlite3 *database = nil;
@@ -120,6 +121,12 @@ static sqlite3_stmt *statement = nil;
     SXLogDebug(@"query:%@",query);
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {
+        
+        //Check query type as delete. If yes set the flag to TRUE.
+        if ([query hasPrefix:@"DELETE"]) {
+            [[ProductIQManager sharedInstance] setIsRecordDeleted:YES];
+        }
+        
 //        if ([query hasPrefix:@"UPDATE"])
 //        {
 //            MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];

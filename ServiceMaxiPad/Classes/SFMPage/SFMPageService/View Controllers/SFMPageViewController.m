@@ -314,6 +314,11 @@
     {
         [self.tempViewController reloadTableView];
     }
+    if ([ProductIQManager sharedInstance].isRecordDeleted == YES) { //deleted record from productIQ.Hence navigate to root view (024507).
+        //reset it again to NO.
+        [ProductIQManager sharedInstance].isRecordDeleted = NO;
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
