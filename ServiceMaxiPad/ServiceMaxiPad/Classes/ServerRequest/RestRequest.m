@@ -138,7 +138,12 @@
             
             
             
-            
+            if (self.requestType == RequestOneCallDataSync) {
+                SXLogDebug(@"==============\n clientRequestIdentifier remembered on error.: %@\n\n==============", self.clientRequestIdentifier);
+                
+                [[NSUserDefaults standardUserDefaults] setObject:self.clientRequestIdentifier forKey:@"requestIdentifier"];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
 
             
             /** Set Header properties  */
@@ -1070,6 +1075,11 @@
 {
     @autoreleasepool {
         [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
+        
+        if (self.requestType == RequestOneCallDataSync) {
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"requestIdentifier"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
     }
 }
 
