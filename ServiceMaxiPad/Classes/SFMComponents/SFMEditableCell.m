@@ -105,7 +105,7 @@
     else{
         currentLenght = self.lenght;
     }
-    if(textField.text.length >= currentLenght)
+    if(textField.text.length + string.length > currentLenght)
     {
         return NO;
     }

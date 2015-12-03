@@ -143,7 +143,7 @@
         return YES;
     }
 
-    if(textView.text.length >= self.lenght)
+    if(textView.text.length + text.length > self.lenght)
     {
         return NO;
     }
