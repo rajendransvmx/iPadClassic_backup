@@ -16,7 +16,7 @@
     $UTILITY.base64Decode = function (objectValue){
             var decodedValue = null;
             if(objectValue != null) {
-                        decodedValue = atob(objectValue);
+                        decodedValue = decodeURIComponent(escape(atob(objectValue)));
             }
             return decodedValue;
     }
