@@ -14,9 +14,14 @@
 -(ResponseCallback*)parseResponseWithRequestParam:(RequestParamModel*)requestParamModel
                                      responseData:(id)responseData {
     @synchronized([self class]){
+        
         @autoreleasepool {
             NSArray *responseArray = (NSArray *)responseData;
-            [self insertProdIQTranslationsToDB:responseArray];
+            if(([responseArray count]> 0 )&& (responseArray != nil))
+            {
+                
+                [self insertProdIQTranslationsToDB:responseArray];
+            }
             return nil;
         }
     }

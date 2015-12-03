@@ -13,7 +13,9 @@
 
 - (void)executeCustomActionURLHandler:(NSString*)urlQuery {
     
-    [[ProductIQHomeViewController getInstance] loadCustomActionURL:urlQuery];
+    //[[ProductIQHomeViewController getInstance] loadCustomActionURL:urlQuery];
+    
+    /*chinna as there is no method declared I am commenting this one */ 
     
 }
 @end

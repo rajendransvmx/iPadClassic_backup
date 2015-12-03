@@ -18,10 +18,13 @@
         @autoreleasepool {
             NSDictionary *dictionary = (NSDictionary *)responseData;
             NSError *err = nil;
-            NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&err];
-            if (jsonData != nil) {
-                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-                [self insertProdIQObjectDescribeToDB:jsonString forObject:requestParamModel.value];
+            if(dictionary != nil)
+            {
+                NSData * jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&err];
+                if (jsonData != nil) {
+                    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                    [self insertProdIQObjectDescribeToDB:jsonString forObject:requestParamModel.value];
+                }
             }
             return nil;
         }
