@@ -124,7 +124,7 @@
     [self.searchButton.layer setBorderColor:[[UIColor colorWithHexString:@"#FF6633"] CGColor]];
     [self.searchButton.layer setBorderWidth:1.0];
     [self.searchButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
-    [self.searchButton setTitle:[[TagManager sharedInstance]tagByName:kTag_search] forState:UIControlStateNormal];
+    [self.searchButton setTitle:[[TagManager sharedInstance]tagByName:kTagSfmLookUpSearch] forState:UIControlStateNormal];
 }
 
 -(BOOL)isValidContextString:(NSString *)contextString {
