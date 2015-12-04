@@ -45,7 +45,10 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     SaveFlowFromPushNotification
 };
 
-@interface PageEditViewController ()
+@interface PageEditViewController () {
+    
+    BOOL isBizRuleTerminated; //25582
+}
 
 @property(nonatomic,strong)SFMPageEditManager   *sfmEditPageManager;
 @property(nonatomic,strong)SFMPage              *sfmPage;
@@ -964,19 +967,33 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     if (!shouldExecuteBizRule) {
         [self saveRecordData];
     }
+    else {
+        [self performSelector:@selector(terminateBizRule) withObject:nil afterDelay:3.0];
+        isBizRuleTerminated = NO; //25582
+    }
 }
 
 - (void)businessRuleFinishedWithResults:(NSMutableArray *)resultArray
 {
+    isBizRuleTerminated = YES;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(terminateBizRule) object:nil]; // 25582
+    
     [(PageEditDetailViewController *)self.detailViewController  initiateBuissRulesData:resultArray];
     
     if (([resultArray count]== 0) || (resultArray == nil) || ([self.ruleManager allWarningsAreConfirmed] && ([self.ruleManager numberOfErrorsInResult] == 0))) {
-        [self saveRecordData];
+        [self performSelector:@selector(saveRecordData) withObject:nil afterDelay:0.5]; //25582 + crash
         return;
     }
     [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(enableUI) withObject:self waitUntilDone:NO];
     
+}
+
+-(void)terminateBizRule {
+    NSLog(@"terminateBizRule: %d",isBizRuleTerminated);
+    if (!isBizRuleTerminated) {
+        [self performSelector:@selector(saveRecordData) withObject:nil afterDelay:0.5]; //25582
+    }
 }
 
 -(void)refreshBizRuleData
