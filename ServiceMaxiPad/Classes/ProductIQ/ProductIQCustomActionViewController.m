@@ -8,11 +8,13 @@
 
 #import "ProductIQCustomActionViewController.h"
 #import "TagManager.h"
+#import "MBProgressHUD.h"
 
 @interface ProductIQCustomActionViewController () {
     
 }
 @property (strong, nonatomic) UIWebView *webview;
+@property (strong, nonatomic) MBProgressHUD *hudView;
 
 @end
 
@@ -23,11 +25,13 @@
     // Do any additional setup after loading the view from its nib.
     
     [self populateNavigationBar];
+    [self createWebView];
+    [self showAnimator];
+
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self createWebView];
     [self loadCustomURL];
 
 }
@@ -91,6 +95,25 @@
     
 }
 
+- (void)hideAnimator
+{
+    if (self.hudView) {
+        [self.hudView hide:YES];
+        self.hudView = nil;
+    }
+}
+
+- (void)showAnimator
+{
+    if (!self.hudView) {
+        self.hudView = [[MBProgressHUD alloc] initWithView:self.view];
+        [self.view addSubview:self.hudView];
+        self.hudView.mode = MBProgressHUDModeIndeterminate;
+        self.hudView.labelText = [[TagManager sharedInstance]tagByName:kTagLoading];
+        [self.hudView show:YES];
+    }
+}
+
 - (void)loadCustomURL {
     NSURL *url = [NSURL URLWithString:self.urlString];
     [self.webview loadRequest:[NSURLRequest requestWithURL:url]];
@@ -101,6 +124,19 @@
     [self.navigationController popViewControllerAnimated:YES];
     
 }
+
+#pragma mark - Rotation methods
+
+-(BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+-(NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskLandscape;
+}
+
 
 #pragma mark - UIWebViewDelegate Methods
 // START - webview events
@@ -114,11 +150,11 @@
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
-    
+    [self hideAnimator];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
-    NSLog(@"Failed to load with error :%@",[error debugDescription]);
+    [self hideAnimator];
     
 }
 
