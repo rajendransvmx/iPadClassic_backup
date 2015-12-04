@@ -31,6 +31,10 @@
     [self loadCustomURL];
 
 }
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -82,12 +86,14 @@
     self.webview = [[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     self.webview.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.webview.scalesPageToFit = YES;
+    self.webview.delegate = self;
     [self.view addSubview:self.webview];
     
 }
 
 - (void)loadCustomURL {
-    
+    NSURL *url = [NSURL URLWithString:self.urlString];
+    [self.webview loadRequest:[NSURLRequest requestWithURL:url]];
 }
 
 - (void)backView
@@ -95,6 +101,27 @@
     [self.navigationController popViewControllerAnimated:YES];
     
 }
+
+#pragma mark - UIWebViewDelegate Methods
+// START - webview events
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    
+    return YES;
+}
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    
+}
+
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    NSLog(@"Failed to load with error :%@",[error debugDescription]);
+    
+}
+
 
 /*
 #pragma mark - Navigation

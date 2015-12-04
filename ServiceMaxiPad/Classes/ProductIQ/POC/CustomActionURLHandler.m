@@ -13,9 +13,19 @@
 
 - (void)executeCustomActionURLHandler:(NSString*)urlQuery {
     
-    //[[ProductIQHomeViewController getInstance] loadCustomActionURL:urlQuery];
+    NSDictionary *dictionary = [self parse:urlQuery];
+    NSString *paramString = dictionary[@"params"];
+    NSDictionary *urlDictionary = [self parse:paramString];
+    NSString *uriString = urlDictionary[@"Uri"];
     
-    /*chinna as there is no method declared I am commenting this one */ 
+    [[ProductIQHomeViewController getInstance] loadCustomActionURL:uriString];
     
+}
+
+-(NSDictionary *)parse:(NSString *) str {
+    NSError *error = nil;
+    NSDictionary *ret =
+    [NSJSONSerialization JSONObjectWithData:[str dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+    return ret;
 }
 @end

@@ -31,6 +31,7 @@
 -(NSString *) getAccessToken;
 -(NSString *) getInstanceUrl;
 -(UIWebView *) getBrowser;
+-(void)loadCustomActionURL:(NSString*)urlString;
 
 
 @end

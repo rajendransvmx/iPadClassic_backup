@@ -14,6 +14,7 @@
 #import "BarCodeScannerUtility.h"
 #import "StyleGuideConstants.h"
 #import "StyleManager.h"
+#import "ProductIQCustomActionViewController.h"
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
@@ -22,6 +23,7 @@
 @property (copy, nonatomic) NSString *focusedElementString;
 @property (strong, nonatomic) BarCodeScannerUtility *barCodeScanner;
 @property (strong, nonatomic) UIView *barCodeView;
+@property (nonatomic, assign) BOOL recordDeleted;
 
 @end
 
@@ -489,6 +491,15 @@ static  ProductIQHomeViewController *instance;
 -(NSUInteger)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskLandscape;
+}
+
+#pragma mark - CustomActionURL
+-(void)loadCustomActionURL:(NSString*)urlString {
+    ProductIQCustomActionViewController *viewController = [[ProductIQCustomActionViewController alloc] initWithNibName:@"ProductIQCustomActionViewController" bundle:[NSBundle mainBundle]];
+    viewController.urlString = urlString;
+    
+    [self.navigationController pushViewController:viewController animated:YES];
+
 }
 
 @end

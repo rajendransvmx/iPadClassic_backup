@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ProductIQCustomActionViewController : UIViewController {
+@interface ProductIQCustomActionViewController : UIViewController<UIWebViewDelegate> {
     
 }
 
