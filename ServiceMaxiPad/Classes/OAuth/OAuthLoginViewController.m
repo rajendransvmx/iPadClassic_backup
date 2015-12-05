@@ -321,7 +321,7 @@ NSInteger webViewLoadCounter;
         // Apart from Custom domain lets redirect to mobile safari.
         // logout.jsp, because 'Not you?' in confirmation page should not redirect to mobile safari
         
-        if ([StringUtil containsString:@"forgotpassword.jsp" inString:[request.URL absoluteString]] )
+        if ([StringUtil containsString:@"forgotpassword.jsp" inString:[request.URL absoluteString]] ) // Defect#025424. Only coded for Forgot Password. Other links will open up in the App itself. Have to be handled as and when they appear in future in Salesforce Login Page.
         {
             /**  User in forgot password page, lets redirect to mobile safari */
             [[UIApplication sharedApplication] openURL:request.URL];
