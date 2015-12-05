@@ -14,6 +14,7 @@
 #import "TransactionObjectDAO.h"
 #import "FactoryDAO.h"
 #import "CalenderHelper.h"
+#import "StringUtil.h"
 
 @interface EventTransactionObjectModel ()
 
@@ -344,13 +345,18 @@
     comp.minute = 00;
     
     NSDate *theStartDate = [cal dateFromComponents:comp];
-    comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
-    comp.hour = 23;
-    comp.minute = 59;
+    NSDate *theEndDate = nil;
     
-    NSDate *theEndDate = [cal dateFromComponents:comp];
-    
-    
+    if (![StringUtil isStringEmpty:endDate]) {
+        comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
+        comp.hour = 23;
+        comp.minute = 59;
+       theEndDate = [cal dateFromComponents:comp];
+        
+    }
+    else {
+        theEndDate = theStartDate;
+    }
     
     return @[theStartDate, theEndDate];
 }
