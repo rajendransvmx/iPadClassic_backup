@@ -320,14 +320,26 @@ NSInteger webViewLoadCounter;
         // Krishna : Fixed With reference to defect 011758.
         // Apart from Custom domain lets redirect to mobile safari.
         // logout.jsp, because 'Not you?' in confirmation page should not redirect to mobile safari
-        if (![StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]])
-		{
+        
+        if ([StringUtil containsString:@"forgotpassword.jsp" inString:[request.URL absoluteString]] )
+        {
             /**  User in forgot password page, lets redirect to mobile safari */
+            [[UIApplication sharedApplication] openURL:request.URL];
+            SXLogInfo(@"Return NO : kRedirectURL %@", request.URL);
+            
+            return NO;
+        }
+        
+  /*
+        if (![StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]] )
+		{
+            //  User in forgot password page, lets redirect to mobile safari
 			[[UIApplication sharedApplication] openURL:request.URL];
             SXLogInfo(@"Return NO : kRedirectURL %@", request.URL);
             
 			return NO;
 		}
+   */
 	}
     
     if ([[request.URL absoluteString] hasPrefix:kRedirectURL])

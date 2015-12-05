@@ -382,7 +382,7 @@
             }
         }
     }
-    criteriaString = [criteriaString stringByReplacingOccurrencesOfString:@"''" withString:@"'"];
+//    criteriaString = [criteriaString stringByReplacingOccurrencesOfString:@"''" withString:@"'"];
     return criteriaString;
 }
 
