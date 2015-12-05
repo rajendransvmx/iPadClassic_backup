@@ -500,44 +500,31 @@ PageManagerErrorType;
                 
                 if (aPageField.relatedObjectName != nil)
                 {
-                    /*
-Below logic is used to get the default column name and value of the lookup fields.
-*/
-                    NSMutableDictionary *defaultColumnDictionary = [self getDefaultColumnNameForField:aPageField withFieldSfId:internalValue];
+                    //    Below logic is used to get the default column name and value of the lookup fields.
+
+                    NSDictionary *defaultColumnDictionary;
+                    if (internalValue.length) {
+                       defaultColumnDictionary = [self getDefaultColumnNameForField:aPageField withFieldSfId:internalValue];
+                    }
                     
                     if (defaultColumnDictionary.count > 0) {
                         keyField = aPageField.defaultColumnName;
                         displayValue = [defaultColumnDictionary objectForKey:aPageField.defaultColumnName];
                         
-                    } else {
                         [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
-                        
-                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
-
+                        [fieldNameAndInternalValue setObject:displayValue?displayValue:kEmptyString forKey:aPageField.fieldName];
                     }
-                    
-//                    [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
-//                    
-//                    [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
-                    
-
-//                    if([aPageField.relatedObjectName caseInsensitiveCompare:@"User"] == NSOrderedSame)
-//                    {
-//                        [fieldNameAndInternalValue setObject:[PlistManager getLoggedInUserName] forKey:aPageField.fieldName];
-//                    }
-//                    else{
-//                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
-//                    }
-                    
+                    else
+                    {
+                        [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                    }
                 }
                 else
                 {
                     if (![StringUtil isStringEmpty:internalValue]) {
                         
-                        
                         [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
-                        
-                        
                         displayValue = [PlistManager getLoggedInUserName];
                         
                         if (aPageField.relatedObjectName != nil) {
@@ -763,11 +750,15 @@ Below logic is used to get the default column name and value of the lookup field
     
     for (NSString * sfId in remainigIds) {
         NSString * newValue = [idDictionary objectForKey:sfId];
+        
         if ([StringUtil isStringEmpty:newValue])
             continue;
+        
         NSArray *matchingKeys = [fieldNameAndInternalValue allKeysForObject:sfId];
-        if ([matchingKeys count] > 0)
-            [fieldNameAndInternalValue setValue:newValue forKey:[matchingKeys objectAtIndex:0]];
+
+        for (NSString *key in matchingKeys) {
+                [fieldNameAndInternalValue setValue:newValue forKey:key]; // Defect#025772. all the SFID's in the dictionary shud be replaced by the value.
+            }
     }
 }
 
