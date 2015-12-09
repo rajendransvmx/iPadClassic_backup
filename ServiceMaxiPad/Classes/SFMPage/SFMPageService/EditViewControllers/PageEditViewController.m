@@ -812,6 +812,8 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             
             UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
                 
+                // any changes made here in future should be applied in alertview delegate method also..
+                
                 if (self.isHeader) {
                     [self selectMasterTableCellWithIndexPath:self.requiredFieldIndexPath];
                 } else {
@@ -1110,6 +1112,8 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         if(buttonIndex == 0)
         {
             //SXLogInfo(@"indexPath: %@",self.requiredFieldIndexPath);
+            
+            // any changes made here in future should be applied in alertcontroller action handler method also..
             
             if (self.isHeader) {
                 [self selectMasterTableCellWithIndexPath:self.requiredFieldIndexPath];
