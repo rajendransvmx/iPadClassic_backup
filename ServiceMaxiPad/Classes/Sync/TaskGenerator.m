@@ -13,6 +13,21 @@
 @implementation TaskGenerator
 +(TaskModel *)generateTaskFor:(CategoryType)catogoryType requestParam:(RequestParamModel *)requestParam callerDelegate:(id)callerdelegate
 {
+    // BUG:018451
+    // key has to be the previous failed onecalldatasync. The taskID is used as identifier which the server remembers. So send the previously failed onecall request's id.
+    NSString *uniqueKey = nil;
+    if (catogoryType == CategoryTypeOneCallDataSync) {
+        
+        uniqueKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"requestIdentifier"];
+        if (!uniqueKey && uniqueKey.length==0) {
+            uniqueKey = [TaskGenerator generateTaskIdentifier];
+        }
+    }
+    else
+    {
+        uniqueKey = [TaskGenerator generateTaskIdentifier];
+    }
+    
     TaskModel * model = [[TaskModel alloc] initWitTaskId:[TaskGenerator generateTaskIdentifier]
                                         withCategoryType:catogoryType
                                             requestParam:requestParam
