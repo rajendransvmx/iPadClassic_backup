@@ -807,40 +807,41 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
                                                      otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:AlertMessageTypeRequiredFieldWarning], nil];
             [self.alertViewBiz performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
         }
-        else {
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning] message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning] preferredStyle:(UIAlertControllerStyleAlert)];
-            
-            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
-                
-                // any changes made here in future should be applied in alertview delegate method also..
-                
-                if (self.isHeader) {
-                    [self selectMasterTableCellWithIndexPath:self.requiredFieldIndexPath];
-                } else {
-                    NSIndexPath *tempIndexPath  = [NSIndexPath indexPathForRow:self.requiredFieldIndexPath.section inSection:1];
-                    
-                    [self selectMasterTableCellWithIndexPath:tempIndexPath];
-                    
-                    PageEditDetailViewController *detailViewController = [self.viewControllers objectAtIndex:1];
-                    ChildEditViewController *childEditListViewController = nil;
-                    if ([[detailViewController allChildViewController] count] > 0 ) {
-                        childEditListViewController = [[detailViewController allChildViewController] objectAtIndex:0];
-                    }
-                    if (childEditListViewController) {
-                        [childEditListViewController expandRecordWithIndexPath:self.requiredFieldIndexPath];
-                    }
-                }
-                self.requiredFieldIndexPath = nil;
-                
-            }];
-            
-            
-            [alertController addAction:alertAction];
-            
-            [self presentViewController:alertController animated:YES completion:^{}];
-        }
-        
     }
+    
+    else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning] message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning] preferredStyle:(UIAlertControllerStyleAlert)];
+        
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
+            
+            // any changes made here in future should be applied in alertview delegate method also..
+            
+            if (self.isHeader) {
+                [self selectMasterTableCellWithIndexPath:self.requiredFieldIndexPath];
+            } else {
+                NSIndexPath *tempIndexPath  = [NSIndexPath indexPathForRow:self.requiredFieldIndexPath.section inSection:1];
+                
+                [self selectMasterTableCellWithIndexPath:tempIndexPath];
+                
+                PageEditDetailViewController *detailViewController = [self.viewControllers objectAtIndex:1];
+                ChildEditViewController *childEditListViewController = nil;
+                if ([[detailViewController allChildViewController] count] > 0 ) {
+                    childEditListViewController = [[detailViewController allChildViewController] objectAtIndex:0];
+                }
+                if (childEditListViewController) {
+                    [childEditListViewController expandRecordWithIndexPath:self.requiredFieldIndexPath];
+                }
+            }
+            self.requiredFieldIndexPath = nil;
+            
+        }];
+        
+        
+        [alertController addAction:alertAction];
+        
+        [self presentViewController:alertController animated:YES completion:^{}];
+    }
+    
 }
 
 
