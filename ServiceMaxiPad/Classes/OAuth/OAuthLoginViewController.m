@@ -380,7 +380,9 @@ NSInteger webViewLoadCounter;
 	else if ([StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]])
 	{
         SXLogDebug(@" OAuth :  logout.jsp");
+//        [webView stopLoading];
         [self reloadAuthorization];
+        return NO;
 	}
     else
     {
