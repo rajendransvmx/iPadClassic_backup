@@ -9,6 +9,7 @@
 #import "ProductIQCustomActionViewController.h"
 #import "TagManager.h"
 #import "MBProgressHUD.h"
+#import "SNetworkReachabilityManager.h"
 
 @interface ProductIQCustomActionViewController () {
     
@@ -32,7 +33,15 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self loadCustomURL];
+    
+    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]) {
+        [self loadCustomURL];
+    } else {
+        [self hideAnimator];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage] message:[[TagManager sharedInstance]tagByName:kTag_InternetConnectionOffline] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil];
+        
+        [alertView show];
+    }
 
 }
 - (void)viewWillAppear:(BOOL)animated {
