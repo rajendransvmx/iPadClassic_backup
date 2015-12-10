@@ -6634,7 +6634,7 @@
 				ORGANIZATIONNAME = "ServiceMax Inc";
 				TargetAttributes = {
 					18A2171819E57C5A00F22EA6 = {
-						DevelopmentTeam = 4B24F56ULW;
+						DevelopmentTeam = UZ47KHA3AB;
 					};
 					18A2173919E57C5A00F22EA6 = {
 						DevelopmentTeam = 4B24F56ULW;
@@ -7869,8 +7869,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
@@ -7882,7 +7882,7 @@
 					"sqlcipher-static-ios/include",
 				);
 				INFOPLIST_FILE = "ServiceMaxiPad/ServiceMaxiPad-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/ExternalFrameworks/ZBarSDK",
@@ -7892,7 +7892,7 @@
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxmobilewin16;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "8a61c2d0-a372-4319-956b-e98842d1255f";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -7902,8 +7902,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -7916,7 +7916,7 @@
 					"sqlcipher-static-ios/include",
 				);
 				INFOPLIST_FILE = "ServiceMaxiPad/ServiceMaxiPad-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/ExternalFrameworks/ZBarSDK",
@@ -7925,7 +7925,7 @@
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxmobilewin16;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "8a61c2d0-a372-4319-956b-e98842d1255f";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
