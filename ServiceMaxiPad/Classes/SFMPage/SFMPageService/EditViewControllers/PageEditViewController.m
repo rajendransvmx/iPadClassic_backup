@@ -815,17 +815,17 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
                                                      otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:AlertMessageTypeRequiredFieldWarning], nil];
             [self.alertViewBiz performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
         }
+    }
+    
+    else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning] message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning] preferredStyle:(UIAlertControllerStyleAlert)];
         
-        else {
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning] message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning] preferredStyle:(UIAlertControllerStyleAlert)];
-            
-            UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
-                [self requiredFieldsAlertTapped];
-            }];
-            
-            [alertController addAction:alertAction];
-            [self presentViewController:alertController animated:YES completion:^{}];
-        }
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
+            [self requiredFieldsAlertTapped];
+        }];
+        
+        [alertController addAction:alertAction];
+        [self presentViewController:alertController animated:YES completion:^{}];
     }
 }
 
