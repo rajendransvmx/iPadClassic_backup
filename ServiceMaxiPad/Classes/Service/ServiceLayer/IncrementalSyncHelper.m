@@ -309,7 +309,10 @@
             
             
             //This localId change for productIQ, In productIQ we are copying local id of the record
-            if ((![StringUtil checkIfStringEmpty:sfIdValue]) && (sfIdValue.length < 30) && (sfIdValue.length > 3)) {   //sfId is there
+            /* roll back productIQ change */
+            //if ((![StringUtil checkIfStringEmpty:sfIdValue]) && (sfIdValue.length < 30) && (sfIdValue.length > 3))
+            if (sfIdValue.length > 3)
+            {   //sfId is there
                 
                 /* Sfid exist and can be replaced */
                 [recordDictionary setObject:sfIdValue forKey:key];
