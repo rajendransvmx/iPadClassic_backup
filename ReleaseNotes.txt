@@ -4,16 +4,20 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.105
+Version = 15.99.106
  
 defects
 =========
+
+25274
+25215
+13386
 
 ===========================================
 
 ——————
 NOTE:
-App Name has been changed back to “ServiceMax”
 
+Namespace is SVMXC.
 
 
