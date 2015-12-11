@@ -829,17 +829,30 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     return YES;
 }
 #pragma mark - show alert
--(void)showAlert
-{
-    if (![self.alertViewBiz isVisible])
-    {
-        if (self.alertViewBiz == nil)
-            self.alertViewBiz = [[UIAlertView alloc] initWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning]
-                                                           message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning]
-                                                          delegate:self
-                                                 cancelButtonTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning]
-                                                 otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:AlertMessageTypeRequiredFieldWarning], nil];
-        [self.alertViewBiz performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+-(void)showAlert {
+    // 25274
+    if (SYSTEM_VERSION < 8.0) {
+        
+        if (![self.alertViewBiz isVisible]) {
+            if (self.alertViewBiz == nil)
+                self.alertViewBiz = [[UIAlertView alloc] initWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning]
+                                                               message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning]
+                                                              delegate:self
+                                                     cancelButtonTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning]
+                                                     otherButtonTitles:[AlertMessageHandler otherButtonTitleByType:AlertMessageTypeRequiredFieldWarning], nil];
+            [self.alertViewBiz performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+        }
+    }
+    
+    else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[AlertMessageHandler titleByType:AlertMessageTypeRequiredFieldWarning] message:[AlertMessageHandler messageByType:AlertMessageTypeRequiredFieldWarning] preferredStyle:(UIAlertControllerStyleAlert)];
+        
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[AlertMessageHandler cancelButtonTitleByType:AlertMessageTypeRequiredFieldWarning] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
+            [self requiredFieldsAlertTapped];
+        }];
+        
+        [alertController addAction:alertAction];
+        [self presentViewController:alertController animated:YES completion:^{}];
     }
 }
 
@@ -1126,6 +1139,31 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         }
     }
 }
+
+
+//25274
+-(void)requiredFieldsAlertTapped {
+    
+    if (self.isHeader) {
+        [self selectMasterTableCellWithIndexPath:self.requiredFieldIndexPath];
+    } else {
+        NSIndexPath *tempIndexPath  = [NSIndexPath indexPathForRow:self.requiredFieldIndexPath.section inSection:1];
+        
+        [self selectMasterTableCellWithIndexPath:tempIndexPath];
+        
+        PageEditDetailViewController *detailViewController = [self.viewControllers objectAtIndex:1];
+        ChildEditViewController *childEditListViewController = nil;
+        if ([[detailViewController allChildViewController] count] > 0 ) {
+            childEditListViewController = [[detailViewController allChildViewController] objectAtIndex:0];
+        }
+        if (childEditListViewController) {
+            [childEditListViewController expandRecordWithIndexPath:self.requiredFieldIndexPath];
+        }
+    }
+    self.requiredFieldIndexPath = nil;
+    
+}
+
 
 - (void)selectMasterTableCellWithIndexPath:(NSIndexPath*)indexPath
 {

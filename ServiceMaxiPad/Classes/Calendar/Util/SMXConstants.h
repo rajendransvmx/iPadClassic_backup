@@ -101,6 +101,10 @@ typedef enum ScrollDirection {
 
 float gNavBarHeight;  // Shifted from .pch file on 10-Oct-2014. PRASAD
 
+
+#define SYSTEM_VERSION [[[UIDevice currentDevice] systemVersion] floatValue]
+
+
 @interface SMXConstants
 
 @end
