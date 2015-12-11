@@ -315,17 +315,31 @@ NSInteger webViewLoadCounter;
     
 	if (navigationType == UIWebViewNavigationTypeLinkClicked)
 	{
+        
+        
+        if ([StringUtil containsString:@"forgotpassword.jsp" inString:[request.URL absoluteString]] ) // Defect#025424. Only coded for Forgot Password. Other links will open up in the App itself. Have to be handled as and when they appear in future in Salesforce Login Page.
+        {
+            /**  User in forgot password page, lets redirect to mobile safari */
+            [[UIApplication sharedApplication] openURL:request.URL];
+            SXLogInfo(@"Return NO : kRedirectURL %@", request.URL);
+            
+            return NO;
+        }
+        
+        /*
+        
         // Krishna : Fixed With reference to defect 011758.
         // Apart from Custom domain lets redirect to mobile safari.
         // logout.jsp, because 'Not you?' in confirmation page should not redirect to mobile safari
         if (![StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]])
 		{
-            /**  User in forgot password page, lets redirect to mobile safari */
+            //  User in forgot password page, lets redirect to mobile safari
 			[[UIApplication sharedApplication] openURL:request.URL];
             SXLogInfo(@"Return NO : kRedirectURL %@", request.URL);
             
 			return NO;
 		}
+         */
 	}
     
     if ([[request.URL absoluteString] hasPrefix:kRedirectURL])
@@ -367,6 +381,8 @@ NSInteger webViewLoadCounter;
 	{
         SXLogDebug(@" OAuth :  logout.jsp");
         [self reloadAuthorization];
+        
+        return NO;  //Defect#025424 crashing in iOS9+.
 	}
     else
     {
