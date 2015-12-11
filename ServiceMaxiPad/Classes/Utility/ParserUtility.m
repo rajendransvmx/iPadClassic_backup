@@ -7,6 +7,7 @@
 //
 
 #import "ParserUtility.h"
+#import "ModifiedRecordModel.h"
 
 @implementation ParserUtility
 
@@ -50,7 +51,13 @@
     
     //Step 3]
     
-    [modelObject setValuesForKeysWithDictionary:commonMutDict];
+    //Niraj conflict problem
+    //Here modelObject is <ModifiedRecordModel: 0x190cbbb0>
+    if ([modelObject isKindOfClass:[ModifiedRecordModel class]]){
+        [modelObject addValuefromDictionary:commonMutDict];
+    }else{
+        [modelObject setValuesForKeysWithDictionary:commonMutDict];
+    }
     //NSLog(@"Final Model Object is %@",modelObject);
     return modelObject;
     
