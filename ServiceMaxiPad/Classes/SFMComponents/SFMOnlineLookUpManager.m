@@ -450,7 +450,8 @@
     
     SFMRecordFieldData *recordData = [self.delegate getLiteralValueThroughDelegateForLiteral:subcriteria];
     NSString *literalValue = recordData.internalValue;
-    
+    if(!literalValue)
+        literalValue = @"";
     criteriaString =[criteriaString stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"[%@]",subcriteria] withString:literalValue];
     return criteriaString;
 }
