@@ -50,15 +50,15 @@
     }
     
     //Step 3]
-    
-    //Niraj conflict problem
     //Here modelObject is <ModifiedRecordModel: 0x190cbbb0>
-    if ([modelObject isKindOfClass:[ModifiedRecordModel class]]){
+    
+    /* roll back productIQ change */
+   /* if ([modelObject isKindOfClass:[ModifiedRecordModel class]]){
         [modelObject addValuefromDictionary:commonMutDict];
     }else{
         [modelObject setValuesForKeysWithDictionary:commonMutDict];
-    }
-    //NSLog(@"Final Model Object is %@",modelObject);
+    }*/
+    [modelObject setValuesForKeysWithDictionary:commonMutDict];
     return modelObject;
     
 }
