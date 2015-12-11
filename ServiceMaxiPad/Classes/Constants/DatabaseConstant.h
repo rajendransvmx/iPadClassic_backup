@@ -253,6 +253,9 @@ extern NSString *const kSLAClockPaused;
 extern NSString *const kSLAResolutionInternal;
 extern NSString *const kSLARestorationInternal;
 
+/*Work Detail Summary*/
+extern NSString *const kSerialNumber;
+
 /*Sorting Order*/
 extern NSString *const kFieldAPIName;
 

@@ -141,10 +141,44 @@
                 }
             }
         }
+        
+        NSString *workOrderSfId = [[sfmPageView.sfmPage.headerRecord objectForKey:@"Id"] internalValue];
+        
+        //Now check for WorkDetail object. (kWorkOrderDetailTableName)
+        //This is specific to work detail --> serial number (record type: Products Serviced
+        [self getInstallBaseIdsForWorkDetailObject:kWorkOrderDetailTableName withWorkOrderId:workOrderSfId];
     }
 
     return productIQFieldsAvailable;
 }
+
+- (void)getInstallBaseIdsForWorkDetailObject:(NSString*)objectName withWorkOrderId:(NSString*)workOrderSfId{
+    //get sfid from SFRecord table if record type is "Products Serviced".
+    NSString *sfrecordTypeId = [self getRecordIdForObject:kSFRecordType withFieldName:kRecordTypeId withRecordType:kRecordType];
+    
+    TransactionObjectService *services = [[TransactionObjectService alloc] init];
+    
+    DBCriteria * criteria1 = nil;
+    DBCriteria * criteria2 = nil;
+    
+    criteria1 = [[DBCriteria alloc] initWithFieldName: kRecordTypeId operatorType:SQLOperatorEqual andFieldValue:sfrecordTypeId];
+    
+    criteria2 = [[DBCriteria alloc] initWithFieldName:kWorkOrderTableName operatorType:SQLOperatorEqual andFieldValue:workOrderSfId];
+    
+    
+    NSString * advExpression = @"(1 AND 2)";
+    
+    NSArray *records = [services fetchDataForObjectForSfmPage:objectName fields:@[kSerialNumber] expression:advExpression criteria:@[criteria1,criteria2]];
+    
+    for (TransactionObjectModel *model in records) {
+        NSDictionary *dictionary = [model getFieldValueDictionary];
+        NSString *installBaseId = [dictionary objectForKey:kSerialNumber];
+        if (![StringUtil isStringEmpty:installBaseId]) {
+            [self.recordIds addObject:installBaseId];
+        }
+    }
+    
+   }
 
 /*
  
@@ -340,6 +374,19 @@
         return insertedRecords;
         
     }
+}
+
+- (NSString*)getRecordIdForObject:(NSString*)tableName withFieldName:(NSString*)fieldName withRecordType:(NSString*)recordType {
+    
+    DBCriteria * criteia = [[DBCriteria alloc] initWithFieldName:recordType operatorType:SQLOperatorEqual andFieldValue:@"Products Serviced"];
+    
+    TransactionObjectService *services = [[TransactionObjectService alloc] init];
+    
+    TransactionObjectModel *transactionObject = [services getDataForObject:tableName fields:@[fieldName] expression:nil criteria:@[criteia]];
+    
+    NSString *fieldValue = [[transactionObject getFieldValueDictionary] objectForKey:fieldName];
+    
+    return fieldValue;
 }
 
 /*

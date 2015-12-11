@@ -107,6 +107,9 @@ NSString *const kWorkOrderOrderStatus           = ORG_NAME_SPACE@"__Order_Status
 NSString *const kWorkOrderScheduledDateTime     = ORG_NAME_SPACE@"__Scheduled_Date_Time__c";
 NSString *const kWorkOrderSite                  = ORG_NAME_SPACE@"__Site__c";
 
+/*Work Detail Summary*/
+NSString *const kSerialNumber                   = ORG_NAME_SPACE@"__Serial_Number__c";
+
 
 /* PROCESS constants*/
 NSString *const kProcessTypeView                = @"VIEW RECORD";
