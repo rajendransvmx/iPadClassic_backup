@@ -354,6 +354,16 @@
         }
     }
     
+    
+    // 013386
+    if (self.requestType == RequestOneCallDataSync) {
+        SXLogDebug(@"==============\n clientRequestIdentifier remembered on error.: %@\n\n==============", self.clientRequestIdentifier);
+        
+        [[NSUserDefaults standardUserDefaults] setObject:self.clientRequestIdentifier forKey:@"requestIdentifier"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
+    
     /** Content type */
     [urlRequest setValue:kContentType forHTTPHeaderField:@"content-type"];
     [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Accept-Encoding"];
@@ -1367,16 +1377,6 @@
 
 - (void)didRequestFailedWithError:(id)error andResponse:(id)someResponseObj
 {
-
-//    [self.requestIdentifier
-    
-    if (self.requestType == RequestOneCallDataSync)
-    {
-        SXLogDebug(@"==============\n clientRequestIdentifier remembered on error.: %@\n\n==============", self.clientRequestIdentifier);
-        
-        [[NSUserDefaults standardUserDefaults] setObject:self.clientRequestIdentifier forKey:@"requestIdentifier"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-    }
     
     [self.serverRequestdelegate didRequestFailedWithError:error Response:someResponseObj andRequestObject:self];
 }
