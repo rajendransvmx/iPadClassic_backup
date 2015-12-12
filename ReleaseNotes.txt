@@ -4,16 +4,9 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.108
+Version = 15.99.109
  
-defects
-=========
-
-Merged back the code for forward porting defect fixes:
-
-13386
-25215
-25274
+Added latest js files for productIQ.
 
 ===========================================
 
