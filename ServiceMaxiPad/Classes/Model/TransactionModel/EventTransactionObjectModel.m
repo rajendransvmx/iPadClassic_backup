@@ -49,19 +49,19 @@
 {
     [self setTheKeys];
     
-//    NSDate *startDate = [DateUtil getLocalTimeFromDateBaseDate:[self valueForField:keyStartDateTime]];
-//    NSDate *endDate = [DateUtil getLocalTimeFromDateBaseDate:[self valueForField:keyEndDateTime]];
+    //    NSDate *startDate = [DateUtil getLocalTimeFromDateBaseDate:[self valueForField:keyStartDateTime]];
+    //    NSDate *endDate = [DateUtil getLocalTimeFromDateBaseDate:[self valueForField:keyEndDateTime]];
     
     NSDate *startDate;
     NSDate *endDate;
     
     NSMutableDictionary *theDict = (NSMutableDictionary *) [self getFieldValueDictionary];
-
+    
     isAllDayEvent=[[theDict objectForKey:keyIsAllDayEvent] boolValue];
     if (isAllDayEvent) {
         NSDictionary *theDateArray =[self getDateForAllDayEventOnDate:[self valueForField:keyStartDateTime] endDate:[self valueForField:keyEndDateTime]];
-            startDate = [theDateArray objectForKey:@"startDate"];
-            endDate = [theDateArray objectForKey:@"endDate"];
+        startDate = [theDateArray objectForKey:@"startDate"];
+        endDate = [theDateArray objectForKey:@"endDate"];
         
     }
     else
@@ -69,7 +69,7 @@
         startDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyStartDateTime]];
         endDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyEndDateTime]];
     }
-
+    
     if ([startDate isSameDay:endDate])
     {
         isMultiDay = NO;
@@ -129,8 +129,8 @@
     
     NSDate *startDate;
     NSDate *endDate;
-
-        
+    
+    
     if (isAllDayEvent) {
         NSDictionary *theDateArray =[self getDateForAllDayEventOnDate:[self valueForField:keyStartDateTime] endDate:[self valueForField:keyEndDateTime]];
         startDate = [theDateArray objectForKey:@"startDate"];
@@ -140,9 +140,9 @@
     {
         startDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyStartDateTime]];
         endDate = [CalenderHelper getStartEndDateTime:[self valueForField:keyEndDateTime]];
-
+        
     }
-  
+    
     
     if(!self.jsonEventArray)
         self.jsonEventArray = [NSMutableArray new];
@@ -152,7 +152,7 @@
     if (![self isMultidayForStartDate:startDate andEndDate:endDate])
         return;
     
-
+    
     int numberOfDays = [NSDate numberOfDaysFromStartDate:startDate andEndDate:endDate];
     NSDate *newStartDate;
     NSDate *newEndDate;
@@ -170,7 +170,7 @@
             newStartDate=[self changeTime:startDate newHour:0 newMin:0 numberOfday:i];//Middel Days
             newEndDate=[self changeTime:startDate newHour:23 newMin:59 numberOfday:i];
         }
-
+        
         float duration = [newEndDate timeIntervalSinceDate:newStartDate]/60;
         [self createObjectForStartDate:newStartDate andEndDate:newEndDate andDuration:duration number:numberOfDays+1 index:i];
     }
@@ -180,7 +180,7 @@
         newEndDate=[self changeTime:endDate newHour:23 newMin:59 numberOfday:0];
     else
         newEndDate=endDate;
-            
+    
     float duration = [newEndDate timeIntervalSinceDate:newStartDate]/60;
     [self createObjectForStartDate:newStartDate andEndDate:newEndDate andDuration:duration number:numberOfDays+1 index:numberOfDays];
 }
@@ -308,7 +308,7 @@
     [dateComponents setDay:numberOfDay]; // This is required to avoid Daylight saving effect.
     
     NSDate *end = [cal dateByAddingComponents:dateComponents toDate:date options:0];
-
+    
     NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:end];
     comp.hour = hour;
     comp.minute = min;
@@ -340,6 +340,20 @@
         NSDate *theEndDate = [cal dateFromComponents:comp];
         if(theEndDate)
             [dict setObject:theEndDate forKey:@"endDate"];
+        else
+        {
+            NSDate *lStartDate = [dict objectForKey:@"startDate"];
+            if (lStartDate) {
+                [dict setObject:lStartDate forKey:@"endDate"];
+            }
+        }
+    }
+    else
+    {
+        NSDate *lStartDate = [dict objectForKey:@"startDate"];
+        if (lStartDate) {
+            [dict setObject:lStartDate forKey:@"endDate"];
+        }
     }
     return dict;
 }
