@@ -7,7 +7,6 @@
 //
 
 #import "ParserUtility.h"
-#import "ModifiedRecordModel.h"
 
 @implementation ParserUtility
 
@@ -50,15 +49,9 @@
     }
     
     //Step 3]
-    //Here modelObject is <ModifiedRecordModel: 0x190cbbb0>
     
-    /* roll back productIQ change */
-   /* if ([modelObject isKindOfClass:[ModifiedRecordModel class]]){
-        [modelObject addValuefromDictionary:commonMutDict];
-    }else{
-        [modelObject setValuesForKeysWithDictionary:commonMutDict];
-    }*/
     [modelObject setValuesForKeysWithDictionary:commonMutDict];
+    //NSLog(@"Final Model Object is %@",modelObject);
     return modelObject;
     
 }

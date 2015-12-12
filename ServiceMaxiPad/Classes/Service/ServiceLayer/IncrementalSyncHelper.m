@@ -307,12 +307,7 @@
             /* It is local Id , so get the sfid */
             NSString *sfIdValue =   [transObj getSfIdForLocalId:referenceId forObjectName:referenceTo];  //[self sfIdForLocalId:referenceId inTable:referenceTo];
             
-            
-            //This localId change for productIQ, In productIQ we are copying local id of the record
-            /* roll back productIQ change */
-            //if ((![StringUtil checkIfStringEmpty:sfIdValue]) && (sfIdValue.length < 30) && (sfIdValue.length > 3))
-            if (sfIdValue.length > 3)
-            {   //sfId is there
+            if (sfIdValue.length > 3) {   //sfId is there
                 
                 /* Sfid exist and can be replaced */
                 [recordDictionary setObject:sfIdValue forKey:key];

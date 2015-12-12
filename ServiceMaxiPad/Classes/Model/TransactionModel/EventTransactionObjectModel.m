@@ -340,20 +340,6 @@
         NSDate *theEndDate = [cal dateFromComponents:comp];
         if(theEndDate)
             [dict setObject:theEndDate forKey:@"endDate"];
-        else
-        {
-            NSDate *lStartDate = [dict objectForKey:@"startDate"];
-            if (lStartDate) {
-                [dict setObject:lStartDate forKey:@"endDate"];
-            }
-        }
-    }
-    else
-    {
-        NSDate *lStartDate = [dict objectForKey:@"startDate"];
-        if (lStartDate) {
-            [dict setObject:lStartDate forKey:@"endDate"];
-        }
     }
     return dict;
 }

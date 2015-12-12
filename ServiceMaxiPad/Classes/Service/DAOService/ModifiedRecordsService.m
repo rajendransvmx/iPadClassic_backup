@@ -474,8 +474,6 @@
             while ([resultSet next]) {
                 ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
                 NSDictionary *dict = [resultSet resultDictionary];
-                /* roll back productIQ change */
-                //NSDictionary *dict = [resultSet resultDictionaryWithFieldsAsString];
                 [ParserUtility parseJSON:dict toModelObject:model withMappingDict:nil];
                 [records addObject:model];
             }

@@ -24,7 +24,7 @@
 
 #import "ModifiedRecordModel.h"
 
-@implementation ModifiedRecordModel
+@implementation ModifiedRecordModel 
 
 @synthesize localId;
 @synthesize recordLocalId;
@@ -48,28 +48,28 @@
 
 - (id)init
 {
-    self = [super init];
-    if (self != nil)
+	self = [super init];
+	if (self != nil)
     {
-        //Initialization
-    }
-    return self;
+		//Initialization
+	}
+	return self;
 }
 
 - (void)dealloc
 {
-    recordLocalId = nil;
+	recordLocalId = nil;
     sfId = nil;
     recordType = nil;
     operation = nil;
     objectName = nil;
-    parentObjectName = nil;
+	parentObjectName = nil;
     parentLocalId = nil;
     recordSent = nil;
-    webserviceName = nil;
+	webserviceName = nil;
     className = nil;
     syncType = nil;
-    headerLocalId = nil;
+	headerLocalId = nil;
     requestData = nil;
     requestId = nil;
     timeStamp = nil;
@@ -80,5 +80,4 @@
 {
     SXLogInfo(@"recordLocalId : %@ \n sfId : %@ \n recordType : %@ \n operation : %@ \n  objectName : %@ \n parentObjectName : %@ \n parentLocalId : %@ \n  recordSent : %@ \n webserviceName : %@ \n className : %@ \n syncType : %@ \n headerLocalId : %@ \n  requestData : %@ \n requestId : %@ \n timeStamp : %@,fieldsModified = %@",  recordLocalId,sfId, recordType,operation,objectName, parentObjectName,parentLocalId,recordSent,webserviceName,className,syncType,headerLocalId,requestData,requestId,timeStamp,fieldsModified);
 }
-
 @end
