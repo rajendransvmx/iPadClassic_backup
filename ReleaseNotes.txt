@@ -4,14 +4,17 @@ ServiceMax iPad Win16Build
 
 *******************************************
 
-Version = 15.99.106
+Version = 15.99.107
  
 defects
 =========
 
-25274
-25215
-13386
+Reverted back to build 15.99.105
+
+But merged back the code changes for
+
+25408
+26110
 
 ===========================================
 
