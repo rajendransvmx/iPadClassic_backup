@@ -45,9 +45,7 @@
 @property(nonatomic, strong) NSString *requestId;
 @property(nonatomic, strong) NSString *timeStamp;
 @property(nonatomic, strong) NSString *fieldsModified;
-@property(nonatomic, strong) NSString *Pending;
-@property(nonatomic, strong) NSString *fieldName;
-@property(nonatomic, strong) NSString *type;
+
 @property(nonatomic) BOOL cannotSendToServer;
 @property(nonatomic, strong) NSString *jsonRecord;
 
@@ -55,7 +53,7 @@
 @property(nonatomic, strong) NSString *overrideFlag;
 
 - (id)init;
--(void)addValuefromDictionary:(NSDictionary *)dict;
+
 - (void)explainMe;
 
 @end
