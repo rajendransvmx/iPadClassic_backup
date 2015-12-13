@@ -900,9 +900,10 @@
 
 -(id)getLiteralValueThroughDelegateForLiteral:(NSString *)literal;
 {
-    if ([self.delegate isKindOfClass:[PageEditChildListViewController class]])
-        return [self.delegate getInternalValueForLiteralForLookUp:literal];
-    else
+//   Commenting due to re-opening of 026110
+// if ([self.delegate isKindOfClass:[PageEditChildListViewController class]])
+//        return [self.delegate getInternalValueForLiteralForLookUp:literal];
+//    else
         return [self.delegate getInternalValueForLiteral:literal];
 }
 

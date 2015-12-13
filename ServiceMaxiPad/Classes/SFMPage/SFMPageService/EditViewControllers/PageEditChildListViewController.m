@@ -248,12 +248,17 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     }];
 }
 
+//Commenting getInternalValueForLiteralForLookUp cause this method will be triggered only if lookup is triggered for line record before it being created. Hence there is no detail line record present yet.
+/* Commenting due to re-opening of 026110
 - (SFMRecordFieldData *)getInternalValueForLiteralForLookUp:(NSString *)lietral
 {
+ 
     SFMDetailLayout * layout = [self.sfmPage.process.pageLayout.detailLayouts
                                 objectAtIndex:self.selectedIndexPath.section];
-    NSString *compId = layout.processComponentId;
     
+    NSString *compId = layout.processComponentId;
+    compId = self.detailLayout.processComponentId;
+    NSLog(@"row:%ld, section;%ld",self.selectedIndexPath.row, self.selectedIndexPath.section);
     NSArray *detailArray = [self.sfmPage.detailsRecord objectForKey:compId];
     NSDictionary *recordDataDict = [detailArray objectAtIndex:self.selectedIndexPath.row];
     
@@ -269,13 +274,15 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     
     return recordData;
 }
+*/
 
 - (SFMRecordFieldData *)filterCriteriaForContextFilter:(NSString *)fieldName forHeaderObject:(NSString *)headerValue {
     
     if([headerValue isEqualToString:kcurrentRecordContextFilter ] || [headerValue length] == 0 || [headerValue isEqualToString:@""]) {
         
+        /* commenting to re-opening of 026110
         SFMDetailLayout * layout = [self.sfmPage.process.pageLayout.detailLayouts
-                                    objectAtIndex:self.selectedIndexPath.section];
+                                    objectAtIndex:self.selectedIndexPath.row];
         NSString *compId = layout.processComponentId;
         
         NSArray *detailArray = [self.sfmPage.detailsRecord objectForKey:compId];
@@ -283,6 +290,8 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         
         SFMRecordFieldData *recordData = [recordDataDict objectForKey:fieldName];
         return recordData;
+         */
+        return nil;
         
     }
     else {
