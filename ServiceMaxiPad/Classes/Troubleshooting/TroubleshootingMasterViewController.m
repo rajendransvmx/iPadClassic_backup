@@ -28,6 +28,7 @@
 #import "TagConstant.h"
 #import "TroubleshootDataModel.h"
 #import "SNetworkReachabilityManager.h"
+#import "AlertViewHandler.h"
 
 @interface TroubleshootingMasterViewController()
 
@@ -60,7 +61,7 @@
     self.troubleshootTableView.tableFooterView = [[UIView alloc] init] ;
     self.detailViewController = [self.smSplitViewController.viewControllers lastObject];
     self.searchBar.placeholder = [[TagManager sharedInstance]tagByName:kTag_search];
-   
+    
 }
 
 #pragma mark - TableView delegate methods
@@ -75,7 +76,7 @@
     return 1;
 }
 
- - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 60.0f;
 }
@@ -84,26 +85,26 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *cellIdentifier = @"TroubleshootCell1";
-     if ([self.productDetailsArray count] > 0)
-     {
-         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-         
-         if (cell == nil)
-         {
-             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-             [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-         }
-         
-         TroubleshootDataModel *model =[self.productDetailsArray objectAtIndex:indexPath.row];
-         cell.textLabel.text = model.Name;
-         cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
-         cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
-         cell.textLabel.highlightedTextColor = [UIColor colorWithHexString:kWhiteColor];
-         UIView *bgColorView = [[UIView alloc] init];
-         [bgColorView setBackgroundColor:[UIColor colorWithHexString:kMasterSelectionColor]];
-         [cell setSelectedBackgroundView:bgColorView];
-         return cell;
-     }
+    if ([self.productDetailsArray count] > 0)
+    {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        
+        if (cell == nil)
+        {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+            [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
+        }
+        
+        TroubleshootDataModel *model =[self.productDetailsArray objectAtIndex:indexPath.row];
+        cell.textLabel.text = model.Name;
+        cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
+        cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
+        cell.textLabel.highlightedTextColor = [UIColor colorWithHexString:kWhiteColor];
+        UIView *bgColorView = [[UIView alloc] init];
+        [bgColorView setBackgroundColor:[UIColor colorWithHexString:kMasterSelectionColor]];
+        [cell setSelectedBackgroundView:bgColorView];
+        return cell;
+    }
     return nil;
 }
 
@@ -128,9 +129,14 @@
         else
         {
             [self.detailViewController loadWebViewForThedocId:@"" andThedocName:@""];
-
-            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-            [alertView show];
+            
+            //            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+            //            [alertView show];
+            
+            
+            AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+            [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:@"File format is incorrect"  Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
+            
         }
         [self setDetailButtonTitle:model.Name];
     }
@@ -159,10 +165,10 @@
             }
             else
             {
-                 [self addActivityAndLoadingLabel];
+                [self addActivityAndLoadingLabel];
                 [TroubleshootingDataLoader makingRequestForDetailsByProductName:self.searchBar.text
                                                           withTheCallerDelegate:self];
-               
+                
                 
             }
             
@@ -188,8 +194,17 @@
                 {
                     [self.detailViewController loadWebViewForThedocId:@"" andThedocName:@""];
                     
-                    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-                    [alertView show];
+                    //                    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+                    //                    [alertView show];
+                    
+                    
+                    AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+                    [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
+                                          Message:@"File format is incorrect"
+                                         Delegate:self
+                                     cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+                                   andOtherButton:nil];
+                    
                 }
                 [self removeActivityAndLoadingLabel];
             }
@@ -207,7 +222,7 @@
 - (void) setDetailButtonTitle:(NSString *)title
 {
     [self.detailViewController setContentWithItem:title];
-
+    
 }
 
 
@@ -242,8 +257,13 @@
                             else
                             {
                                 [self.detailViewController loadWebViewForThedocId:@"" andThedocName:@""];
-                                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-                                [alertView show];
+                                //                                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+                                //                                [alertView show];
+                                
+                                
+                                AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+                                [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:@"File format is incorrect"  Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
+                                
                             }
                             
                         }
