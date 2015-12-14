@@ -826,6 +826,7 @@
 		57186B5C19EF9DDD00B4642A /* TroubleshootingMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B5219EF9DDD00B4642A /* TroubleshootingMasterViewController.m */; };
 		57186B5D19EF9DDD00B4642A /* TroubleshootingMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57186B5319EF9DDD00B4642A /* TroubleshootingMasterViewController.xib */; };
 		57186B6319EF9E4300B4642A /* TroubleshootingParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B6219EF9E4300B4642A /* TroubleshootingParser.m */; };
+		572DD3CA1C1EA5D7007058EB /* AlertViewHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 572DD3C91C1EA5D7007058EB /* AlertViewHandler.m */; };
 		5732F0991A26FD8C009C2DFA /* TroubleshootingService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5732F0981A26FD8C009C2DFA /* TroubleshootingService.m */; };
 		5753E0541A0766D100B82FAC /* DataPurgeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5753E0531A0766D100B82FAC /* DataPurgeParser.m */; };
 		577003F81A1B50A2002537FB /* ActionDisplayTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 577003F61A1B50A2002537FB /* ActionDisplayTableViewController.m */; };
@@ -2607,6 +2608,8 @@
 		57186B5619EF9DDD00B4642A /* TroubleshootingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TroubleshootingViewController.m; sourceTree = "<group>"; };
 		57186B6119EF9E4300B4642A /* TroubleshootingParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TroubleshootingParser.h; sourceTree = "<group>"; };
 		57186B6219EF9E4300B4642A /* TroubleshootingParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TroubleshootingParser.m; sourceTree = "<group>"; };
+		572DD3C81C1EA5D7007058EB /* AlertViewHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertViewHandler.h; sourceTree = "<group>"; };
+		572DD3C91C1EA5D7007058EB /* AlertViewHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertViewHandler.m; sourceTree = "<group>"; };
 		5732F08F1A26F8FA009C2DFA /* TroubleshootingDAO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TroubleshootingDAO.h; sourceTree = "<group>"; };
 		5732F0971A26FD8C009C2DFA /* TroubleshootingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TroubleshootingService.h; sourceTree = "<group>"; };
 		5732F0981A26FD8C009C2DFA /* TroubleshootingService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TroubleshootingService.m; sourceTree = "<group>"; };
@@ -6006,6 +6009,8 @@
 				57186B5319EF9DDD00B4642A /* TroubleshootingMasterViewController.xib */,
 				57186B5519EF9DDD00B4642A /* TroubleshootingViewController.h */,
 				57186B5619EF9DDD00B4642A /* TroubleshootingViewController.m */,
+				572DD3C81C1EA5D7007058EB /* AlertViewHandler.h */,
+				572DD3C91C1EA5D7007058EB /* AlertViewHandler.m */,
 			);
 			path = Troubleshooting;
 			sourceTree = "<group>";
@@ -7617,6 +7622,7 @@
 				9E335E051A4144E600D8CC39 /* SMDataPurgeHelper.m in Sources */,
 				D752644919EB9278006AAC4C /* SFMLookUpDeatilViewController.m in Sources */,
 				183A9F1119E6A15600919345 /* ZKQueryResult.m in Sources */,
+				572DD3CA1C1EA5D7007058EB /* AlertViewHandler.m in Sources */,
 				183A9E4F19E69DB000919345 /* SFReferenceToModel.m in Sources */,
 				183AA06A19E6C93400919345 /* SearchDetailViewController.m in Sources */,
 				184A8F2219E7B7AD006DA6BE /* ZipArchive.mm in Sources */,

@@ -19,6 +19,7 @@
 #import "StyleGuideConstants.h"
 #import "TagManager.h"
 #import "SNetworkReachabilityManager.h"
+#import "AlertViewHandler.h"
 
 
 @interface TroubleshootingDetailViewController()
@@ -148,8 +149,12 @@
             }
             else
             {
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-                [alertView show];
+//                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+//                [alertView show];
+//                
+//                
+                AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+                [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:@"File format is incorrect"  Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
                 
             }
         }
@@ -157,8 +162,11 @@
         {
             [self.webView loadHTMLString:fileContents baseURL:baseURL];
             [self removeActivityAndLoadingLabel];
-            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-            [alertView show];
+//            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+//            [alertView show];
+            
+            AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+            [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:@"File format is incorrect"  Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
             
         }
         
@@ -167,8 +175,13 @@
     else
     {
         [self.webView loadHTMLString:@"" baseURL:nil];
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]  message:@"File not found" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-        [alertView show];
+//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]  message:@"File not found" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+//        [alertView show];
+        
+        
+        AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+        [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:@"File format is incorrect"  Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
+
         
     }
     

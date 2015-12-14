@@ -19,6 +19,7 @@
 #import "ProductManualDataLoader.h"
 #import "Reachability.h"
 #import "SNetworkReachabilityManager.h"
+#import "AlertViewHandler.h"
 
 @interface ProductManualDetail ()
 {
@@ -95,21 +96,38 @@
             else
             {
                 [self removeActivityAndLoadingLabel];
-                UIAlertView * alertview = [[UIAlertView alloc] initWithTitle:title message:@"The Product Manual not found " delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+//                UIAlertView * alertview = [[UIAlertView alloc] initWithTitle:title message:@"The Product Manual not found " delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+//                
+//                [alertview show];
                 
-                [alertview show];
+                
+                AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+                [alert showAlertViewWithTitle:title Message:@"The Product Manual not found "
+                                     Delegate:self
+                                 cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+                               andOtherButton:nil];
             }
         }
         else {
             
             self.webView.hidden = YES;
             [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[self.productName lastPathComponent] stringByDeletingPathExtension]
-                                                                message:@"Product Manual file format is not supported"
-                                                               delegate:self
-                                                      cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-                                                      otherButtonTitles:nil, nil];
-            [alertView show];
+//            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[self.productName lastPathComponent] stringByDeletingPathExtension]
+//                                                                message:@"Product Manual file format is not supported"
+//                                                               delegate:self
+//                                                      cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+//                                                      otherButtonTitles:nil, nil];
+//            
+//            [alertView show];
+            
+            
+            AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+            [alert showAlertViewWithTitle:[[self.productName lastPathComponent] stringByDeletingPathExtension]
+                                  Message:@"Product Manual file format is not supported"
+                                 Delegate:self
+                             cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+                           andOtherButton:nil];
+
             [self removeActivityAndLoadingLabel];
         }
     }
@@ -139,8 +157,16 @@
         self.webView.hidden = YES;
        //[self.webView stringByEvaluatingJavaScriptFromString:@"document.open();document.close()"];
       [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:fileNameTODisplay message:@"Product Manual file format is not supported" delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-        [alertView show];
+//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:fileNameTODisplay message:@"Product Manual file format is not supported" delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+//        [alertView show];
+        
+        AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+        [alert showAlertViewWithTitle:fileNameTODisplay
+                              Message:@"Product Manual file format is not supported"
+                             Delegate:self
+                         cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+                       andOtherButton:nil];
+
         [self removeActivityAndLoadingLabel];
     }
   }

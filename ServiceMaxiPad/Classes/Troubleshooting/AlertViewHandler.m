@@ -1,0 +1,59 @@
+//
+//  AlertViewHandler.m
+//  ServiceMaxiPad
+//
+//  Created by Chinna Babu on 14/12/15.
+//  Copyright © 2015 ServiceMax Inc. All rights reserved.
+//
+
+#import "AlertViewHandler.h"
+#import "SMXConstants.h"
+
+@implementation AlertViewHandler
+
+
+/* UIAlertView is depricated in ios 8.0 and above*/
+/* defect number 026133 */
+
+- (void)showAlertViewWithTitle:(NSString *)title
+                       Message:(NSString *)messaage
+                      Delegate:(id)delegate
+                  cancelButton:(NSString *)cancelButton
+                andOtherButton:(NSString *)otherButton
+{
+    if (SYSTEM_VERSION < 8.0)
+    {
+        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:title
+                                                           message:messaage
+                                                          delegate:self
+                                                 cancelButtonTitle:cancelButton
+                                                 otherButtonTitles:otherButton, nil];
+        [alertView show];
+        
+    }
+    else
+    {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:messaage preferredStyle:(UIAlertControllerStyleAlert)];
+        
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:cancelButton style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
+            
+            [delegate dismissViewControllerAnimated:YES completion:nil];
+            
+            
+        }];
+        
+       
+        
+        [alertController addAction:cancelAction];
+        
+        [delegate presentViewController:alertController animated:YES completion:nil];
+
+
+    }
+    
+    
+    
+}
+
+
+@end

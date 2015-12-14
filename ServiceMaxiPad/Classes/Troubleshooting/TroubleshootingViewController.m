@@ -32,6 +32,7 @@
 #import "TroubleshootDataModel.h"
 #import "SNetworkReachabilityManager.h"
 #import "UIBarButtonItem+TKCategory.h"
+#import "AlertViewHandler.h"
 
 @interface TroubleshootingViewController ()
 <SMActionSideBarViewControllerDelegate,ActionMenuDelegate>
@@ -194,13 +195,8 @@
                     }
                     else
                     {
-                        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                                                                           message:[[TagManager sharedInstance]tagByName:kTagTroubleShootingError]
-                                                                          delegate:self
-                                                                 cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
-                                                                 otherButtonTitles:nil, nil];
-                        [alertView show];
-                        
+                        AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+                        [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:[[TagManager sharedInstance]tagByName:kTagTroubleShootingError] Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
                     }
                 }
                 else if(st.syncStatus == SyncStatusFailed)
@@ -242,12 +238,20 @@
         if(!([self.productName  length]) > 0)
         {
             
-            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                                                               message:[[TagManager sharedInstance]tagByName:kTagTroubleShootingError]
-                                                              delegate:self
-                                                     cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
-                                                     otherButtonTitles:nil, nil];
-            [alertView show];
+//            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
+//                                                               message:[[TagManager sharedInstance]tagByName:kTagTroubleShootingError]
+//                                                              delegate:self
+//                                                     cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+//                                                     otherButtonTitles:nil, nil];
+//            [alertView show];
+            
+            
+            AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+            [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
+                                  Message:[[TagManager sharedInstance]tagByName:kTagTroubleShootingError]
+                                 Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+                           andOtherButton:nil];
+
             [self removeActivityAndLoadingLabel];
         }
         else
@@ -308,12 +312,24 @@
 {
     if ( [StringUtil isStringEmpty:self.productId])
     {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                                                           message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent]
-                                                          delegate:self
-                                                 cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
-                                                 otherButtonTitles:nil, nil];
-        [alertView show];
+//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
+//                                                           message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent]
+//                                                          delegate:self
+//                                                 cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+//                                                 otherButtonTitles:nil, nil];
+//        
+//        
+//        
+//        
+//        [alertView show];
+        
+        
+        AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+        [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
+                              Message:kTagProductManualNotPresent
+                             Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+                       andOtherButton:nil];
+
         
     }
     else
@@ -343,12 +359,20 @@
     }
     else
     {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                                                           message:@"File format is incorrect"
-                                                          delegate:nil
-                                                 cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-                                                 otherButtonTitles:nil, nil];
-        [alertView show];
+//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
+//                                                           message:@"File format is incorrect"
+//                                                          delegate:nil
+//                                                 cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+//                                                 otherButtonTitles:nil, nil];
+        
+        
+        AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+        [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
+                              Message:@"File format is incorrect"
+                             Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
+                       andOtherButton:nil];
+
+       // [alertView show];
     }
     
 }
