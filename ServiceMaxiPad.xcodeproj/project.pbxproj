@@ -7888,7 +7888,7 @@
 					"sqlcipher-static-ios/include",
 				);
 				INFOPLIST_FILE = "ServiceMaxiPad/ServiceMaxiPad-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/ExternalFrameworks/ZBarSDK",
@@ -7922,7 +7922,7 @@
 					"sqlcipher-static-ios/include",
 				);
 				INFOPLIST_FILE = "ServiceMaxiPad/ServiceMaxiPad-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/ExternalFrameworks/ZBarSDK",
