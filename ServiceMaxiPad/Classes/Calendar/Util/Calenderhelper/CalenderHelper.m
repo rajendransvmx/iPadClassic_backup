@@ -970,6 +970,10 @@
             NSDictionary *dict=[model getFieldValueDictionary];
             [dictI setObject:[dict objectForKey:@"Name"] forKey:[dict objectForKey:kId]];
         }
+        
+        if (dictI.count != ids.count) {
+            return nil;
+        }
         return [self getList:dictI productId:ids];
     }else{
         return nil;
