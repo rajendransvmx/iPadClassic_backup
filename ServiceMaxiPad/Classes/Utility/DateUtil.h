@@ -188,7 +188,7 @@ static NSString *kDateFormatType3   = @"%a, %d %b %Y %H:%M:%S";  /** Sun, 19 May
 static NSString *kDateFormatType4   = @"%Y-%m-%dT%H:%M:%S";      /** Sun, 18 May 2014 16:36:20 */
 static NSString *kDateFormatType5   = @"EEE, dd MMM yyyy";  //ANOOP 017148: @"%a, %d %b %Y";/** Sun, 18 May 2014 **/
 static NSString *kDateFormatType6   = @"%I:%M %p";               /** 8:36 PM **/
-static NSString *kDateFormatType7   = @"EEE. mm/dd/yyyy"; //ANOOP 017148: @"%a. %m/%d/%Y  -";         /** Wed. 10/22/2014  -*/
+static NSString *kDateFormatType7   = @"EEE. MM/dd/yyyy"; //ANOOP 017148: @"%a. %m/%d/%Y  -";         /** Wed. 10/22/2014  -*/
 static NSString *kDateFormatType9   = @"%Y-%m-%d %H:%M:%S %z";      /** 2014-05-18 16:36:20 +0530*/
 
 static NSString *kDateFormatType12Hr   = @"%a, %d %b %Y %r";
