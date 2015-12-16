@@ -400,7 +400,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         PageEditMasterViewController *masterViewController = [self.childViewControllers objectAtIndex:0];
         masterViewController.sfmPage = self.sfmPage;
         if ([masterViewController conformsToProtocol:@protocol(PageEditViewControllerDelegate)]) {
-            [masterViewController reloadData];
+           [masterViewController reloadData];
         }
         
     }
@@ -1400,19 +1400,26 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     [self performSelectorOnMainThread:@selector(updateTheSFMPage:) withObject:responseString waitUntilDone:YES];
     
+   // [self updateTheSFMPage:responseString];
+    
     
     if ([event isEqualToString:@"onLoad"]) {
         [self enableUI];
         [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
     }
-    
     [self performSelectorOnMainThread:@selector(reloadDataToFirstSection) withObject:nil waitUntilDone:YES];
+
     
     if ([event isEqualToString:@"onSave"]) {
         //[self test];
-        [self performSelector:@selector(bizRuleExecute) withObject:nil afterDelay:3.0];
+        [self performSelector:@selector(bizRuleExecute) withObject:nil afterDelay:0.0];
+        
+        //[self performSelectorOnMainThread:@selector(bizRuleExecute) withObject:nil waitUntilDone:YES];
+
+       // [self bizRuleExecute];
         
     }
+
 }
 
 -(void)updateTheSFMPage:(NSString *)responseString
