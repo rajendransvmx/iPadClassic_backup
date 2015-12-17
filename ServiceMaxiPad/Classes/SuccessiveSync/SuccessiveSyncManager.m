@@ -218,12 +218,12 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
 {
     @synchronized([self class]){
         
-        NSLog(@"shouldPerformSyccessiveSync");
+//        NSLog(@"shouldPerformSyccessiveSync");
         
         if ([self shouldPerformSyccessiveSync:syncRecord.recordLocalId]) {
             
             if ([record isKindOfClass:[NSDictionary class]]) {
-                NSLog(@"Successive sync call");
+//                NSLog(@"Successive sync call");
                 
                 syncRecord.recordDictionary  = [[NSMutableDictionary alloc]initWithDictionary:record];
             }

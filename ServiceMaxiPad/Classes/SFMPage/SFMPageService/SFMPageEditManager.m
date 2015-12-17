@@ -2057,6 +2057,11 @@
         NSDictionary *finalDict = [sourceRecords objectForKey:localId];
         NSString * sfId = [finalDict objectForKey:kId];
         
+        self.dataDictionaryAfterModification = [NSMutableDictionary dictionaryWithDictionary:finalDict];
+        
+        NSString *modifiedFieldAsJsonString = [self getJsonStringAfterComparisionForObject:objectName recordId:localId sfid:sfId andSettingsFlag:YES];
+        
+        
         SFMPageEditHelper *editHelper = [[SFMPageEditHelper alloc] init];
         
         ModifiedRecordModel * syncRecord = [[ModifiedRecordModel alloc] init];
@@ -2069,7 +2074,7 @@
         id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
         /* Check if record exist */
         BOOL isRecordExist =  [transObjectService isRecordExistsForObject:objectName forRecordLocalId:localId];
-        if (isRecordExist) {
+        if (isRecordExist && ![StringUtil isStringEmpty:sfId]) {
             
             syncRecord.operation = kModificationTypeUpdate;
             recordUpdatedSuccessFully = [editHelper updateFinalRecord:finalDict inObjectName:objectName andLocalId:localId];
@@ -2077,12 +2082,30 @@
         syncRecord.recordType = recordType;//kRecordTypeMaster;
         syncRecord.sfId = sfId;
         
+        
+        BOOL canUpdate = YES;
+        
+        if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
+            if (![StringUtil isStringEmpty:modifiedFieldAsJsonString]) {
+                syncRecord.fieldsModified = modifiedFieldAsJsonString;
+            }
+            else if (self.isfieldMergeEnabled && ![StringUtil isStringEmpty:sfId]) {
+                canUpdate = NO;
+            }
+        }
+        
+        
         /*after save  make an entry in trailer table*/
-        if (recordUpdatedSuccessFully) {
+        if (recordUpdatedSuccessFully && canUpdate) {
             id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
             BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localId];
             if (!doesExist) {
                 [modifiedRecordService saveRecordModel:syncRecord];
+            }
+            else {
+                if (self.isfieldMergeEnabled && ![StringUtil isStringEmpty:sfId] && [syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
+                    [modifiedRecordService updateFieldsModifed:syncRecord];
+                }
             }
             [[SuccessiveSyncManager sharedSuccessiveSyncManager] registerForSuccessiveSync:syncRecord withData:finalDict];
         }
