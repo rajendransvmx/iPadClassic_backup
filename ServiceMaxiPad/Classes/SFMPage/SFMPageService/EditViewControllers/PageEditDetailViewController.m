@@ -93,7 +93,10 @@ static NSString *cellIdentifier = @"cellIdentifier";
 }
 
 - (void)reloadData {
-    [self.tableView reloadData];
+    //[self.tableView reloadData];
+    
+    [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+
 }
 
 #pragma mark - Tableview data source and delegates

@@ -550,8 +550,10 @@
     
     SFMPageMasterSectionView *pageHeaderSectionView = (SFMPageMasterSectionView *)[self.masterTableView headerViewForSection:0];
     [self tappedOnButton:pageHeaderSectionView.rightButton withIndex:0];
+    
+    [self.masterTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
   
-    [self.masterTableView reloadData];
+    //[self.masterTableView reloadData];
     
     //Select first row of first section by default.
 //    [self.masterTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:0];
