@@ -959,6 +959,7 @@
     
 }
 
+
 /* Here we are getting value from product table*/
 +(NSArray *)getProductFromProductTable:(NSArray *)ids{
     DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:ids];
@@ -970,11 +971,16 @@
             NSDictionary *dict=[model getFieldValueDictionary];
             [dictI setObject:[dict objectForKey:@"Name"] forKey:[dict objectForKey:kId]];
         }
+        
+        if (dictI.count != ids.count) {
+            return nil;
+        }
         return [self getList:dictI productId:ids];
     }else{
         return nil;
     }
 }
+
 
 +(NSArray *)getList:(NSMutableDictionary *)productIdToNameDictionary productId:(NSArray *)productIds{
     

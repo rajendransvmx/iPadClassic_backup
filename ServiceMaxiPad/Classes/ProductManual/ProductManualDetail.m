@@ -38,7 +38,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     titleLabel = [UILabel new];
-
+    
     self.webView.delegate = self;
     self.webView.hidden = YES;
 }
@@ -96,9 +96,9 @@
             else
             {
                 [self removeActivityAndLoadingLabel];
-//                UIAlertView * alertview = [[UIAlertView alloc] initWithTitle:title message:@"The Product Manual not found " delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-//                
-//                [alertview show];
+                //                UIAlertView * alertview = [[UIAlertView alloc] initWithTitle:title message:@"The Product Manual not found " delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+                //
+                //                [alertview show];
                 
                 
                 AlertViewHandler *alert = [[AlertViewHandler alloc] init];
@@ -112,13 +112,13 @@
             
             self.webView.hidden = YES;
             [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-//            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[self.productName lastPathComponent] stringByDeletingPathExtension]
-//                                                                message:@"Product Manual file format is not supported"
-//                                                               delegate:self
-//                                                      cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-//                                                      otherButtonTitles:nil, nil];
-//            
-//            [alertView show];
+            //            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[self.productName lastPathComponent] stringByDeletingPathExtension]
+            //                                                                message:@"Product Manual file format is not supported"
+            //                                                               delegate:self
+            //                                                      cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+            //                                                      otherButtonTitles:nil, nil];
+            //
+            //            [alertView show];
             
             
             AlertViewHandler *alert = [[AlertViewHandler alloc] init];
@@ -127,7 +127,7 @@
                                  Delegate:self
                              cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
                            andOtherButton:nil];
-
+            
             [self removeActivityAndLoadingLabel];
         }
     }
@@ -155,10 +155,10 @@
     else
     {
         self.webView.hidden = YES;
-       //[self.webView stringByEvaluatingJavaScriptFromString:@"document.open();document.close()"];
-      [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
-//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:fileNameTODisplay message:@"Product Manual file format is not supported" delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-//        [alertView show];
+        //[self.webView stringByEvaluatingJavaScriptFromString:@"document.open();document.close()"];
+        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+        //        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:fileNameTODisplay message:@"Product Manual file format is not supported" delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+        //        [alertView show];
         
         AlertViewHandler *alert = [[AlertViewHandler alloc] init];
         [alert showAlertViewWithTitle:fileNameTODisplay
@@ -166,10 +166,10 @@
                              Delegate:self
                          cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
                        andOtherButton:nil];
-
+        
         [self removeActivityAndLoadingLabel];
     }
-  }
+}
 
 - (void)addActivityAndLoadingLabel
 {
@@ -179,7 +179,7 @@
         self.HUD.mode = MBProgressHUDModeIndeterminate;
         self.HUD.labelText = [[TagManager sharedInstance]tagByName:kTagLoading];
         [self.HUD show:YES];
-       
+        
     }
 }
 
@@ -220,18 +220,18 @@
         WebserviceResponseStatus *st = (WebserviceResponseStatus*)status;
         switch (st.category)
         {
-                case CategoryTypeProductManualDownlaod:
+            case CategoryTypeProductManualDownlaod:
+            {
+                if(st.syncStatus == SyncStatusSuccess)
                 {
-                    if(st.syncStatus == SyncStatusSuccess)
-                    {
-                        [self loadWebView];
-                    }
-                    else if(st.syncStatus == SyncStatusFailed)
-                    {
-                        [self removeActivityAndLoadingLabel];
-                        [[AlertMessageHandler sharedInstance] showCustomMessage:[st.syncError errorEndUserMessage] withDelegate:nil title:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage] cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] andOtherButtonTitles:nil];
-                    }
+                    [self loadWebView];
                 }
+                else if(st.syncStatus == SyncStatusFailed)
+                {
+                    [self removeActivityAndLoadingLabel];
+                    [[AlertMessageHandler sharedInstance] showCustomMessage:[st.syncError errorEndUserMessage] withDelegate:nil title:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage] cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] andOtherButtonTitles:nil];
+                }
+            }
                 break;
             default:
                 break;
@@ -270,11 +270,11 @@
 - (void)clearBackground {
     UIView *view = self.webView;
     while (view) {
-       view = [view.subviews firstObject];
+        view = [view.subviews firstObject];
         
         if ([NSStringFromClass([view  class]) isEqualToString:@"UIWebPDFView"]) {
             [view setBackgroundColor:[UIColor whiteColor]];
-                      [UIView animateWithDuration:0.25 delay:0.0 options:UIViewAnimationOptionCurveEaseOut
+            [UIView animateWithDuration:0.25 delay:0.0 options:UIViewAnimationOptionCurveEaseOut
                              animations:^{
                                  self.webView .alpha = 1.0;
                              }

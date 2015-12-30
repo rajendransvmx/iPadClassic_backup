@@ -24,7 +24,7 @@
 
 @interface TroubleshootingDetailViewController()
 {
-     UILabel *titleLabel;
+    UILabel *titleLabel;
 }
 
 @property (nonatomic, strong) MBProgressHUD *HUD;
@@ -53,11 +53,11 @@
     titleLabel = [UILabel new];
     self.view.backgroundColor = [UIColor whiteColor];
     _webView.backgroundColor = [UIColor whiteColor];
-
+    
 }
 
 - (void)loadWebViewForThedocId:(NSString *)docId
-                andThedocName:(NSString *)docName;
+                 andThedocName:(NSString *)docName;
 {
     if((([docId length]) > 0) &&(([docName length])> 0))
     {
@@ -149,10 +149,10 @@
             }
             else
             {
-//                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-//                [alertView show];
-//                
-//                
+                //                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+                //                [alertView show];
+                //
+                //
                 AlertViewHandler *alert = [[AlertViewHandler alloc] init];
                 [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:@"File format is incorrect"  Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
                 
@@ -162,8 +162,8 @@
         {
             [self.webView loadHTMLString:fileContents baseURL:baseURL];
             [self removeActivityAndLoadingLabel];
-//            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-//            [alertView show];
+            //            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:@"File format is incorrect" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+            //            [alertView show];
             
             AlertViewHandler *alert = [[AlertViewHandler alloc] init];
             [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:@"File format is incorrect"  Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
@@ -175,13 +175,13 @@
     else
     {
         [self.webView loadHTMLString:@"" baseURL:nil];
-//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]  message:@"File not found" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-//        [alertView show];
+        //        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]  message:@"File not found" delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+        //        [alertView show];
         
         
         AlertViewHandler *alert = [[AlertViewHandler alloc] init];
         [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] Message:@"File format is incorrect"  Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ] andOtherButton:nil];
-
+        
         
     }
     
@@ -223,11 +223,11 @@
 - (void)splitViewController:(SMSplitViewController *)splitViewController didHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem *)barButtonItem popover:(SMSplitPopover *)popover
 {
     self.masterViewButton.hidden = NO;
-   titleLabel.hidden = YES;
+    titleLabel.hidden = YES;
     
     [self.masterViewButton addTarget:barButtonItem.target action:barButtonItem.action forControlEvents:UIControlEventTouchUpInside];
     
-     self.masterPopoverController = popover;
+    self.masterPopoverController = popover;
 }
 
 - (void)splitViewController:(SMSplitViewController *)splitViewController didShowViewController:(UIViewController *)aViewController barButtonItem:(UIBarButtonItem *)barButtonItem

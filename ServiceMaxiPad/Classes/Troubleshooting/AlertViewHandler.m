@@ -9,11 +9,9 @@
 #import "AlertViewHandler.h"
 #import "SMXConstants.h"
 
+
 @implementation AlertViewHandler
 
-
-/* UIAlertView is depricated in ios 8.0 and above*/
-/* defect number 026133 */
 
 - (void)showAlertViewWithTitle:(NSString *)title
                        Message:(NSString *)messaage
@@ -42,13 +40,13 @@
             
         }];
         
-       
+        
         
         [alertController addAction:cancelAction];
         
         [delegate presentViewController:alertController animated:YES completion:nil];
-
-
+        
+        
     }
     
     
