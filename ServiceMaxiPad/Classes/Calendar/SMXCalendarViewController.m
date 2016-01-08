@@ -273,7 +273,7 @@
 -(void)updateEventFromNotification:(NSNotification *)notification
 {
     [self eventDisplayReset:nil];
-  [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
+//  [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
 
     
 }
@@ -392,7 +392,7 @@
     if ([pNotification.name isEqualToString:kUpadteWebserviceData])
     {
         [self eventDisplayReset:nil];
-        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
+//        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
     }
     else
     {
@@ -407,7 +407,7 @@
             //[self performSelectorInBackground:@selector(eventDisplayReset:) withObject:nil];
         }
         //[self loadWizardData];
-        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
+//        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
         [self changeSegementControlText];
     }
 
@@ -426,7 +426,7 @@
     SyncProgressDetailModel *syncProgressDetailModel = [[notification userInfo]objectForKey:@"syncstatus"];
     SyncStatus status = syncProgressDetailModel.syncStatus;
     if (status == SyncStatusSuccess) {
-        [self loadWizardData];
+//        [self loadWizardData];
         [self eventDisplayReset:nil];
 
     }
@@ -652,6 +652,10 @@
 //    NSLog(@"Selected event is %@",self.selectedEvent);
     if (self.selectedEvent)
     {
+        if (![self checkIfEventStillPresent]) {
+            return;
+        }
+        
         SFObjectModel *objectModel =  [self getObjectNameForSelectedEvent:self.selectedEvent];
         NSString *recordId  = nil;
         //HS issue Fix :013140
@@ -723,6 +727,44 @@
     }
    
 }
+
+/*
+ 
+ Method: checkIfEventStillPresent
+ Paramaters: nil
+ return Type: Bool
+ Description: Everytime the Action button is displayed. Check if the Event is present in the Day. If the event is not present in the day. make the selectedEvent as nil and disable the Action button.
+ Bug: 023634
+ Date: 4-Jan-2016
+ Autor: BSP
+ 
+ */
+
+-(BOOL)checkIfEventStillPresent
+{
+    NSDateComponents *comp = [NSDate componentsOfDate:self.selectedEvent.dateTimeBegin];
+    NSDate *newDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
+    
+    NSMutableArray *arrayNew = [dictEvents objectForKey:newDate]; // Array containing all the events of one particular day.
+    BOOL isEventPresent = NO;
+    for (SMXEvent *event in arrayNew) {
+        if ([event.localID isEqualToString:self.selectedEvent.localID]) {
+            isEventPresent = YES;
+            break;
+        }
+    }
+    
+    if (!isEventPresent) {
+        self.selectedEvent = nil;
+        [rightButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        rightButton.enabled = NO;
+        self.navigationItem.rightBarButtonItem.enabled = NO;
+        [self.mySideBar removeContentViewInSideBar:self.tempViewController.view];
+        
+    }
+    return isEventPresent;
+}
+
 
 //HS 23 Jan15 added for fix issue :013040
 -(void)addRescheduleBtninWizard:(NSMutableArray *)allWizards
@@ -871,6 +913,7 @@
     [self setEvents:self.cEventListArray]; //Has to be done in main Thread. However, it was taking lot of time. hence not put on the main thread.
 //    [self refreshTheUI];
     [self performSelectorOnMainThread:@selector(refreshTheUI) withObject:nil waitUntilDone:YES];
+    [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
     
 }
 
