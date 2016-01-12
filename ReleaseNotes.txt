@@ -4,13 +4,13 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.19.001
+Version = 16.19.002
  
 ===========================================
 
 ——————
 NOTE:
 
-Namespace is SVMXC.
+Namespace is SVMXDEV.
 
 
