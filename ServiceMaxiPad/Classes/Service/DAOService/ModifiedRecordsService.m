@@ -473,7 +473,10 @@
             
             while ([resultSet next]) {
                 ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
-                NSDictionary *dict = [resultSet resultDictionary];
+                //NSDictionary *dict = [resultSet resultDictionary];
+                
+                /* converting text into string */
+                NSDictionary *dict = [resultSet resultDictionaryWithFieldsAsString];
                 [ParserUtility parseJSON:dict toModelObject:model withMappingDict:nil];
                 [records addObject:model];
             }

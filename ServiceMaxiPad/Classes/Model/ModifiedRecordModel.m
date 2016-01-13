@@ -45,6 +45,7 @@
 @synthesize timeStamp;
 @synthesize fieldsModified;
 @synthesize overrideFlag;
+@synthesize Pending;
 
 - (id)init
 {
@@ -55,6 +56,75 @@
 	}
 	return self;
 }
+-(void)addValuefromDictionary:(NSDictionary *)dict
+{
+    
+    if ([dict objectForKey:@"localId"]) {
+        localId = [[dict valueForKey:@"localId"] integerValue];
+    }
+    if ([dict objectForKey:@"recordLocalId"]) {
+        recordLocalId = [dict valueForKey:@"recordLocalId"];
+    }
+    if ([dict objectForKey:@"sfId"]) {
+        sfId = [dict valueForKey:@"sfId"];
+    }
+    if ([dict objectForKey:@"recordType"]) {
+        recordType = [dict valueForKey:@"recordType"];
+    }
+    if ([dict objectForKey:@"operation"]) {
+        operation = [dict valueForKey:@"operation"];
+    }
+    if ([dict objectForKey:@"objectName"]) {
+        objectName = [dict valueForKey:@"objectName"];
+    }
+    if ([dict objectForKey:@"syncFlag"]) {
+        syncFlag = [[dict valueForKey:@"syncFlag"] boolValue];
+    }
+    if ([dict objectForKey:@"parentObjectName"]) {
+        parentObjectName = [dict valueForKey:@"parentObjectName"];
+    }
+    if ([dict objectForKey:@"parentLocalId"]) {
+        parentLocalId = [dict valueForKey:@"parentLocalId"];
+    }
+    if ([dict objectForKey:@"recordSent"]) {
+        recordSent = [dict valueForKey:@"recordSent"];
+    }
+    if ([dict objectForKey:@"webserviceName"]) {
+        webserviceName = [dict valueForKey:@"webserviceName"];
+    }
+    if ([dict objectForKey:@"className"]) {
+        className = [dict valueForKey:@"className"];
+    }
+    if ([dict objectForKey:@"syncType"]) {
+        syncType = [dict valueForKey:@"syncType"];
+    }
+    if ([dict objectForKey:@"headerLocalId"]) {
+        headerLocalId = [dict valueForKey:@"headerLocalId"];
+    }
+    if ([dict objectForKey:@"requestData"]) {
+        requestData = [dict valueForKey:@"requestData"];
+    }
+    if ([dict objectForKey:@"requestId"]) {
+        requestId = [dict valueForKey:@"requestId"];
+    }
+    if ([dict objectForKey:@"timeStamp"]) {
+        timeStamp = [dict valueForKey:@"timeStamp"];
+    }
+    if ([dict objectForKey:@"fieldsModified"]) {
+        fieldsModified = [dict valueForKey:@"fieldsModified"];
+    }
+    if ([dict objectForKey:@"overrideFlag"]) {
+        overrideFlag = [dict valueForKey:@"overrideFlag"];
+    }
+    if ([dict objectForKey:@"Pending"]) {
+        Pending = [dict valueForKey:@"Pending"];
+    }
+    if ([dict objectForKey:@"overrideFlag"]) {
+        overrideFlag = [dict valueForKey:@"overrideFlag"];
+    }
+    
+}
+
 
 - (void)dealloc
 {
@@ -74,6 +144,7 @@
     requestId = nil;
     timeStamp = nil;
     fieldsModified = nil;
+    Pending = nil;
 }
 
 - (void)explainMe
