@@ -2059,6 +2059,10 @@
         
         self.dataDictionaryAfterModification = [NSMutableDictionary dictionaryWithDictionary:finalDict];
         
+        if([StringUtil isStringEmpty:sfId]) {
+            sfId = nil;
+        }
+        
         NSString *modifiedFieldAsJsonString = [self getJsonStringAfterComparisionForObject:objectName recordId:localId sfid:sfId andSettingsFlag:YES];
         
         
@@ -2079,6 +2083,11 @@
             syncRecord.operation = kModificationTypeUpdate;
             recordUpdatedSuccessFully = [editHelper updateFinalRecord:finalDict inObjectName:objectName andLocalId:localId];
         }
+        else {
+            syncRecord.operation = kModificationTypeInsert;
+            recordUpdatedSuccessFully = [editHelper updateFinalRecord:finalDict inObjectName:objectName andLocalId:localId];
+        }
+        
         syncRecord.recordType = recordType;//kRecordTypeMaster;
         syncRecord.sfId = sfId;
         

@@ -24,6 +24,7 @@
 #import "SVMXSystemConstant.h"
 #import "SuccessiveSyncManager.h"
 #import "SFMRecordFieldData.h"
+#import "SFMPageEditManager.h"
 
 @implementation SourceUpdateService
 
@@ -152,40 +153,72 @@
         }
         
         NSString *escapedValue = [newDisplayValue stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-        
-        id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-        
-        DBCriteria *crit = [[DBCriteria alloc] initWithFieldName:@"localId" operatorType:SQLOperatorEqual andFieldValue:localId];
-        recordUpdatedSuccessFully = [transObj updateEachRecord:[NSDictionary dictionaryWithObject:escapedValue?escapedValue:kEmptyString forKey:srcFieldName]
-                                                    withFields:[NSArray arrayWithObject:srcFieldName]
-                                                  withCriteria:[NSArray arrayWithObject:crit]
-                                                 withTableName:objectName];
-        
         [recordDictionary setObject:escapedValue?escapedValue:kEmptyString forKey:srcFieldName];
     }
     
-    // Modify inserted records into modified table
+    // Defect: 026451
+    NSString *sfId = [SFMPageEditHelper getSfIdForLocalId:localId objectName:objectName];
+    [recordDictionary setObject:sfId forKey:kId];
+    NSDictionary *finalDict = [NSDictionary dictionaryWithDictionary:recordDictionary];
+    
+    SFMPageEditHelper *editHelper = [[SFMPageEditHelper alloc] init];
+    SFMPageEditManager *editManager = [[SFMPageEditManager alloc] init];
+    editManager.dataDictionaryAfterModification = [NSMutableDictionary dictionaryWithDictionary:finalDict];
+    
+    if ([StringUtil isStringEmpty:sfId]) {
+        sfId = nil;
+    }
+    
+    NSString *modifiedFieldAsJsonString = [editManager getJsonStringAfterComparisionForObject:objectName recordId:localId sfid:sfId andSettingsFlag:YES];
+    
+    ModifiedRecordModel * syncRecord = [[ModifiedRecordModel alloc] init];
+    syncRecord.recordLocalId = localId;
+    syncRecord.objectName = objectName;
+    syncRecord.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
+    
+    id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    /* Check if record exist */
+    BOOL isRecordExist =  [transObjectService isRecordExistsForObject:objectName forRecordLocalId:localId];
+    if (isRecordExist && ![StringUtil isStringEmpty:sfId]) {
+        
+        syncRecord.operation = kModificationTypeUpdate;
+        recordUpdatedSuccessFully = [editHelper updateFinalRecord:finalDict inObjectName:objectName andLocalId:localId];
+    }
+    else {
+        syncRecord.operation = kModificationTypeInsert;
+        recordUpdatedSuccessFully = [editHelper updateFinalRecord:finalDict inObjectName:objectName andLocalId:localId];
+    }
+    
+    syncRecord.recordType = kRecordTypeMaster;
+    syncRecord.sfId = sfId;
+    
+    BOOL canUpdate = YES;
+    
+    if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
+        if (![StringUtil isStringEmpty:modifiedFieldAsJsonString]) {
+            syncRecord.fieldsModified = modifiedFieldAsJsonString;
+        }
+        else if (editManager.isfieldMergeEnabled && ![StringUtil isStringEmpty:sfId]) {
+            canUpdate = NO;
+        }
+    }
+    
     /*after save  make an entry in trailer table*/
-    if (recordUpdatedSuccessFully)
-    {
+    if (recordUpdatedSuccessFully && canUpdate) {
         id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
         BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localId];
-        
-        ModifiedRecordModel * syncRecord = [[ModifiedRecordModel alloc] init];
-        syncRecord.recordLocalId = localId;
-        syncRecord.objectName = objectName;
-        syncRecord.recordType = kRecordTypeMaster;
-        syncRecord.operation = kModificationTypeUpdate;
-        syncRecord.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
-        
-        syncRecord.sfId = [SFMPageEditHelper getSfIdForLocalId:localId objectName:objectName];
-        
         if (!doesExist) {
             [modifiedRecordService saveRecordModel:syncRecord];
         }
-        [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:recordDictionary];
+        else {
+            if (editManager.isfieldMergeEnabled && ![StringUtil isStringEmpty:sfId] && [syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
+                [modifiedRecordService updateFieldsModifed:syncRecord];
+            }
+        }
+        [[SuccessiveSyncManager sharedSuccessiveSyncManager] registerForSuccessiveSync:syncRecord withData:finalDict];
     }
 }
+
 
 - (NSString *)getValueForField:(NSString *)fieldName objectName:(NSString *)objectName recordId:(NSString *)localId
 {
