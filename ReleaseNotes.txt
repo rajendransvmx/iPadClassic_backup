@@ -4,13 +4,13 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.19.005
+Version = 16.19.006
  
 ===========================================
 
 ——————
 NOTE:
 
-Fixed data validation issues for ProductIQ.
+Fixed: 026180
 
 
