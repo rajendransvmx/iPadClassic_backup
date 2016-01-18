@@ -45,6 +45,9 @@
 @property(nonatomic, strong) NSNumber *precision;
 @property(nonatomic, strong) NSNumber *scale;
 
+@property(nonatomic, strong) NSString *defaultColumnName; //required for tracking default column name.// defect- 23783
+
+
 - (id)initWithDictionary:(NSDictionary *)pageFieldDict;
 
 @end

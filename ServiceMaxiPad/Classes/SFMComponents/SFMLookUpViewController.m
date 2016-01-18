@@ -562,6 +562,12 @@
     if(self.lookUpObject.defaultColoumnName != nil){
         recordField = [dictionary objectForKey:self.lookUpObject.defaultColoumnName];
     }
+    
+    // defect- 23783
+
+    if ([StringUtil isStringEmpty:recordField.displayValue] && self.lookUpObject.defaultObjectColumnName != nil ) {
+        recordField = [dictionary objectForKey:self.lookUpObject.defaultObjectColumnName];
+    }
     return recordField;
 }
 

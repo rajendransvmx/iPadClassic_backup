@@ -30,6 +30,8 @@
 #import "DataTypeUtility.h"
 
 #import "SVMXSystemConstant.h"
+#import "SFMPageLookUpHelper.h"
+#import "SFMLookUp.h"
 
 
 typedef enum PageManagerErrorType : NSUInteger
@@ -77,7 +79,7 @@ PageManagerErrorType;
     if(sfmId == nil)
     {
         recordId = self.recordId;
-      
+        
     }else
     {
         recordId = sfmId;
@@ -96,7 +98,7 @@ PageManagerErrorType;
             isEntryCriteraMatching = [parser isEntryCriteriaMatchingForRecordId:recordId];
             if (!isEntryCriteraMatching) {
                 [self fillError:error
-                    withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria
+       withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria
                         message:[parser errorMessage]];
             }
         }
@@ -186,9 +188,9 @@ PageManagerErrorType;
                || [pageField.dataType isEqualToString:kSfDTDouble]
                || [pageField.dataType isEqualToString:kSfDTPercent])
             {
-                SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:headerLayout.objectName];
-                pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
-                pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
+            SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:headerLayout.objectName];
+            pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
+            pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
             }
         }
     }
@@ -197,18 +199,18 @@ PageManagerErrorType;
 }
 
 -(void)fillPrecisionInfoForDetailLayouts:(NSArray *)detailLayouts{
- 
+    
     DataTypeUtility *fieldUtil = [[DataTypeUtility alloc] init];
     for (SFMDetailLayout * detailLayout in detailLayouts) {
-    
+        
         for (SFMPageField * pageField in detailLayout.detailSectionFields) {
             if([pageField.dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
                || [pageField.dataType isEqualToString:kSfDTDouble]
                || [pageField.dataType isEqualToString:kSfDTPercent])
             {
-                SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:detailLayout.objectName];
-                pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
-                pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
+            SFObjectFieldModel * objectFieldModel =  [fieldUtil getField:pageField.fieldName objectName:detailLayout.objectName];
+            pageField.precision = [NSNumber numberWithDouble:objectFieldModel.precision];
+            pageField.scale = [NSNumber numberWithDouble:objectFieldModel.scale];
             }
         }
     }
@@ -278,9 +280,9 @@ PageManagerErrorType;
 {
     NSArray *headerFields = [sfmPage getHeaderLayoutFields];
     
-       //TO DO
+    //TO DO
     /*For work order and event object need to add harcoded fields in the fields array*/
-
+    
     NSMutableDictionary *fieldDataTypeMap = [self getFieldDataTypeMap:headerFields];
     
     [self fillPickPickListAndRecordTypeInfo:fieldDataTypeMap andObjectName:sfmPage.objectName];
@@ -291,7 +293,7 @@ PageManagerErrorType;
                                                             recordId:sfmPage.recordId];
     
     self.nameFieldValue = [dataDict objectForKey:[SFMPageHelper getNameFieldForObject:self.objectName]];
-
+    
     NSMutableDictionary * headerFieldValeDict = [self fillDataDictForHeaderOrDetail:dataDict fields:headerFields];
     
     NSMutableArray *picklists = [fieldDataTypeMap objectForKey:kSfDTPicklist];
@@ -364,7 +366,7 @@ PageManagerErrorType;
     NSMutableArray *picklistFields  = [dataDictionary objectForKey:kSfDTPicklist];
     NSMutableArray *multiPicklistFields = [dataDictionary objectForKey:kSfDTMultiPicklist];
     NSMutableArray *recordTypeFields = [dataDictionary objectForKey:kSfDTRecordTypeId];
-   
+    
     NSMutableArray *finalPicklist = nil;
     
     if ([picklistFields count] > 0) {
@@ -374,7 +376,7 @@ PageManagerErrorType;
     if ([multiPicklistFields count] > 0) {
         if (finalPicklist == nil)
             finalPicklist = [[NSMutableArray alloc] initWithCapacity:0];
-         [finalPicklist addObjectsFromArray:multiPicklistFields];
+        [finalPicklist addObjectsFromArray:multiPicklistFields];
     }
     if ([finalPicklist count] > 0) {
         [self updatePicklistDataFor:objectName fields:finalPicklist];
@@ -402,7 +404,7 @@ PageManagerErrorType;
                     [self.pickListData setObject:dict forKey:model.fieldName];
                 }
                 else {
-                     [picklistDict setObject:model forKey:model.value];
+                    [picklistDict setObject:model forKey:model.value];
                 }
             }
         }
@@ -427,6 +429,28 @@ PageManagerErrorType;
     }
 }
 
+ // defect- 23783
+
+- (NSDictionary*)getDefaultColumnNameForField:(SFMPageField*)aPageField withFieldSfId:(NSString*)sfId{
+    NSDictionary *dictionary = nil;
+    SFMPageLookUpHelper *lookUpHelper   = [[SFMPageLookUpHelper alloc] init];
+    SFMLookUp *lookUpObject   = [[SFMLookUp alloc] init];
+    
+    lookUpObject.lookUpId   = aPageField.namedSearch;
+    lookUpObject.objectName = aPageField.relatedObjectName;
+    
+    [lookUpHelper fillLookUpMetaDataLookUp:lookUpObject]; // get the default column Name.
+    
+    if (![StringUtil isStringEmpty:lookUpObject.defaultColoumnName]) {
+        aPageField.defaultColumnName = lookUpObject.defaultColoumnName;
+        
+        //Now get the value or sfid for this.
+        dictionary = [lookUpHelper getDefaultColumnNameDataForLookup:lookUpObject withSfId:sfId ];
+    }
+    
+    return dictionary;
+}
+
 - (NSMutableDictionary *)fillDataDictForHeaderOrDetail:(NSDictionary *)dataDict fields:(NSArray *)fields
 {
     NSMutableDictionary *fieldNameAndInternalValue = [[NSMutableDictionary alloc] init];
@@ -448,22 +472,57 @@ PageManagerErrorType;
             }
             NSString *displayValue = internalValue;
             
-            if ([aPageField.dataType isEqualToString:kSfDTReference]) {
+            // defect- 23783
+
+            NSString *keyField = aPageField.fieldName;
+            
+            if ([aPageField.dataType isEqualToString:kSfDTReference])
+            {
                 
-                if (![StringUtil isStringEmpty:internalValue]) {
+                if (aPageField.relatedObjectName != nil)
+                {
+                    //    Below logic is used to get the default column name and value of the lookup fields.
                     
-                    [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                    NSDictionary *defaultColumnDictionary;
+                    if (internalValue.length) {
+                        defaultColumnDictionary = [self getDefaultColumnNameForField:aPageField withFieldSfId:internalValue];
+                    }
                     
-                    if (aPageField.relatedObjectName != nil) {
+                    if (defaultColumnDictionary.count > 0) {
+                        keyField = aPageField.defaultColumnName;
+                        displayValue = [defaultColumnDictionary objectForKey:aPageField.defaultColumnName];
+                        
                         [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                        [fieldNameAndInternalValue setObject:displayValue?displayValue:kEmptyString forKey:aPageField.fieldName];
+                    }
+                    else
+                    {
+                        [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                    }
+                }
+                else
+                {
+                    if (![StringUtil isStringEmpty:internalValue]) {
+                        
+                        [fieldNameAndInternalValue setObject:internalValue?internalValue:kEmptyString forKey:aPageField.fieldName];
+                        displayValue = [PlistManager getLoggedInUserName]; // defect- 23783
+
+                        
+                        if (aPageField.relatedObjectName != nil) {
+                            [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
+                        }
                     }
                 }
             }
+            
+            
+            
             else if ([aPageField.dataType isEqualToString:kSfDTDateTime]) {
                 if (![StringUtil isStringEmpty:internalValue]) {
                     
                     //BSP-1-Apr-2015. Changes to account for the All Day Event.
-                     NSString *dateTime =   [self checkAllDayAndReturnDateTime:aPageField andInternalValue:internalValue];
+                    NSString *dateTime =   [self checkAllDayAndReturnDateTime:aPageField andInternalValue:internalValue];
                     
                     if (dateTime != nil) {
                         displayValue = dateTime;
@@ -511,7 +570,7 @@ PageManagerErrorType;
                 if ([relatedObjectName length] > 0 && [fieldData.internalValue length] > 0){
                     fieldData.isReferenceRecordExist  = [self isViewProcessExistsForObject:relatedObjectName recordId:fieldData.internalValue];
                 }
-             }
+            }
         }
     }
     return fieldValueData;
@@ -523,8 +582,8 @@ PageManagerErrorType;
     NSDictionary *dataDict =  nil;
     
     if([self.objectName isEqualToString:kEventObject] || [self.objectName isEqualToString:kSVMXTableName])
-         dataDict = [SFMPageHelper getSlAInFo:self.objectName localId:self.recordId fieldNames:@[isAlldayEventKey]];
-
+        dataDict = [SFMPageHelper getSlAInFo:self.objectName localId:self.recordId fieldNames:@[isAlldayEventKey]];
+    
     NSString *dateTime = @"";
     
     if (isAlldayEventKey !=nil) {
@@ -559,18 +618,18 @@ PageManagerErrorType;
     else
     {
         //If the object is not of event or svmx_event.
-
+        
         dateTime = [self getUserReadableDateTime:internalValue];
-
+        
     }
     
     return dateTime;
-
+    
 }
 
 -(NSString *)getUserReadableDateTime:(NSString *)dateTime
 {
-     return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
+    return [DateUtil getUserReadableDateForDateBaseDate:dateTime];
 }
 
 -(NSString *)getUserReadableDate:(NSString *)dateTime
@@ -657,8 +716,8 @@ PageManagerErrorType;
 
 - (NSString *)getReferenceValueForObject:(NSString *)objectName andsfId:(NSString *)sfId
 {
-    return [SFMPageHelper getRefernceFieldValueForObject:objectName andId:sfId];
-}
+        return [SFMPageHelper getRefernceFieldValueForObject:objectName andId:sfId];
+    }
 
 - (NSDictionary *)getReferenceFieldValueFromLookUpTable:(NSMutableSet *)remainingIds
 {
@@ -769,7 +828,7 @@ PageManagerErrorType;
                     NSArray *values = [SFMPageHelper getAllValuesFromMultiPicklistString:displayValue];
                     NSDictionary *maappingDict = [self getMultiPicklistMappingDict:picklistDict value:values];
                     if ([maappingDict count] > 0) {
-                       NSString *picklistValue = [SFMPageHelper getMutliPicklistLabelForpicklistString:values andFieldLabelDictionary:maappingDict];
+                        NSString *picklistValue = [SFMPageHelper getMutliPicklistLabelForpicklistString:values andFieldLabelDictionary:maappingDict];
                         if (picklistValue != nil) {
                             field.displayValue = picklistValue;
                         }
@@ -833,16 +892,16 @@ PageManagerErrorType;
             else
             {
                 SXLogDebug(@"Entry critera is not matching");
-				//Defect fix: 012660
+                //Defect fix: 012660
                 [self fillError:error withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria message:[internalError localizedDescription]];
                 //[self fillError:error withPageManagerErrorType:PageManagerErrorTypeNotMatchingEntryCriteria message:nil];
-
+                
             }
         }
         else
         {
             SXLogWarning(@"Page layout is not available");
-
+            
             [self fillError:error withPageManagerErrorType:PageManagerErrorTypeNoPageLayout message:[internalError localizedDescription]];
         }
         
@@ -851,7 +910,7 @@ PageManagerErrorType;
     {
         SXLogWarning(@"Process is not availbale");
         [self fillError:error withPageManagerErrorType:PageManagerErrorTypeNoProcess message:nil];
-
+        
     }
     return isValidProcess;
 }
@@ -885,13 +944,13 @@ PageManagerErrorType;
 
 - (SFMPage *) sfmPage
 {
-   SFMPage *sfmPage = [[SFMPage alloc] initWithObjectName:self.objectName andRecordId:self.recordId];
+    SFMPage *sfmPage = [[SFMPage alloc] initWithObjectName:self.objectName andRecordId:self.recordId];
     
     NSString *objectLabel = [self getObjectLabel];
     
     if ([objectLabel length] > 0) {
         sfmPage.objectLabel = objectLabel;
-    }   
+    }
     
     /*Fill SFMProcess object info*/
     if (self.processId != nil) {
@@ -920,7 +979,7 @@ PageManagerErrorType;
 
 - (NSString *)getHeaderSfId:(SFMPage *)sfmPageLocal
 {
-   return [sfmPageLocal getHeaderSalesForceId];
+    return [sfmPageLocal getHeaderSalesForceId];
 }
 
 - (SFMProcess *) sfmProcessForPage
@@ -951,7 +1010,7 @@ PageManagerErrorType;
             case PageManagerErrorTypeNoProcess:
                 message = [tagManager tagByName:kTagNoViewProcess];
                 break;
-
+                
             case PageManagerErrorTypeNotMatchingEntryCriteria:
                 if ([StringUtil isStringEmpty:errorMessage]) {
                     message = [tagManager tagByName:kTagSfmSwitchProcess];
@@ -997,17 +1056,17 @@ PageManagerErrorType;
 -(NSArray *)getDateForAllDayEventOnDate:(NSString *)startDate endDate:(NSString *)endDate{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:startDate]];
-    
-    comp.second = 00;
-    comp.hour = 00;
-    comp.minute = 00;
-    
-    NSDate *theStartDate = [cal dateFromComponents:comp];
-    comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
-    comp.hour = 23;
-    comp.minute = 59;
-    
-    NSDate *theEndDate = [cal dateFromComponents:comp];
+        
+        comp.second = 00;
+        comp.hour = 00;
+        comp.minute = 00;
+        
+        NSDate *theStartDate = [cal dateFromComponents:comp];
+        comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
+        comp.hour = 23;
+        comp.minute = 59;
+        
+        NSDate *theEndDate = [cal dateFromComponents:comp];
     
     
     //First Object is the start date, second object is End date.
@@ -1032,7 +1091,7 @@ PageManagerErrorType;
     SFMPage *sfmPage = [[SFMPage alloc] initWithObjectName:theObjectName andRecordId:lRecordID];
     
     NSString *objectLabel = [SFMPageHelper getObjectLabelForObjectName:theObjectName];
-
+    
     
     if ([objectLabel length] > 0) {
         sfmPage.objectLabel = objectLabel;
@@ -1040,14 +1099,14 @@ PageManagerErrorType;
     
     /*Fill SFMProcess object info*/
     
-        SFMProcess *process = [[SFMProcess alloc] init];
-        process.processInfo = [SFMPageHelper getProcessInfoForSFID:lProcessId];
-        process.component = [SFMPageHelper getProcessComponentForProcess:process.processInfo.sfID];
-        process.pageLayout = [self pageLayoutInfoForProcess:process];
-        [self fillUpPrecisionInfoForPage:process];
-        
-        sfmPage.process = process;
-
+    SFMProcess *process = [[SFMProcess alloc] init];
+    process.processInfo = [SFMPageHelper getProcessInfoForSFID:lProcessId];
+    process.component = [SFMPageHelper getProcessComponentForProcess:process.processInfo.sfID];
+    process.pageLayout = [self pageLayoutInfoForProcess:process];
+    [self fillUpPrecisionInfoForPage:process];
+    
+    sfmPage.process = process;
+    
     
     /*Data filling*/
     NSMutableDictionary *headerDict = [self getHeaderRecordForSFMPage:sfmPage];
@@ -1080,21 +1139,21 @@ PageManagerErrorType;
         NSString * processComponentId = detailLayout.processComponentId;
         SFProcessComponentModel *componemtModel = [processComp objectForKey:processComponentId];
         
-            NSArray *sectionFields = detailLayout.detailSectionFields;
-            SFMDetailFieldData * record = [[SFMDetailFieldData alloc] init];
-            record.fieldsArray = sectionFields;
-            record.parentLocalId = sfmPage.recordId;
-            record.parentSfID = headerSfId;
-            record.parentColumnName = componemtModel.parentColumnName;
-            record.objectName = componemtModel.objectName;
-            record.sortingData = componemtModel.sortingOrder;
-            record.sourceToTargetType = sfmPage.process.processInfo.processType;
-            
-            if (![StringUtil isStringEmpty:componemtModel.expressionId]) {
-                SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:componemtModel.expressionId
-                                                                                             objectName:componemtModel.objectName];
-                record.criteriaObjects = [NSMutableArray arrayWithArray:[expressionParser expressionCriteriaObjects]];
-                record.expression = [expressionParser advanceExpression];
+        NSArray *sectionFields = detailLayout.detailSectionFields;
+        SFMDetailFieldData * record = [[SFMDetailFieldData alloc] init];
+        record.fieldsArray = sectionFields;
+        record.parentLocalId = sfmPage.recordId;
+        record.parentSfID = headerSfId;
+        record.parentColumnName = componemtModel.parentColumnName;
+        record.objectName = componemtModel.objectName;
+        record.sortingData = componemtModel.sortingOrder;
+        record.sourceToTargetType = sfmPage.process.processInfo.processType;
+        
+        if (![StringUtil isStringEmpty:componemtModel.expressionId]) {
+            SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:componemtModel.expressionId
+                                                                                         objectName:componemtModel.objectName];
+            record.criteriaObjects = [NSMutableArray arrayWithArray:[expressionParser expressionCriteriaObjects]];
+            record.expression = [expressionParser advanceExpression];
             
             NSMutableArray * detailArray = [self getDetailData:record];
             

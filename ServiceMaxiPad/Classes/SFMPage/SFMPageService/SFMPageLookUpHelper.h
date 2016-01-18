@@ -26,6 +26,12 @@
 
 - (NSArray *) getCriteriaArrayForContextLookUp:(SFMLookUp *)lookup ;
 
+
+// Below methods are used to lookup display field issue.023314 and // defect- 23783
+
+-(void)fillLookUpMetaDataLookUp:(SFMLookUp *)lookUpObj;
+-(NSDictionary*)getDefaultColumnNameDataForLookup:(SFMLookUp*)lookupObject withSfId:(NSString*)sfId;
+
 @end
 
 
