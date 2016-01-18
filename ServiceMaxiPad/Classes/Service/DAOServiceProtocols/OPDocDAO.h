@@ -54,6 +54,7 @@
 -(NSArray *)getHTMLListToSubmitForHtmlFile:(NSString *)htmlFile;
 
 -(BOOL)deleteRecordsHTMLTableForList:(NSArray *)listArray;
+-(NSString*)deleteRecordFromTableOnConflict:(NSString*)recordId;
 
 //Retreive the names of the files which needs to be deleted from the folder.
 

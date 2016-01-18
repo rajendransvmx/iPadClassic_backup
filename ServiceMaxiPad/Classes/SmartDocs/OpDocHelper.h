@@ -30,5 +30,6 @@
 -(void)clearOpDocHTMLAndSignatureFilesOnReset;
 -(NSMutableArray*)getLocalOpDocHtmlFilesAndSignatureFiles;
 -(void)deleteTheAlreadyUploadedFiles:(NSArray *)deleteIds;
+-(void)deleteSignatureAndHtmlFilesForConflicts:(NSString*)recordId;
 
 @end

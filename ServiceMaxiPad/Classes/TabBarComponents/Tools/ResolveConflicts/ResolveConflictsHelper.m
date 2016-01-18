@@ -30,6 +30,7 @@
 #import "AttachmentHelper.h"
 #import "ModifiedRecordsService.h"
 #import "MobileDeviceSettingService.h"
+#import "OpDocHelper.h"
 
 NSString *const kResolveConflictRetry                = @"retry";
 NSString *const kResolveConflictRemove               = @"remove";
@@ -314,6 +315,7 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
                     NSString *lTempDeletedID = [NSString stringWithFormat:@"%@%@", deleteId, kChangedLocalIDForCustomCall];
                     [ResolveConflictsHelper deleteRecordWithFieldName:fieldName forRecord:lTempDeletedID fromObjectName:kModifiedRecords];
                 }
+                [[OpDocHelper sharedManager] deleteSignatureAndHtmlFilesForConflicts:deleteId];
                 fieldName = ([syncConflictModel.operationType isEqualToString:kModificationTypeUpdate])? kId:kLocalId;
                 [ResolveConflictsHelper deleteRecordWithFieldName:fieldName forRecord:deleteId fromObjectName:syncConflictModel.objectName];
                 

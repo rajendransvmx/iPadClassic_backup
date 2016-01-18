@@ -54,6 +54,7 @@
 -(NSMutableArray *)getSignatureListToSubmitForHtmlFile:(NSString *)htmlFile;
 
 -(BOOL)deleteRecordsSignatureTableForList:(NSArray *)listArray;
+-(void)deleteRecordFromTableOnConflict:(NSString*)processId;
 
 //To retrieve the list of files to be deleted from folder.
 -(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted:(NSString *)signatureSFIDOrHTMLFileName; //This is needed to delete the record from tables of HTML as well as SIGNATURE cause if a DELETE_ID is received from Server, we

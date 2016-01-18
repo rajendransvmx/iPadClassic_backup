@@ -827,5 +827,17 @@
     [self deleteTheSignatureFiles:deleteIds];
     [self deleteTheHTMLFiles:deleteIds];
 }
+-(void)deleteSignatureAndHtmlFilesForConflicts:(NSString*)recordId {
+    
+    OPDocServices *services = [[OPDocServices alloc] init];
+    
+    NSString *processId = [services deleteRecordFromTableOnConflict:recordId];
+    
+    if (processId) {
+        OPDocSignatureService *signatureServices = [[OPDocSignatureService alloc] init];
+        [signatureServices deleteRecordFromTableOnConflict:processId];
+    }
+    
+}
 
 @end

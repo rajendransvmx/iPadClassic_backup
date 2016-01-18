@@ -13,6 +13,7 @@
 #import "DBCriteria.h"
 #import "DatabaseManager.h"
 #import "DBRequestDelete.h"
+#import "FileManager.h"
 
 @implementation OPDocSignatureService
 
@@ -349,6 +350,62 @@
     BOOL result = [self executeStatement:[requestDelete query]];
     
     return result;
+    
+}
+
+-(void)deleteRecordFromTableOnConflict:(NSString*)processId {
+    NSArray *array = [self getSignatureServiceReportNameAndProcessId:processId];
+    
+    for (OPDocSignature *serviceReport in array) {
+        NSString *lFilePath = nil;
+        
+        if (serviceReport.Name) {
+            lFilePath =  [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:serviceReport.Name];
+        }
+        
+        BOOL success = NO;
+        if (lFilePath) {
+            success = [FileManager deleteFileAtPath:lFilePath];
+            SXLogDebug(@" FILE: %@ DELETED: %d", lFilePath, success);
+        }
+        
+    }
+    
+    
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocProcessId operatorType:SQLOperatorIn andFieldValues:@[processId]];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kOPDocSFID operatorType:SQLOperatorIsNull andFieldValue:nil];
+    DBRequestDelete *requestDelete = [[DBRequestDelete alloc] initWithTableName:[self tableName] whereCriteria:[NSArray arrayWithObjects:criteriaOne,criteriaTwo,nil] andAdvanceExpression:@"(1 AND 2)"];
+    
+    [self executeStatement:[requestDelete query]];
+}
+- (NSArray*)getSignatureServiceReportNameAndProcessId:(NSString*)processId {
+    
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocProcessId operatorType:SQLOperatorEqual andFieldValue:processId];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:kOPDocSFID operatorType:SQLOperatorIsNull andFieldValue:nil];
+    
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:@"(1 AND 2)"];
+    
+    NSMutableArray *lTheDataArray = [[NSMutableArray alloc] init];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                
+                OPDocSignature * model = [[OPDocSignature alloc] init];
+                [resultSet kvcMagic:model];
+                [lTheDataArray addObject:model];
+            }
+            [resultSet close];
+        }];
+    }
+    return lTheDataArray;
     
 }
 

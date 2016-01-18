@@ -14,6 +14,7 @@
 #import "DBRequestDelete.h"
 #import "DatabaseConstant.h"
 #import "StringUtil.h"
+#import "FileManager.h"
 
 @implementation OPDocServices
 
@@ -452,6 +453,72 @@
     
     return result;
 }
+
+-(NSString*)deleteRecordFromTableOnConflict:(NSString*)recordId {
+    
+    NSString *processId = nil;
+    
+    NSArray *array = [self getServiceReportNameAndProcessId:recordId];
+    
+    OPDocHTML *serviceReport = [array firstObject];//will have only one report for each record id.
+    NSString *lFilePath = nil;
+    
+    if (serviceReport.Name) {
+        lFilePath =  [[FileManager getCoreLibSubDirectoryPath] stringByAppendingPathComponent:serviceReport.Name];
+    }
+    
+    if (serviceReport.process_id) {
+        processId = serviceReport.process_id;
+    }
+    
+    
+    BOOL success = NO;
+    if (lFilePath) {
+        success = [FileManager deleteFileAtPath:lFilePath];
+        SXLogDebug(@" FILE: %@ DELETED: %d", lFilePath, success);
+    }
+    
+    
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocRecordId operatorType:SQLOperatorIn andFieldValues:@[recordId]];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc] initWithFieldName:kOPDocSFID operatorType:SQLOperatorIsNull andFieldValue:nil];
+    DBRequestDelete *requestDelete = [[DBRequestDelete alloc] initWithTableName:[self tableName] whereCriteria:[NSArray arrayWithObjects:criteriaOne,criteriaTwo,nil] andAdvanceExpression:@"(1 AND 2)"];
+    
+    [self executeStatement:[requestDelete query]];
+    
+    return processId;
+}
+
+- (NSArray*)getServiceReportNameAndProcessId:(NSString*)recordId {
+    
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocRecordId operatorType:SQLOperatorEqual andFieldValue:recordId];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:kOPDocSFID operatorType:SQLOperatorIsNull andFieldValue:nil];
+    
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:@"(1 AND 2)"];
+    
+    NSMutableArray *lTheDataArray = [[NSMutableArray alloc] init];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                
+                OPDocHTML * model = [[OPDocHTML alloc] init];
+                [resultSet kvcMagic:model];
+                [lTheDataArray addObject:model];
+            }
+            [resultSet close];
+        }];
+    }
+    return lTheDataArray;
+    
+}
+
 
 -(BOOL)updateTableToRemovetheSFIDForList:(NSArray *)listArray
 {
