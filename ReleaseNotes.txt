@@ -4,12 +4,14 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.001
+Version = 16.29.002
  
 ===========================================
 
 ——————
 NOTE:
+
+Added latest JS files for ProductIQ in static resource folder.
 
 Name Space: SVMXDEV
 
