@@ -16,6 +16,7 @@
 
 
 @property(nonatomic, strong) NSMutableArray *recordIds;
+@property(nonatomic, copy) NSString *accountId;
 @property(nonatomic, assign) BOOL isProdIQSyncInProgress;
 @property(nonatomic, assign) NSString *prodIQTaskId;
 @property(nonatomic, assign) BOOL isRecordDeleted;

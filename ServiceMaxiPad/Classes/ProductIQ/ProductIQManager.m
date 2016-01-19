@@ -115,6 +115,8 @@
         NSString *sfId = [[sfmPageView.sfmPage.headerRecord objectForKey:@"Id"] internalValue];
         if (![StringUtil isStringEmpty:sfId]) {
             [self.recordIds addObject:sfId];
+            //get the accountId by using IB sfid.
+            self.accountId = [self getAccountIdForObject:kInstalledProductTableName withObjectId:[self.recordIds firstObject]];
         }
     }
     
@@ -147,9 +149,35 @@
         //Now check for WorkDetail object. (kWorkOrderDetailTableName)
         //This is specific to work detail --> serial number (record type: Products Serviced
         [self getInstallBaseIdsForWorkDetailObject:kWorkOrderDetailTableName withWorkOrderId:workOrderSfId];
+        
+        //get the accountId by using IB sfid.
+        self.accountId = [self getAccountIdForObject:kInstalledProductTableName withObjectId:[self.recordIds firstObject]];
+
     }
+    
 
     return productIQFieldsAvailable;
+}
+
+- (NSString*)getAccountIdForObject:(NSString*)objectName withObjectId:(NSString*)sfid {
+    
+    NSString *accountId = nil;
+    
+    TransactionObjectService *services = [[TransactionObjectService alloc] init];
+    
+    DBCriteria * criteria1 = nil;
+    
+    criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sfid];
+    
+    
+    NSArray *records = [services fetchDataForObjectForSfmPage:objectName fields:@[kWorkOrderCompanyId] expression:nil criteria:@[criteria1]];
+    
+    for (TransactionObjectModel *model in records) {
+        NSDictionary *dictionary = [model getFieldValueDictionary];
+        accountId = [dictionary objectForKey:kWorkOrderCompanyId];
+    }
+    
+    return accountId;
 }
 
 - (void)getInstallBaseIdsForWorkDetailObject:(NSString*)objectName withWorkOrderId:(NSString*)workOrderSfId{

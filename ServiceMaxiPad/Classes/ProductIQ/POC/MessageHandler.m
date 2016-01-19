@@ -70,12 +70,15 @@
     @autoreleasepool {
         NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
         NSMutableArray *recordIds = nil;
+        NSString *accountId = nil;
         recordIds = [[ProductIQManager sharedInstance] recordIds];
+        accountId = [[ProductIQManager sharedInstance] accountId];
         
         [responseDictionary setValue:sfmPageView.sfmPage.objectName forKey:@"object"];
         [responseDictionary setValue:@"VIEW" forKey:@"action"];
         [responseDictionary setValue:recordIds forKey:@"recordIds"];
         [responseDictionary setValue:sfmPageView.sfmPage.nameFieldValue forKey:@"sourceRecordName"];
+        [responseDictionary setValue:accountId forKey:@"accountId"];
         return responseDictionary;
     }
 }
