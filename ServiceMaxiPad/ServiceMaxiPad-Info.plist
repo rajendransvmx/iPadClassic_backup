@@ -23,16 +23,22 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.servicemaxinc.svmxmobile.pulse.sum15</string>
+			<string>com.servicemaxinc.svmxmobile.pulse.win16</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>svmxmobilepulsesum15</string>
+				<string>svmxmobilepulsewin16</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>16.19.009</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fgcskysm</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
