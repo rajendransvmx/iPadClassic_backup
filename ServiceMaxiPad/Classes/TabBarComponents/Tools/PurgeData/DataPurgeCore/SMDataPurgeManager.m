@@ -494,6 +494,10 @@ const float progress = 0.05;
     }
     else
     {
+        //Defect:026563
+        SyncManager *syncMan = [SyncManager sharedInstance];
+        syncMan.dataPurgeStatus = DataPurgeInProgress;
+        
         [self postDataPurgeStartedNotification];
         self.purgeStatus = DataPurgeStatusScheduled;
         [SMDataPurgeHelper clearDataPurgeTableContents];
@@ -1692,6 +1696,9 @@ const float progress = 0.05;
                         /* using consatnt value for Data purge status */
                         [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kFailed];
                         [self manageDataPurge];
+                        //DefectFix:26563
+                        SyncManager *syncManager = [SyncManager sharedInstance];
+                        [syncManager updateDataPurgeStatus:SyncStatusSuccess];
                     }
                     else
                     {
@@ -1712,6 +1719,10 @@ const float progress = 0.05;
             {
                 if (st.syncStatus == SyncStatusSuccess)
                 {
+                    //DefectFix:26563
+                    SyncManager *syncManager = [SyncManager sharedInstance];
+                    [syncManager updateDataPurgeStatus:SyncStatusSuccess];
+                    
                     [self manageDataPurge];
                 }
                 else if ((st.syncStatus == SyncStatusFailed)
@@ -1730,6 +1741,10 @@ const float progress = 0.05;
 }
 
 - (void)dataPurgeWebserviceFailedWithError:(NSError *)error {
+    
+    //DefectFix:26563
+    SyncManager *syncManager = [SyncManager sharedInstance];
+    [syncManager updateDataPurgeStatus:SyncStatusFailed];
     
     if (![self isRescheduled])
     {
