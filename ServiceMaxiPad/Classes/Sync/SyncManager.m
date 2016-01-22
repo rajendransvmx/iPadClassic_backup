@@ -302,17 +302,28 @@ static SyncManager *_instance;
             
                 if (![self isDataSyncInProgress])
                 {
-                    [self performDataSync];
-                
-                    if (self.isGetPriceCallEnabled)
+                    if ([self isDataPurgeInProgress])
                     {
-                        self.isGetPriceCallEnabled = NO;
-                        [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
+                        self.dataSyncStatus = SyncStatusInQueue;
+                        [self enqueueSyncQueue:SyncTypeData];
                     }
                     
-                    if([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
-                        [self performSelectorInBackground:@selector(initiateProdIQDataSync) withObject:nil];
+                    else
+                    {
+                        [self performDataSync];
+                        
+                        if (self.isGetPriceCallEnabled)
+                        {
+                            self.isGetPriceCallEnabled = NO;
+                            [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
+                        }
+                        
+                        if([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
+                            [self performSelectorInBackground:@selector(initiateProdIQDataSync) withObject:nil];
+                        }
+                        
                     }
+                    
                 }
             }
             break;
@@ -1485,6 +1496,29 @@ static SyncManager *_instance;
     {
         return NO;
     }
+}
+
+//DefectFix:026563
+- (BOOL)isDataPurgeInProgress
+{
+    if (self.dataPurgeStatus == DataPurgeInProgress)
+    {
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
+
+- (void)updateDataPurgeStatus:(SyncStatus)status
+{
+    if ((status == SyncStatusSuccess) || (status == SyncStatusFailed))
+    {
+        self.dataPurgeStatus = DataPurgeCompleted;
+    }
+    [self manageSyncQueueProcess];
+    
 }
 
 - (BOOL)syncInProgress

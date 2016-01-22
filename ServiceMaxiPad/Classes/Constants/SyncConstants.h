@@ -87,7 +87,11 @@ typedef NS_ENUM(NSUInteger, SyncStatus) {
     SyncStatusConflict,
     SyncStatusNetworkError,
     SyncStatusRefreshTokenFailedWithError,
-    SyncStatusInCancelled
+    SyncStatusInCancelled,
+    
+    //Added for Data Purge
+    DataPurgeInProgress,
+    DataPurgeCompleted
 };
 
 

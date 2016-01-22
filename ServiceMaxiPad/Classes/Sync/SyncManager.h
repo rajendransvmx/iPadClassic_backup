@@ -31,6 +31,8 @@ extern NSString *kUpadteWebserviceData;
 
 @property(nonatomic, assign) BOOL isConfigSyncDueAlertShown;
 @property(nonatomic, assign) BOOL isGetPriceCallEnabled;
+@property (nonatomic,assign) SyncStatus dataPurgeStatus;
+
 
 // ...
 
@@ -71,6 +73,8 @@ extern NSString *kUpadteWebserviceData;
 - (BOOL)isInitalSyncOrResetApplicationInProgress;
 - (BOOL)isConfigSyncInQueue;
 - (BOOL)isInitialSyncInQueue;
+- (BOOL)isDataPurgeInProgress;
+
 
 - (void)updateUserTableIfRecordDoesnotExist;
 
@@ -89,5 +93,9 @@ extern NSString *kUpadteWebserviceData;
 
 - (void)enqueueSyncQueue:(SyncType)syncType;
 - (SyncType)dequeueSyncQueue;
+
+- (void)manageSyncQueueProcess;
+- (void)updateDataPurgeStatus:(SyncStatus )status;
+
 
 @end
