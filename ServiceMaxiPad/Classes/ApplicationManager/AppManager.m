@@ -549,6 +549,8 @@
     {
        // Verify user status
        [self doPostLoggedInUserVerification];
+        
+        [self saveCookies];
     }
     else if (status == ApplicationStatusAuthorizationFailedWithError)
     {
@@ -1090,6 +1092,28 @@
         });
 }
 
+/**
+ * @name   saveCookies
+ *
+ * @author Madhusudhan HK
+ *
+ * @brief save the cookies in NSUserDefaults.
+ *
+ * \par
+ *  <Longer description starts here>
+ *
+ *
+ * @return void
+ *
+ */
+
+- (void)saveCookies
+{
+    NSData         *cookiesData = [NSKeyedArchiver archivedDataWithRootObject: [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]];
+    NSUserDefaults *defaults    = [NSUserDefaults standardUserDefaults];
+    [defaults setObject: cookiesData forKey: @"cookies"];
+    [defaults synchronize];
+}
 
 @end
 

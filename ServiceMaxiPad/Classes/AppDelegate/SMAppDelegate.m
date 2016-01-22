@@ -53,6 +53,31 @@
    // *** ---  STORED VALUES HERE.... TEXT EDIT ---*////
 }
 
+/**
+ * @name   loadCookies
+ *
+ * @author Madhusudhan HK
+ *
+ * @brief update all saved cookies to NSHTTPCookieStorage instance.
+ *
+ * \par
+ *  <Longer description starts here>
+ *
+ *
+ * @return void
+ *
+ */
+- (void)loadCookies
+{
+    NSArray             *cookies       = [NSKeyedUnarchiver unarchiveObjectWithData: [[NSUserDefaults standardUserDefaults] objectForKey: @"cookies"]];
+    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    
+    for (NSHTTPCookie *cookie in cookies)
+    {
+        [cookieStorage setCookie: cookie];
+    }
+}
+
 #pragma mark - Application Life Cycle Methods
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -97,6 +122,8 @@
      [self.window makeKeyAndVisible];
      
      [self testLogin];
+     [self loadCookies];
+     
      [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
                                                        object:nil
                                                         queue:[NSOperationQueue mainQueue]
