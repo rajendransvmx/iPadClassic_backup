@@ -60,6 +60,9 @@
         if ([self.locManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             
             [self.locManager requestAlwaysAuthorization];
+            //Defect Fix:025217
+            [self.locManager requestWhenInUseAuthorization];
+
         }
 #endif
         [self.locManager startUpdatingLocation];
@@ -69,6 +72,8 @@
         if ([self.locManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
             
             [self.locManager requestAlwaysAuthorization];
+            //Defect Fix:025217
+            [self.locManager requestWhenInUseAuthorization];
         }
 #endif
         [self.locManager startMonitoringSignificantLocationChanges];

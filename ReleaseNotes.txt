@@ -4,15 +4,15 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.002
+Version = 16.29.006
  
 ===========================================
 
 ——————
 NOTE:
+Added URL Scheme of Namirial app in Plist file for iOS 9 compatibility.
+Updated URL scheme for Pulse in URL Type for Spr16.
 
-Added latest JS files for ProductIQ in static resource folder.
-
-Name Space: SVMXDEV
+Name Space: SVMXC
 
 
