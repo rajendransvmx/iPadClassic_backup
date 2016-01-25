@@ -240,13 +240,13 @@
         {
             return nil; //If controlling field value is nil, dependent field value will be none
             
-           /* if ([recordTypeDepList count]!=0)
-            {
-                //Returning complet set of DependentPicklist if there is nothing selected in Controlling Field
-                return recordTypeDepList;
-            }
-            else
-                return pickList;*/
+            /* if ([recordTypeDepList count]!=0)
+             {
+             //Returning complet set of DependentPicklist if there is nothing selected in Controlling Field
+             return recordTypeDepList;
+             }
+             else
+             return pickList;*/
         }
         dependentPicklistValues =  [SFMPageEditHelper getDependentPicklistValuesForPageField:controllerPageField recordFieldVal:recordField.internalValue objectName:self.pickListObjectName fromPicklist:pickList];
         
@@ -320,7 +320,7 @@
     if ([self.editViewControllerDelegate respondsToSelector:@selector(getRecordDataForField:)]) {
         SFMRecordFieldData *recordData = [self.editViewControllerDelegate getRecordDataForField:fieldName];
         if (recordData == nil && fieldName) {
-          
+            
             NSString *localId = [self.editViewControllerDelegate recordLocalId];
             
             NSMutableDictionary *dict = [SFMPageEditHelper getDataForObject:self.pickListObjectName fields:@[fieldName] recordId:localId];
@@ -371,13 +371,13 @@
         for (SFObjectMappingComponentModel * mappingModel in mappingArray ) {
             
             /*  ===================================================  */
-                /*Defect: 018999, non translated display values */
+            /*Defect: 018999, non translated display values */
             /*  ===================================================  */
             
-           
+            
             
             NSString *displayValue = mappingModel.mappingValue;
-
+            
             
             if(sfmPage.process.processInfo.processType != nil && [sfmPage.process.processInfo.processType isEqualToString:kProcessTypeStandAloneCreate])
             {
@@ -394,7 +394,7 @@
             }
             
             /*  ===================================================  */
-                     /* END */
+            /* END */
             /*  ===================================================    */
             SFMRecordFieldData * recordField = [[SFMRecordFieldData alloc] initWithFieldName: mappingModel.targetFieldName value:mappingModel.mappingValue andDisplayValue:displayValue];
             
@@ -736,7 +736,7 @@
 
 - (BOOL)saveHeaderRecord:(SFMPage *)page {
     /* write update method*/
-
+    
     BOOL canUpdate = YES;
     self.dataDictionaryAfterModification = page.headerRecord;
     
@@ -783,11 +783,11 @@
     
     syncRecord.recordType = (page.sourceObjectName == nil) ? kRecordTypeMaster : kRecordTypeDetail;
     syncRecord.sfId = headerSfid;
- 
+    
     if ([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
         
         if (modifiedFieldAsJsonString != nil) {
-             syncRecord.fieldsModified = modifiedFieldAsJsonString;
+            syncRecord.fieldsModified = modifiedFieldAsJsonString;
         }
         else{
             if (self.isfieldMergeEnabled && ![StringUtil isStringEmpty:headerSfid]) {
@@ -795,13 +795,13 @@
             }
             
         }
-     }
-   
+    }
+    
     //delete the existing entry form modified record
-//    if (!canUpdate) {
-//        id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-//        [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:page.recordId];
-//    }
+    //    if (!canUpdate) {
+    //        id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    //        [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:page.recordId];
+    //    }
     
     /*after save  make an entry in trailer table*/
     if (recordUpdatedSuccessFully && canUpdate) {
@@ -822,7 +822,7 @@
                 }
             }
             else{
-                 [modifiedRecordService saveRecordModel:syncRecord];
+                [modifiedRecordService saveRecordModel:syncRecord];
             }
         }
         else {
@@ -839,29 +839,29 @@
             [self checkIfObjectIsEvent:page.objectName];
         }
         
-       // NSLog(@"database path: %@",[[DatabaseManager sharedInstance]primaryDatabasePath]);
+        // NSLog(@"database path: %@",[[DatabaseManager sharedInstance]primaryDatabasePath]);
         
         [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:page.headerRecord];
         [self theModifiedRecordsUpdateForCustomWebservice:syncRecord andSFMPage:page];
         
-       // NSString *abc = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:page.recordId];
-
+        // NSString *abc = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:page.recordId];
+        
     }
     return canUpdate;
 }
 
 -(void)theModifiedRecordsUpdateForCustomWebservice:(ModifiedRecordModel *) syncRecord andSFMPage:(SFMPage *)sfmpage
 {
-
+    
     if (sfmpage.customWebserviceOptionsArray.count) {
         syncRecord.recordLocalId = [NSString stringWithFormat:@"%@%@", syncRecord.recordLocalId, kChangedLocalIDForCustomCall];
         syncRecord.sfId = [NSString stringWithFormat:@"%@%@", syncRecord.sfId, kChangedLocalIDForCustomCall];
         // This is being done to avoid the confusion wrt normal records and customcall records in Modified records. Also, if the recordid is same as normal data records then successivesync will create problems in - (void) doSuccessiveSync method in SuccessiveSyncManager. Method is getting called is===>     [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync]; from - (void)PerformSYncBasedOnFlags from SyncManager class.
-
+        
         NSString *requestData = [NSString stringWithFormat:@"%@,%@,%@", sfmpage.objectName, sfmpage.recordId, sfmpage.process.processInfo.sfID];
         syncRecord.requestData = requestData;
         id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-
+        
         if ([syncRecord.operation isEqualToString:kModificationTypeInsert]) {
             
             if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeAfterInsert]) {
@@ -869,14 +869,14 @@
                 
                 if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterInsert andparentID:syncRecord.parentLocalId] ) {
                     [modifiedRecordService saveRecordModel:syncRecord];
-
+                    
                 }
             }
         }
         else{
             
             if ([sfmpage.customWebserviceOptionsArray containsObject:kModificationTypeAfterUpdate]) {
-                    syncRecord.operation = kModificationTypeAfterUpdate;
+                syncRecord.operation = kModificationTypeAfterUpdate;
                 if (![modifiedRecordService doesRecordExistForId:sfmpage.recordId andOperationType:kModificationTypeAfterUpdate andparentID:syncRecord.parentLocalId] ) {
                     [modifiedRecordService saveRecordModel:syncRecord];
                 }
@@ -888,7 +888,7 @@
                     
                 }
             }
-
+            
         }
     }
 }
@@ -1002,7 +1002,7 @@
                     else{
                         
                         if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
-                             BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localIdField.internalValue];
+                            BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localIdField.internalValue];
                             if (!doesExist) {
                                 BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
                             }
@@ -1025,19 +1025,19 @@
                 lTempSyncRecordForCustomWebservice = syncRecord;
                 shouldRecordBeSavedForCustomWebService = YES;
                 [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:eachDetailDict];
-
-           }
+                
+            }
             //else {
-//                //delete the existing entry form modified record
-//                    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-//                    [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:syncRecord.recordLocalId];
-//            }
+            //                //delete the existing entry form modified record
+            //                    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+            //                    [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:syncRecord.recordLocalId];
+            //            }
         }
         
         if (shouldRecordBeSavedForCustomWebService) {
             [self theModifiedRecordsUpdateForCustomWebservice:lTempSyncRecordForCustomWebservice andSFMPage:sfmPage];
         }
-
+        
         //delete record
         if([deletedRecordIds count] > 0 )
         {
@@ -1461,7 +1461,7 @@
             detailParam.parentLocalId = sfpage.sourceRecordId;
             detailParam.parentSfID = headerSfId;
             detailParam.sourceToTargetType = sfpage.process.processInfo.processType;
-
+            
             if (![StringUtil isStringEmpty:component.expressionId]) {
                 SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:component.expressionId objectName:detailParam.objectName];
                 
@@ -1815,7 +1815,7 @@
               andHeaderObjectName:(NSString *)headerObjectName {
     
     if ([objectName isEqualToString:kEventObject] ||[objectName isEqualToString:kServicemaxEventObject] ) {
-       
+        
         if ([objectName isEqualToString:kServicemaxEventObject]) {
             [self updateRecordIfSVMXEventObject:recordDictionary andObjectName:objectName andHeaderObjectName:headerObjectName];
         } else {
@@ -1874,8 +1874,8 @@
 
 
 - (void)updateRecordIfSVMXEventObject:(NSMutableDictionary *)recordDictionary
-                    andObjectName:(NSString *)objectName
-              andHeaderObjectName:(NSString *)headerObjectName {
+                        andObjectName:(NSString *)objectName
+                  andHeaderObjectName:(NSString *)headerObjectName {
     
     if (![objectName isEqualToString:kServicemaxEventObject]) {
         return;
@@ -1911,7 +1911,7 @@
         durationField = [[SFMRecordFieldData alloc] initWithFieldName:kSVMXDurationInMinutes value:nil andDisplayValue:nil];
         [recordDictionary setObject:durationField forKey:kSVMXDurationInMinutes];
     }
-
+    
     SFMRecordFieldData *whatId = [recordDictionary objectForKey:kSVMXWhatId];
     if (whatId.internalValue) {
         SFMRecordFieldData *objectSfId = [[SFMRecordFieldData alloc] initWithFieldName:kObjectSfId value:whatId.internalValue andDisplayValue:whatId.internalValue];
@@ -2097,6 +2097,15 @@
         NSDictionary *finalDict = [sourceRecords objectForKey:localId];
         NSString * sfId = [finalDict objectForKey:kId];
         
+        self.dataDictionaryAfterModification = [NSMutableDictionary dictionaryWithDictionary:finalDict];
+        
+        if([StringUtil isStringEmpty:sfId]) {
+            sfId = nil;
+        }
+        
+        NSString *modifiedFieldAsJsonString = [self getJsonStringAfterComparisionForObject:objectName recordId:localId sfid:sfId andSettingsFlag:YES];
+        
+        
         SFMPageEditHelper *editHelper = [[SFMPageEditHelper alloc] init];
         
         ModifiedRecordModel * syncRecord = [[ModifiedRecordModel alloc] init];
@@ -2109,20 +2118,43 @@
         id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
         /* Check if record exist */
         BOOL isRecordExist =  [transObjectService isRecordExistsForObject:objectName forRecordLocalId:localId];
-        if (isRecordExist) {
+        if (isRecordExist && ![StringUtil isStringEmpty:sfId]) {
             
             syncRecord.operation = kModificationTypeUpdate;
             recordUpdatedSuccessFully = [editHelper updateFinalRecord:finalDict inObjectName:objectName andLocalId:localId];
         }
+        else {
+            syncRecord.operation = kModificationTypeInsert;
+            recordUpdatedSuccessFully = [editHelper updateFinalRecord:finalDict inObjectName:objectName andLocalId:localId];
+        }
+        
         syncRecord.recordType = recordType;//kRecordTypeMaster;
         syncRecord.sfId = sfId;
         
+        
+        BOOL canUpdate = YES;
+        
+        if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
+            if (![StringUtil isStringEmpty:modifiedFieldAsJsonString]) {
+                syncRecord.fieldsModified = modifiedFieldAsJsonString;
+            }
+            else if (self.isfieldMergeEnabled && ![StringUtil isStringEmpty:sfId]) {
+                canUpdate = NO;
+            }
+        }
+        
+        
         /*after save  make an entry in trailer table*/
-        if (recordUpdatedSuccessFully) {
+        if (recordUpdatedSuccessFully && canUpdate) {
             id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
             BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localId];
             if (!doesExist) {
                 [modifiedRecordService saveRecordModel:syncRecord];
+            }
+            else {
+                if (self.isfieldMergeEnabled && ![StringUtil isStringEmpty:sfId] && [syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
+                    [modifiedRecordService updateFieldsModifed:syncRecord];
+                }
             }
             [[SuccessiveSyncManager sharedSuccessiveSyncManager] registerForSuccessiveSync:syncRecord withData:finalDict];
         }
@@ -2371,7 +2403,7 @@
             }
             else if ([dataType isEqualToString:kSfDTMultiPicklist]) {
                 
-        
+                
                 NSArray *allComponents = [SFMPageHelper getAllValuesFromMultiPicklistString:internalValue];
                 if ([allComponents count] > 0) {
                     
@@ -2421,7 +2453,7 @@
     {
         self.isfieldMergeEnabled = YES;
     }
-   
+    
     if (!self.isfieldMergeEnabled)
     {
         // Woo Field Level merge is not anabled. Lets go back.
@@ -2445,7 +2477,7 @@
         // It is new record whcih is not sync.
         if ((sfid == nil) && (recordId != nil))
         {
-           // self.foundNonFieldMergeChanges = YES;
+            // self.foundNonFieldMergeChanges = YES;
             SXLogInfo(@"Eligible for updation but Not Advance Sync Conflict - since it is unsynced record ");
         }
         else
@@ -2502,7 +2534,7 @@
             // Conflict has been found, lets make copy of old modification
             oldDataAfterModificationDictionary = [existingDataAfterModificationDictionary copy];
         }
-
+        
         NSArray *fields = [existingDataBeforeModificationDictionary allKeys];
         
         // Iteration over all fields
@@ -2515,7 +2547,7 @@
                 if (oldValue != nil)
                 {
                     [self.dataDictionaryBeforeModification setObject:oldValue
-                                                         forKey:newKey];
+                                                              forKey:newKey];
                 }
             }
             
@@ -2529,7 +2561,7 @@
                     recordFieldData.internalValue = oldValue;
                     recordFieldData.name          = newKey;
                     [self.dataDictionaryAfterModification setObject:recordFieldData
-                                                        forKey:newKey];
+                                                             forKey:newKey];
                 }
             }
         }
@@ -2541,13 +2573,13 @@
     
     if (existingDataBeforeModificationDictionary == nil)
     {
-      //  existingDataBeforeModificationDictionary = [self dataDictionaryBeforeModification];
+        //  existingDataBeforeModificationDictionary = [self dataDictionaryBeforeModification];
     }
     
     NSString *modifedFieldAsJsonString = [fieldMergeHelper getJsonAfterComparingDictOne:self.dataDictionaryBeforeModification withDataAfterModification:self.dataDictionaryAfterModification andOldModificationDict:oldDataAfterModificationDictionary];
     
     NSString *currentModifiedFields = [modifiedRecordService fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:recordId andSfId:sfid];
-
+    
     if (![StringUtil isStringEmpty:currentModifiedFields] && [modifedFieldAsJsonString isEqualToString:currentModifiedFields]) {
         modifedFieldAsJsonString = nil;
     }
