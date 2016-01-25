@@ -4,13 +4,26 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.19.010
+Version = 16.19.011
  
 ===========================================
+
+-------------
+Fixed Defects
+-------------
+
+
+Forward ported:
+______________
+25351
+26451
+____
+
+
+Namespace - SVMXC
+
 
 ——————
 NOTE:
 
-URL schema has been added in plist for Namirial (iOS 9 compatibility)
-Schema and Identifier has been updated in URL Type for Pulse to Win16/Win16SP invoke.
 
