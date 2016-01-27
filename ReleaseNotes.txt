@@ -5,14 +5,14 @@ Release Notes Starts For Version 14.50.019
 ServiceMax iPad Sum14SPiPadBuild
 
 *******************************************
-Version = 14.50.020
+Version = 14.50.022
 ===========================================
 
 
 -------------
 Fixed Defects
 -------------
-020844
+026185 -  App crash issue during successive sync.
 
 ------------
 Known Issues
@@ -32,5 +32,5 @@ None
 ---------------------
 Additional Notes
 ---------------------
-- Merged Spring 14 SP branch changes to Summer 14 SP - This is has 64-bit compatibility changes and defects fixes on Spring 14 SP
+
 
