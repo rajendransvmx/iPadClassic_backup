@@ -27,7 +27,6 @@
 
 -(void)dealloc
 {
-    [super dealloc];
     
     [localId release];
     [objectName release];
@@ -40,6 +39,9 @@
     [parentObjName release];
     [syncType release];
     [headerLocalId release];
+    
+    [super dealloc];
+
 
     
 }
