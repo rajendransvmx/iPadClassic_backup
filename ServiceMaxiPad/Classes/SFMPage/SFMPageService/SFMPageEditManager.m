@@ -2695,7 +2695,7 @@
     NSDictionary *tempDict = (NSDictionary *)[Utility objectFromJsonString:response];
     NSDictionary *responseDict = [tempDict objectForKey:@"response"];
     
-    NSLog(@"FORMULA RESULT: %@", responseDict);
+//    NSLog(@"FORMULA RESULT: %@", responseDict);
     
     NSArray *allKeys = [responseDict allKeys];
     

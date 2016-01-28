@@ -230,6 +230,9 @@
             headerView.rightButton.hidden = YES;
             
         }
+        else {
+            headerView.rightButton.hidden = NO;
+        }
     }
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -264,16 +267,17 @@
             
             pageSectionView.sectionTitle.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
             [pageSectionView.rightButton setTitle:[[TagManager sharedInstance] tagByName:kTagShowAllButtonText] forState:UIControlStateNormal];
-
-            pageSectionView.index = section;
-            if (section != self.selectedSection ) {
-                [self setShowAllSection:YES sender:pageSectionView.rightButton];
-            }else
-            {
-                [self setShowAllSection:NO sender:pageSectionView.rightButton];
-                
-            }
         }
+        pageSectionView.index = section;
+        
+        if (section != self.selectedSection ) {
+            [self setShowAllSection:YES sender:pageSectionView.rightButton];
+        }else
+        {
+            [self setShowAllSection:NO sender:pageSectionView.rightButton];
+            
+        }
+
     }
     return pageSectionView;
 }

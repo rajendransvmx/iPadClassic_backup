@@ -45,7 +45,11 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     SaveFlowFromPushNotification
 };
 
-@interface PageEditViewController ()<PageEventProcessManagerDelegate>
+@interface PageEditViewController ()<PageEventProcessManagerDelegate> {
+    
+    int jsExeCount;
+    BOOL jsExecuted;
+}
 
 @property(nonatomic,strong)SFMPageEditManager   *sfmEditPageManager;
 @property(nonatomic,strong)SFMPage              *sfmPage;
@@ -150,12 +154,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    BOOL formulaExists = [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onLoad"];
-    if (formulaExists) {
-        [self disableUI];
-        [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
-    }
+    [self startFormula];
 }
 
 
@@ -981,22 +980,160 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 {
     if (![self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onSave"]) {
         
-        if (nil == self.ruleManager) {
-            PageEditMasterViewController *detailViewController = [self.childViewControllers objectAtIndex:0];
-            
-            self.ruleManager = [[BusinessRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
-            self.ruleManager.parentView = detailViewController.view;
-            self.ruleManager.delegate = self;
+        [self startBizRule];
+    }
+    else {
+        jsExeCount = 1;
+        jsExecuted = NO;
+        [self performSelector:@selector(reloadFormula:) withObject:@"onSave" afterDelay:3.0];
+    }
+}
+
+
+
+-(void)startFormula {
+    BOOL formulaExists = [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onLoad"];
+    if (formulaExists) {
+        [self disableUI];
+        [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
+        jsExeCount = 1;
+        jsExecuted = NO;
+        [self performSelector:@selector(reloadFormula:) withObject:@"onLoad" afterDelay:3.0];
+    }
+}
+
+-(void)startBizRule {
+    
+    if (nil == self.ruleManager) {
+        PageEditMasterViewController *detailViewController = [self.childViewControllers objectAtIndex:0];
+        
+        self.ruleManager = [[BusinessRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
+        self.ruleManager.parentView = detailViewController.view;
+        self.ruleManager.delegate = self;
+    }
+    
+    BOOL shouldExecuteBizRule = [self.ruleManager executeBusinessRules];
+    if (!shouldExecuteBizRule) {
+        [self saveRecordData];
+    }
+    else {
+        jsExecuted = NO;
+        jsExeCount = 1;
+        [self performSelector:@selector(reloadBizRule) withObject:nil afterDelay:3.0];
+    }
+}
+
+-(void)reloadBizRule {
+    if(jsExecuted == NO && jsExeCount < 3) {
+        NSLog(@"Biz rule hanged count: %d", jsExeCount);
+        [self.ruleManager executeBusinessRules];
+        jsExeCount++;
+        [self performSelector:@selector(reloadBizRule) withObject:nil afterDelay:3.0];
+    }
+    else {
+        [self enableUI];
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+        [self performSelectorOnMainThread:@selector(showBizRuleAlertMessage) withObject:nil waitUntilDone:YES];
+    }
+}
+
+-(void)reloadFormula:(NSString *)event {
+    if (jsExecuted == NO && jsExeCount < 3) {
+        NSLog(@"Formula %@ hanged count : %d", event, jsExeCount);
+        [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:event];
+        jsExeCount++;
+    }
+    else {
+        [self enableUI];
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+        [self performSelectorOnMainThread:@selector(showBizRuleAlertMessage) withObject:nil waitUntilDone:YES];
+    }
+}
+
+-(void)showBizRuleAlertMessage {
+    NSString *title = @"Data Validation Rule Execution Failed";
+    NSString *message = @"Do you wish to discard the changes or continue editing?";
+    NSString *discardChanges = [[TagManager sharedInstance] tagByName:kTag_AbandonChanges];
+    NSString *continueStr = [[TagManager sharedInstance] tagByName:kTag_SaveChanges];
+    
+    if (SYSTEM_VERSION < 8.0) {
+        UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@",title] message:message delegate:self cancelButtonTitle:discardChanges otherButtonTitles:continueStr,nil];
+        _alert.tag = kAlertViewTagBizRuleWarning;
+        [_alert show];
+    }
+    else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@",title] message:message preferredStyle:(UIAlertControllerStyleAlert)];
+        UIAlertAction *discardAction = [UIAlertAction actionWithTitle:discardChanges style:(UIAlertActionStyleCancel) handler:^(UIAlertAction *action) {
+            [self alertActionEventForTag:kAlertViewTagBizRuleWarning andButtonIndex:0];
+        }];
+        UIAlertAction *continueAction = [UIAlertAction actionWithTitle:continueStr style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            [self alertActionEventForTag:kAlertViewTagBizRuleWarning andButtonIndex:1];
+        }];
+        [alertController addAction:discardAction];
+        [alertController addAction:continueAction];
+        [self presentViewController:alertController animated:YES completion:^{
+        }];
+    }
+}
+
+
+-(void)showFormulaAlertMessage {
+    NSString *title = @"ServiceMax Formula Execution Failed";
+    NSString *message = @"Do you wish to discard the changes or continue editing?";
+    NSString *discardChanges = [[TagManager sharedInstance] tagByName:kTag_AbandonChanges];
+    NSString *continueStr = [[TagManager sharedInstance] tagByName:kTag_SaveChanges];
+    
+    if (SYSTEM_VERSION < 8.0) {
+        UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@",title] message:message delegate:self cancelButtonTitle:discardChanges otherButtonTitles:continueStr,nil];
+        _alert.tag = kAlertViewTagFormulaWarning;
+        [_alert show];
+    }
+    else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@",title] message:message preferredStyle:(UIAlertControllerStyleAlert)];
+        UIAlertAction *discardAction = [UIAlertAction actionWithTitle:discardChanges style:(UIAlertActionStyleCancel) handler:^(UIAlertAction *action) {
+            [self alertActionEventForTag:kAlertViewTagFormulaWarning andButtonIndex:0];
+        }];
+        UIAlertAction *continueAction = [UIAlertAction actionWithTitle:continueStr style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            [self alertActionEventForTag:kAlertViewTagFormulaWarning andButtonIndex:1];
+        }];
+        [alertController addAction:discardAction];
+        [alertController addAction:continueAction];
+        [self presentViewController:alertController animated:YES completion:^{
+        }];
+    }
+}
+
+
+-(void)alertActionEventForTag:(int)alertTag andButtonIndex:(int)buttonIndex {
+    if (alertTag == kAlertViewTagBizRuleWarning ) {
+        switch (buttonIndex) {
+            case 0:
+                [self cancelButtonTappedInAlert:nil];
+                break;
+            default:
+                break;
         }
-        BOOL shouldExecuteBizRule = [self.ruleManager executeBusinessRules];
-        if (!shouldExecuteBizRule) {
-            [self saveRecordData];
+    }
+    else if (alertTag == kAlertViewTagFormulaWarning) {
+        switch (buttonIndex) {
+            case 0:
+                [self cancelButtonTappedInAlert:nil];
+                break;
+                case 1:
+                [self startFormula];
+            default:
+                break;
         }
     }
 }
 
 - (void)businessRuleFinishedWithResults:(NSMutableArray *)resultArray
 {
+    
+    jsExecuted = YES;
+    jsExeCount = 0;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadBizRule) object:nil];
+    
     [(PageEditDetailViewController *)self.detailViewController  initiateBuissRulesData:resultArray];
     
     if (([resultArray count]== 0) || (resultArray == nil) || ([self.ruleManager allWarningsAreConfirmed] && ([self.ruleManager numberOfErrorsInResult] == 0))) {
@@ -1064,27 +1201,12 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         }
         else
         {
-            if ([self.sfmPage isAttachmentEnabled])
-            {
-                NSString *parentId = [SFMPageHelper getSfIdForLocalId:self.sfmPage.recordId objectName:self.sfmPage.objectName];
-                if ([StringUtil isStringEmpty:parentId])
-                {
-                    parentId = self.sfmPage.recordId;
-                }
-                [AttachmentHelper revertImagesAndVideosForUploadForParentId:parentId];
-                NSArray *imagesAndVideosArray = [AttachmentHelper getImagesAndVideosForUploadForParentId:parentId];
-                if ([parentId isEqualToString:self.sfmPage.recordId] && ![imagesAndVideosArray count])
-                {
-                    [AttachmentHelper deleteAttachmentLocalModelFromDB:parentId];
-                }
-                BOOL status = [AttachmentHelper revertDeleteAttachmentsFromModifiedRecordsForParentId:parentId andLocalIds:[AttachmentHelper modifiedRecordLocalIds]];
-                if (status) {
-                    [AttachmentHelper removeModifiedRecordLocalIds];
-                }
-            }
-            [self dismissViewControllerAnimated:YES completion:nil];
-            return;
+            [self cancelButtonTappedInAlert:nil];
         }
+    }
+    else if (alertView.tag == kAlertViewTagBizRuleWarning)
+    {
+        [self alertActionEventForTag:alertView.tag andButtonIndex:buttonIndex];
     }
     else
     {
@@ -1093,6 +1215,30 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             [self requiredFieldsAlertTapped];
         }
     }
+}
+
+
+-(void)cancelButtonTappedInAlert:(id)sender {
+    if ([self.sfmPage isAttachmentEnabled])
+    {
+        NSString *parentId = [SFMPageHelper getSfIdForLocalId:self.sfmPage.recordId objectName:self.sfmPage.objectName];
+        if ([StringUtil isStringEmpty:parentId])
+        {
+            parentId = self.sfmPage.recordId;
+        }
+        [AttachmentHelper revertImagesAndVideosForUploadForParentId:parentId];
+        NSArray *imagesAndVideosArray = [AttachmentHelper getImagesAndVideosForUploadForParentId:parentId];
+        if ([parentId isEqualToString:self.sfmPage.recordId] && ![imagesAndVideosArray count])
+        {
+            [AttachmentHelper deleteAttachmentLocalModelFromDB:parentId];
+        }
+        BOOL status = [AttachmentHelper revertDeleteAttachmentsFromModifiedRecordsForParentId:parentId andLocalIds:[AttachmentHelper modifiedRecordLocalIds]];
+        if (status) {
+            [AttachmentHelper removeModifiedRecordLocalIds];
+        }
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
+    return;
 }
 
 //25274
@@ -1368,9 +1514,11 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 -(void)refreshSFMPageWithFieldUpdateRuleResults:(NSString *)responseString forEvent:(NSString *)event {
     
-    [self performSelectorOnMainThread:@selector(updateTheSFMPage:) withObject:responseString waitUntilDone:YES];
+    jsExecuted = YES;
+    jsExeCount = 0;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadFormula:) object:event];
     
-    // [self updateTheSFMPage:responseString];
+    [self performSelectorOnMainThread:@selector(updateTheSFMPage:) withObject:responseString waitUntilDone:YES];
     
     
     if ([event isEqualToString:@"onLoad"]) {
@@ -1381,15 +1529,8 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     
     if ([event isEqualToString:@"onSave"]) {
-        //[self test];
-        [self performSelector:@selector(bizRuleExecute) withObject:nil afterDelay:0.0];
-        
-        //[self performSelectorOnMainThread:@selector(bizRuleExecute) withObject:nil waitUntilDone:YES];
-        
-        // [self bizRuleExecute];
-        
+        [self performSelector:@selector(startBizRule) withObject:nil afterDelay:0.0];
     }
-    
 }
 
 -(void)updateTheSFMPage:(NSString *)responseString

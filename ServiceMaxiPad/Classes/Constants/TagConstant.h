@@ -880,4 +880,9 @@ extern NSString *const kSignIn ;
 extern NSString *const kPurgeDataLogs;
 
 
+#define kAlertViewTagBizRuleWarning 107
+#define kAlertViewTagFormulaWarning 108
+
+
+
 //@end
