@@ -210,7 +210,8 @@ forLocalNotification:(UILocalNotification *)notification
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-    if ([[url scheme] isEqualToString:@"svmxmobilepulsesum15"])
+    //DefectFix:026723
+    if ([[url scheme] containsString:@"svmxmobilepulse"])
     {
         NSDictionary *queryStringDictionary = [PushNotificationUtility getDictionaryFromSharedURL:url];
      
