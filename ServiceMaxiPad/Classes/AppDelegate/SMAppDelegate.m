@@ -237,17 +237,18 @@ forLocalNotification:(UILocalNotification *)notification
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-    if ([[url scheme] isEqualToString:@"svmxmobilepulsesum15"])
+    //Defect Fix:026723
+    if ([[url scheme] containsString:@"svmxmobilepulse"])
     {
         NSDictionary *queryStringDictionary = [PushNotificationUtility getDictionaryFromSharedURL:url];
-     
+        
         BOOL isValidUser = [PushNotificationUtility validateOrg:queryStringDictionary];
         if (isValidUser)
         {
             [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
         }
     }
-    return YES; 
+    return YES;
 }
 
 
