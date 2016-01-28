@@ -915,22 +915,22 @@
 
 #pragma mark - fill complete what id
 
-//-(NSString *)getObjectNameForWhatId:(NSString *)whatId {
-//    
-//    if (whatId.length < 15) {
-//        return nil;
-//    }
-//    
-//    NSString *keyPrefix = [whatId substringToIndex:3];
-//    
-//    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"keyPrefix" operatorType:SQLOperatorEqual andFieldValue:keyPrefix];
-//    
-//    id <SFObjectDAO> objectService = [FactoryDAO serviceByServiceType:ServiceTypeSFObject];
-//    
-//    SFObjectModel *model = [objectService getSFObjectInfo:criteria fieldName:@[@"objectName"]];
-//    
-//    return model.objectName;
-//}
+-(NSString *)getObjectNameForWhatId:(NSString *)whatId {
+    
+    if (whatId.length < 15 || whatId.length > 18 ) {
+        return nil;
+    }
+    
+    NSString *keyPrefix = [whatId substringToIndex:3];
+    
+    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"keyPrefix" operatorType:SQLOperatorEqual andFieldValue:keyPrefix];
+    
+    id <SFObjectDAO> objectService = [FactoryDAO serviceByServiceType:ServiceTypeSFObject];
+    
+    SFObjectModel *model = [objectService getSFObjectInfo:criteria fieldName:@[@"objectName"]];
+    
+    return model.objectName;
+}
 
 //- (NSArray*)fetchAllTheIdsForGivenSetOfPartialWhatId:(NSArray*)listOfPartialWhatId
 //{

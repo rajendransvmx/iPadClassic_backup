@@ -84,5 +84,7 @@ expression:(NSString *)advancaeExpression
 
 - (NSMutableArray *)getDetailsDataForQueryForSfmPage:(DBRequestSelect *)selectQuery;
 
+-(NSString *)getObjectNameForWhatId:(NSString *)whatId;
+
 #pragma End
 @end

@@ -29,6 +29,7 @@
 #import "LinkedSfmProcessDAO.h"
 #import "MobileDeviceSettingDAO.h"
 #import "EventTransactionObjectModel.h"
+#import "ObjectNameFieldValueService.h"
 
 @implementation SFMPageEditHelper
 
@@ -426,7 +427,8 @@
       intoObjectName:(NSString *)objectName {
     
     NSMutableDictionary *headerRecord = [[NSMutableDictionary alloc] init];
-    
+    NSMutableArray *referenceFieldNames = [[NSMutableArray alloc] init];
+
     NSDictionary *fieldTyDictionary =  [SFMPageEditHelper getObjectFieldInfoByType:objectName];
     for (NSString *eachFieldName in fieldTyDictionary) {
         
@@ -434,15 +436,37 @@
         if ([fieldType isEqualToString:kSfDTBoolean]) {
             [headerRecord setObject:kFalse forKey:eachFieldName];
         }
+        else if ([fieldType isEqualToString:kSfDTReference]) {
+            [referenceFieldNames addObject:eachFieldName];
+        }
         
     }
     
+    NSMutableArray *onlineIncludedRecords = [NSMutableArray new];
     for (NSString *fieldName in record) {
         SFMRecordFieldData *fieldValue = [record objectForKey:fieldName];
         if (fieldValue.internalValue != nil) {
             [headerRecord setObject:fieldValue.internalValue forKey:fieldName];
         }
+        BOOL isReference = NO;
+        for (NSString *fieldNameString in referenceFieldNames) {
+            if ([fieldNameString isEqualToString:fieldName] && fieldValue.internalValue != nil) {
+                isReference = YES;
+                break;
+            }
+        }
         
+        if (isReference) {
+            id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+            NSString *objectName = [transObjectService getObjectNameForWhatId:fieldValue.internalValue];
+
+            DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:fieldValue.internalValue];
+           TransactionObjectModel *model = [transObjectService getDataForObject:objectName fields:nil expression:nil criteria:@[criteria]];
+            if (model.recordLocalId ==nil) {
+                NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys: fieldValue.internalValue, kId, fieldValue.displayValue,@"Value", nil];
+                [onlineIncludedRecords addObject:dict];
+            }
+        }
     }
     NSArray *transactionObjects = [[NSArray alloc]init];
     if ([objectName isEqualToString:kServicemaxEventObject] || [objectName isEqualToString:kEventObject]) {
@@ -457,6 +481,24 @@
     
     id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
     TXFetchHelper *helper = [[TXFetchHelper alloc]init];
+    if (onlineIncludedRecords.count) {
+        
+        NSMutableArray *transactionArray = [NSMutableArray new];
+        
+        for(NSDictionary *onlineIncludedDictionary in onlineIncludedRecords)
+        {
+            TransactionObjectModel *aModel = [[TransactionObjectModel alloc] initWithObjectApiName:kObjectNameFieldValue];
+            
+            [aModel mergeFieldValueDictionaryForFields:onlineIncludedDictionary];
+            [transactionArray addObject:aModel];
+        }
+        ObjectNameFieldValueService *service = [[ObjectNameFieldValueService alloc] init];
+        [service updateOrInsertTransactionObjects:transactionArray];
+
+//        DBRequestInsert *InsertQuery =  [helper getInsertQuery:kObjectNameFieldValue];
+//        [transObjectService insertTransactionObjects:transactionArray andDbRequest:[query query]];
+    }
+
     DBRequestInsert *query =  [helper getInsertQuery:objectName];
     return [transObjectService insertTransactionObjects:transactionObjects andDbRequest:[query query]];
 }
@@ -464,8 +506,19 @@
 - (BOOL)updateRecord:(NSDictionary *)record inObjectName:(NSString *)objectName andLocalId:(NSString *)localId {
     
     NSMutableDictionary *eachRecord = [[NSMutableDictionary alloc] init];
-   
+    NSMutableArray *referenceFieldNames = [[NSMutableArray alloc] init];
+
+    NSDictionary *fieldTyDictionary =  [SFMPageEditHelper getObjectFieldInfoByType:objectName];
+    for (NSString *eachFieldName in fieldTyDictionary) {
+        
+        NSString *fieldType = [fieldTyDictionary objectForKey:eachFieldName];
+        if ([fieldType isEqualToString:kSfDTReference]) {
+            [referenceFieldNames addObject:eachFieldName];
+        }
+    }
+    
     NSMutableArray *allFields = [[NSMutableArray alloc] init];
+    NSMutableArray *onlineIncludedRecords = [NSMutableArray new];
     for (NSString *fieldName in record) {
         SFMRecordFieldData *fieldValue = [record objectForKey:fieldName];
         if ([fieldName isEqualToString:kId]) {
@@ -475,6 +528,27 @@
             [eachRecord setObject:fieldValue.internalValue forKey:fieldName];
         }
         [allFields addObject:fieldName];
+        
+        BOOL isReference = NO;
+        for (NSString *fieldNameString in referenceFieldNames) {
+            if ([fieldNameString isEqualToString:fieldName] && fieldValue.internalValue != nil) {
+                isReference = YES;
+                break;
+            }
+        }
+        
+        if (isReference) {
+            id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+            NSString *objectName = [transObjectService getObjectNameForWhatId:fieldValue.internalValue];
+            
+            DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:fieldValue.internalValue];
+            TransactionObjectModel *model = [transObjectService getDataForObject:objectName fields:nil expression:nil criteria:@[criteria]];
+            if (model.recordLocalId ==nil) {
+                
+                NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys: fieldValue.internalValue, kId, fieldValue.displayValue,@"Value", nil];
+                [onlineIncludedRecords addObject:dict];
+            }
+        }
     }
     if ([objectName isEqualToString:kServicemaxEventObject] || [objectName isEqualToString:kEventObject]) {
         
@@ -496,6 +570,24 @@
     }else {
     TransactionObjectModel *aModel = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
     [aModel mergeFieldValueDictionaryForFields:eachRecord];
+    }
+    
+    if (onlineIncludedRecords.count) {
+        
+        NSMutableArray *transactionArray = [NSMutableArray new];
+        
+        for(NSDictionary *onlineIncludedDictionary in onlineIncludedRecords)
+        {
+            TransactionObjectModel *aModel = [[TransactionObjectModel alloc] initWithObjectApiName:kObjectNameFieldValue];
+            
+            [aModel mergeFieldValueDictionaryForFields:onlineIncludedDictionary];
+            [transactionArray addObject:aModel];
+        }
+        ObjectNameFieldValueService *service = [[ObjectNameFieldValueService alloc] init];
+        [service updateOrInsertTransactionObjects:transactionArray];
+        
+        //        DBRequestInsert *InsertQuery =  [helper getInsertQuery:kObjectNameFieldValue];
+        //        [transObjectService insertTransactionObjects:transactionArray andDbRequest:[query query]];
     }
     
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:localId];
