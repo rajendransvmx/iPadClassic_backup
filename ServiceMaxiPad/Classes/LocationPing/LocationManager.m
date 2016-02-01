@@ -61,7 +61,7 @@
             
             [self.locManager requestAlwaysAuthorization];
             
-            //Defect Fix:025217
+            //Defect Fix:026471
             [self.locManager requestWhenInUseAuthorization];
         }
 #endif
