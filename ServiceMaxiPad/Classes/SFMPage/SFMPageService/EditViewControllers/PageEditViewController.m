@@ -1054,7 +1054,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     NSString *title = @"Data Validation Rule Execution Failed";
     NSString *message = @"Do you wish to discard the changes or continue editing?";
     NSString *discardChanges = [[TagManager sharedInstance] tagByName:kTag_AbandonChanges];
-    NSString *continueStr = [[TagManager sharedInstance] tagByName:kTag_SaveChanges];
+    NSString *continueStr = @"Continue Editing"; //[[TagManager sharedInstance] tagByName:kTag_SaveChanges];
     
     if (SYSTEM_VERSION < 8.0) {
         UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@",title] message:message delegate:self cancelButtonTitle:discardChanges otherButtonTitles:continueStr,nil];
@@ -1081,7 +1081,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     NSString *title = @"ServiceMax Formula Execution Failed";
     NSString *message = @"Do you wish to discard the changes or continue editing?";
     NSString *discardChanges = [[TagManager sharedInstance] tagByName:kTag_AbandonChanges];
-    NSString *continueStr = [[TagManager sharedInstance] tagByName:kTag_SaveChanges];
+    NSString *continueStr = @"Continue Editing"; //[[TagManager sharedInstance] tagByName:kTag_SaveChanges];
     
     if (SYSTEM_VERSION < 8.0) {
         UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@",title] message:message delegate:self cancelButtonTitle:discardChanges otherButtonTitles:continueStr,nil];
