@@ -11,13 +11,8 @@ Version = 16.19.014
 -------------
 Fixed Defects
 -------------
+1. 026872
 
-
-Forward ported:
-______________
-
-
-____
 
 
 Namespace - SVMXC
