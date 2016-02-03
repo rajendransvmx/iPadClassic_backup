@@ -322,6 +322,9 @@ extern NSString *const kTopLevelId;
 extern NSString *const kComponentId;
 extern NSString *const kOrderStatus;
 
+/*Location*/
+extern NSString *const kSiteAccountId;
+
 
 /* search process table */
 extern NSString *const kSearchProcessTableName;

@@ -110,6 +110,9 @@ NSString *const kWorkOrderSite                  = ORG_NAME_SPACE@"__Site__c";
 /*Work Detail Summary*/
 NSString *const kSerialNumber                   = ORG_NAME_SPACE@"__Serial_Number__c";
 
+/*Location*/
+NSString *const kSiteAccountId                  = ORG_NAME_SPACE@"__Account__c";
+
 
 /* PROCESS constants*/
 NSString *const kProcessTypeView                = @"VIEW RECORD";

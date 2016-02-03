@@ -115,8 +115,14 @@
         NSString *sfId = [[sfmPageView.sfmPage.headerRecord objectForKey:@"Id"] internalValue];
         if (![StringUtil isStringEmpty:sfId]) {
             [self.recordIds addObject:sfId];
+            NSString *fieldName = kWorkOrderCompanyId;
+            
+            if ([sfmPageView.sfmPage.objectName isEqualToString:kWorkOrderSite]) {
+                fieldName = kSiteAccountId;
+            }
+            
             //get the accountId by using IB sfid.
-            self.accountId = [self getAccountIdForObject:kInstalledProductTableName withObjectId:[self.recordIds firstObject]];
+            self.accountId = [self getAccountIdForObject:sfmPageView.sfmPage.objectName withObjectId:[self.recordIds firstObject] withFieldName:fieldName];
         }
     }
     
@@ -151,7 +157,7 @@
         [self getInstallBaseIdsForWorkDetailObject:kWorkOrderDetailTableName withWorkOrderId:workOrderSfId];
         
         //get the accountId by using IB sfid.
-        self.accountId = [self getAccountIdForObject:kInstalledProductTableName withObjectId:[self.recordIds firstObject]];
+        self.accountId = [self getAccountIdForObject:kInstalledProductTableName withObjectId:[self.recordIds firstObject] withFieldName:kWorkOrderCompanyId];
 
     }
     
@@ -159,7 +165,7 @@
     return productIQFieldsAvailable;
 }
 
-- (NSString*)getAccountIdForObject:(NSString*)objectName withObjectId:(NSString*)sfid {
+- (NSString*)getAccountIdForObject:(NSString*)objectName withObjectId:(NSString*)sfid withFieldName:(NSString*)fieldName{
     
     NSString *accountId = nil;
     
@@ -169,12 +175,12 @@
     
     criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sfid];
     
-    
-    NSArray *records = [services fetchDataForObjectForSfmPage:objectName fields:@[kWorkOrderCompanyId] expression:nil criteria:@[criteria1]];
+    //kWorkOrderCompanyId
+    NSArray *records = [services fetchDataForObjectForSfmPage:objectName fields:@[fieldName] expression:nil criteria:@[criteria1]];
     
     for (TransactionObjectModel *model in records) {
         NSDictionary *dictionary = [model getFieldValueDictionary];
-        accountId = [dictionary objectForKey:kWorkOrderCompanyId];
+        accountId = [dictionary objectForKey:fieldName];
     }
     
     return accountId;
