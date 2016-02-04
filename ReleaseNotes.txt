@@ -4,20 +4,19 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.19.014
+Version = 16.20.001
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-1. 026872
+Product name has been changed to “ServiceMax”
+Version number has been changed to ’20’ series for AppStore testing.
 
 
 
 Namespace - SVMXC
-
-
 ——————
 NOTE:
 
