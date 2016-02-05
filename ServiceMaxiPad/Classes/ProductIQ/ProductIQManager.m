@@ -168,19 +168,37 @@
 - (NSString*)getAccountIdForObject:(NSString*)objectName withObjectId:(NSString*)sfid withFieldName:(NSString*)fieldName{
     
     NSString *accountId = nil;
+    NSString *locationId = nil;
+    NSArray *fieldsArray = nil;
+    DBCriteria * criteria1 = nil;
+    DBCriteria *criteria2 = nil;
+    
+    if ([objectName isEqualToString:kInstalledProductTableName]) {
+        fieldsArray = [NSArray arrayWithObjects:fieldName,kWorkOrderSite,nil];
+    }
     
     TransactionObjectService *services = [[TransactionObjectService alloc] init];
     
-    DBCriteria * criteria1 = nil;
     
     criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sfid];
     
     //kWorkOrderCompanyId
-    NSArray *records = [services fetchDataForObjectForSfmPage:objectName fields:@[fieldName] expression:nil criteria:@[criteria1]];
+    NSArray *records = [services fetchDataForObjectForSfmPage:objectName fields:fieldsArray expression:nil criteria:@[criteria1]];
     
     for (TransactionObjectModel *model in records) {
         NSDictionary *dictionary = [model getFieldValueDictionary];
         accountId = [dictionary objectForKey:fieldName];
+        locationId = [dictionary objectForKey:kWorkOrderSite];
+    }
+    
+    if (accountId == nil && locationId != nil) { //kSiteAccountId
+        criteria2 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:locationId];
+        NSArray *records = [services fetchDataForObjectForSfmPage:kWorkOrderSite fields:@[kSiteAccountId] expression:nil criteria:@[criteria2]];
+        
+        for (TransactionObjectModel *model in records) {
+            NSDictionary *dictionary = [model getFieldValueDictionary];
+            accountId = [dictionary objectForKey:kSiteAccountId];
+        }
     }
     
     return accountId;
