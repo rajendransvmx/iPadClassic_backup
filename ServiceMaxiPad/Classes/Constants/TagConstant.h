@@ -886,5 +886,9 @@ extern NSString *const kPurgeDataLogs;
 extern NSString *const KWizardNameForProductIQ;
 extern NSString *const KStepNameForProductIQ;
 
+#define kAlertViewTagBizRuleWarning 107
+#define kAlertViewTagFormulaWarning 108
+
+
 
 //@end

@@ -101,13 +101,13 @@ SFMPageMasterSectionType;
         if (self.sfmPageView.sfmPage.process.pageLayout.headerLayout.showAllSectionsByDefault) {
             SFMPageMasterSectionView *pageHeaderSectionView = (SFMPageMasterSectionView *)[self.tableView headerViewForSection:0];
             [self tappedOnButton:pageHeaderSectionView.rightButton withIndex:0];
-             [self.tableView reloadData];
+            [self.tableView reloadData];
         }
         else{
-             [self tableView:self.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-             [self.tableView reloadData];
+            [self tableView:self.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+            [self.tableView reloadData];
             [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:0];
-           
+            
         }
     }
 }
@@ -118,7 +118,7 @@ SFMPageMasterSectionType;
 }
 
 
-#pragma mark - 
+#pragma mark -
 #pragma mark UITableViewDataSource Methods
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -129,19 +129,19 @@ SFMPageMasterSectionType;
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-
+        
         cell.textLabel.highlightedTextColor = [UIColor colorWithHexString:kWhiteColor];
         UIView *bgColorView = [[UIView alloc] init];
         [bgColorView setBackgroundColor:[UIColor colorWithHexString:kMasterSelectionColor]];
         [cell setSelectedBackgroundView:bgColorView];
-
+        
     }
     cell.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
     NSString *title = [self rowTitleForIndexPath:indexPath];
     if ([StringUtil isStringEmpty:title]) {
-       title = [[TagManager sharedInstance]tagByName:kTagInformation];
+        title = [[TagManager sharedInstance]tagByName:kTagInformation];
     }
     cell.textLabel.text = title;
     return cell;
@@ -200,41 +200,41 @@ SFMPageMasterSectionType;
 
 - (NSString *) titleForHeaderInSection:(NSInteger)section
 {
-        NSString *headerTitle = nil;
-        SFMHeaderLayout *headerLayout = self.pageLayout.headerLayout;
-        NSArray *detailsArray = self.pageLayout.detailLayouts;
-        TagManager *tagManager = [TagManager sharedInstance];
-
-        switch (section) {
-            case SFMPageMasterSectionTypeHeader:/*Header section*/
-                if ([headerLayout.sections count]>0) {
-                    headerTitle = self.sfmPageView.sfmPage.objectLabel;
-                }
-                break;
-                
-            case SFMPageMasterSectionTypeChild:/*Line Items*/
-                if ([detailsArray count]>0) {
-               headerTitle = [tagManager tagByName:kTagSfmLeftPaneLine];
-                    //headerTitle = @"Line Items ";
-                }
-                break;
-                
-            case SFMPageMasterSectionTypeHistory:/*Additional Info*/
-                if (headerLayout.enableAccountHistory || headerLayout.enableProductHistory ) {
+    NSString *headerTitle = nil;
+    SFMHeaderLayout *headerLayout = self.pageLayout.headerLayout;
+    NSArray *detailsArray = self.pageLayout.detailLayouts;
+    TagManager *tagManager = [TagManager sharedInstance];
+    
+    switch (section) {
+        case SFMPageMasterSectionTypeHeader:/*Header section*/
+            if ([headerLayout.sections count]>0) {
+                headerTitle = self.sfmPageView.sfmPage.objectLabel;
+            }
+            break;
+            
+        case SFMPageMasterSectionTypeChild:/*Line Items*/
+            if ([detailsArray count]>0) {
+                headerTitle = [tagManager tagByName:kTagSfmLeftPaneLine];
+                //headerTitle = @"Line Items ";
+            }
+            break;
+            
+        case SFMPageMasterSectionTypeHistory:/*Additional Info*/
+            if (headerLayout.enableAccountHistory || headerLayout.enableProductHistory ) {
                     headerTitle = [tagManager tagByName:kTag_History]; //Fixed issue:013801
-                }
-                break;
-                
-            case SFMPageMasterSectionTypeAttachment:/*Attachments*/
-                if ([self isAttachmentEnabled]) {
-                    headerTitle = [tagManager tagByName:kTagSfmLeftPaneAttachments];
-                }
-                break;
-                
-            default:
-                break;
-        }
-        return headerTitle;
+            }
+            break;
+            
+        case SFMPageMasterSectionTypeAttachment:/*Attachments*/
+            if ([self isAttachmentEnabled]) {
+                headerTitle = [tagManager tagByName:kTagSfmLeftPaneAttachments];
+            }
+            break;
+            
+        default:
+            break;
+    }
+    return headerTitle;
 }
 
 
@@ -278,7 +278,7 @@ SFMPageMasterSectionType;
             break;
             
         default:
-
+            
             break;
     }
     
@@ -301,9 +301,9 @@ SFMPageMasterSectionType;
     if ([view isKindOfClass:[SFMPageMasterSectionView class]])
     {
         SFMPageMasterSectionView *headerView = (SFMPageMasterSectionView *)view;
-
+        
         headerView.sectionTitle.text = [self titleForHeaderInSection:section];
-            [headerView.rightButton.titleLabel setFont:[UIFont fontWithName:kHelveticaNeueLight size:kFontSize14]];
+        [headerView.rightButton.titleLabel setFont:[UIFont fontWithName:kHelveticaNeueLight size:kFontSize14]];
         headerView.rightButton.hidden = NO;
         int numberOfRows = (int)[self.tableView numberOfRowsInSection:section];
         /*Hide Show All button for Attachment and if number of rows less than 2*/
@@ -328,15 +328,13 @@ SFMPageMasterSectionType;
             
             pageSectionView.sectionTitle.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
             [pageSectionView.rightButton setTitle:[[TagManager sharedInstance] tagByName:kTagShowAllButtonText] forState:UIControlStateNormal];
-            pageSectionView.index = section;
-            if (section != self.selectedSection) {
-                [self setShowAllSection:YES sender:pageSectionView.rightButton index:section];
-            }else
-            {
-                [self setShowAllSection:NO sender:pageSectionView.rightButton index:section];
-
-            }
-            
+        }
+        pageSectionView.index = section;
+        if (section != self.selectedSection) {
+            [self setShowAllSection:YES sender:pageSectionView.rightButton index:section];
+        }else
+        {
+            [self setShowAllSection:NO sender:pageSectionView.rightButton index:section];
             
         }
     }
@@ -353,13 +351,13 @@ SFMPageMasterSectionType;
         
         [self setShowAllSection:YES sender:headerSectionView.rightButton index:self.selectedSection];
     }
-
+    
     UITableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
     [self setDetailButtonTitle:selectedCell.textLabel.text];
     [self setDetailChildViewControllerForIndexPath:indexPath];
     
     
-
+    
 }
 
 #pragma mark -
@@ -369,19 +367,19 @@ SFMPageMasterSectionType;
     if (self.selectedSection != -1 ) {
         
         SFMPageMasterSectionView *headerSectionView = (SFMPageMasterSectionView *)[self.tableView headerViewForSection:self.selectedSection];
-
+        
         [self setShowAllSection:YES sender:headerSectionView.rightButton index:self.selectedSection];
-
+        
     }
     [self setShowAllSection:NO sender:sender index:index];
     self.selectedSection = index;
     
     NSString *sectionName = [self titleForHeaderInSection:index];
     [self setDetailButtonTitle: sectionName];
-
+    
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:NO];
     [self loadShowAllViewControllerForSection:(int)self.selectedSection];
-
+    
 }
 
 
@@ -396,8 +394,8 @@ SFMPageMasterSectionType;
 
 
 - (void) setShowAllSection:(BOOL)isAllSectionShown
-                      sender:(id)sender
-                       index:(NSInteger) index
+                    sender:(id)sender
+                     index:(NSInteger) index
 {
     if (isAllSectionShown) {
         [sender setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
@@ -406,7 +404,7 @@ SFMPageMasterSectionType;
     else{
         [sender setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
         [sender setEnabled:NO];
-
+        
     }
 }
 
@@ -414,7 +412,7 @@ SFMPageMasterSectionType;
 {
     SFMPageDetailViewController *detailViewController = (SFMPageDetailViewController *)[self.smSplitViewController detailViewController];
     [detailViewController setContentWithItem:title];
-
+    
 }
 
 - (void)setDetailChildViewControllerForIndexPath:(NSIndexPath *)indexPath
@@ -441,7 +439,7 @@ SFMPageMasterSectionType;
             if ([StringUtil isStringEmpty:title]) {
                 title = [[TagManager sharedInstance]tagByName:kTagInformation];
             }
-
+            
             break;
             
         case SFMPageMasterSectionTypeChild:/*Line Items*/
@@ -451,7 +449,7 @@ SFMPageMasterSectionType;
             if ([StringUtil isStringEmpty:title]) {
                 title = [[TagManager sharedInstance]tagByName:kTagInformation];
             }
-
+            
             break;
             
         case SFMPageMasterSectionTypeHistory:/*Additional Info*/
@@ -533,12 +531,12 @@ SFMPageMasterSectionType;
     if ([headerSections count]>indexPath.row) {
         SFMHeaderSection *headerSection= [headerSections objectAtIndex:indexPath.row];
         if(headerSection.isSLAClock){
-//            if(self.slaViewController == nil)
-//            {
-                viewController = [ViewControllerFactory createViewControllerByContext:ViewControllerPageViewSLAClock];
-                self.slaViewController = viewController;
-
-//            }
+            //            if(self.slaViewController == nil)
+            //            {
+            viewController = [ViewControllerFactory createViewControllerByContext:ViewControllerPageViewSLAClock];
+            self.slaViewController = viewController;
+            
+            //            }
             [self.slaViewController setSlaClock:self.sfmPageView.slaClock];
             viewController = self.slaViewController;
         }
@@ -546,7 +544,7 @@ SFMPageMasterSectionType;
             viewController = (SFMPageHeaderLayoutViewController *)[ViewControllerFactory createViewControllerByContext:ViewControllerPageViewHeader];
             [viewController setSelectedSection:indexPath.row];
             [viewController setSfmPageView:self.sfmPageView];
-         
+            
             [viewController setPageFields:headerSection.sectionFields];
         }
     }
@@ -560,7 +558,7 @@ SFMPageMasterSectionType;
     [viewController setSfmPageView:self.sfmPageView];
     [viewController setSelectedSection:indexPath.row];
     return viewController;
-
+    
 }
 
 - (UIViewController *) historyViewControllerForIndexPath:(NSIndexPath *)indexPath
@@ -696,7 +694,7 @@ SFMPageMasterSectionType;
             break;
             
         case SFMPageMasterSectionTypeAttachment:/*Attachments*/
-             //TODO:
+            //TODO:
             break;
             
         default:
@@ -712,12 +710,12 @@ SFMPageMasterSectionType;
 {
     BOOL result = NO;
     
-   /* NSString *title = [[TagManager sharedInstance] tagByName:kTag_AccountHistoryAndRecords];//[[TagManager sharedInstance] tagByName:kTag_AccountHistory];
-    
-    if([[self rowTitleForIndexPath:indexPath] isEqualToString:title])
-    {
-        result = YES;
-    }*/
+    /* NSString *title = [[TagManager sharedInstance] tagByName:kTag_AccountHistoryAndRecords];//[[TagManager sharedInstance] tagByName:kTag_AccountHistory];
+     
+     if([[self rowTitleForIndexPath:indexPath] isEqualToString:title])
+     {
+     result = YES;
+     }*/
     
     SFMHeaderLayout *headerLayout = self.pageLayout.headerLayout;
     
@@ -729,7 +727,7 @@ SFMPageMasterSectionType;
     else if(headerLayout.enableAccountHistory) {
         result = YES;
     }
-
+    
     
     return result;
 }
@@ -738,10 +736,10 @@ SFMPageMasterSectionType;
 {
     self.selectedSection = -1;
     
-        [self openTabBasedOnSetting];
+    [self openTabBasedOnSetting];
     
-//    SFMPageMasterSectionView *pageHeaderSectionView = (SFMPageMasterSectionView *)[self.tableView headerViewForSection:0];
-//    [self tappedOnButton:pageHeaderSectionView.rightButton withIndex:0];
+    //    SFMPageMasterSectionView *pageHeaderSectionView = (SFMPageMasterSectionView *)[self.tableView headerViewForSection:0];
+    //    [self tappedOnButton:pageHeaderSectionView.rightButton withIndex:0];
     
     //[self.tableView reloadData]; // Need to check with Aparna or Radha why we are reloading table view here
 }
@@ -751,9 +749,9 @@ SFMPageMasterSectionType;
     BOOL result = NO;
     
     /*if([[self rowTitleForIndexPath:indexPath] isEqualToString:[[TagManager sharedInstance] tagByName:kTag_ProductHistoryAndRecords]])
-    {
-        result = YES;
-    }*/
+     {
+     result = YES;
+     }*/
     
     SFMHeaderLayout *headerLayout = self.pageLayout.headerLayout;
     
@@ -765,7 +763,7 @@ SFMPageMasterSectionType;
     else if(headerLayout.enableProductHistory) {
         result = YES;
     }
-
+    
     return result;
 }
 
