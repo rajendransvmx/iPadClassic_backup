@@ -4,16 +4,18 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.001
+Version = 16.20.002
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-Product name has been changed to “ServiceMax”
-Version number has been changed to ’20’ series for AppStore testing.
 
+Forward ported:
+
+023585 -  hanging workaround.
+026650 - Show All for Work Orders and Line Items is reversed in iPad.
 
 
 Namespace - SVMXC
