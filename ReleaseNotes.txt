@@ -4,18 +4,14 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.002
+Version = 16.20.003
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-
-Forward ported:
-
-023585 -  hanging workaround.
-026650 - Show All for Work Orders and Line Items is reversed in iPad.
+Deployment target has been changed from 8.4 to 8.0
 
 
 Namespace - SVMXC
