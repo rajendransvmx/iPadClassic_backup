@@ -800,6 +800,11 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         
         NSDateFormatter *dateformatter = [[NSDateFormatter alloc] init];
         NSDateComponents * dateComponents = [DateUtil getDateComponents];
+        //Defect Fix :027062 HS 11Feb2015
+        [dateformatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale currentLocale]localeIdentifier]]];
+        //ends here
+         
+        
         [dateformatter setTimeZone:[dateComponents timeZone]];
         
         NSString *dateFormat = @"";
@@ -826,6 +831,13 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
         NSString *dateFormat = (isDateWithTime)?kFormulaDateTimeForModule:kFormulaDateForModule;
         [dateFormatter setDateFormat:dateFormat];
+        
+        //Defect Fix :027062 HS 12Feb2015
+        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale currentLocale]localeIdentifier]]];
+         NSDateComponents * dateComponents = [DateUtil getDateComponents];
+        [dateFormatter setTimeZone:[dateComponents timeZone]];
+        //ends here
+        
         NSDate *date = [dateFormatter dateFromString:formulaDate];
         if(date != nil) {
             gmtDate = (isDateWithTime)?[DateUtil getSecZeroedDatabaseStringForDate:date]:[DateUtil stringFromDate:date inFormat:kDataBaseDate];
