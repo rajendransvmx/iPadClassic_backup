@@ -5,14 +5,14 @@ Release Notes Starts For Version 14.50.019
 ServiceMax iPad Sum14SPiPadBuild
 
 *******************************************
-Version = 14.50.022
+Version = 14.50.023
 ===========================================
 
 
 -------------
 Fixed Defects
 -------------
-026185 -  App crash issue during successive sync.
+App freeze workaround
 
 ------------
 Known Issues
