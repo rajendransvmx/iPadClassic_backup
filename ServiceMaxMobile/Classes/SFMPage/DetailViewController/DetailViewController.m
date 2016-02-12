@@ -11970,6 +11970,8 @@ static dispatch_once_t _sharedInstanceGuard;
     else {
         NSLog(@"PS : biz rule 3 times done");
         
+        self.bizRuleJSExecuter = nil;
+        
         [activity stopAnimating];
         [self enableSFMUI];
         
@@ -17563,6 +17565,7 @@ static dispatch_once_t _sharedInstanceGuard;
     }
     else if ([eventName isEqualToString:@"bizruleresult"])
     {
+        NSLog(@"bizruleresult");
         bizRuleExecutionStatus = TRUE;
         SBJsonParser * jsonParser = [[[SBJsonParser alloc] init] autorelease];
         self.bizRuleResult = [jsonParser objectWithString:jsonParameterString];

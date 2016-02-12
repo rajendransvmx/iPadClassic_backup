@@ -26,6 +26,8 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 @synthesize parentView;
 
 - (void)dealloc {
+    [jsWebView setDelegate:nil];
+    [jsWebView stopLoading];
     [jsWebView removeFromSuperview];
     [jsWebView release];
     [codeSnippet release];
