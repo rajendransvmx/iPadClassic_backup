@@ -62,7 +62,13 @@ enum BizRuleConfirmViewStatus{
 }alertViewStatus;
 
 
-@interface DetailViewController ()
+@interface DetailViewController () {
+    
+    // app freeze workaround
+    int jsExeCount;
+    BOOL jsExecuted;
+    BOOL bizRuleHanged;
+}
 @property (nonatomic,retain) NSMutableDictionary * headerValueMappingDict;
 @property (nonatomic,retain) NSString * s2t_recordId;
 @property (nonatomic ) BOOL business_rules_success;
@@ -11954,13 +11960,41 @@ static dispatch_once_t _sharedInstanceGuard;
     }
 }
 
+
+// app freeze workaround
+-(void)reloadBizRule {
+    NSLog(@"PS : biz rule hanged: %d", jsExeCount);
+    if(jsExecuted == NO && jsExeCount < 3) {
+        bizRuleHanged = YES;
+    }
+    else {
+        NSLog(@"PS : biz rule 3 times done");
+        
+        [activity stopAnimating];
+        [self enableSFMUI];
+        
+        jsExeCount = 0;
+    
+        NSString *title = @"Data Validation Rule Execution Failed";
+        NSString *message = @"Do you wish to discard the changes or continue editing?";
+        NSString *discardChanges = @"Discard Changes";
+        NSString *continueStr = @"Continue Editing";
+        
+        UIAlertView *bizRuleFailAlert = [[UIAlertView alloc] initWithTitle:title message:message delegate:self cancelButtonTitle:discardChanges otherButtonTitles:continueStr, nil];
+        [bizRuleFailAlert setTag:420];
+        [bizRuleFailAlert show];
+        [bizRuleFailAlert release];
+        
+    }
+}
+
 //Shravya-8639
 - (void)continuedOfflineActions:(NSDictionary *)buttonDict
 {
 
 	//Radha - june/10/2013 - child Sfm
 	[self hideChildLinkedViewProcess];
-	
+        
     
     NSString * warning = [appDelegate.wsInterface.tagsDictionary objectForKey:ALERT_ERROR_WARNING];
     NSString * invalidEmail = [appDelegate.wsInterface.tagsDictionary objectForKey:SFM_TEXT_INVALID_EMAIL]; 
@@ -11981,8 +12015,15 @@ static dispatch_once_t _sharedInstanceGuard;
     if(([targetCall isEqualToString:save] || [targetCall isEqualToString:quick_save]) && bizRulesAvailable)
     {
         SMLog(kLogLevelVerbose,@"Save / Quick Save Called.");
-        if([self executeBizRules])
+        
+        // app freeze workaround
+        if([self executeBizRules]) {
+            if (bizRuleHanged) {
+                NSLog(@"PS : biz rule retrying");
+                [self continuedOfflineActions:buttonDict];
+            }
             return;
+        }
     }
     
     
@@ -15135,13 +15176,39 @@ static dispatch_once_t _sharedInstanceGuard;
         jsExecuterObj = nil;
         
         bizRuleExecutionStatus = FALSE;
+        
+        // app freeze workaround
+        jsExeCount++;
+        jsExecuted = NO;
+        bizRuleHanged = NO;
+        [self performSelector:@selector(reloadBizRule) withObject:nil afterDelay:3.0];
+        
+        NSLog(@"PS : biz rule started count: %d", jsExeCount);
+
         while (CFRunLoopRunInMode( kCFRunLoopDefaultMode, kRunLoopTimeInterval, FALSE))
         {
             if (bizRuleExecutionStatus)
             {
                 break;
             }
+            
+            // app freeze workaround
+            if (bizRuleHanged) {
+                break;
+            }
         }
+        
+        // app freeze workaround
+        if(bizRuleHanged) {
+            return TRUE;
+        }
+        
+        NSLog(@"PS : biz rule ended count: %d", jsExeCount);
+        
+        jsExecuted = YES;
+        jsExeCount = 0;
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadBizRule) object:nil];
+        
         activity.hidden = YES;
         [activity stopAnimating];
         SMLog(kLogLevelVerbose,@"bizRuleResult Warnings = %@",[bizRuleResult objectForKey:@"warnings"]);
@@ -17356,6 +17423,19 @@ static dispatch_once_t _sharedInstanceGuard;
         {
             alertViewStatus = kBizRuleConfirmMessageSaved;
             SMLog(kLogLevelVerbose,@"[Alert %d] Confirm Message Saved",alertView.tag);
+        }
+    }
+    
+    // app freeze workaround
+    else if (alertTag == 420) {
+        if (buttonIndex == 0) {
+            // discard changes
+            appDelegate.SFMPage = nil;
+            appDelegate.SFMoffline = nil;
+            [delegate BackOnSave];
+        }
+        else {
+            // continue editing
         }
     }
     else
