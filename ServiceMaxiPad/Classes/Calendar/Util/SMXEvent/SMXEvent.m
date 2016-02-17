@@ -23,7 +23,7 @@
 
 @implementation SMXEvent
 
-@synthesize stringCustomerName;
+@synthesize title;
 @synthesize numCustomerID;
 @synthesize ActivityDateDay;
 @synthesize dateTimeBegin;
@@ -121,7 +121,9 @@
         self.IDString = [dict objectForKey:key_ID];
         self.whatId = [dict objectForKey:key_WhatID];
         
-        self.stringCustomerName = [dict objectForKey:key_Title];
+        self.subject = [dict objectForKey:key_Title];
+        self.title = [dict objectForKey:@"eventTitle"];
+
         self.description = [dict objectForKey:key_Description];
         self.sla = NO;
         self.priority = NO;
@@ -212,7 +214,8 @@
         self.IDString = [dict objectForKey:key_ID];
         self.whatId = [dict objectForKey:key_WhatID];
         
-        self.stringCustomerName = [dict objectForKey:key_Title];
+        self.subject = [dict objectForKey:key_Title];
+        self.title = [dict objectForKey:@"eventTitle"];
         self.description = [dict objectForKey:key_Description];
         self.sla = NO;
         self.priority = NO;
@@ -240,7 +243,8 @@
 {
     self.localID = model.localID;
     self.IDString = model.IDString;
-    self.stringCustomerName = model.stringCustomerName;
+    self.subject = model.subject;
+    self.title = model.title;
     self.description = model.description;
     self.whatId = model.whatId;
     self.sla = model.sla;
@@ -276,7 +280,7 @@
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSDateComponents *comp;
     if (startDate) {
-        NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:startDate]];
+        NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[self dateFromString:startDate]];
     
         comp.second = 00;
         comp.hour = 00;
@@ -288,7 +292,7 @@
     }
     
     if (endDate) {
-        comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
+        comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[self dateFromString:endDate]];
         comp.hour = 23;
         comp.minute = 59;
         
@@ -329,7 +333,7 @@
 
 -(void)convertDateForAllDay{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:self.dateTimeBegin_multi];
+    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:self.dateTimeBegin_multi];
     
     comp.second = 00;
     comp.hour = 00;
@@ -337,7 +341,7 @@
     
     self.dateTimeBegin_multi = [cal dateFromComponents:comp];
     self.dateTimeBegin= [cal dateFromComponents:comp];
-    comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:self.dateTimeEnd_multi];
+    comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:self.dateTimeEnd_multi];
     comp.hour = 23;
     comp.minute = 59;
     

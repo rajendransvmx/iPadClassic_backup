@@ -249,6 +249,25 @@
 
 }
 
+-(NSDictionary *)getDataTypeForFields:(NSArray *)fields objectName:(NSString *)objectName;
+{
+    NSMutableDictionary * fieldLabelDict = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:objectName];
+    
+    DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:kfieldname operatorType:SQLOperatorIn andFieldValues:fields];
+    
+    NSArray * resultSet =   [self fetchSFObjectFieldsInfoByFields:@[@"fieldName",@"type"] andCriteriaArray:[NSArray arrayWithObjects:criteria1,criteria2, nil] advanceExpression:@"( 1 AND 2 )"];
+    
+    if ([resultSet count] > 0) {
+        for (SFObjectFieldModel * model in resultSet) {
+            if (model != nil) {
+                [fieldLabelDict setObject:model.type forKey:model.fieldName];
+            }
+        }
+    }
+    return fieldLabelDict;
+}
 
 - (NSString *)getFieldNameForRelationShipName:(NSString *)relationship withRelatedObjectName:(NSString *)relatedObjectName andObjectName:(NSString *)objectName
 {
@@ -374,6 +393,14 @@
     DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
     SFObjectFieldModel * model = [self getSFObjectFieldInfo:@[criteriaOne,criteriaTwo] advanceExpression:nil];
     return model.referenceTo;
+}
+
+- (NSString*)getNameFieldForObjectName:(NSString*)objectName {
+
+    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"nameField" operatorType:SQLOperatorEqual andFieldValue:@"true"];
+    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
+    SFObjectFieldModel * model = [self getSFObjectFieldInfo:@[criteriaOne,criteriaTwo] advanceExpression:nil];
+    return model.fieldName;
 }
 
 @end

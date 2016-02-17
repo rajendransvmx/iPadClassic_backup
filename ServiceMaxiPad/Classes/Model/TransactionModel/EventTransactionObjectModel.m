@@ -264,8 +264,8 @@
     startDate=[self changeTime:startDate];
     endDate=[self changeTime:endDate];
     if ((startDate !=nil) && (endDate!=nil)) {
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
                                                             fromDate:startDate
                                                               toDate:endDate
                                                              options:0];
@@ -283,7 +283,7 @@
 }
 -(NSDate *)changeTime:(NSDate *)date {
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
+    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:date];
     comp.hour = 00;
     comp.minute = 00;
     comp.second = 00;
@@ -295,8 +295,7 @@
     //Time zone change for weekview change, here we are considering system reagion.
     NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     //  NSCalendar *calender = [NSCalendar currentCalendar];
-    NSDateComponents *comp0 = [calender components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitWeekOfMonth| NSHourCalendarUnit |
-                               NSMinuteCalendarUnit fromDate:date];
+    NSDateComponents *comp0 = [calender components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitWeekOfMonth| NSCalendarUnitHour |  NSCalendarUnitMinute fromDate:date];
     return comp0;
 }
 
@@ -309,7 +308,7 @@
     
     NSDate *end = [cal dateByAddingComponents:dateComponents toDate:date options:0];
     
-    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:end];
+    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:end];
     comp.hour = hour;
     comp.minute = min;
     comp.second = 00;
@@ -323,7 +322,7 @@
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSDateComponents *comp;
     if (startDate) {
-        comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:startDate]];
+        comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[self dateFromString:startDate]];
         
         comp.second = 00;
         comp.hour = 00;
@@ -333,7 +332,7 @@
             [dict setObject:theStartDate forKey:@"startDate"];
     }
     if (endDate) {
-        comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
+        comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[self dateFromString:endDate]];
         comp.hour = 23;
         comp.minute = 59;
         

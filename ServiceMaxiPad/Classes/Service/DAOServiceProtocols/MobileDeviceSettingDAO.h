@@ -13,6 +13,7 @@
 @protocol MobileDeviceSettingDAO <CommonServiceDAO>
 
 - (MobileDeviceSettingsModel *)fetchDataForSettingId:(NSString *)settingId;
+- (NSMutableArray *)fetchDataForSettingIds:(NSArray *)settingIds;
 
 /**
  * @name   configurationSyncFrequency

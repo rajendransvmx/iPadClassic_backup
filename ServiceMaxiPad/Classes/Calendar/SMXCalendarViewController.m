@@ -247,7 +247,7 @@
     //HS 23 Jan ends here
   
     
-    NSDateComponents *components = [[NSCalendar currentCalendar] components: NSSecondCalendarUnit fromDate:[NSDate date]];
+    NSDateComponents *components = [[NSCalendar currentCalendar] components: NSCalendarUnitSecond fromDate:[NSDate date]];
     NSInteger second = [components second];
     NSTimeInterval tillNextMinute = (60 - second) % 60;
     
@@ -1221,8 +1221,8 @@
     [f setDateFormat:@"yyyy-MM-ddHH:mm:ss ZZZ"];
     NSDate *startDate = event.dateTimeBegin;
     NSDate *endDate = event.dateTimeEnd;
-    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
+    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
                                                         fromDate:startDate
                                                           toDate:endDate
                                                          options:0];
@@ -1261,8 +1261,8 @@
     startDate=[self changeTime:startDate];
     endDate=[self changeTime:endDate];
     if ((startDate !=nil) && (endDate!=nil)) {
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
                                                             fromDate:startDate
                                                               toDate:endDate
                                                              options:0];
@@ -1280,7 +1280,7 @@
 }
 -(NSDate *)changeTime:(NSDate *)date{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[date dateByAddingTimeInterval:0*24*60*60]];
+    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[date dateByAddingTimeInterval:0*24*60*60]];
     comp.hour = 00;
     comp.minute = 00;
     comp.second = 00;
@@ -1347,7 +1347,7 @@
 /*Here changing date , adding number of day*/
 -(NSDate *)changeTime:(NSDate *)date newHour:(int )hour newMin:(int)min numberOfday:(int)numberOfDay{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[date dateByAddingTimeInterval:numberOfDay*24*60*60]];
+    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[date dateByAddingTimeInterval:numberOfDay*24*60*60]];
     comp.hour = hour;
     comp.minute = min;
     comp.second = 00;
@@ -2292,9 +2292,9 @@
 
 -(void)setMonthAndYearValue:(NSDate *)date
 {
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     
-    NSDateComponents *lComponent = [cal components:NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
+    NSDateComponents *lComponent = [cal components:NSCalendarUnitMonth | NSCalendarUnitYear fromDate:date];
     NSString *monthName = [CalenderHelper getTagValueForMonth:lComponent.month-1];
     NSString *year = [NSString stringWithFormat:@"%ld", (long)lComponent.year];
 //    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];

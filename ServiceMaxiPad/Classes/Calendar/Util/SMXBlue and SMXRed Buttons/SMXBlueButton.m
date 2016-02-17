@@ -387,35 +387,30 @@
     //adding 1 with index, event starting with 0 like normal array
     NSString *dayIndexString = (self.event.isMultidayEvent? [@(self.eventIndex+1) stringValue] : @"");
     NSString *lEventTitle;
-    NSString *lLocation = (self.event.isWorkOrder ? [CalenderHelper getServiceLocation:self.event.whatId]:@"");
+//    NSString *lLocation = (self.event.isWorkOrder ? [CalenderHelper getServiceLocation:self.event.whatId]:@"");
     
     NSString *priorityString = nil;
 
     if (self.event.isWorkOrder) {
         WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:self.event.whatId];
-        lEventTitle = (model.companyName.length ? model.companyName : self.event.stringCustomerName);
+//        lEventTitle = (model.companyName.length ? model.companyName : self.event.title);
         priorityString = model.priorityString;
         
     } else if (self.event.isCaseEvent){
         
         CaseObjectModel *model = [[SMXCalendarViewController sharedInstance].cCaseDetailsDict objectForKey:self.event.whatId];
         priorityString = model.priorityString;
-
-         lEventTitle = self.event.stringCustomerName;
-
     }
-    else{
-        lEventTitle = self.event.stringCustomerName;
+        lEventTitle = self.event.title;
         
-    }
-    
+
     lEventTitle = [lEventTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     if (!lEventTitle) {
         lEventTitle = @"";
     }
-    if (!lLocation) {
-        lLocation = @"";
-    }
+//    if (!lLocation) {
+//        lLocation = @"";
+//    }
 //    CGRect frame = self.eventName.frame;
 //    //    frame.size.height = [self dynamicHeightOfLabel:self.eventName withWidth:self.eventName.frame.size.width].height;
 //    if (frame.size.height>self.frame.size.height) {
@@ -427,12 +422,14 @@
     
     if (self.event.isMultidayEvent) {
         dayIndexString = [NSString stringWithFormat:@"day %@",dayIndexString];
-        text = [NSString stringWithFormat:@"%@\n%@\n%@", dayIndexString, lEventTitle, lLocation];
-        
+//        text = [NSString stringWithFormat:@"%@\n%@\n%@]", dayIndexString, lEventTitle, lLocation];
+        text = [NSString stringWithFormat:@"%@\n%@", dayIndexString, lEventTitle];
+
     }
     else
     {
-        text = [NSString stringWithFormat:@"%@\n%@", lEventTitle, lLocation];
+//        text = [NSString stringWithFormat:@"%@\n%@", lEventTitle, lLocation];
+        text = [NSString stringWithFormat:@"%@", lEventTitle];
     }
     
     // If attributed text is supported (iOS6+)
@@ -468,17 +465,19 @@
         }
        
         
+        /*
         if (lLocation)
         {
         
         // Purple and bold text attributes
         UIColor *lLocationColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
         UIFont *lLocationFont = [UIFont fontWithName:@"HelveticaNeue-Light" size: 16.0];;
-        NSRange lLocationTextRange = [text rangeOfString:lLocation];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
+        NSRange lLocationTextRange = [text rangeOfString:lLocation];
         [attributedText setAttributes:@{NSForegroundColorAttributeName:lLocationColor,
                                         NSFontAttributeName:lLocationFont}
                                 range:lLocationTextRange];
         }
+        */
         
         self.eventName.attributedText = attributedText;
     }
@@ -486,6 +485,7 @@
     else {
         self.eventName.text = text;
     }
+
     [self setFlagColor:priorityString];
 
 }

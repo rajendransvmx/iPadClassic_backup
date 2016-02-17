@@ -37,4 +37,8 @@
 - (NSString*)getDatatypeOfField:(NSString*)fieldName andObject:(NSString*)objectName;
 - (NSString*)getFieldLabelFromFieldName:(NSString*)fieldName andObjectName:(NSString*)objectName;
 - (NSString*)getReferenceToFromFieldName:(NSString*)fieldName andObjectName:(NSString*)objectName;
+
+-(NSDictionary *)getDataTypeForFields:(NSArray *)fields objectName:(NSString *)objectName;
+- (NSString*)getNameFieldForObjectName:(NSString*)objectName;
+
 @end

@@ -118,7 +118,7 @@
     //    [[SVProgressHUD sharedView] setBackgroundColor:[UIColor lighterGrayCustom]];
     
     SMXEvent *eventNew = [SMXEvent new];
-    eventNew.stringCustomerName = searchBarCustom.stringClientName;
+    eventNew.title = searchBarCustom.stringClientName;
     eventNew.numCustomerID = searchBarCustom.numCustomerID;
     eventNew.ActivityDateDay = buttonDate.dateOfButton;
     eventNew.dateTimeBegin = buttonTimeBegin.dateOfButton;
@@ -201,7 +201,7 @@
     
     searchBarCustom = [[SMXSearchBarWithAutoComplete alloc] initWithFrame:CGRectMake(0,buttonCancel.superview.frame.origin.y+buttonCancel.superview.frame.size.height+ BUTTON_HEIGHT, self.frame.size.width, BUTTON_HEIGHT)];
     [searchBarCustom setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-    [searchBarCustom setStringClientName:event.stringCustomerName];
+    [searchBarCustom setStringClientName:event.title];
     [searchBarCustom setNumCustomerID:event.numCustomerID];
     [self addSubview:searchBarCustom];
 }

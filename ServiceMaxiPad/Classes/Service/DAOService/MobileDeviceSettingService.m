@@ -50,6 +50,43 @@ static NSString *const kLocationTrackingEnabled         = @"Enable Location Trac
     return model;
 }
 
+/*
+ This method gets fields & values to be displayed in the evnt on the calendar. The settings are for Event & severvicemax Event table.
+ */
+
+-(NSMutableArray *)fetchDataForSettingIds:(NSArray *)settingIds
+{
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kSettingId operatorType:SQLOperatorIn andFieldValues:settingIds];
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"value" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+
+//    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriteria:criteria];
+    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteria,criteria2] andAdvanceExpression:nil];
+    NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
+
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                
+                MobileDeviceSettingsModel * model = [[MobileDeviceSettingsModel alloc] init];
+                [resultSet kvcMagic:model];
+//                NSDictionary *dict = [resultSet resultDictionary];
+//                [ParserUtility parseJSON:dict toModelObject:model withMappingDict:nil];
+//                
+                [records addObject:model];
+
+            }
+            [resultSet close];
+        }];
+    }
+    return records;
+}
+
 /**
  * @name   configurationSyncFrequency
  *
