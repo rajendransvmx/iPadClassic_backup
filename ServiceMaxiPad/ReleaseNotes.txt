@@ -1,14 +1,15 @@
 -—————————————————————————————————————————————-
-ServiceMax Win 15 SP iPad Release
+ServiceMax Win 15 SP iPad Release Win15SPBuild
 
 *******************************************
-Version = 15.20.039
+Version = 15.20.040
 ===========================================
 -------------
 Fixed Defects
 -------------
 
-013386 - iPad Sync issues with low connectivity
+Reverted back changes done for defect 013386. (rev. 5987)
+Enabled iTunes file sharing.
 
 -------------
 Known Issues
