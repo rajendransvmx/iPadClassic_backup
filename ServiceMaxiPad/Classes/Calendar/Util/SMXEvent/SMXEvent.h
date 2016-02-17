@@ -25,6 +25,7 @@
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *subject;
+@property (nonatomic, assign) BOOL isEventTitleSettingDriven;
 @property (nonatomic, strong) NSNumber *numCustomerID;
 @property (nonatomic, strong) NSDate *ActivityDateDay;
 @property (nonatomic, strong) NSDate *dateTimeBegin;

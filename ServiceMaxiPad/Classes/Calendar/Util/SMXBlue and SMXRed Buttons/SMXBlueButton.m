@@ -387,20 +387,24 @@
     //adding 1 with index, event starting with 0 like normal array
     NSString *dayIndexString = (self.event.isMultidayEvent? [@(self.eventIndex+1) stringValue] : @"");
     NSString *lEventTitle;
-//    NSString *lLocation = (self.event.isWorkOrder ? [CalenderHelper getServiceLocation:self.event.whatId]:@"");
-    
+    NSString *lLocation;
     NSString *priorityString = nil;
 
     if (self.event.isWorkOrder) {
         WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:self.event.whatId];
-//        lEventTitle = (model.companyName.length ? model.companyName : self.event.title);
+         lLocation = (self.event.isWorkOrder ? [CalenderHelper getServiceLocation:self.event.whatId]:@"");
+
+        lEventTitle = (model.companyName.length ? model.companyName : self.event.subject);
         priorityString = model.priorityString;
         
     } else if (self.event.isCaseEvent){
         
         CaseObjectModel *model = [[SMXCalendarViewController sharedInstance].cCaseDetailsDict objectForKey:self.event.whatId];
         priorityString = model.priorityString;
+        lEventTitle = self.event.subject;
+
     }
+    if(self.event.isEventTitleSettingDriven)
         lEventTitle = self.event.title;
         
 
@@ -408,9 +412,9 @@
     if (!lEventTitle) {
         lEventTitle = @"";
     }
-//    if (!lLocation) {
-//        lLocation = @"";
-//    }
+    if (!lLocation) {
+        lLocation = @"";
+    }
 //    CGRect frame = self.eventName.frame;
 //    //    frame.size.height = [self dynamicHeightOfLabel:self.eventName withWidth:self.eventName.frame.size.width].height;
 //    if (frame.size.height>self.frame.size.height) {
@@ -422,14 +426,21 @@
     
     if (self.event.isMultidayEvent) {
         dayIndexString = [NSString stringWithFormat:@"day %@",dayIndexString];
-//        text = [NSString stringWithFormat:@"%@\n%@\n%@]", dayIndexString, lEventTitle, lLocation];
-        text = [NSString stringWithFormat:@"%@\n%@", dayIndexString, lEventTitle];
+        if (!self.event.isEventTitleSettingDriven) {
+            
+              text = [NSString stringWithFormat:@"%@\n%@\n%@", dayIndexString, lEventTitle, lLocation];
+        }
+        else
+            text = [NSString stringWithFormat:@"%@\n%@", dayIndexString, lEventTitle];
 
     }
     else
     {
-//        text = [NSString stringWithFormat:@"%@\n%@", lEventTitle, lLocation];
-        text = [NSString stringWithFormat:@"%@", lEventTitle];
+        if (!self.event.isEventTitleSettingDriven) {
+            text = [NSString stringWithFormat:@"%@\n%@", lEventTitle, lLocation];
+        }
+        else
+            text = [NSString stringWithFormat:@"%@", lEventTitle];
     }
     
     // If attributed text is supported (iOS6+)
@@ -465,8 +476,8 @@
         }
        
         
-        /*
-        if (lLocation)
+        
+        if (lLocation && !self.event.isEventTitleSettingDriven)
         {
         
         // Purple and bold text attributes
@@ -477,7 +488,7 @@
                                         NSFontAttributeName:lLocationFont}
                                 range:lLocationTextRange];
         }
-        */
+        
         
         self.eventName.attributedText = attributedText;
     }

@@ -123,6 +123,7 @@
         
         self.subject = [dict objectForKey:key_Title];
         self.title = [dict objectForKey:@"eventTitle"];
+        self.isEventTitleSettingDriven = [[dict objectForKey:@"isSetting"] boolValue];
 
         self.description = [dict objectForKey:key_Description];
         self.sla = NO;
@@ -216,6 +217,7 @@
         
         self.subject = [dict objectForKey:key_Title];
         self.title = [dict objectForKey:@"eventTitle"];
+        self.isEventTitleSettingDriven = [[dict objectForKey:@"isSetting"] boolValue];
         self.description = [dict objectForKey:key_Description];
         self.sla = NO;
         self.priority = NO;
@@ -245,6 +247,8 @@
     self.IDString = model.IDString;
     self.subject = model.subject;
     self.title = model.title;
+    self.isEventTitleSettingDriven = model.isEventTitleSettingDriven;
+
     self.description = model.description;
     self.whatId = model.whatId;
     self.sla = model.sla;

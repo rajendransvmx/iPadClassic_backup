@@ -1685,22 +1685,27 @@
     }
     if (fieldsArray.count) {
         [theRecordDict setObject:(theTitle?theTitle:@"") forKey:@"eventTitle"];
+        [theRecordDict setObject:@"YES" forKey:@"isSetting"];
+
     }
     else{
+        [theRecordDict setObject:@"NO" forKey:@"isSetting"];
+        [theRecordDict setObject:@"" forKey:@"eventTitle"];
+
         // When the Calendar settings are not present.
         
         // Check if the event is of type WO or not
-
+/*
         if ([[theRecordDict objectForKey:@"isWorkOrder"] boolValue]) {
           
-         /*
-          Priority:
-            1) Account, City & State
-            2) Account
-            3) Subject, City & State
-            4) Subject & State
-            5) Subject
-         */
+ 
+//          Priority:
+//            1) Account, City & State
+//            2) Account
+//            3) Subject, City & State
+//            4) Subject & State
+//            5) Subject
+         
             DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:[theRecordDict objectForKey:kWhatId]];
             NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kWorkOrderSTREET,kWorkOrderCITY, kWorkOrderSTATE, kWorkOrderCompanyId, nil];
             
@@ -1746,7 +1751,7 @@
         
         NSString *trimmedString = [theTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         [theRecordDict setObject:(trimmedString?trimmedString:@"") forKey:@"eventTitle"];
-
+*/
     }
 }
 
