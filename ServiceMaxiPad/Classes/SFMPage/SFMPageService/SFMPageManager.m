@@ -1122,7 +1122,7 @@ PageManagerErrorType;
     NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
     NSDateComponents *comp;
     if (startDate) {
-        comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:startDate]];
+        comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[self dateFromString:startDate]];
     
         comp.second = 00;
         comp.hour = 00;
@@ -1134,7 +1134,7 @@ PageManagerErrorType;
         }
     }
     if (endDate) {
-        comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
+        comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[self dateFromString:endDate]];
         comp.hour = 23;
         comp.minute = 59;
     

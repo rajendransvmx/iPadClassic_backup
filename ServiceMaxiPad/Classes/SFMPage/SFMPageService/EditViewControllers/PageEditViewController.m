@@ -1160,8 +1160,8 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 /*This method giving number of day diffrence beteen two date*/
 -(int )numberOfDaysFromDate:(NSDate *)startDate andEndDate:(NSDate *)endDate{
     if ((startDate !=nil) && (endDate!=nil)) {
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
                                                             fromDate:startDate
                                                               toDate:endDate
                                                              options:0];

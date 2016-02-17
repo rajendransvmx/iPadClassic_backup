@@ -139,8 +139,8 @@
     startDate=[self removeHourMinSecon:startDate];
     endDate=[self removeHourMinSecon:endDate];
     if ((startDate !=nil) && (endDate!=nil)) {
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay|NSCalendarUnitYear|NSCalendarUnitMonth
                                                             fromDate:startDate
                                                               toDate:endDate
                                                              options:0];
@@ -158,7 +158,7 @@
 }
 -(NSDate *)removeHourMinSecon:(NSDate *)date{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[date dateByAddingTimeInterval:0*24*60*60]];
+    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[date dateByAddingTimeInterval:0*24*60*60]];
     comp.hour = 00;
     comp.minute = 00;
     comp.second = 00;
@@ -170,8 +170,7 @@
     //Time zone change for weekview change, here we are considering system reagion.
     NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     //  NSCalendar *calender = [NSCalendar currentCalendar];
-    NSDateComponents *comp0 = [calender components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitWeekOfMonth| NSHourCalendarUnit |
-                               NSMinuteCalendarUnit fromDate:date];
+    NSDateComponents *comp0 = [calender components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitWeekOfMonth| NSCalendarUnitHour | NSCalendarUnitMinute fromDate:date];
     return comp0;
 }
 @end
