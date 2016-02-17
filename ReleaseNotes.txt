@@ -10,12 +10,10 @@ Version = 16.29.012
 -------------
 Fixed Defects
 -------------
-1. Multi pick list support
-2. Search shorting
-3. Expression over search screen
+
 
 ——————
 NOTE:
 
 
-Name Space: SVMXDEV
+Name Space: SVMXC
