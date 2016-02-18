@@ -18,6 +18,7 @@
 
 #import "SMXDateManager.h"
 #import "SMXConstants.h"
+#import "CalenderHelper.h"
 
 @implementation SMXDateManager
 
@@ -83,6 +84,7 @@
         event.dateTimeEnd=endTim;
         event.dateTimeBegin_multi=startTime;
         event.dateTimeEnd_multi=endTim;
+        [[CalenderHelper new] setRescheduledEventTitle:event];
         NSMutableArray *fromList=[self.dictEvents objectForKey:fromActivityDate];
         
         /*sorting array with startDate*/
@@ -103,6 +105,8 @@
         event.dateTimeEnd=endTim;
         event.dateTimeBegin_multi=startTime;
         event.dateTimeEnd_multi=endTim;
+        [[CalenderHelper new] setRescheduledEventTitle:event];
+
         /*Add Evenet toDate*/
         NSMutableArray *toList=[self.dictEvents objectForKey:toActivityDate];
         if (toList==nil && [toList count]==0) {

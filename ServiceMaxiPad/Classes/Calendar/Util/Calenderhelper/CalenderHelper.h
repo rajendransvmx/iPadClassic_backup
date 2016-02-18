@@ -48,4 +48,6 @@
 + (void)updateOriginalSfIdForSVMXEvent;
 
 + (void)alterSVMXEventTable;
+-(void)setRescheduledEventTitle:(SMXEvent *)event;
+
 @end

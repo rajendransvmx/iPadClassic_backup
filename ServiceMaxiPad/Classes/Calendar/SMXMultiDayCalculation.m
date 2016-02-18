@@ -24,6 +24,7 @@
     newEvent.dateTimeEnd = endTim;
     newEvent.dateTimeBegin_multi = startTime;
     newEvent.dateTimeEnd_multi = endTim;
+    [[CalenderHelper new] setRescheduledEventTitle:newEvent];
     [self processEvent:newEvent];
 }
 

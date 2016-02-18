@@ -1755,6 +1755,145 @@
     }
 }
 
+
+
+-(void)setRescheduledEventTitle:(SMXEvent *)event{
+    
+    NSDictionary *lTitleFieldDict =  [self getCalendarEventTitleData];
+    
+    NSArray *fieldsArray;
+    NSDictionary *fieldTypeDict;
+    if ([event.eventTableName isEqualToString:kEventObject]) {
+        fieldsArray = [[lTitleFieldDict objectForKey:kEventObject] objectForKey:EventTableSetting];
+        fieldTypeDict = [[lTitleFieldDict objectForKey:kEventObject] objectForKey:kEventObject];
+    }
+    else
+    {
+        fieldsArray = [[lTitleFieldDict objectForKey:kSVMXTableName] objectForKey:SVMXEventTableSetting];
+        fieldTypeDict = [[lTitleFieldDict objectForKey:kSVMXTableName] objectForKey:kSVMXTableName];
+    }
+    
+    if (fieldsArray.count<=0 || !event.isEventTitleSettingDriven) {
+        //not settings driven.
+        return;
+    }
+    
+    id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:klocalId operatorType:SQLOperatorEqual andFieldValue:event.localID];
+    
+    NSArray *eventArray = [transObjectService fetchEventDataForObject:event.eventTableName fields:nil expression:nil criteria:@[criteria]];
+    EventTransactionObjectModel *lModel = [eventArray objectAtIndex:0];
+    NSDictionary *theRecordDict = [lModel getFieldValueDictionary];
+
+    NSMutableDictionary *referenceKeyValueDict = [NSMutableDictionary new];
+    NSArray *referenceFieldType = [fieldTypeDict allKeysForObject:kSfDTReference];
+    
+    if (referenceFieldType.count ) {
+        for (NSString *fieldName in referenceFieldType) {
+            NSString *referenceID = [theRecordDict objectForKey:fieldName];
+            TransactionObjectModel *model = [CalenderHelper getRecordForSalesforceId:referenceID];
+            id sfObjectService = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
+            
+            if ([sfObjectService conformsToProtocol:@protocol(SFObjectFieldDAO)]) {
+                NSString *nameField = [sfObjectService getNameFieldForObjectName:model.objectAPIName];
+                if(nameField){
+                    
+                    NSString *value = [[model getFieldValueDictionaryForFields:@[nameField]] objectForKey:nameField];
+                    [referenceKeyValueDict setObject:value forKey:fieldName];
+                }
+            }
+            
+        }
+    }
+    NSMutableString *theTitle=[NSMutableString new];
+    for (NSString *thefield in fieldsArray) {
+        
+        if ([referenceFieldType containsObject:thefield] && [[referenceKeyValueDict allKeys] containsObject:thefield]) {
+            if (theTitle.length && ![theTitle hasSuffix:@"\n"])
+                [theTitle appendFormat:@" %@",[referenceKeyValueDict objectForKey:thefield]];
+            else
+                [theTitle appendFormat:@"%@",[referenceKeyValueDict objectForKey:thefield]];
+            
+        }
+        else
+        {
+            NSString *trimmedString = [thefield stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            if ([[theRecordDict allKeys] containsObject:trimmedString]) {
+                
+                
+                NSString *dateString=nil;
+                if ([[fieldTypeDict objectForKey:trimmedString] isEqualToString:kSfDTDateTime]) {
+                    
+                    NSDate *referenceDate = nil;
+                    
+                    if ([trimmedString isEqualToString:kStartDateTime] || [trimmedString isEqualToString:kEndDateTime] || [trimmedString isEqualToString:kActivityDateTime] || [trimmedString isEqualToString:kSVMXStartDateTime] || [trimmedString isEqualToString:kSVMXEndDateTime] || [trimmedString isEqualToString:kSVMXActivityDateTime]) {
+                        if ([trimmedString isEqualToString:kStartDateTime] || [trimmedString isEqualToString:kActivityDateTime] || [trimmedString isEqualToString:kSVMXStartDateTime] || [trimmedString isEqualToString:kSVMXActivityDateTime]) {
+                            referenceDate = event.dateTimeBegin;
+                        }
+                        else{
+                            referenceDate = event.dateTimeEnd;
+                        }
+                    }
+                    else{
+                        referenceDate = [CalenderHelper getStartEndDateTime:[theRecordDict objectForKey:trimmedString]];
+                    }
+                    
+                    //                    NSDate *theDateTime = [CalenderHelper getStartEndDateTime:[theRecordDict objectForKey:trimmedString]];
+                    dateString =  [NSDate localDateTimeStringFromDate:referenceDate];
+                    
+                }
+                else if ([[fieldTypeDict objectForKey:trimmedString] isEqualToString:kSfDTDate]){
+                    if ([trimmedString isEqualToString:kSVMXActivityDate]||[trimmedString isEqualToString:kActivityDate]) {
+                        
+                        NSDateComponents *comp = [NSDate componentsOfDate:event.dateTimeBegin];
+                        NSDate *newDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
+                        
+                        dateString =  [NSDate localDateStringFromDate:newDate];
+                    }
+                    else{
+                        NSDate *theDateTime = [CalenderHelper getStartEndDateTime:[theRecordDict objectForKey:trimmedString]];
+                        NSDateComponents *comp = [NSDate componentsOfDate:theDateTime];
+                        NSDate *newDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
+                        dateString =  [NSDate localDateStringFromDate:newDate];
+
+                    }
+                    
+                    
+                }
+                if (theTitle.length)
+                    [theTitle appendFormat:@" %@",(dateString?dateString:[theRecordDict objectForKey:trimmedString])];
+                else
+                    [theTitle appendFormat:@"%@",(dateString?dateString:[theRecordDict objectForKey:trimmedString])];
+            }
+            else{
+                if([trimmedString containsString:@"\""] ){
+                    if([trimmedString containsString:@"\\n"]){
+                        trimmedString = @"\n";
+                    }
+                    else if([trimmedString containsString:@" "]){
+                        trimmedString = @" ";
+                        
+                    }
+                    else if([trimmedString containsString:@"\\r"]){
+                        trimmedString = @"\r";
+                    }
+                    else if([trimmedString containsString:@"\\t"]){
+                        trimmedString = @"\t";
+                    }
+                    
+                    if (theTitle.length)
+                        [theTitle appendFormat:@" %@",trimmedString];
+                    else
+                        [theTitle appendFormat:@"%@",trimmedString];
+                }
+            }
+        }
+    }
+    
+    event.title = (theTitle?theTitle:@"");
+    
+}
 #pragma - Custom Calendar Field End
 
 
