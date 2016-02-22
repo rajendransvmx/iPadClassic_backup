@@ -70,11 +70,25 @@
 
 - (BOOL)setCriteria:(NSArray *)criterias
       andExpression:(NSString *)expression {
-     @synchronized([self class]) {
-            self.criteriaArray = criterias;
+    @synchronized([self class]) {
+        @synchronized([self class]) {
+            
+           NSMutableArray *tempCriteria =[criterias mutableCopy];
+            
+            for (DBCriteria *criteria in tempCriteria)
+            {
+                if([criteria.lhsValue isEqualToString:@"RecordTypeId"])
+                {
+                    criteria.rhsValue = @"IgnoreThis";
+                    criteria.operatorType = SQLOperatorEqual;
+                }
+            }
+            self.criteriaArray = tempCriteria;
             self.advancedExpression = expression;
             return [self isValidExpression];
-     }
+        }
+        
+    }
     
 }
 
