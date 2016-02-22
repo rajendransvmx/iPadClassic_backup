@@ -46,9 +46,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 };
 
 @interface PageEditViewController ()<PageEventProcessManagerDelegate> {
-    
-    int jsExeCount;
-    BOOL jsExecuted;
+
 }
 
 @property(nonatomic,strong)SFMPageEditManager   *sfmEditPageManager;
@@ -979,13 +977,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 - (void) executeBusinessRules
 {
     if (![self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onSave"]) {
-        
         [self startBizRule];
-    }
-    else {
-        jsExeCount = 1;
-        jsExecuted = NO;
-        [self performSelector:@selector(reloadFormula:) withObject:@"onSave" afterDelay:3.0];
     }
 }
 
@@ -996,9 +988,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     if (formulaExists) {
         [self disableUI];
         [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
-        jsExeCount = 1;
-        jsExecuted = NO;
-        [self performSelector:@selector(reloadFormula:) withObject:@"onLoad" afterDelay:3.0];
     }
 }
 
@@ -1016,124 +1005,15 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     if (!shouldExecuteBizRule) {
         [self saveRecordData];
     }
-    else {
-        jsExecuted = NO;
-        jsExeCount = 1;
-        [self performSelector:@selector(reloadBizRule) withObject:nil afterDelay:3.0];
-    }
 }
 
--(void)reloadBizRule {
-    if(jsExecuted == NO && jsExeCount < 3) {
-        NSLog(@"Biz rule hanged count: %d", jsExeCount);
-        [self.ruleManager executeBusinessRules];
-        jsExeCount++;
-        [self performSelector:@selector(reloadBizRule) withObject:nil afterDelay:3.0];
-    }
-    else {
-        [self enableUI];
-        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
-        [self performSelectorOnMainThread:@selector(showBizRuleAlertMessage) withObject:nil waitUntilDone:YES];
-    }
-}
-
--(void)reloadFormula:(NSString *)event {
-    if (jsExecuted == NO && jsExeCount < 3) {
-        NSLog(@"Formula %@ hanged count : %d", event, jsExeCount);
-        [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:event];
-        jsExeCount++;
-    }
-    else {
-        [self enableUI];
-        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
-        [self performSelectorOnMainThread:@selector(showBizRuleAlertMessage) withObject:nil waitUntilDone:YES];
-    }
-}
-
--(void)showBizRuleAlertMessage {
-    NSString *title = @"Data Validation Rule Execution Failed";
-    NSString *message = @"Do you wish to discard the changes or continue editing?";
-    NSString *discardChanges = [[TagManager sharedInstance] tagByName:kTag_AbandonChanges];
-    NSString *continueStr = @"Continue Editing"; //[[TagManager sharedInstance] tagByName:kTag_SaveChanges];
-    
-    if (SYSTEM_VERSION < 8.0) {
-        UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@",title] message:message delegate:self cancelButtonTitle:discardChanges otherButtonTitles:continueStr,nil];
-        _alert.tag = kAlertViewTagBizRuleWarning;
-        [_alert show];
-    }
-    else {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@",title] message:message preferredStyle:(UIAlertControllerStyleAlert)];
-        UIAlertAction *discardAction = [UIAlertAction actionWithTitle:discardChanges style:(UIAlertActionStyleCancel) handler:^(UIAlertAction *action) {
-            [self alertActionEventForTag:kAlertViewTagBizRuleWarning andButtonIndex:0];
-        }];
-        UIAlertAction *continueAction = [UIAlertAction actionWithTitle:continueStr style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
-            [self alertActionEventForTag:kAlertViewTagBizRuleWarning andButtonIndex:1];
-        }];
-        [alertController addAction:discardAction];
-        [alertController addAction:continueAction];
-        [self presentViewController:alertController animated:YES completion:^{
-        }];
-    }
-}
-
-
--(void)showFormulaAlertMessage {
-    NSString *title = @"ServiceMax Formula Execution Failed";
-    NSString *message = @"Do you wish to discard the changes or continue editing?";
-    NSString *discardChanges = [[TagManager sharedInstance] tagByName:kTag_AbandonChanges];
-    NSString *continueStr = @"Continue Editing"; //[[TagManager sharedInstance] tagByName:kTag_SaveChanges];
-    
-    if (SYSTEM_VERSION < 8.0) {
-        UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@",title] message:message delegate:self cancelButtonTitle:discardChanges otherButtonTitles:continueStr,nil];
-        _alert.tag = kAlertViewTagFormulaWarning;
-        [_alert show];
-    }
-    else {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@",title] message:message preferredStyle:(UIAlertControllerStyleAlert)];
-        UIAlertAction *discardAction = [UIAlertAction actionWithTitle:discardChanges style:(UIAlertActionStyleCancel) handler:^(UIAlertAction *action) {
-            [self alertActionEventForTag:kAlertViewTagFormulaWarning andButtonIndex:0];
-        }];
-        UIAlertAction *continueAction = [UIAlertAction actionWithTitle:continueStr style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
-            [self alertActionEventForTag:kAlertViewTagFormulaWarning andButtonIndex:1];
-        }];
-        [alertController addAction:discardAction];
-        [alertController addAction:continueAction];
-        [self presentViewController:alertController animated:YES completion:^{
-        }];
-    }
-}
 
 
 -(void)alertActionEventForTag:(int)alertTag andButtonIndex:(int)buttonIndex {
-    if (alertTag == kAlertViewTagBizRuleWarning ) {
-        switch (buttonIndex) {
-            case 0:
-                [self cancelButtonTappedInAlert:nil];
-                break;
-            default:
-                break;
-        }
-    }
-    else if (alertTag == kAlertViewTagFormulaWarning) {
-        switch (buttonIndex) {
-            case 0:
-                [self cancelButtonTappedInAlert:nil];
-                break;
-                case 1:
-                [self startFormula];
-            default:
-                break;
-        }
-    }
 }
 
 - (void)businessRuleFinishedWithResults:(NSMutableArray *)resultArray
 {
-    
-    jsExecuted = YES;
-    jsExeCount = 0;
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadBizRule) object:nil];
-    
     [(PageEditDetailViewController *)self.detailViewController  initiateBuissRulesData:resultArray];
     
     if (([resultArray count]== 0) || (resultArray == nil) || ([self.ruleManager allWarningsAreConfirmed] && ([self.ruleManager numberOfErrorsInResult] == 0))) {
@@ -1203,10 +1083,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         {
             [self cancelButtonTappedInAlert:nil];
         }
-    }
-    else if (alertView.tag == kAlertViewTagBizRuleWarning)
-    {
-        [self alertActionEventForTag:alertView.tag andButtonIndex:buttonIndex];
     }
     else
     {
@@ -1514,10 +1390,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 -(void)refreshSFMPageWithFieldUpdateRuleResults:(NSString *)responseString forEvent:(NSString *)event {
     
-    jsExecuted = YES;
-    jsExeCount = 0;
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadFormula:) object:event];
-    
     [self performSelectorOnMainThread:@selector(updateTheSFMPage:) withObject:responseString waitUntilDone:YES];
     
     
@@ -1529,7 +1401,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     
     if ([event isEqualToString:@"onSave"]) {
-        [self performSelector:@selector(startBizRule) withObject:nil afterDelay:0.0];
+        [self startBizRule];
     }
 }
 
