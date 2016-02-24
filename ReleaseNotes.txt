@@ -4,18 +4,18 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.003
+Version = 16.20.004
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-Deployment target has been changed from 8.4 to 8.0
 
 
 Namespace - SVMXC
 ——————
-NOTE:
+NOTE: Added Certificates for network validation of trial orgs. Required for Sales Rep’s.
+
 
 
