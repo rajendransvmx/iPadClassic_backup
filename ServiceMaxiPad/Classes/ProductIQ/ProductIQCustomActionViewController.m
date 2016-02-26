@@ -11,6 +11,18 @@
 #import "MBProgressHUD.h"
 #import "SNetworkReachabilityManager.h"
 
+
+@implementation NSURLRequest (NSURLRequestWithIgnoreSSL)
+
++ (BOOL)allowsAnyHTTPSCertificateForHost:(NSString *)host
+{
+    return YES;
+}
+
+
+@end
+
+
 @interface ProductIQCustomActionViewController () {
     
 }
