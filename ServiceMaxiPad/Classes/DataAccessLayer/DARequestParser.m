@@ -104,6 +104,11 @@
         [selectObject addOrderByFields:@[requestObject.orderBy]];
     }
     
+    // 012895
+    if ([requestObject.innerJoin length] > 0) {
+        [selectObject addJoinString:requestObject.innerJoin];
+    }
+    
     return [selectObject query];
 }
 

@@ -184,6 +184,24 @@
         return  concatenatedString;
     }
     
+    
+    // 012895
+   else if ([self.joinString length] > 0) {
+        NSMutableString *concatenatedString = [[NSMutableString alloc] init];
+        for (int counter = 0; counter < [self.fieldNames count]; counter++) {
+            
+            NSString *fName = [self.fieldNames objectAtIndex:counter];
+            NSString *tableNameStr = self.tableName;
+            if (counter == 0) {
+                [concatenatedString appendFormat:@"'%@'.%@",tableNameStr,fName ];
+            }
+            else{
+                [concatenatedString appendFormat:@",'%@'.%@",tableNameStr,fName];
+            }
+        }
+        return  concatenatedString;
+    }
+    
    return  [StringUtil getConcatenatedStringFromArray:self.fieldNames withSingleQuotesAndBraces:NO];
 }
 

@@ -167,6 +167,12 @@
     }
 }
 
+
+// 012895
+-(void)addJoinString:(NSString *)ajoinString {
+    self.joinString = ajoinString;
+}
+
 - (NSString *)getAggregateFunction:(SQLAggregateFunction)functionType{
 
     NSString *functionName = nil;
@@ -237,6 +243,11 @@
              NSString *joinString = [self getJoinString];
              if (joinString != nil) {
                  [query appendFormat:@" %@",joinString];
+             }
+             
+             // 012895
+             if ([self.joinString length] > 0) {
+                 [query appendString:self.joinString];
              }
              
              /* Add where clause if exist */

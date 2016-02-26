@@ -16,6 +16,8 @@
 #define kDAOrderbyVal       @"orderBy"
 #define kDAResponse         @"response"
 #define kSOQLJson           @"jsonSoql"
+#define kInnerJoin          @"innerJoin" // 012895
+
 @implementation DARequest
 
 - (id)initWithDictionary:(NSDictionary *)dataDictionary {
@@ -50,6 +52,13 @@
         if (![Utility isStringEmpty:sqlJson]) {
             self.query = sqlJson;
         }
+        
+        // 012895
+        NSString *innerJoin = [dataDictionary objectForKey:kInnerJoin];
+        if (![Utility isStringEmpty:innerJoin]) {
+            self.innerJoin = innerJoin;
+        }
+
     }
     return self;
 }

@@ -165,5 +165,7 @@ andAdvanceExpression:(NSString *)advanceExpression;
  */
 - (void)addLeftOuterJoinTable:(NSString *)joinTableName andPrimaryTableFieldName:(NSString *)leftFieldName;
 
+// 012895
+-(void)addJoinString:(NSString *)joinString;
 
 @end

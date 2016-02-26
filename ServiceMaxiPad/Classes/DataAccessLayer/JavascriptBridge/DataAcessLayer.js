@@ -123,11 +123,15 @@ $DAL.getDBObjects = function(callbackFunction){
  
  }
 
- $DAL.parseSoqlJSOnObject = function(objectName, fieldNames, criteriaArray, advancedExpression,jsonQuery,callbackFunction){
+ // 012895 - opdoc sort order fix - added sortOder, innerJoin params
+ $DAL.parseSoqlJSOnObject = function(objectName, fieldNames, criteriaArray, advancedExpression,jsonQuery, sortOder, innerJoin,callbackFunction){
+ 
+        var temp_orderBy = (sortOder)?sortOder:null;
  
         var requestType = "DARequest"+functionMapper.SOQLQuery;
-        var requestObject =  formRequestobject(objectName, fieldNames, criteriaArray, advancedExpression, null);
+        var requestObject =  formRequestobject(objectName, fieldNames, criteriaArray, advancedExpression, temp_orderBy);
             requestObject.jsonSoql = jsonQuery;
+            requestObject.innerJoin = innerJoin;
         var finalParamString = JSON.stringify(requestObject);
         $COMM.requestDataForType(requestType,finalParamString,function(contextData) {
                           
@@ -185,7 +189,7 @@ function getJsonString(jsonObject){
     var finalParamString = JSON.stringify(jsonObject);
     return finalParamString;
 }
-
+ 
 })();
 
 

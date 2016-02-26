@@ -39,6 +39,8 @@
 @property(nonatomic,strong) NSString    *advancedExpression;
 @property(nonatomic,assign) NSInteger    offSet;
 @property(nonatomic,assign) NSInteger    limit;
+@property(nonatomic, strong) NSString *joinString; // 012895
+
 
 
 - (void)setRequestType:(DBRequestQueryType)queryType;

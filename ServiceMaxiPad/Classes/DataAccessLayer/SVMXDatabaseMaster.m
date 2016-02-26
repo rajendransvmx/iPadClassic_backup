@@ -253,6 +253,27 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
             }
 
         }];
+            
+            
+            // 012895
+            if ([request.objectName isEqualToString:@"SFProcessComponent"]) {
+                NSMutableArray *tempArray = [NSMutableArray arrayWithArray:responseObject.objectData];
+                
+                if([tempArray count] > 0) {
+                    NSMutableDictionary *temp = [tempArray objectAtIndex:0];
+                
+                if ([[temp objectForKey:@"sortingOrder"] length] > 0 && [[temp objectForKey:@"objectName"] length] > 0 ) {
+                    NSArray *result = [self getObjectName:[temp objectForKey:@"sortingOrder"] forObject:[temp objectForKey:@"objectName"]];
+                    if ([result count] >= 2) {
+                    [temp setObject:[result objectAtIndex:0] forKey:@"innerJoin"];
+                    [temp setObject:[result objectAtIndex:1] forKey:@"sortingOrder"];
+                    }
+                    [tempArray insertObject:temp atIndex:0];
+                    responseObject.objectData = tempArray;
+                }
+            }
+            }
+
         }
         return responseObject;
     }
@@ -934,5 +955,60 @@ static SVMXDatabaseMaster *sharedDatamasterObject = nil;
     
     
 }
+
+
+// 012895
+-(NSArray *)getObjectName:(NSString *)advanceExpression forObject:(NSString *)objName {
+ 
+            NSArray *tempArray;
+            
+            NSString *finalInnerJoinStr = @"";
+            NSString *finalOrderByStr = @"";
+            
+            NSString *jsonString = advanceExpression;
+            NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
+            NSDictionary *sortingArray =[jsonDict objectForKey:@"lstSortingRec"];
+            
+            for (NSDictionary *sortingDict in sortingArray) {
+                
+                if ([[sortingDict objectForKey:@"dataType"] isEqualToString:@"REFERENCE"]) {
+                    
+                     NSString *refObjName;
+                    
+                    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:@"type" operatorType:SQLOperatorEqual andFieldValue:@"reference"];
+                    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:@"fieldName" operatorType:SQLOperatorEqual andFieldValue:[sortingDict objectForKey:@"fieldAPIName"]];
+
+                    
+                    CommonServices *service = [[CommonServices alloc] init];
+                    NSArray *results = [service fetchDataForFields:@[@"referenceTo"] criterias:@[criteria1, criteria2] objectName:@"SFObjectField" andModelClass:[SFObjectFieldModel class]];
+                    
+                    if ([results count] > 0) {
+                        SFObjectFieldModel *tempModel = [results firstObject];
+                        refObjName = tempModel.referenceTo;
+                    
+                    NSString *queryField = [sortingDict objectForKey:@"queryField"];
+                    NSArray *queryFieldArray = [queryField componentsSeparatedByString:@"."];
+                    NSString *queryFieldName = [queryFieldArray firstObject];
+                    
+                    NSString *finalString = [NSString stringWithFormat:@" LEFT JOIN %@ %@ on '%@'.%@ = %@.Id ", refObjName, queryFieldName, objName, [sortingDict objectForKey:@"fieldAPIName"], queryFieldName];
+                    
+                    finalInnerJoinStr = [finalInnerJoinStr stringByAppendingString:finalString];
+                    }
+
+                }
+                
+                NSString *orderByStr = [NSString stringWithFormat:@" %@ %@,", [sortingDict objectForKey:@"queryField"], [sortingDict objectForKey:@"sortingOrder"]];
+                finalOrderByStr = [finalOrderByStr stringByAppendingString:orderByStr];
+
+            }
+            
+            finalOrderByStr = [finalOrderByStr substringToIndex:[finalOrderByStr length] - 1];
+            
+            tempArray = @[finalInnerJoinStr, finalOrderByStr];
+            return tempArray;
+
+}
+
 
 @end

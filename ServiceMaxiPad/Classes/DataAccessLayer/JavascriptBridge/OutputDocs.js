@@ -344,7 +344,9 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
     /* Get the expression  */
     /* Get the expression_id from process component table for the given process_id */
     var objectName = "SFProcessComponent";
-    var fieldNames = [{fieldName:'expressionId',fieldType:'TEXT'}];
+    
+        // 012895 - opdoc sort order - added sortingOrder, objectName params
+    var fieldNames = [{fieldName:'expressionId',fieldType:'TEXT'},{fieldName:'sortingOrder',fieldType:'TEXT'}, {fieldName:'objectName',fieldType:'TEXT'}];
     var criteria = [{fieldName:'processId',fieldValue:processSfid,operator:'='},{fieldName:'docTemplateDetailId',fieldValue:dtd_Id,operator:'='}];
     var expression_id = 0;
    
@@ -363,9 +365,11 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                       {
                       
                       expr_id =  processCompObj.expressionId;
-                     
-                     
                       
+                      // 012895 - get inner join and sortOrder string
+                      var innerJoin = processCompObj.innerJoin;
+                      var sortingOrder = processCompObj.sortingOrder;
+  
                       /* Get the expression for the retrieved expression_id */
                       var exptblName = "SFExpression";
                       var fields = [{fieldName:'expressionId',fieldType:'TEXT'},{fieldName:'expression',fieldType:'TEXT'},{fieldName:'expressionName',fieldType:'TEXT'}];
@@ -469,7 +473,13 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                                           templateDetailRecords[index].criteria = advCriteria; // [{fieldName:hdr_ref_fld,fieldValue:ref_fld_Id,operator:'='}];
                                                           templateDetailRecords[index].advancedExpression = advCriteriaExpression;
                                                           
-                                                        
+                                        
+                                                          // 012895 - setting inner join and sorting order
+                                                          templateDetailRecords[index].innerJoin = innerJoin;
+                                                          templateDetailRecords[index].sortingOrder = sortingOrder;
+
+                                                          
+
 //                                                          alert(JSON.stringify(templateDetailRecords[index]));
 
                                                           // Temporary : To be inserted in the inner most callback function
@@ -692,7 +702,11 @@ function continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordI
        
         var fieldNames = [];
         
-        $DAL.parseSoqlJSOnObject(objectName, fieldNames, criteriaArray, advnExpr,jsonString,function(request){
+            // 012895 - passing sortingOrder, innerJoin to native
+        var sortingOrder = detailObject.sortingOrder;
+        var innerJoin = detailObject.innerJoin;
+        
+        $DAL.parseSoqlJSOnObject(objectName, fieldNames, criteriaArray, advnExpr,jsonString, sortingOrder, innerJoin, function(request){
                                  
                                  if(request.response.statusCode == "1"){
                                  
