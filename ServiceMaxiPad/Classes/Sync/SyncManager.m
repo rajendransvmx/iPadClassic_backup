@@ -1683,7 +1683,20 @@ static SyncManager *_instance;
             NSString *aggressiveSyncEnabled = [SFMPageHelper getSettingValueForSettingId:kMobileSettingsAggressiveSync];
             if (![[aggressiveSyncEnabled uppercaseString] isEqualToString:@"FALSE"])
             {
-                self.isGetPriceCallEnabled = NO;
+                   NSString *getPriceEnabled= [SFMPageHelper getSettingValueForSettingId:kMobileSettingsGetPrice];
+                
+                BOOL isGetPrice = [getPriceEnabled boolValue];
+                
+                   if(isGetPrice)
+                   {
+                       self.isGetPriceCallEnabled = YES;
+
+                   }
+                   else{
+                       self.isGetPriceCallEnabled = NO;
+
+                   }
+                
                 [self performSyncWithType:SyncTypeData];
             }
         }

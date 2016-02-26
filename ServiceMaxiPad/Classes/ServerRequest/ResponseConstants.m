@@ -431,3 +431,8 @@ NSInteger const kMaximumNoOfParallelPageLayoutCalls = 5;
 
 NSInteger const kOBJdefnLimit = 20;
 NSString *const kOBJdefList                 = @"ObjectsDefinitionList";
+NSString *const kMobileSettingsGetPrice   = @"IPAD018_SET022";
+
+
+
+
