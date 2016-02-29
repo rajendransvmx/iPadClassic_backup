@@ -113,6 +113,10 @@
             
             NSDateFormatter *lDateFormatter = [[NSDateFormatter alloc] init];
             [lDateFormatter setDateFormat:@"yyyy-MM-dd"];
+            [lDateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
+            [lDateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
+            lDateFormatter.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+
             [cAllEventDictionary setObject:[lDateFormatter dateFromString:[lDateFormatter stringFromDate:[NSDate date]]] forKey:kEventStartTimeDate];
             [cAllEventDictionary setObject:[NSNumber numberWithLong:24*60*60] forKey:kEventDurationLong];
             [cAllEventDictionary setObject:@{} forKey:kSmallerEventsDictionary];
