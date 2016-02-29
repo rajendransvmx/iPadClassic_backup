@@ -401,10 +401,15 @@
         
         CaseObjectModel *model = [[SMXCalendarViewController sharedInstance].cCaseDetailsDict objectForKey:self.event.whatId];
         priorityString = model.priorityString;
-        lEventTitle = self.event.subject;
+        lEventTitle = (self.event.subject?self.event.subject:@"");
 
     }
-    if(self.event.isEventTitleSettingDriven)
+    else
+    {
+        lEventTitle = (self.event.subject?self.event.subject:@"");
+
+    }
+    if(self.event.isEventTitleSettingDriven && self.event.isWorkOrder)
         lEventTitle = self.event.title;
         
 
