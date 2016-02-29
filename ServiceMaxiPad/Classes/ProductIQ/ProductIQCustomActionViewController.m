@@ -10,6 +10,7 @@
 #import "TagManager.h"
 #import "MBProgressHUD.h"
 #import "SNetworkReachabilityManager.h"
+#import "AlertMessageHandler.h"
 
 
 @implementation NSURLRequest (NSURLRequestWithIgnoreSSL)
@@ -176,6 +177,10 @@
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     [self hideAnimator];
+    if ( [error code] != NSURLErrorCancelled ){
+        [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeCannotFindHost
+                                                           andDelegate:nil];
+    }
     
 }
 
