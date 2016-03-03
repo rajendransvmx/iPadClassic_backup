@@ -3,19 +3,19 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.021
+Version = 16.29.022
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-
+Search related defects.
 
 -------------
 Feature
 -------------
-Calendar Subject Title.
+ProductIq search change.
 
 
 ——————
