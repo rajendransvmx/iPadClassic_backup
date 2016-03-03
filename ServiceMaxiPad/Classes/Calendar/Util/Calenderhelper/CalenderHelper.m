@@ -69,6 +69,9 @@
 @property (nonatomic, strong) NSString *cRangeOfDaysString;
 @property (nonatomic, strong) NSDictionary *salesforceEventFieldList;
 @property (nonatomic, strong) NSDictionary *svmxEventEventFieldList;
+@property (nonatomic, strong) NSString *salesforceEventTitleSettingString;
+@property (nonatomic, strong) NSString *svmxEventTitleSettingString;
+
 @end
 
 @implementation CalenderHelper
@@ -1480,15 +1483,14 @@
     NSArray *lSVMXEventFields;
     for (MobileDeviceSettingsModel *model in calendarTitleFieldList) {
         
-        model.value = [model.value stringByReplacingOccurrencesOfString:@"\\," withString:PlaceHolderText];
         if ([model.settingId isEqualToString:EventTableSetting]) {
-            lEventFields = [model.value componentsSeparatedByString:@","];
-            lEventFields = [self checkForCommaInFieldsinFieldArray:lEventFields];
+            _salesforceEventTitleSettingString = model.value;
+            lEventFields = [self getFieldsFromString:model.value];
 
         }
         else if ([model.settingId isEqualToString:SVMXEventTableSetting]) {
-            lSVMXEventFields = [model.value componentsSeparatedByString:@","];
-            lSVMXEventFields = [self checkForCommaInFieldsinFieldArray:lSVMXEventFields];
+            _svmxEventTitleSettingString = model.value;
+            lSVMXEventFields = [self getFieldsFromString:model.value];
         }
     }
     NSMutableArray *lEventFieldArray = [NSMutableArray new];
@@ -1549,6 +1551,27 @@
     
 }
 
+-(NSArray *)getFieldsFromString:(NSString *)sentence
+{
+    NSRange startRange = [sentence rangeOfString:@"{"];
+    NSRange endRange = [sentence rangeOfString:@"}"];
+    NSMutableArray *fields = [NSMutableArray new];
+    while (endRange.location<sentence.length && startRange.location<endRange.location){
+        long startLocation = startRange.location + startRange.length;
+        long length = endRange.location - startLocation;
+        
+        NSString *field = [sentence substringWithRange:NSMakeRange(startLocation, length)];
+        [fields addObject:field];
+        sentence = [sentence substringFromIndex:endRange.location+1];
+        startRange = [sentence rangeOfString:@"{"];
+        endRange = [sentence rangeOfString:@"}"];
+        
+    }
+
+    
+    return fields;
+}
+
 -(NSArray *)checkForCommaInFieldsinFieldArray:(NSArray *)fieldArray
 {
     NSMutableArray *placeHolderArray = [NSMutableArray arrayWithArray:fieldArray];
@@ -1591,14 +1614,17 @@
     
     NSArray *fieldsArray;
     NSDictionary *fieldTypeDict;
+    NSString *settingString;
     if (isSalesforceEvent) {
         fieldsArray = [self.salesforceEventFieldList objectForKey:EventTableSetting];
         fieldTypeDict = [self.salesforceEventFieldList objectForKey:kEventObject];
+        settingString = self.salesforceEventTitleSettingString;
     }
     else
     {
         fieldsArray = [self.svmxEventEventFieldList objectForKey:SVMXEventTableSetting];
         fieldTypeDict = [self.svmxEventEventFieldList objectForKey:kSVMXTableName];
+        settingString = self.svmxEventTitleSettingString;
     }
     
     NSMutableDictionary *referenceKeyValueDict = [NSMutableDictionary new];
@@ -1621,20 +1647,18 @@
             
         }
     }
-    NSMutableString *theTitle=[NSMutableString new];
+    NSString *theTitle = settingString;
     for (NSString *thefield in fieldsArray) {
         
         if ([referenceFieldType containsObject:thefield] && [[referenceKeyValueDict allKeys] containsObject:thefield]) {
-            if (theTitle.length && ![theTitle hasSuffix:@"\n"])
-                [theTitle appendFormat:@" %@",[referenceKeyValueDict objectForKey:thefield]];
-            else
-                [theTitle appendFormat:@"%@",[referenceKeyValueDict objectForKey:thefield]];
-            
+
+            theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:[referenceKeyValueDict objectForKey:thefield]];
+
         }
         else
         {
             NSString *trimmedString = [thefield stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            if ([[theRecordDict allKeys] containsObject:trimmedString]) {
+            if ([[theRecordDict allKeys] containsObject:trimmedString] || [[fieldTypeDict allKeys] containsObject:trimmedString]) {
                 
                 NSString *dateString=nil;
                 if ([[fieldTypeDict objectForKey:trimmedString] isEqualToString:kSfDTDateTime]) {
@@ -1649,53 +1673,20 @@
                 if (!dateString) {
                     dateString = [theRecordDict objectForKey:trimmedString];
                 }
-                if (![self isTitleStringFinishingWithWhiteSpace:theTitle andSubString:dateString])
-                    [theTitle appendFormat:@" %@",dateString];
-                else
-                    [theTitle appendFormat:@"%@",dateString];
+
+                theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:(dateString?dateString:@"")];
                 
             }
             else{
-                if([trimmedString containsString:@"\""] ){
-                    if([trimmedString containsString:@"\\n"]){
-                        if ([self isTitleStringFinishingWithWhiteSpace:theTitle andSubString:nil]) {
-                            trimmedString = @"";
-                        }
-                        else{
-                            trimmedString = @"\n";
-                        }
-                    }
-                    else if([trimmedString containsString:@" "] && trimmedString.length==3){
-                        if ([self isTitleStringFinishingWithWhiteSpace:theTitle andSubString:nil]) {
-                            trimmedString = @"";
-                        }
-                        else{
-                            trimmedString = @" ";
-                        }
-                    }
-                    else if([trimmedString containsString:@"\\r"]){
-                        trimmedString = @"\r";
-                    }
-                    else if([trimmedString containsString:@"\\t"]){
-                        trimmedString = @"\t";
-                    }
-                    else if([trimmedString containsString:@"\\,"]){
-                        trimmedString = @",";
-                        [theTitle appendFormat:@"%@",trimmedString];
-                        continue;
-                    }
-                    else{
-                        trimmedString = [trimmedString stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-                    }
-                    
-                    if (![self isTitleStringFinishingWithWhiteSpace:theTitle andSubString:trimmedString])
-                        [theTitle appendFormat:@" %@",trimmedString];
-                    else
-                        [theTitle appendFormat:@"%@",trimmedString];
-                }
+                // not field.
             }
         }
     }
+    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
+    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
+
+
     if (fieldsArray.count) {
         NSString *trimmedString = [theTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
@@ -1709,35 +1700,24 @@
     }
 }
 
--(BOOL)isTitleStringFinishingWithWhiteSpace:(NSMutableString *)completeString andSubString:(NSString *)substring{
-    if (completeString.length<=0) {
-        return YES;
-    }
-    BOOL isLastCharSpace = NO;
-    unichar last = [completeString characterAtIndex:[completeString length] - 1];
-    if ([[NSCharacterSet whitespaceAndNewlineCharacterSet] characterIsMember:last]) {
-        isLastCharSpace = YES;
-    }
-    if ([substring isEqualToString:@"\n"] && !isLastCharSpace) {
-        isLastCharSpace = YES;
-    }
-    return isLastCharSpace;
-}
-
 -(void)setRescheduledEventTitle:(SMXEvent *)event{
     
     NSDictionary *lTitleFieldDict =  [self getCalendarEventTitleData];
     
     NSArray *fieldsArray;
     NSDictionary *fieldTypeDict;
+    NSString *settingString;
+
     if ([event.eventTableName isEqualToString:kEventObject]) {
         fieldsArray = [[lTitleFieldDict objectForKey:kEventObject] objectForKey:EventTableSetting];
         fieldTypeDict = [[lTitleFieldDict objectForKey:kEventObject] objectForKey:kEventObject];
+        settingString = self.salesforceEventTitleSettingString;
     }
     else
     {
         fieldsArray = [[lTitleFieldDict objectForKey:kSVMXTableName] objectForKey:SVMXEventTableSetting];
         fieldTypeDict = [[lTitleFieldDict objectForKey:kSVMXTableName] objectForKey:kSVMXTableName];
+        settingString = self.svmxEventTitleSettingString;
     }
     
     if (fieldsArray.count<=0 || !event.isEventTitleSettingDriven) {
@@ -1773,20 +1753,16 @@
             
         }
     }
-    NSMutableString *theTitle=[NSMutableString new];
+    NSString *theTitle = settingString;
     for (NSString *thefield in fieldsArray) {
         
         if ([referenceFieldType containsObject:thefield] && [[referenceKeyValueDict allKeys] containsObject:thefield]) {
-            if (theTitle.length && ![theTitle hasSuffix:@"\n"])
-                [theTitle appendFormat:@" %@",[referenceKeyValueDict objectForKey:thefield]];
-            else
-                [theTitle appendFormat:@"%@",[referenceKeyValueDict objectForKey:thefield]];
-            
+            theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:[referenceKeyValueDict objectForKey:thefield]];
         }
         else
         {
             NSString *trimmedString = [thefield stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            if ([[theRecordDict allKeys] containsObject:trimmedString]) {
+            if ([[theRecordDict allKeys] containsObject:trimmedString] || [[fieldTypeDict allKeys] containsObject:trimmedString]) {
                 
                 
                 NSString *dateString=nil;
@@ -1831,53 +1807,19 @@
                 if (!dateString) {
                     dateString = [theRecordDict objectForKey:trimmedString];
                 }
-                if (![self isTitleStringFinishingWithWhiteSpace:theTitle andSubString:dateString])
-                    [theTitle appendFormat:@" %@",(dateString?dateString:[theRecordDict objectForKey:trimmedString])];
-                else
-                    [theTitle appendFormat:@"%@",(dateString?dateString:[theRecordDict objectForKey:trimmedString])];
+                theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:(dateString?dateString:@"")];
+
             }
             else{
-                if([trimmedString containsString:@"\""] ){
-                    if([trimmedString containsString:@"\\n"]){
-                        if ([self isTitleStringFinishingWithWhiteSpace:theTitle andSubString:nil]) {
-                            trimmedString = @"";
-                        }
-                        else{
-                            trimmedString = @"\n";
-                        }
-                    }
-                    else if([trimmedString containsString:@" "] && trimmedString.length==3){
-                        if ([self isTitleStringFinishingWithWhiteSpace:theTitle andSubString:nil]) {
-                            trimmedString = @"";
-                        }
-                        else{
-                            trimmedString = @" ";
-                        }
-                    }
-                    else if([trimmedString containsString:@"\\r"]){
-                        trimmedString = @"\r";
-                    }
-                    else if([trimmedString containsString:@"\\t"]){
-                        trimmedString = @"\t";
-                    }
-                    else if([trimmedString containsString:@"\\,"]){
-                        trimmedString = @",";
-                        [theTitle appendFormat:@"%@",trimmedString];
-                        continue;
-                    }
-                    else{
-                        trimmedString = [trimmedString stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-                    }
-                    
-                    if (![self isTitleStringFinishingWithWhiteSpace:theTitle andSubString:trimmedString])
-                        [theTitle appendFormat:@" %@",trimmedString];
-                    else
-                        [theTitle appendFormat:@"%@",trimmedString];
-                }
+            // Not fields.
             }
         }
     }
     
+    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
+    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
+
     event.title = (theTitle?theTitle:@"");
     
 }
