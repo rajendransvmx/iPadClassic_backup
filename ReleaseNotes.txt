@@ -4,18 +4,19 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.004
+Version = 16.20.005
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
+27079
 
 
 Namespace - SVMXC
 ——————
-NOTE: Added Certificates for network validation of trial orgs. Required for Sales Rep’s.
+
 
 
 
