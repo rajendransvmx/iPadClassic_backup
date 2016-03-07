@@ -328,15 +328,13 @@ SFMPageMasterSectionType;
             
             pageSectionView.sectionTitle.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
             [pageSectionView.rightButton setTitle:[[TagManager sharedInstance] tagByName:kTagShowAllButtonText] forState:UIControlStateNormal];
-            pageSectionView.index = section;
-            if (section != self.selectedSection) {
-                [self setShowAllSection:YES sender:pageSectionView.rightButton index:section];
-            }else
-            {
-                [self setShowAllSection:NO sender:pageSectionView.rightButton index:section];
-
-            }
-            
+        }
+        pageSectionView.index = section;
+        if (section != self.selectedSection) {
+            [self setShowAllSection:YES sender:pageSectionView.rightButton index:section];
+        }else
+        {
+            [self setShowAllSection:NO sender:pageSectionView.rightButton index:section];
             
         }
     }
