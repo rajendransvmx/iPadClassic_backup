@@ -950,6 +950,8 @@
             {
                 //Insert record into object table
                 syncRecord.operation = kModificationTypeInsert;
+                //Defect#026616- Currency from WO to WD.
+                [self updateRecordforCurrencyCode:eachDetailDict andObjectName:processComponent.objectName forSFMPageObject:sfmPage];
                 recordUpdatedSuccessFully = [editHelper insertRecord:eachDetailDict intoObjectName:syncRecord.objectName];
             }
             else{
@@ -1004,11 +1006,11 @@
                         if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
                              BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localIdField.internalValue];
                             if (!doesExist) {
-                                BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
+                                [modifiedRecordService saveRecordModel:syncRecord];
                             }
                         }
                         else{
-                            BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
+                            [modifiedRecordService saveRecordModel:syncRecord];
                         }
                     }
                 }else{
@@ -1947,6 +1949,28 @@
 
 #pragma mark - End
 
+/* Defect#026616 */
+-(void)updateRecordforCurrencyCode:(NSMutableDictionary *)eachDetailDict andObjectName:(NSString *)objectName forSFMPageObject:(SFMPage *)sfmPage{
+    if ([sfmPage.objectName isEqualToString:kWorkOrderTableName] && [objectName isEqualToString:kWorkOrderDetailTableName] ) {
+        
+        NSString *parentSfId =  [sfmPage  getHeaderSalesForceId];
+        SFMRecordFieldData *parentLocalField=  [sfmPage.headerRecord objectForKey:kLocalId];
+        id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+        /* Check if record exist */
+        DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:parentSfId];
+        DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:parentLocalField.internalValue];
+        TransactionObjectModel * model =  [transObjectService getDataForObject:kWorkOrderTableName fields:@[@"CurrencyIsoCode"] expression:@"(1 OR 2)" criteria:@[criteria1, criteria2]];
+        NSDictionary *fieldDictionary = [model getFieldValueDictionary];
+        NSString *currencyValue = [fieldDictionary objectForKey:@"CurrencyIsoCode"];
+        if (currencyValue != nil) {
+            SFMRecordFieldData *currencyField = [eachDetailDict objectForKey:@"CurrencyIsoCode"];
+            if (currencyField == nil) {
+                currencyField = [[SFMRecordFieldData alloc] initWithFieldName:@"CurrencyIsoCode" value:currencyValue andDisplayValue:currencyValue];
+                [eachDetailDict setObject:currencyField forKey:@"CurrencyIsoCode"];
+            }
+        }
+    }
+}
 
 #pragma makr - Added new recent record
 
