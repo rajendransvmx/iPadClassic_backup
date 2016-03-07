@@ -30,23 +30,26 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 {
     int index = n >> 3;
     //fix for 8978
-
+    
     NSUInteger len = [nsdata length];
     Byte *data = (Byte*)calloc(len, sizeof(char));
     memcpy(data, [nsdata bytes], len);
     
- // Byte * data = (Byte *)[nsdata bytes];//[nsstr characterAtIndex:index];
+    // Byte * data = (Byte *)[nsdata bytes];//[nsstr characterAtIndex:index];
     //SMLog(kLogLevelVerbose,@"data =========%@",nsdata);
     
-   // int value = (data[index] & (0x80 >> n % 8));
-    Boolean flag = (data[index] & (0x80 >> n % 8)) != 0;
-//    NSLog(@"%d",n >> 3);
-//    NSLog(@"%d",data[n >> 3]);
-//    NSLog(@"%d",(0x80 >> n % 8));
-//    NSLog(flag ? @"Yes" : @"No");
-//    NSLog(@" %d",(data[n >> 3] & (0x80 >> n % 8)));
-//    NSLog(@"%d",n);
-//    NSLog(@"%@",[nsdata description]);
+    // int value = (data[index] & (0x80 >> n % 8));
+    
+    //    Boolean flag = (data[index] & (0x80 >> n % 8)) != 0; // 27079
+    Boolean flag = (data[index] == (0x80 >> n % 8));
+    
+    //    NSLog(@"%d",n >> 3);
+    //    NSLog(@"%d",data[n >> 3]);
+    //    NSLog(@"%d",(0x80 >> n % 8));
+    //    NSLog(flag ? @"Yes" : @"No");
+    //    NSLog(@" %d",(data[n >> 3] & (0x80 >> n % 8)));
+    //    NSLog(@"%d",n);
+    //    NSLog(@"%@",[nsdata description]);
     
     free(data);
     return flag;
