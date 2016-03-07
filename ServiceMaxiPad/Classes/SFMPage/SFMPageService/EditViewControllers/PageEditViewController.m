@@ -154,12 +154,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    BOOL formulaExists = [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onLoad"];
-    if (formulaExists) {
-        [self disableUI];
-        [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
-    }
+    [self startFormula];
 }
 
 
@@ -1008,19 +1003,39 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 - (void) executeBusinessRules
 {
     if (![self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onSave"]) {
-        
-        if (nil == self.ruleManager) {
-            PageEditMasterViewController *detailViewController = [self.childViewControllers objectAtIndex:0];
-            
-            self.ruleManager = [[BusinessRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
-            self.ruleManager.parentView = detailViewController.view;
-            self.ruleManager.delegate = self;
-        }
-        BOOL shouldExecuteBizRule = [self.ruleManager executeBusinessRules];
-        if (!shouldExecuteBizRule) {
-            [self saveRecordData];
-        }
+        [self startBizRule];
     }
+}
+
+
+
+-(void)startFormula {
+    BOOL formulaExists = [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:@"onLoad"];
+    if (formulaExists) {
+        [self disableUI];
+        [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
+    }
+}
+
+-(void)startBizRule {
+    
+    if (nil == self.ruleManager) {
+        PageEditMasterViewController *detailViewController = [self.childViewControllers objectAtIndex:0];
+        
+        self.ruleManager = [[BusinessRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
+        self.ruleManager.parentView = detailViewController.view;
+        self.ruleManager.delegate = self;
+    }
+    
+    BOOL shouldExecuteBizRule = [self.ruleManager executeBusinessRules];
+    if (!shouldExecuteBizRule) {
+        [self saveRecordData];
+    }
+}
+
+
+
+-(void)alertActionEventForTag:(int)alertTag andButtonIndex:(int)buttonIndex {
 }
 
 - (void)businessRuleFinishedWithResults:(NSMutableArray *)resultArray
@@ -1092,26 +1107,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         }
         else
         {
-            if ([self.sfmPage isAttachmentEnabled])
-            {
-                NSString *parentId = [SFMPageHelper getSfIdForLocalId:self.sfmPage.recordId objectName:self.sfmPage.objectName];
-                if ([StringUtil isStringEmpty:parentId])
-                {
-                    parentId = self.sfmPage.recordId;
-                }
-                [AttachmentHelper revertImagesAndVideosForUploadForParentId:parentId];
-                NSArray *imagesAndVideosArray = [AttachmentHelper getImagesAndVideosForUploadForParentId:parentId];
-                if ([parentId isEqualToString:self.sfmPage.recordId] && ![imagesAndVideosArray count])
-                {
-                    [AttachmentHelper deleteAttachmentLocalModelFromDB:parentId];
-                }
-                BOOL status = [AttachmentHelper revertDeleteAttachmentsFromModifiedRecordsForParentId:parentId andLocalIds:[AttachmentHelper modifiedRecordLocalIds]];
-                if (status) {
-                    [AttachmentHelper removeModifiedRecordLocalIds];
-                }
-            }
-            [self dismissViewControllerAnimated:YES completion:nil];
-            return;
+            [self cancelButtonTappedInAlert:nil];
         }
     }
     else
@@ -1119,11 +1115,33 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         if(buttonIndex == 0)
         {
             [self requiredFieldsAlertTapped];
-            
         }
     }
 }
 
+
+-(void)cancelButtonTappedInAlert:(id)sender {
+    if ([self.sfmPage isAttachmentEnabled])
+    {
+        NSString *parentId = [SFMPageHelper getSfIdForLocalId:self.sfmPage.recordId objectName:self.sfmPage.objectName];
+        if ([StringUtil isStringEmpty:parentId])
+        {
+            parentId = self.sfmPage.recordId;
+        }
+        [AttachmentHelper revertImagesAndVideosForUploadForParentId:parentId];
+        NSArray *imagesAndVideosArray = [AttachmentHelper getImagesAndVideosForUploadForParentId:parentId];
+        if ([parentId isEqualToString:self.sfmPage.recordId] && ![imagesAndVideosArray count])
+        {
+            [AttachmentHelper deleteAttachmentLocalModelFromDB:parentId];
+        }
+        BOOL status = [AttachmentHelper revertDeleteAttachmentsFromModifiedRecordsForParentId:parentId andLocalIds:[AttachmentHelper modifiedRecordLocalIds]];
+        if (status) {
+            [AttachmentHelper removeModifiedRecordLocalIds];
+        }
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
+    return;
+}
 
 //25274
 -(void)requiredFieldsAlertTapped {
@@ -1400,8 +1418,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     [self performSelectorOnMainThread:@selector(updateTheSFMPage:) withObject:responseString waitUntilDone:YES];
     
-    // [self updateTheSFMPage:responseString];
-    
     
     if ([event isEqualToString:@"onLoad"]) {
         [self enableUI];
@@ -1411,15 +1427,8 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     
     if ([event isEqualToString:@"onSave"]) {
-        //[self test];
-        [self performSelector:@selector(bizRuleExecute) withObject:nil afterDelay:0.0];
-        
-        //[self performSelectorOnMainThread:@selector(bizRuleExecute) withObject:nil waitUntilDone:YES];
-        
-        // [self bizRuleExecute];
-        
+        [self startBizRule];
     }
-    
 }
 
 -(void)updateTheSFMPage:(NSString *)responseString
@@ -1444,6 +1453,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     });
     
 }
+
 
 -(void)dealloc
 {
