@@ -50,7 +50,7 @@
     [appManager loadScreen];
     return;
     
-    // *** ---  STORED VALUES HERE.... TEXT EDIT ---*////
+   // *** ---  STORED VALUES HERE.... TEXT EDIT ---*////
 }
 
 /**
@@ -81,75 +81,66 @@
 #pragma mark - Application Life Cycle Methods
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    [FileManager createApplicationDirectory];
-    //     [self disableIdleTimerForApplication];
-    //self.window.tintColor = [UIColor whiteColor];
-    /*
+ {
+     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+     [FileManager createApplicationDirectory];
+//     [self disableIdleTimerForApplication];
+     //self.window.tintColor = [UIColor whiteColor];
+/*
      if([UINavigationBar conformsToProtocol:@protocol(UIAppearanceContainer)]) {
-     [UINavigationBar appearance].tintColor = [UIColor whiteColor];
+         [UINavigationBar appearance].tintColor = [UIColor whiteColor];
      }
-     */
-    /** Setup Logger  */
-    //HS 29Fev added one key
-    NSMutableArray *arr = [[NSMutableArray alloc]init];
-    self.syncErrorDataArray = arr;
-    
-    NSMutableArray *arr2 = [[NSMutableArray alloc]init];
-    self.syncDataArray = arr2;
-    
-    //self.syncReportingType = @"always";
-    
-    SMLogPerformInitialSetup();
-    ConfigureLoggerAccordingToSettings();
-    
-    
-    /***************************************************
-     * Handle launching from a notification
-     */
-    [[SMLocalNotificationManager sharedInstance] clearBadgeCount];
-    if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
-        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
-    }
-    UILocalNotification *localNotif =
-    [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
-    if (localNotif) {
-        [[SMLocalNotificationManager sharedInstance] handleReceivedLocalNotification:localNotif
-                                                           triggeredWhenAppIsRunning:NO];
-        SXLogInfo(@"Recieved Notification %@",localNotif);
-    }
-    [[SMLocalNotificationManager sharedInstance] cancelAllLocalNotifications];
-    /**************************************************/
-    
-    
-    /***  Will remove  this  part  --- vipindas  21 March 2014 */
-    
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
-    [self.window makeKeyAndVisible];
-    
-    [self testLogin];
-    [self loadCookies];
-    
-    [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
-                                                      object:nil
-                                                       queue:[NSOperationQueue mainQueue]
-                                                  usingBlock:^(NSNotification *note) {
-                                                      [PlistManager updateServerURLFromManagedConfig];
-                                                  }];
-    //[[SyncManager sharedInstance] scheduleSync];
+*/
+     /** Setup Logger  */
+     SMLogPerformInitialSetup();
+     ConfigureLoggerAccordingToSettings();
+     
+     
+     /***************************************************
+      * Handle launching from a notification
+      */
+      [[SMLocalNotificationManager sharedInstance] clearBadgeCount];
+     if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]){
+         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
+     }
+     UILocalNotification *localNotif =
+     [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+     if (localNotif) {
+         [[SMLocalNotificationManager sharedInstance] handleReceivedLocalNotification:localNotif
+                                                            triggeredWhenAppIsRunning:NO];
+         SXLogInfo(@"Recieved Notification %@",localNotif);
+     }
+     [[SMLocalNotificationManager sharedInstance] cancelAllLocalNotifications];
+     /**************************************************/
+     
+     
+     /***  Will remove  this  part  --- vipindas  21 March 2014 */
+     
+     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+     // Override point for customization after application launch.
+     self.window.backgroundColor = [UIColor whiteColor];
+     [self.window makeKeyAndVisible];
+     
+     [self testLogin];
+     [self loadCookies];
+     
+     [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
+                                                       object:nil
+                                                        queue:[NSOperationQueue mainQueue]
+                                                   usingBlock:^(NSNotification *note) {
+                                                       [PlistManager updateServerURLFromManagedConfig];
+                                                   }];
+     //[[SyncManager sharedInstance] scheduleSync];
     NSLog(@"------ AapplicationLaunching -------");
-    
-    return YES;
+     
+     return YES;
 }
 
 
 - (void)disableIdleTimerForApplication
 {
-    //    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
-    //    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+//    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+//    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
 }
 
 /**
@@ -175,7 +166,7 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-    
+
 }
 #pragma mark - Local Notification methods
 - (void)application:(UIApplication *)app didReceiveLocalNotification:(UILocalNotification *)notif {

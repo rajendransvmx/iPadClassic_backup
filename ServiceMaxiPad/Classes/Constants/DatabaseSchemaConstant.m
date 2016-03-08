@@ -216,8 +216,7 @@ NSString *const KTableClientSyncLogTransient =@"CREATE TABLE IF NOT EXISTS 'Clie
 
 NSString *const kTableDescribeLayout = @"CREATE TABLE IF NOT EXISTS 'DescribeLayout' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'ObjectName' VARCHAR,'DescribeLayoutResult' VARCHAR )";
 
-//Static table for SyncErrorHandling
-NSString *const kTableSFUsageDataSchema = @"CREATE TABLE IF NOT EXISTS 'SFUsageData' (key VARCHAR PRIMARY KEY NOT NULL, value VARCHAR)";
+
 
 
 @implementation DatabaseSchemaConstant

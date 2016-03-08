@@ -11,6 +11,4 @@
 
 @interface JobLogViewController : DetailParentViewController
 
-- (BOOL)isLogSettingsON;
-
 @end

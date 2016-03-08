@@ -3,7 +3,7 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.025
+Version = 16.29.024
  
 ===========================================
 
@@ -11,15 +11,21 @@ Version = 16.29.025
 Fixed Defects
 -------------
 
+Forward ported fixes:
+
+023585
+026650
+025351
+026451
+027079
+
 
 -------------
 Feature
 -------------
-ProductIQ UI change rollBack.
+
 
 ——————
 NOTE:
 
 Name Space: SVMXDEV
-
-Known Issues:

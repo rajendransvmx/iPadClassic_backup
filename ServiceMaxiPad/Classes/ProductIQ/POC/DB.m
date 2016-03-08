@@ -9,7 +9,6 @@
 #import "DB.h"
 #import "DBManager.h"
 #import "ProductIQHomeViewController.h"
-#import "MobileDataUsageExecuter.h"
 
 @implementation DB
 
@@ -30,7 +29,6 @@
     [resp setObject:rows forKey:@"rows"];
     [resp setObject:callback forKey:@"nativeCallbackHandler"];
     [resp setObject:jsCallback forKey:@"jsCallback"];
-    
     [self respondOnMethod:callback withParams:resp];
 }
 
@@ -47,11 +45,6 @@
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
-    if (browser == nil)
-    {
-        browser = [[MobileDataUsageExecuter getInstance] getBrowser];
-        
-    }
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
     SXLogDebug(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];

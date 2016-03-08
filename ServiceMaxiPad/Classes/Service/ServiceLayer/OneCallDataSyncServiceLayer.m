@@ -30,7 +30,7 @@
 }
 
 - (ResponseCallback*)processResponseWithRequestParam:(RequestParamModel*)requestParamModel
-                                        responseData:(id)responseData {
+                                      responseData:(id)responseData {
     ResponseCallback *callBack = nil;
     WebServiceParser *parserObj = (WebServiceParser *)[ParserFactory parserWithRequestType:self.requestType];
     if ([parserObj conformsToProtocol:@protocol(WebServiceParserProtocol)]) {
@@ -59,7 +59,7 @@
             return finalArray;
         }
     }
-    
+  
     switch (self.requestType) {
         case RequestAdvancedDownLoadCriteria:
             return [self getParamterForAdvancedDownloadCriteria];
@@ -82,14 +82,10 @@
         {
             
             self.requestParamHelper = [[IncrementalSyncRequestParamHelper alloc] initWithRequestIdentifier:self.requestIdentifier];
-            RequestParamModel *model = [self.requestParamHelper createSyncParamters:nil andContext:nil];
+             RequestParamModel *model = [self.requestParamHelper createSyncParamters:nil andContext:nil];
             return @[model];
         }
-            break;
-        case RequestMasterSyncTimeLog:
-        {
-            
-        }
+        break;
         case RequestTXFetch:
         {
             OneCallDataSyncHelper *helper = [[OneCallDataSyncHelper alloc] init];
@@ -109,7 +105,7 @@
             RequestParamModel *model = [[RequestParamModel alloc] init];
             return @[model];
         }
-            break;
+        break;
         default:
             break;
     }

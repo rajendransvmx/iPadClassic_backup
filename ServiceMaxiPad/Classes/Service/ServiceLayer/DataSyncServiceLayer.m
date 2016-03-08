@@ -25,7 +25,7 @@
 }
 
 - (ResponseCallback*)processResponseWithRequestParam:(RequestParamModel*)requestParamModel
-                                        responseData:(id)responseData {
+                                      responseData:(id)responseData {
     return nil;
     
 }
@@ -64,8 +64,6 @@
             
         case RequestAdvancedDownLoadCriteria:
             
-            break;
-        case RequestMasterSyncTimeLog:
             break;
             
         default:

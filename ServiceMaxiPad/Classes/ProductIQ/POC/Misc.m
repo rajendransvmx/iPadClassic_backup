@@ -10,8 +10,6 @@
 #import "ProductIQHomeViewController.h"
 #import "SNetworkReachabilityManager.h"
 #import "CustomerOrgInfo.h"
-#import "MobileDataUsageExecuter.h"
-
 
 @implementation Misc
 
@@ -39,11 +37,10 @@
         [responseDictionary setObject:jsCallback forKey:@"jsCallback"];
         [responseDictionary setObject:networkDictionary forKey:@"networkStatus"];
         [self respondOnMethod:callback withParams:responseDictionary];
-        
+
     }
     
 }
-//Needs to add some more values
 - (void)getLoginUserInfo:(NSString*)params {
     @autoreleasepool {
         NSDictionary *requestParams = [self parse:params];
@@ -65,28 +62,6 @@
         if (userDisplayName != nil) {
             [loginUserInfoDictionary setObject:userDisplayName forKey:@"userDisplayName"];
         }
-        
-        
-        //Added below values for SyncErrorReporting
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        
-        NSString *appVersion = [[NSBundle mainBundle]
-                                objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-        //[loginUserInfoDictionary setObject:@"00DZ00012005JD6MAM" forKey:@"OrgId"];
-        [loginUserInfoDictionary setObject:[userDefaults objectForKey:@"ps_organization_id"] forKey:@"OrgId"];
-        
-        [loginUserInfoDictionary setObject:appVersion forKey:@"AppVersion"];
-        [loginUserInfoDictionary setObject:[userDefaults objectForKey:@"ps_cur_username"] forKey:@"UserName"];
-        [loginUserInfoDictionary setObject:[userDefaults objectForKey:@"ps_language"] forKey:@"Language"];
-        [loginUserInfoDictionary setObject:@"" forKey:@"IsSyncOnLogin"];
-        [loginUserInfoDictionary setObject:@"" forKey:@"TimeZone"];
-        [loginUserInfoDictionary setObject:@"" forKey:@"Locale"];
-        [loginUserInfoDictionary setObject:[userDefaults valueForKey:@"preference_identifier"] forKey:@"EnvDefault"];
-        [loginUserInfoDictionary setObject:@"" forKey:@"EnvTag"];
-        [loginUserInfoDictionary setObject:@"" forKey:@"TimeZoneOffSet"];
-        
-        
-        
         
         NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
         [responseDictionary setObject:requestId forKey:@"requestId"];
@@ -115,10 +90,6 @@
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
-    if (browser == nil)
-    {
-        browser = [[MobileDataUsageExecuter getInstance] getBrowser];
-    }
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
     SXLogDebug(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];

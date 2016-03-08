@@ -97,8 +97,5 @@ extern NSString *kUpadteWebserviceData;
 - (void)manageSyncQueueProcess;
 - (void)updateDataPurgeStatus:(SyncStatus )status;
 
-//For executing Javascript for syncErrorReproting
-@property(nonatomic,strong)UIView *parentView;
-
 
 @end

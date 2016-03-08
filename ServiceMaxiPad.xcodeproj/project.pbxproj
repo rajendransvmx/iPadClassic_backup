@@ -821,13 +821,6 @@
 		43B98E671AC18CCC003DCF80 /* APNSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B98E661AC18CCC003DCF80 /* APNSParser.m */; };
 		43C5F4861A138FD60046FF43 /* DODParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C5F4851A138FD60046FF43 /* DODParser.m */; };
 		43E7C2DE1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip in Resources */ = {isa = PBXBuildFile; fileRef = 43E7C2DD1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip */; };
-		43F3CF401C8E72E800181BFD /* MobileDataUsageExecuter.m in Sources */ = {isa = PBXBuildFile; fileRef = 43F3CF321C8E72E800181BFD /* MobileDataUsageExecuter.m */; };
-		43F3CF4B1C8E72E800181BFD /* MobileDataUsageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 43F3CF3F1C8E72E800181BFD /* MobileDataUsageManager.m */; };
-		43F3CF4E1C8E759500181BFD /* MobileDataUsageParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43F3CF4C1C8E759500181BFD /* MobileDataUsageParser.m */; };
-		43F3CF561C8EB20100181BFD /* MobileDataUsageFiles.zip in Resources */ = {isa = PBXBuildFile; fileRef = 43F3CF551C8EB20100181BFD /* MobileDataUsageFiles.zip */; };
-		43F3CF5A1C8EB8D700181BFD /* com.servicemax.client.native.laptop.zip in Resources */ = {isa = PBXBuildFile; fileRef = 43F3CF571C8EB8D700181BFD /* com.servicemax.client.native.laptop.zip */; };
-		43F3CF5B1C8EB8D700181BFD /* com.servicemax.client.offline.sal.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = 43F3CF581C8EB8D700181BFD /* com.servicemax.client.offline.sal.model.zip */; };
-		43F3CF5C1C8EB8D700181BFD /* com.servicemax.client.usage.zip in Resources */ = {isa = PBXBuildFile; fileRef = 43F3CF591C8EB8D700181BFD /* com.servicemax.client.usage.zip */; };
 		57186B5919EF9DDD00B4642A /* TroubleshootingDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B4D19EF9DDD00B4642A /* TroubleshootingDataLoader.m */; };
 		57186B5B19EF9DDD00B4642A /* TroubleshootingDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57186B5019EF9DDD00B4642A /* TroubleshootingDetailViewController.xib */; };
 		57186B5C19EF9DDD00B4642A /* TroubleshootingMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B5219EF9DDD00B4642A /* TroubleshootingMasterViewController.m */; };
@@ -2605,16 +2598,6 @@
 		43C5F4841A138FD60046FF43 /* DODParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DODParser.h; sourceTree = "<group>"; };
 		43C5F4851A138FD60046FF43 /* DODParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DODParser.m; sourceTree = "<group>"; };
 		43E7C2DD1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sfmbizrules.zip; sourceTree = "<group>"; };
-		43F3CF311C8E72E800181BFD /* MobileDataUsageExecuter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageExecuter.h; sourceTree = "<group>"; };
-		43F3CF321C8E72E800181BFD /* MobileDataUsageExecuter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageExecuter.m; sourceTree = "<group>"; };
-		43F3CF3E1C8E72E800181BFD /* MobileDataUsageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageManager.h; sourceTree = "<group>"; };
-		43F3CF3F1C8E72E800181BFD /* MobileDataUsageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageManager.m; sourceTree = "<group>"; };
-		43F3CF4C1C8E759500181BFD /* MobileDataUsageParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageParser.m; sourceTree = "<group>"; };
-		43F3CF4D1C8E759500181BFD /* MobileDataUsageParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageParser.h; sourceTree = "<group>"; };
-		43F3CF551C8EB20100181BFD /* MobileDataUsageFiles.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = MobileDataUsageFiles.zip; sourceTree = "<group>"; };
-		43F3CF571C8EB8D700181BFD /* com.servicemax.client.native.laptop.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.native.laptop.zip; sourceTree = "<group>"; };
-		43F3CF581C8EB8D700181BFD /* com.servicemax.client.offline.sal.model.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.offline.sal.model.zip; sourceTree = "<group>"; };
-		43F3CF591C8EB8D700181BFD /* com.servicemax.client.usage.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.usage.zip; sourceTree = "<group>"; };
 		57186B4C19EF9DDD00B4642A /* TroubleshootingDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TroubleshootingDataLoader.h; sourceTree = "<group>"; };
 		57186B4D19EF9DDD00B4642A /* TroubleshootingDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TroubleshootingDataLoader.m; sourceTree = "<group>"; };
 		57186B4E19EF9DDD00B4642A /* TroubleshootingDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TroubleshootingDetailViewController.h; sourceTree = "<group>"; };
@@ -4154,8 +4137,6 @@
 		183A9FFF19E6BDB300919345 /* Parser */ = {
 			isa = PBXGroup;
 			children = (
-				43F3CF4C1C8E759500181BFD /* MobileDataUsageParser.m */,
-				43F3CF4D1C8E759500181BFD /* MobileDataUsageParser.h */,
 				57186B6119EF9E4300B4642A /* TroubleshootingParser.h */,
 				57186B6219EF9E4300B4642A /* TroubleshootingParser.m */,
 				183AA00019E6BDB300919345 /* ADCResponseParser.h */,
@@ -5609,7 +5590,6 @@
 		18A2177C19E57E7E00F22EA6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				43F3CF301C8E72E800181BFD /* MobileDataUsage */,
 				844F00B91B848BE3008BC652 /* ProductIQ */,
 				C8E0D03A1B4E8A65008C4AB8 /* CustomTableViewCells */,
 				180E3AAE1B3AE41A0055036D /* FieldUpdateRuleManager */,
@@ -5947,9 +5927,6 @@
 		407252FF19FF6C2900ACA729 /* Static Resources */ = {
 			isa = PBXGroup;
 			children = (
-				43F3CF571C8EB8D700181BFD /* com.servicemax.client.native.laptop.zip */,
-				43F3CF581C8EB8D700181BFD /* com.servicemax.client.offline.sal.model.zip */,
-				43F3CF591C8EB8D700181BFD /* com.servicemax.client.usage.zip */,
 				189AE1711BC513FA00AD549D /* com.servicemax.client.testframework.zip */,
 				189AE16F1BC513EB00AD549D /* com.servicemax.client.sal.zip */,
 				189AE1611BC513D500AD549D /* com.servicemax.client.installigence.admin.zip */,
@@ -6021,18 +5998,6 @@
 				42F968351A073CF000676C34 /* SuccessiveSyncManager.m */,
 			);
 			path = SuccessiveSync;
-			sourceTree = "<group>";
-		};
-		43F3CF301C8E72E800181BFD /* MobileDataUsage */ = {
-			isa = PBXGroup;
-			children = (
-				43F3CF551C8EB20100181BFD /* MobileDataUsageFiles.zip */,
-				43F3CF311C8E72E800181BFD /* MobileDataUsageExecuter.h */,
-				43F3CF321C8E72E800181BFD /* MobileDataUsageExecuter.m */,
-				43F3CF3E1C8E72E800181BFD /* MobileDataUsageManager.h */,
-				43F3CF3F1C8E72E800181BFD /* MobileDataUsageManager.m */,
-			);
-			path = MobileDataUsage;
 			sourceTree = "<group>";
 		};
 		57186B4919EF9DDC00B4642A /* Troubleshooting */ = {
@@ -6711,7 +6676,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43F3CF5A1C8EB8D700181BFD /* com.servicemax.client.native.laptop.zip in Resources */,
 				185656AC1A78DE5200DA5C12 /* json2.js in Resources */,
 				427305221A10BD5B005F41E1 /* bizRules-index.js in Resources */,
 				C3EF97A21A036D7300476293 /* Attachment-FileinCloud@2x.png in Resources */,
@@ -6757,7 +6721,6 @@
 				184A9E0F19E7D592006DA6BE /* map_chat@2x.png in Resources */,
 				8B2F4BF71A0C8D0100D2A346 /* u259.png in Resources */,
 				40CA1A0619FE4E9C0097F5A1 /* recapture.png in Resources */,
-				43F3CF5B1C8EB8D700181BFD /* com.servicemax.client.offline.sal.model.zip in Resources */,
 				18FE08FD19EE827800CB8925 /* checkbox-disabled-checked@2x.png in Resources */,
 				183AA37219E6DA9600919345 /* PageContentViewController.xib in Resources */,
 				183AA1D419E6D26400919345 /* SFMPageMasterViewController.xib in Resources */,
@@ -6923,7 +6886,6 @@
 				18800CE81A08D14400930FF9 /* PurgeDataDetailViewController.xib in Resources */,
 				8B932E6A1A1098960002BBB2 /* Attachment-video.png in Resources */,
 				57A320E91AB7178C00A172E0 /* NavBarExplore@2x.png in Resources */,
-				43F3CF5C1C8EB8D700181BFD /* com.servicemax.client.usage.zip in Resources */,
 				5BE2CC1719ED2B2C00A9721C /* down-arrow-orange.png in Resources */,
 				C362BE661A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.xib in Resources */,
 				C3EF97A31A036D7300476293 /* Attachment-PDF@2x.png in Resources */,
@@ -6968,7 +6930,6 @@
 				57A321021AB7196A00A172E0 /* SRecents@2x.png in Resources */,
 				C3EF97A81A036D7300476293 /* Attachment-Unknown@2x.png in Resources */,
 				C3EF979F1A036D7300476293 /* Attachment-DownloadFileOffline@2x.png in Resources */,
-				43F3CF561C8EB20100181BFD /* MobileDataUsageFiles.zip in Resources */,
 				40A06F391B06041400218162 /* SRecents@3x.png in Resources */,
 				18FE08FE19EE827800CB8925 /* checkbox-disabled-unchecked@2x.png in Resources */,
 				9EFE6DFF1A0F33EF0067F9CC /* LinkedProcessViewController.xib in Resources */,
@@ -7170,7 +7131,6 @@
 				9ED694131AB02911007E7EE4 /* ContactInfo.m in Sources */,
 				184A8EF519E7A535006DA6BE /* UICGPolyline.m in Sources */,
 				183AA36F19E6DA9600919345 /* InitialSyncViewController.m in Sources */,
-				43F3CF401C8E72E800181BFD /* MobileDataUsageExecuter.m in Sources */,
 				184A8E5D19E7A0BE006DA6BE /* SMXAddEventPopoverController.m in Sources */,
 				18E5719C1A1A32B500867F8E /* UIPlaceHolderTextView.m in Sources */,
 				C31E66D41AE65EC900A8AE7E /* GetPriceManager.m in Sources */,
@@ -7436,7 +7396,6 @@
 				183A9FE719E6B18500919345 /* TransactionObjectService.m in Sources */,
 				183AA05419E6C84E00919345 /* PageLayoutConstants.m in Sources */,
 				183A9E1A19E69DB000919345 /* AttachmentModel.m in Sources */,
-				43F3CF4E1C8E759500181BFD /* MobileDataUsageParser.m in Sources */,
 				5BEFF7B11A24450C0096B254 /* EditableDataValidator.m in Sources */,
 				184A8E8C19E7A0BE006DA6BE /* TKLabelTextViewCell.m in Sources */,
 				184A8E6419E7A0BE006DA6BE /* SMXDayCell.m in Sources */,
@@ -7446,7 +7405,6 @@
 				183AA1A119E6D26400919345 /* SFMPage.m in Sources */,
 				183A9E9519E6A11800919345 /* SVMXOperationQueue.m in Sources */,
 				8412850F1B8C8D3B00CF8D61 /* ProductIQHomeViewController.m in Sources */,
-				43F3CF4B1C8E72E800181BFD /* MobileDataUsageManager.m in Sources */,
 				183AA1CD19E6D26400919345 /* SFMPageHistoryHeaderSectionView.m in Sources */,
 				183A9F1719E6A15600919345 /* ZKRelatedListSort.m in Sources */,
 				183A9E2919E69DB000919345 /* MetaSyncStatusModel.m in Sources */,
@@ -7948,7 +7906,7 @@
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxmobilespr16;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "f1da58bf-dbf3-4b54-bb54-f484212cab38";
+				PROVISIONING_PROFILE = "6b4198df-3a41-497c-84b5-cb7483d96363";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -7958,8 +7916,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -7981,7 +7939,7 @@
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxmobilespr16;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "f1da58bf-dbf3-4b54-bb54-f484212cab38";
+				PROVISIONING_PROFILE = "6b4198df-3a41-497c-84b5-cb7483d96363";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -45,16 +45,10 @@
 #import "DBRequestSelect.h"
 #import "DatabaseConfigurationManager.h"
 #import "SMLoggerHelper.h"
-#import "SMAppDelegate.h"
-#import "JobLogViewController.h"
-
-
 
 @implementation SMLogger
 
 SMLogBlock SMLogHandler = nil;
-
-
 
 #ifdef NDEBUG
 NSInteger SMLogLevel = 1;
@@ -79,8 +73,6 @@ NSInteger SMLogLevel = 4;
 void SMLogSetLoggerBlock(SMLogBlock handler)
 {
     SMLogHandler = [handler copy];
-    
-    
 }
 
 /**
@@ -199,30 +191,8 @@ void SMLogPerformInitialSetup()
 
 void SMLogEnqueueLogMessage( NSString *message, NSString *methodContext, NSInteger logLevel)
 {
-    // PumpLogIntoDatabase(message, methodContext, logLevel, @"Application Level");
+    PumpLogIntoDatabase(message, methodContext, logLevel, @"Application Level");
     //use this method to write output to file or database depending on your requirement.
-    
-    JobLogViewController *joblogViewController = [[JobLogViewController alloc]init];
-    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
-    
-    if ([joblogViewController isLogSettingsON]) {
-        PumpLogIntoDatabase(message, methodContext, logLevel, @"Application Level");
-        if (appDelegate.syncReportingType)
-        {
-            setDataForSyncError(message, methodContext, logLevel, @"Application level");
-            
-        }
-    }
-    else
-    {
-        setDataForSyncError(message, methodContext, logLevel, @"Application level");
-        
-    }
-    
-    //use this method to write output to file or database depending on your requirement.
-    
-    
-    
 }
 
 #pragma mark - application support methods
@@ -255,7 +225,6 @@ void ConfigureLoggerAccordingToSettings()
     NSInteger applicationLogSettingValue = 0;
     if (stringValue) {
         applicationLogSettingValue = stringValue.integerValue;
-        
     }
     //Since performance monitoring is not yet done.
     //
@@ -325,126 +294,4 @@ void PumpLogIntoDatabase(NSString *message, NSString *methodContext, NSInteger l
         [jobLogService deleteJobLogsIfRecordCountCrossedLimit];
     }
 }
-
-//HS 29Feb SyncError
-
-
-void setDataForSyncError(NSString *message, NSString *methodContext, NSInteger logLevel, NSString *category)
-{
-    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
-    
-    if([methodContext length] > kMaxLogMethodLength) {
-        methodContext = [methodContext substringToIndex:kMaxLogMethodLength];
-    }
-    message = [message stringByReplacingOccurrencesOfString:@"\"" withString:@"&quot;"];
-    if ([message length] > kMaxLogMesssageLength) {
-        
-        message = [message substringToIndex:kMaxLogMesssageLength];
-    }
-    JobLogModel *logModel = [[JobLogModel alloc]init];
-    logModel.profileId = [CustomerOrgInfo sharedInstance].currentUserId;
-    logModel.groupId = @"";
-    logModel.type = @"iPad";
-    logModel.category = category;
-    logModel.message = message;
-    logModel.operation = methodContext;
-    logModel.level = logLevel;
-    
-    logModel.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
-    [dict setObject:[CustomerOrgInfo sharedInstance].currentUserId forKey:@"profileId"];
-    [dict setObject:@"" forKey:@"groupId"];
-    [dict setObject:@"iPad" forKey:@"type"];
-    [dict setObject:category forKey:@"category"];
-    // [dict setObject:message forKey:@"message"];
-    [dict setObject:methodContext forKey:@"operation"];
-    [dict setObject:[NSString stringWithFormat:@"%ld",(long)logLevel] forKey:@"level"];
-    
-    
-    if ([appDelegate.syncReportingType isEqualToString:@"always"])
-    {
-        //NSString *dataStr = [[NSString alloc]initWithFormat:@"%@",dict];
-        
-        //[appDelegate.syncDataArray appendString:message];
-        
-        [appDelegate.syncDataArray addObject:dict];
-        
-    }
-    else if([appDelegate.syncReportingType isEqualToString:@"error"])
-    {
-        [appDelegate.syncErrorDataArray addObject:dict];
-        
-    }
-    
-}
-
-
-
-NSString* getDataForSyncError()
-{
-    NSString *jsonString = nil;
-    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
-    NSMutableArray *modelList;
-    if (![appDelegate.syncReportingType isEqualToString:@"always"])
-    {
-        NSMutableArray *finalArray = [[NSMutableArray alloc]initWithCapacity:0];
-        for (JobLogModel *model in modelList) {
-            NSMutableDictionary *dictionary = [[NSMutableDictionary alloc]initWithCapacity:0];
-            [dictionary setObject:@{@"type":ORG_NAME_SPACE@"__SVMX_Job_Logs__c"} forKey:@"attributes"];
-            
-            validateAndSetObject(model.timeStamp, ORG_NAME_SPACE@"__Log_Timestamp__c", dictionary);
-            validateAndSetObject([NSString stringWithFormat:@"%ld", (long)model.level], ORG_NAME_SPACE@"__Log_level__c", dictionary);
-            
-            validateAndSetObject(model.context, ORG_NAME_SPACE@"__Log_Context__c", dictionary);
-            
-            validateAndSetObject(model.message, ORG_NAME_SPACE@"__Message__c", dictionary);
-            validateAndSetObject(model.type, ORG_NAME_SPACE@"__Type__c", dictionary);
-            
-            validateAndSetObject(model.profileId, ORG_NAME_SPACE@"__Profile_Id__c", dictionary);
-            validateAndSetObject(model.groupId, ORG_NAME_SPACE@"__Group_Id__c", dictionary);
-            validateAndSetObject(model.category, ORG_NAME_SPACE@"__Log_Category__c", dictionary);
-            validateAndSetObject(model.operation, ORG_NAME_SPACE@"__Operation__c", dictionary);
-            
-            [finalArray addObject:dictionary];
-        }
-        jsonString = [[NSString alloc] initWithData:[NSJSONSerialization
-                                                     dataWithJSONObject:finalArray
-                                                     options:0
-                                                     error:nil]
-                      
-                                           encoding:4];
-        
-    }
-    else
-    {
-        jsonString = [[NSString alloc] initWithData:[NSJSONSerialization
-                                                     dataWithJSONObject:appDelegate.syncDataArray
-                                                     options:0
-                                                     error:nil]
-                      
-                                           encoding:4];
-        
-        
-        //jsonString = appDelegate.syncDataArray;
-        
-    }
-    
-    
-    return jsonString;
-    
-}
-
-
-
-
-
-void validateAndSetObject(id object, NSString *key, NSMutableDictionary *dict)
-{
-    if (object != nil && key != nil)
-    {
-        [dict setObject:object forKey:key];
-    }
-}
-
-
 @end
