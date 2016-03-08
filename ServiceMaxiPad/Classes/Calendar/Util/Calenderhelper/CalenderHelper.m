@@ -585,17 +585,6 @@
         lRangeDayInt = 1;
     }
     
-    NSString *titleFields = [[[self.salesforceEventFieldList objectForKey:kEventObject] allKeys] componentsJoinedByString:@","];
-    titleFields = [titleFields stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    NSArray *fieldsArray = nil;
-    if (titleFields.length) {
-        fieldsArray = [[NSArray alloc] initWithObjects:kActivityDate,kActivityDateTime,kDurationInMinutes,kEndDateTime, kStartDateTime, kSubject, kWhatId, kId, klocalId, kEventDescription, kIsAlldayEvent, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, titleFields, nil];
-
-    }
-    else{
-        fieldsArray = [[NSArray alloc] initWithObjects:kActivityDate,kActivityDateTime,kDurationInMinutes,kEndDateTime, kStartDateTime, kSubject, kWhatId, kId, klocalId, kEventDescription, kIsAlldayEvent, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, nil];
-    }
-    
     NSDate *lStartDate = [self dateWithOutTime:[[NSDate date] dateByAddingTimeInterval:-60*60*24*lRangeDayInt]];
     NSDate *lEndDate = [self dateWithOutTime:[[NSDate date] dateByAddingDays:lRangeDayInt+1]];
     [[SMXDateManager sharedManager] setStartDateWindow:lStartDate];
@@ -638,12 +627,12 @@
         
         DBCriteria *criteriaSix = [[DBCriteria alloc] initWithFieldName:kOwnerId operatorType:SQLOperatorEqual andFieldValue:ownerId];
         
-        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
+        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:nil expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
     }
     else {
         //            eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) OR (6 AND 7) AND ())" criteria:[NSArray arrayWithObjects: criteriaTwo, criteriaThree, criteriaFour, criteriaFive, nil]];
         
-        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND (7 AND 8))" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
+        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:nil expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND (7 AND 8))" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
     }
     
     return eventArray;
@@ -659,19 +648,6 @@
     if (lRangeDayInt<=0) {
         lRangeDayInt = 1;
     }
-    
-    NSString *titleFields = [[[self.svmxEventEventFieldList objectForKey:kSVMXTableName] allKeys] componentsJoinedByString:@","];
-    titleFields = [titleFields stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    NSArray *fieldsArray = nil;
-    if (titleFields.length) {
-        fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXWhatId, kSVMXEventName, kSVMXIsAlldayEvent, klocalId, kSVMXID, kSVMXEventDescription, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, kObjectSfId, titleFields, nil];
-
-    }
-    else{
-        fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXWhatId, kSVMXEventName, kSVMXIsAlldayEvent, klocalId, kSVMXID, kSVMXEventDescription, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, kObjectSfId, nil];
-
-    }
-//    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXWhatId, kSVMXEventName, kSVMXIsAlldayEvent, klocalId, kSVMXID, kSVMXEventDescription, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, kObjectSfId, titleFields, nil];
     
     NSDate *lStartDate = [self dateWithOutTime:[[NSDate date] dateByAddingTimeInterval:-60*60*24*lRangeDayInt]];
     NSDate *lEndDate = [self dateWithOutTime:[[NSDate date] dateByAddingDays:lRangeDayInt+1]];
@@ -716,12 +692,12 @@
         
         DBCriteria *criteriaSix = [[DBCriteria alloc] initWithFieldName:kSVMXTechnicianId operatorType:SQLOperatorEqual andFieldValue:technicianID];
         
-        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (7 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
+        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:nil expression:@"(((1 AND 2) OR (3 AND 4) OR (7 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
     }
     else {
         //              eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) OR (6 AND 7))" criteria:[NSArray arrayWithObjects: criteriaTwo, criteriaThree, criteriaFour, criteriaFive, nil]];
         
-        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"((1 AND 2) OR (3 AND 4) OR (5 AND 6) AND 7 AND 8)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
+        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:nil expression:@"((1 AND 2) OR (3 AND 4) OR (5 AND 6) AND 7 AND 8)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
     }
     
     return eventArray;
@@ -1671,7 +1647,7 @@
                     dateString =  [NSDate localDateStringFromDate:theDateTime];
                 }
                 if (!dateString) {
-                    dateString = [theRecordDict objectForKey:trimmedString];
+                        dateString = [[theRecordDict objectForKey:trimmedString] description];
                 }
 
                 theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:(dateString?dateString:@"")];
