@@ -28,6 +28,9 @@
     NSString *serverURLkey = paramDict[@"settingName"];
     NSString *serverURLvalue = @"https://mtools-prod.servicemax-api.com";
     
+    //For Viewing
+   // https://mtools-prod-host.servicemax-api.com/resource/errorsyncreport/?orgid=00DF00000007BzNMAU
+    
     
     NSMutableDictionary *resp = [[NSMutableDictionary alloc] init];
     [resp setObject:requestId forKey:@"requestId"];
@@ -136,14 +139,11 @@
     {
         logType = @"success";
     }
-   /* if (logType == nil)
+    if (logType!=nil)
     {
-        logType = @"success";
-
+        [resp setObject:logType forKey:@"logType"];
     }
-    */
-    [resp setObject:logType forKey:@"logType"]; //How we will decide is it error or Success, is it agan based on key
-    NSMutableDictionary *exceptionDict = [[NSMutableDictionary alloc]init];
+    //NSMutableDictionary *exceptionDict = [[NSMutableDictionary alloc]init];
     //[exceptionDict setObject:appDelegate.syncErrorDataArray forKey:@"errorRecords"];
     //NSString *responseStr = [[NSString alloc]init]
     //[exceptionDict setObject:[NSArray arrayWithObject:@"test error"] forKey:@"errorRecords"];
@@ -169,26 +169,20 @@
     
     NSData *data = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     
-    //NSData *data = [NSJSONSerialization dataWithJSONObject:jsonDict options:0 error:&error];
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    
-    
-    //NSString *resp = [NSString stringWithFormat:@"%@", params];
-    
-   //ProductIQHomeViewController *mdExecuter = [ProductIQHomeViewController getInstance];
+  
     MobileDataUsageExecuter *mdExecuter = [MobileDataUsageExecuter getInstance];
 
     
     UIWebView *browser = [mdExecuter getBrowser];
-    if(browser == nil)
+    if(browser != nil)
     {
-        browser = [[ProductIQHomeViewController getInstance]getBrowser];
-        
+        NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
+        SXLogDebug(@"&&& %@", js);
+        [browser stringByEvaluatingJavaScriptFromString:js];
     }
         
-    NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
-    SXLogDebug(@"&&& %@", js);
-    [browser stringByEvaluatingJavaScriptFromString:js];
+    
 }
 
 -(NSMutableArray *)getDeviceInfo

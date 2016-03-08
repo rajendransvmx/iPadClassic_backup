@@ -132,7 +132,6 @@
     SXLogDebug(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];
     
-    browser = nil;
     
 }
 @end
