@@ -63,13 +63,13 @@
 - (NSString *)selectSqliteQueryRepresentationOfDARequest:(DARequest *)requestObject {
     
     /* Parse the fields and create sqlite query */
-//    NSMutableString *finalQuery = [[NSMutableString alloc] initWithString:@"SELECT "];
-//    
-//    
-//    if ([requestObject.objectName isEqualToString:@"SFExpressionComponent"])
-//    {
-//        [finalQuery appendFormat:@" DISTINCT "];
-//    }
+    //    NSMutableString *finalQuery = [[NSMutableString alloc] initWithString:@"SELECT "];
+    //
+    //
+    //    if ([requestObject.objectName isEqualToString:@"SFExpressionComponent"])
+    //    {
+    //        [finalQuery appendFormat:@" DISTINCT "];
+    //    }
     
     /* Adding FIELDS TO BE SELECTED */
     NSArray *fieldsArray = requestObject.fieldsArray;
@@ -89,12 +89,12 @@
         fieldsArrayNew = nil;
     }
     
-
+    
     /* Adding CRTIERIA PART and Parsing advance expression */
- //   NSArray *whereClause =  [self getWhereClauseForQuery:requestObject];
-//    if (whereClause != nil) {
-//        [finalQuery appendFormat:@" WHERE %@ ",whereClause];
-//    }
+    //   NSArray *whereClause =  [self getWhereClauseForQuery:requestObject];
+    //    if (whereClause != nil) {
+    //        [finalQuery appendFormat:@" WHERE %@ ",whereClause];
+    //    }
     
     NSArray *whereCriteria = [self getWhereClauseForQuery:requestObject];;
     NSString *advancedExpression = requestObject.advanceExpression;
@@ -102,6 +102,11 @@
     DBRequestSelect *selectObject = [[DBRequestSelect alloc] initWithTableName:requestObject.objectName andFieldNames:fieldsArrayNew whereCriterias:whereCriteria andAdvanceExpression:advancedExpression];
     if (![Utility isStringEmpty:requestObject.orderBy]) {
         [selectObject addOrderByFields:@[requestObject.orderBy]];
+    }
+    
+    // 012895
+    if ([requestObject.innerJoin length] > 0) {
+        [selectObject addJoinString:requestObject.innerJoin];
     }
     
     return [selectObject query];
@@ -134,7 +139,7 @@
         expression.operatorValue = operatorValue;
         
         expression.fieldType = fieldType.length > 0? fieldType : @"TEXT";
-    //    [expression replaceExpressionValues];
+        //    [expression replaceExpressionValues];
         
         [expressionArray addObject:expression];
         if (expressionNeed) {
@@ -159,7 +164,7 @@
 //8906
 - (NSString *)getExpressionForCriteriaObject:(NSDictionary *)criteriaDict andObjectName:(NSString *)objectName {
     
-     criteriaDict = [self getOperatorForString:criteriaDict ];
+    criteriaDict = [self getOperatorForString:criteriaDict ];
     
     NSString *fieldName = [criteriaDict objectForKey:kDAFieldName];
     NSString *fieldValue = [criteriaDict objectForKey:kDAFieldValue];
@@ -169,9 +174,9 @@
     NSDictionary *fieldInfo = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getFieldTypeForFieldName:fieldName Object:objectName];
     NSString *fieldType = [fieldInfo objectForKey:@"type"];
     
-   
+    
     if (![Utility isStringEmpty:fieldName] && ![Utility isStringEmpty:operatorValue]) {
-       
+        
         NSString *expression = nil;
         
         if([operatorValue isEqualToString:@"is not null"])
@@ -274,8 +279,8 @@
         fieldsArrayNew = nil;
         valueArray = nil;
     }
-        
-   return finalQuery;
+    
+    return finalQuery;
 }
 
 - (NSString *)updateSqliteQueryRepresentationOfDARequest:(DARequest *)requestObject {
@@ -297,7 +302,7 @@
                 
                 NSString *fieldValue =  [fieldDictionary objectForKey:kDAFieldValue];
                 if ([Utility isStringEmpty:fieldValue]) {
-                     fieldValue = @"";
+                    fieldValue = @"";
                 }
                 
                 if (counter == 0) {
@@ -328,7 +333,7 @@
     
     [finalQuery appendFormat:@" %@ ",requestObject.objectName];
     
-   /* Adding CRTIERIA PART and Parsing advance expression */
+    /* Adding CRTIERIA PART and Parsing advance expression */
     NSArray *whereClause =  [self getWhereClauseForQuery:requestObject];
     if (whereClause != nil) {
         [finalQuery appendFormat:@" WHERE %@ ",whereClause];
@@ -343,7 +348,7 @@
                             andRecordDictionary:(NSDictionary *)recordDictionary {
     
     NSMutableDictionary *mainObjectDictionary = [[NSMutableDictionary alloc] init];
-     /* Shravya - 7805*/
+    /* Shravya - 7805*/
     NSMutableDictionary *nameFieldValueDictionary = [[NSMutableDictionary alloc] init];
     
     for (int counter = 0; counter < [allObjects count]; counter++) {
@@ -377,53 +382,53 @@
                 else{
                     [mainObjectDictionary setObject:fieldValue forKey:fieldName];
                 }
-                 
                 
-                 firstRecordValue = fieldValue;
+                
+                firstRecordValue = fieldValue;
                 if (![fieldTypeName isEqualToString:@"reference"]) {
-                   
-                        break;
+                    
+                    break;
                 }
-           } else if(i == 1){
+            } else if(i == 1){
                 NSString *relationship = [tableFields objectForKey:kRLN];
                 NSString *fieldName = [tableFields objectForKey:kRFN];
                 NSString *objectName = [tableFields objectForKey:kROBJ];
                 NSString *fieldTypeName = [tableFields objectForKey:kRTYP];
                 NSString *fieldValue = [[SVMXDatabaseMaster sharedDataBaseMaterObject] executeQuery:fieldName andObjectName:objectName andCriria:[NSString stringWithFormat:@" ( localId = '%@' OR Id = '%@' )",firstRecordValue,firstRecordValue]];//8980
-               
-               /* Shravya - 7805*/
-               if ([Utility isStringEmpty:fieldValue] && ![fieldTypeName isEqualToString:@"reference"]) {
-                   NSString  *nameField = [nameFieldValueDictionary objectForKey:objectName];
-                   if (nameField == nil) {
-                       nameField = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getNameFieldForObject:objectName];
-                       if (nameField != nil && objectName != nil) {
-                           [nameFieldValueDictionary setObject:nameField forKey:objectName];
-                       }
-                   }
-                   if ([fieldName isEqualToString:nameField]) {
-                       fieldValue = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getNameValueForId:firstRecordValue];
-                   }
-               }
-               /* Shravya - 7805*/
-               
+                
+                /* Shravya - 7805*/
+                if ([Utility isStringEmpty:fieldValue] && ![fieldTypeName isEqualToString:@"reference"]) {
+                    NSString  *nameField = [nameFieldValueDictionary objectForKey:objectName];
+                    if (nameField == nil) {
+                        nameField = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getNameFieldForObject:objectName];
+                        if (nameField != nil && objectName != nil) {
+                            [nameFieldValueDictionary setObject:nameField forKey:objectName];
+                        }
+                    }
+                    if ([fieldName isEqualToString:nameField]) {
+                        fieldValue = [[SVMXDatabaseMaster sharedDataBaseMaterObject] getNameValueForId:firstRecordValue];
+                    }
+                }
+                /* Shravya - 7805*/
+                
                 if (fieldValue == nil) {
                     fieldValue = @"";
                 }
-               //defect 7744 : shravya converting 1/0 to true/false [OPDOC3]
-               NSString *lowerFieldType = [fieldTypeName lowercaseString];
-               if ([lowerFieldType isEqualToString:@"boolean"] || [lowerFieldType isEqualToString:@"bool"] ){
-                   if ([Utility isItTrue:fieldValue]) {
-                       fieldValue = @"true";
-                   }
-                   else{
-                       fieldValue = @"false";
-                   }
-               }
-
-//               NSString *lowerFieldType = [fieldTypeName lowercaseString];
-//               if ([lowerFieldType isEqualToString:@"date"] || [lowerFieldType isEqualToString:@"datetime"] ) {
-//                   NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:fieldName,@"fn", nil];
-//               }
+                //defect 7744 : shravya converting 1/0 to true/false [OPDOC3]
+                NSString *lowerFieldType = [fieldTypeName lowercaseString];
+                if ([lowerFieldType isEqualToString:@"boolean"] || [lowerFieldType isEqualToString:@"bool"] ){
+                    if ([Utility isItTrue:fieldValue]) {
+                        fieldValue = @"true";
+                    }
+                    else{
+                        fieldValue = @"false";
+                    }
+                }
+                
+                //               NSString *lowerFieldType = [fieldTypeName lowercaseString];
+                //               if ([lowerFieldType isEqualToString:@"date"] || [lowerFieldType isEqualToString:@"datetime"] ) {
+                //                   NSDictionary *tempDict = [[NSDictionary alloc] initWithObjectsAndKeys:fieldName,@"fn", nil];
+                //               }
                 if (relationship != nil)
                 {
                     NSMutableDictionary *relationShipDict = [mainObjectDictionary objectForKey:relationship];
@@ -442,7 +447,7 @@
                         
                         break;
                     }
-
+                    
                 }
                 else {
                     break;
@@ -484,7 +489,7 @@
                         relationShipDict2 = [relationshipDict1 objectForKey:relationship2]; // 9450 : Corrected the misplaced variable name.
                     }
                     
-                     [relationShipDict2 setObject:fieldValue forKey:fieldName];
+                    [relationShipDict2 setObject:fieldValue forKey:fieldName];
                     
                     break;
                 }
@@ -497,12 +502,12 @@
 }
 
 - (NSArray *)parseFieldsFromQuery:(NSString *)query {
-   
+    
     query = [query stringByReplacingOccurrencesOfString:@"select " withString:@""];
     query = [query stringByReplacingOccurrencesOfString:@"SELECT " withString:@""];
     query = [query stringByReplacingOccurrencesOfString:@"Select " withString:@""];
     query = [query stringByReplacingOccurrencesOfString:@"DISTINCT " withString:@""];
-     
+    
     
     NSMutableString *finalQuery = [[NSMutableString alloc] initWithString:query];
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:
@@ -541,7 +546,7 @@
     
     //Modified shravya - OPDOC-CR
     //NSString *lhs = [tempDict objectForKey:kDAFieldName]; //uncoment this if we need lhs
-
+    
     
     NSString *rhs = [tempDict objectForKey:kDAFieldValue];
     NSString *operator_ = operator;
@@ -560,7 +565,7 @@
     }
     else if([operator isEqualToString:@"Less or Equal To"])
     {
-         operator_  = @"<=";
+        operator_  = @"<=";
     }
     else if ([operator isEqualToString:@"ne"])
     {
@@ -576,48 +581,48 @@
     }
     else if([operator isEqualToString:@"isnotnull"])
     {
-           
-           operator_ = @"is not null";
-           rhs = @"";
+        
+        operator_ = @"is not null";
+        rhs = @"";
     }
     else if([operator isEqualToString:@"contains"])
     {
-           operator_ = @" LIKE ";
-           NSString * temp = [NSString stringWithFormat:@"%%%@%%",rhs];
-           rhs = temp;
+        operator_ = @" LIKE ";
+        NSString * temp = [NSString stringWithFormat:@"%%%@%%",rhs];
+        rhs = temp;
     }
     else if([operator isEqualToString:@"notcontain"])
-       {
-           operator_ =  @" NOT LIKE ";
-           NSString * temp = [NSString stringWithFormat:@"%%%@%%",rhs];
-           rhs = temp;
-       }
-       else if ([operator isEqualToString:@"in"])
-       {
-           
-           operator_ = @" LIKE ";
-           NSString * temp = [NSString stringWithFormat:@"%%%@%%",rhs];
-           rhs = temp;
-       }
-       else if ([operator isEqualToString:@"notin"])
-       {
-           operator_ =  @" NOT LIKE ";
-           NSString * temp = [NSString stringWithFormat:@"%%%@%%",rhs];
-           rhs = temp;
-       }
-       else if ([operator  isEqualToString:@"starts"])
-       {
-           operator_ = @" LIKE ";
-           //8906
-           NSString * temp = [NSString stringWithFormat:@"%@%%",rhs];
-           rhs = temp;
-       }
-       else if([operator  isEqualToString:@"isnull"])
-       {
-         
-           operator_ = @"is null";
-           rhs = @"";
-       }
+    {
+        operator_ =  @" NOT LIKE ";
+        NSString * temp = [NSString stringWithFormat:@"%%%@%%",rhs];
+        rhs = temp;
+    }
+    else if ([operator isEqualToString:@"in"])
+    {
+        
+        operator_ = @" LIKE ";
+        NSString * temp = [NSString stringWithFormat:@"%%%@%%",rhs];
+        rhs = temp;
+    }
+    else if ([operator isEqualToString:@"notin"])
+    {
+        operator_ =  @" NOT LIKE ";
+        NSString * temp = [NSString stringWithFormat:@"%%%@%%",rhs];
+        rhs = temp;
+    }
+    else if ([operator  isEqualToString:@"starts"])
+    {
+        operator_ = @" LIKE ";
+        //8906
+        NSString * temp = [NSString stringWithFormat:@"%@%%",rhs];
+        rhs = temp;
+    }
+    else if([operator  isEqualToString:@"isnull"])
+    {
+        
+        operator_ = @"is null";
+        rhs = @"";
+    }
     
     [tempDict setObject:rhs forKey:kDAFieldValue];
     [tempDict setObject:operator_ forKey:kDAOperator];
@@ -633,7 +638,7 @@
         
         NSRange range = NSMakeRange(counter, 1);
         NSString *aCharacter = [newAdvanceExpression substringWithRange:range];
-       if (![aCharacter isEqualToString:@""] && ![aCharacter isEqualToString:@" "]) {
+        if (![aCharacter isEqualToString:@""] && ![aCharacter isEqualToString:@" "]) {
             
             NSInteger someIntValue = [aCharacter intValue];
             if (someIntValue > 0 && (counter + 1) < [newAdvanceExpression length]) {

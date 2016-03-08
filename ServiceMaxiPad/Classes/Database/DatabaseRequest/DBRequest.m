@@ -23,7 +23,7 @@
 @implementation DBRequest
 
 - (id)init {
-
+    
     self = [super init];
     if (self != nil) {
         
@@ -57,7 +57,7 @@
                 self.fieldObjects = fields;
             }
         }
-
+        
     }
 }
 
@@ -84,12 +84,12 @@
                 }
             }
             self.criteriaArray = tempCriteria;
-            self.advancedExpression = expression;
-            return [self isValidExpression];
-        }
-        
+        self.advancedExpression = expression;
+        return [self isValidExpression];
     }
     
+}
+
 }
 
 
@@ -106,32 +106,32 @@
 }
 
 - (void)addGroupByFields:(NSArray *)fieldNames {
-     self.groupByFields= fieldNames;
+    self.groupByFields= fieldNames;
 }
 
 - (NSString *)getGroupByString {
     if (self.requestQueryType != DBRequestQueryTypeInsert) {
-          return  [StringUtil getConcatenatedStringFromArray:self.groupByFields withSingleQuotesAndBraces:NO];
+        return  [StringUtil getConcatenatedStringFromArray:self.groupByFields withSingleQuotesAndBraces:NO];
     }
     return nil;
 }
 
 - (NSString *)getOrderByString {
     
-     if (self.requestQueryType != DBRequestQueryTypeInsert) {
+    if (self.requestQueryType != DBRequestQueryTypeInsert) {
         
-         if ([self.orderByFields count] > 0) {
-                id instanceVar = [self.orderByFields objectAtIndex:0];
-             if ([instanceVar isKindOfClass:[NSString class]]) {
-                 return  [StringUtil getConcatenatedStringFromArray:self.orderByFields withSingleQuotesAndBraces:NO];
-             }
-             else{
-                 return [self getOrderByStringFromDbFields];
-             }
-             
-         }
-         
-     }
+        if ([self.orderByFields count] > 0) {
+            id instanceVar = [self.orderByFields objectAtIndex:0];
+            if ([instanceVar isKindOfClass:[NSString class]]) {
+                return  [StringUtil getConcatenatedStringFromArray:self.orderByFields withSingleQuotesAndBraces:NO];
+            }
+            else{
+                return [self getOrderByStringFromDbFields];
+            }
+            
+        }
+        
+    }
     return nil;
 }
 
@@ -181,7 +181,7 @@
     return NO;
 }
 - (NSString *)getFieldNamesSeperatedByCommas {
-  
+    
     if ([self isJoinExists]) {
         NSMutableString *concatenatedString = [[NSMutableString alloc] init];
         for (int counter = 0; counter < [self.fieldNames count]; counter++) {
@@ -198,7 +198,25 @@
         return  concatenatedString;
     }
     
-   return  [StringUtil getConcatenatedStringFromArray:self.fieldNames withSingleQuotesAndBraces:NO];
+    
+    // 012895
+    else if ([self.joinString length] > 0) {
+        NSMutableString *concatenatedString = [[NSMutableString alloc] init];
+        for (int counter = 0; counter < [self.fieldNames count]; counter++) {
+            
+            NSString *fName = [self.fieldNames objectAtIndex:counter];
+            NSString *tableNameStr = self.tableName;
+            if (counter == 0) {
+                [concatenatedString appendFormat:@"'%@'.%@",tableNameStr,fName ];
+            }
+            else{
+                [concatenatedString appendFormat:@",'%@'.%@",tableNameStr,fName];
+            }
+        }
+        return  concatenatedString;
+    }
+    
+    return  [StringUtil getConcatenatedStringFromArray:self.fieldNames withSingleQuotesAndBraces:NO];
 }
 
 - (NSString *)getFieldNamesWithTableNameSeparatedByCommas {
@@ -210,7 +228,7 @@
             DBField *aField = [self.fieldObjects objectAtIndex:counter];
             [fieldNames addObject:aField.name];
         }
-       return [StringUtil getConcatenatedStringFromArray:fieldNames withSingleQuotesAndBraces:YES];
+        return [StringUtil getConcatenatedStringFromArray:fieldNames withSingleQuotesAndBraces:YES];
     }
     else{
         for (int counter = 0; counter < [self.fieldObjects count]; counter++) {
@@ -224,7 +242,7 @@
                 [concatenatedString appendFormat:@",%@.%@",tableNameStr,aField.name];
             }
         }
-
+        
     }
     return concatenatedString;
 }

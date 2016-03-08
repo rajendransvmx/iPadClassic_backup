@@ -46,60 +46,60 @@ function StartOutputDocDataRetrieval()
 }
 
 function OPDGetTemplate(processIdObj, callbackFunction, context){
-  
-  var processId = processIdObj.ProcessId;
-  
-  var objectName = "SFProcess";
-  var fieldNames = [{fieldName:'processId',fieldType:'TEXT'},{fieldName:'docTemplateId',fieldType:'TEXT'},{fieldName:'sfID',fieldType:'TEXT'}];
-  var criteria = [{fieldName:'processId',fieldValue:processId,operator:'='}];
-  
-  $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(request){
-    if(request.response.statusCode != '1') {
-      //alert("Data base error ");
-    }
-    else {
-      var objectData = request.response.objectData;
-      if(objectData.length > 0) {
-        var processObj = objectData[0];
-        var templateId =  processObj.docTemplateId;
-        processSfid = processObj.sfID;
-        
-        objectName = "Attachments";
-        fieldNames = [{fieldName:'attachmentId',fieldType:'TEXT'},{fieldName:'attachmentName',fieldType:'TEXT'},{fieldName:'attachmentBody',fieldType:'BLOB'}];
-        criteria = [{fieldName:'parentId',fieldValue:templateId,operator:'='}];
-        
-                    
-        $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(docRequest){
-
-
-          if(docRequest.response.statusCode != '1') {
-            //alert("Data base error ");
-          }
-          else{
-            var docData = docRequest.response.objectData;
-            if(docData.length > 0){
-
-              var neededObject = docData[0];
-              var bodyValue = neededObject.attachmentBody;
-              if(bodyValue != null){
-
-                var bodyString  = $UTILITY.base64Decode(bodyValue);
-                         
-                var finalTemplate = {Template:bodyString};
-                          
-                          callbackFunction.call(context, finalTemplate, 'GetTemplate');
-                        OPDGetDocumentMetaData(docMetaData.Input, docMetaData.Callback, docMetaData.Context);
-              }
-              
-            }
-            
-          }
-        });
-        
-      }
-      
-    }
-  });
+    
+    var processId = processIdObj.ProcessId;
+    
+    var objectName = "SFProcess";
+    var fieldNames = [{fieldName:'processId',fieldType:'TEXT'},{fieldName:'docTemplateId',fieldType:'TEXT'},{fieldName:'sfID',fieldType:'TEXT'}];
+    var criteria = [{fieldName:'processId',fieldValue:processId,operator:'='}];
+    
+    $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(request){
+                      if(request.response.statusCode != '1') {
+                      //alert("Data base error ");
+                      }
+                      else {
+                      var objectData = request.response.objectData;
+                      if(objectData.length > 0) {
+                      var processObj = objectData[0];
+                      var templateId =  processObj.docTemplateId;
+                      processSfid = processObj.sfID;
+                      
+                      objectName = "Attachments";
+                      fieldNames = [{fieldName:'attachmentId',fieldType:'TEXT'},{fieldName:'attachmentName',fieldType:'TEXT'},{fieldName:'attachmentBody',fieldType:'BLOB'}];
+                      criteria = [{fieldName:'parentId',fieldValue:templateId,operator:'='}];
+                      
+                      
+                      $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(docRequest){
+                                        
+                                        
+                                        if(docRequest.response.statusCode != '1') {
+                                        //alert("Data base error ");
+                                        }
+                                        else{
+                                        var docData = docRequest.response.objectData;
+                                        if(docData.length > 0){
+                                        
+                                        var neededObject = docData[0];
+                                        var bodyValue = neededObject.attachmentBody;
+                                        if(bodyValue != null){
+                                        
+                                        var bodyString  = $UTILITY.base64Decode(bodyValue);
+                                        
+                                        var finalTemplate = {Template:bodyString};
+                                        
+                                        callbackFunction.call(context, finalTemplate, 'GetTemplate');
+                                        OPDGetDocumentMetaData(docMetaData.Input, docMetaData.Callback, docMetaData.Context);
+                                        }
+                                        
+                                        }
+                                        
+                                        }
+                                        });
+                      
+                      }
+                      
+                      }
+                      });
 }
 //Krishna defect 008268
 function GetMediaResourceJSONArray(media_res_array,media_res_json_array,index, templateId, callbackFunction,globalObjectData)
@@ -137,28 +137,28 @@ function GetMediaResourceJSONArray(media_res_array,media_res_json_array,index, t
                       {
                       index = i+1;
                       
-
+                      
                       GetMediaResourceJSONArray(media_res_array,media_res_json_array,index,templateId, callbackFunction,globalObjectData);
                       }
                       else {
-//                      alert ("DocDetailsAfterMediaResources1");
+                      //                      alert ("DocDetailsAfterMediaResources1");
                       DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,globalObjectData);
                       }
                       
                       } /* if(objectData.length > 0) */
                       else
                       {
-                        if(media_res_array.length > (i+1))
-                        {
-                            index = i+1;
-//                      alert ("GetMediaResourceJSONArray2");
-                            GetMediaResourceJSONArray(media_res_array,media_res_json_array,index,templateId, callbackFunction,globalObjectData);
-                        }
-                        else
-                        {
-//                      alert ("DocDetailsAfterMediaResources2");
-                        DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,globalObjectData);
-                        }
+                      if(media_res_array.length > (i+1))
+                      {
+                      index = i+1;
+                      //                      alert ("GetMediaResourceJSONArray2");
+                      GetMediaResourceJSONArray(media_res_array,media_res_json_array,index,templateId, callbackFunction,globalObjectData);
+                      }
+                      else
+                      {
+                      //                      alert ("DocDetailsAfterMediaResources2");
+                      DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,globalObjectData);
+                      }
                       }
                       } /* else if(request.response.statusCode == '1') */
                       }); /* executeQuery on Document object */
@@ -166,141 +166,141 @@ function GetMediaResourceJSONArray(media_res_array,media_res_json_array,index, t
 // krishna defect 008268
 function DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,gObjectData)
 {
-
-
-        gObjectData[0].media_resources = media_res_json_array;
-        
-        templateRecord = JSON.stringify(gObjectData);
-        templateRecord=templateRecord.replace("media_resources",current_org_name_space+"__Media_Resources__c");
-        //alert("new templateRecord : " + templateRecord);
     
-        /* Retrieve the doc_template_details corresponding to the record in JSON format */
-        var templateDetailsRecord;
-        var dtdObj = "DocTemplateDetails";
-        // var dtdfields = [{fieldName:'doc_template',fieldType:'TEXT'},{fieldName:'doc_template_detail_id',fieldType:'TEXT'},{fieldName:'header_ref_fld',fieldType:'TEXT'},{fieldName:'alias',fieldType:'TEXT'},{fieldName:'object_name',fieldType:'TEXT'},{fieldName:'soql',fieldType:'TEXT'},{fieldName:'doc_template_detail_unique_id',fieldType:'TEXT'},{fieldName:'fields',fieldType:'TEXT'},{fieldName:'type',fieldType:'TEXT'},{fieldName:'Id',fieldType:'TEXT'}];
     
-        var dtdfields = [{fieldName:'idTable',fieldType:'TEXT'},{fieldName:'fields',fieldType:'TEXT'},{fieldName:'objectName',fieldType:'TEXT'},{fieldName:'alias',fieldType:'TEXT'},{fieldName:'type',fieldType:'TEXT'}];
-        var dtdcriteria = [{fieldName:'docTemplate',fieldValue:templateId,operator:'='}];
-
-        $DAL.executeQuery(dtdObj,dtdfields,dtdcriteria,null,null,function(request)
-                          {
-                          if(request.response.statusCode != '1')
-                          {
-                          //alert("Data base error ");
-                          }
-                          else
-                          {
-                          var objectData = request.response.objectData;
-                          
-                          if(objectData.length > 0)
-                          {
-                          /* Club these details into one JSON string and pass in the response callback */
-                          templateDetailsRecord = JSON.stringify(objectData);
-//                          alert("DocDetailsAfterMediaResources check 2"+templateDetailsRecord);
-                          //alert("template detail records : " + templateDetailsRecord);
-                          
-                          templateDetailsRecord=templateDetailsRecord.replace(/fields/g,current_org_name_space+"__Fields__c");
-                          templateDetailsRecord=templateDetailsRecord.replace(/objectName/g,current_org_name_space+"__Object_Name__c");
-                          templateDetailsRecord=templateDetailsRecord.replace(/alias/g,current_org_name_space+"__Alias__c");
-                          templateDetailsRecord=templateDetailsRecord.replace(/type/g,current_org_name_space+"__Type__c");
-                          
-                          // JSON.parse() converts json string to json object
-                          var finaljson = {TemplateRecord:JSON.parse(templateRecord), AllObjectInfo:JSON.parse(templateDetailsRecord)};
-                          var finalResponseString = JSON.stringify(finaljson);
-                          
-                         
-                          
-                          callbackFunction.call(context, finaljson, 'GetDocumentMetadata');
-                          OPDGetDocumentData(docData.Input, docData.Callback, docData.Context);
-                          //alert(finalResponseString);
-                          
-                          //alert("GetDocumentMetaData : Ends");
-                          }
-                          }
-                          });/* executeQuery for Doc_template_details */
-            
+    gObjectData[0].media_resources = media_res_json_array;
+    
+    templateRecord = JSON.stringify(gObjectData);
+    templateRecord=templateRecord.replace("media_resources",current_org_name_space+"__Media_Resources__c");
+    //alert("new templateRecord : " + templateRecord);
+    
+    /* Retrieve the doc_template_details corresponding to the record in JSON format */
+    var templateDetailsRecord;
+    var dtdObj = "DocTemplateDetails";
+    // var dtdfields = [{fieldName:'doc_template',fieldType:'TEXT'},{fieldName:'doc_template_detail_id',fieldType:'TEXT'},{fieldName:'header_ref_fld',fieldType:'TEXT'},{fieldName:'alias',fieldType:'TEXT'},{fieldName:'object_name',fieldType:'TEXT'},{fieldName:'soql',fieldType:'TEXT'},{fieldName:'doc_template_detail_unique_id',fieldType:'TEXT'},{fieldName:'fields',fieldType:'TEXT'},{fieldName:'type',fieldType:'TEXT'},{fieldName:'Id',fieldType:'TEXT'}];
+    
+    var dtdfields = [{fieldName:'idTable',fieldType:'TEXT'},{fieldName:'fields',fieldType:'TEXT'},{fieldName:'objectName',fieldType:'TEXT'},{fieldName:'alias',fieldType:'TEXT'},{fieldName:'type',fieldType:'TEXT'}];
+    var dtdcriteria = [{fieldName:'docTemplate',fieldValue:templateId,operator:'='}];
+    
+    $DAL.executeQuery(dtdObj,dtdfields,dtdcriteria,null,null,function(request)
+                      {
+                      if(request.response.statusCode != '1')
+                      {
+                      //alert("Data base error ");
+                      }
+                      else
+                      {
+                      var objectData = request.response.objectData;
+                      
+                      if(objectData.length > 0)
+                      {
+                      /* Club these details into one JSON string and pass in the response callback */
+                      templateDetailsRecord = JSON.stringify(objectData);
+                      //                          alert("DocDetailsAfterMediaResources check 2"+templateDetailsRecord);
+                      //alert("template detail records : " + templateDetailsRecord);
+                      
+                      templateDetailsRecord=templateDetailsRecord.replace(/fields/g,current_org_name_space+"__Fields__c");
+                      templateDetailsRecord=templateDetailsRecord.replace(/objectName/g,current_org_name_space+"__Object_Name__c");
+                      templateDetailsRecord=templateDetailsRecord.replace(/alias/g,current_org_name_space+"__Alias__c");
+                      templateDetailsRecord=templateDetailsRecord.replace(/type/g,current_org_name_space+"__Type__c");
+                      
+                      // JSON.parse() converts json string to json object
+                      var finaljson = {TemplateRecord:JSON.parse(templateRecord), AllObjectInfo:JSON.parse(templateDetailsRecord)};
+                      var finalResponseString = JSON.stringify(finaljson);
+                      
+                      
+                      
+                      callbackFunction.call(context, finaljson, 'GetDocumentMetadata');
+                      OPDGetDocumentData(docData.Input, docData.Callback, docData.Context);
+                      //alert(finalResponseString);
+                      
+                      //alert("GetDocumentMetaData : Ends");
+                      }
+                      }
+                      });/* executeQuery for Doc_template_details */
+    
 }
 function OPDGetDocumentMetaData(processIdObj, callbackFunction, context)
 {
-  /* Get doc_template_id from process_id from SFProcess table */
-  var processId = processIdObj.ProcessId;
-  
-  var objectName = "SFProcess";
-  var fieldNames = [{fieldName:'processId',fieldType:'TEXT'},{fieldName:'docTemplateId',fieldType:'TEXT'}];
-  var criteria = [{fieldName:'processId',fieldValue:processId,operator:'='}];
-  var templateId = 0;
-  $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(request)
-  {
-    if(request.response.statusCode != '1')
-    {
-      //alert("Data base error ");
-    }
-    else
-    {
-      //alert(JSON.stringify(request));
-      
-      var objectData = request.response.objectData;
-      if(objectData.length > 0)
-      {
-        var processObj = objectData[0];
-        templateId =  processObj.docTemplateId;
-        //alert(templateId);
-        
-        /* Retireve the Doc_Template record values in JSON string format */
-        var objectName1 = "DocTemplate";
-        var fieldNames1 = [{fieldName:'docTemplateName',fieldType:'TEXT'},{fieldName:'idTable',fieldType:'TEXT'},{fieldName:'docTemplateId',fieldType:'TEXT'},{fieldName:'isStandard',fieldType:'Boolean'},{fieldName:'mediaResources',fieldType:'TEXT'}];
-        var criteria1 = [{fieldName:'idTable',fieldValue:templateId,operator:'='}];
-        var media_res;
-        $DAL.executeQuery(objectName1,fieldNames1,criteria1,null,null,function(request)
-        {
-          if(request.response.statusCode != '1')
-          {
-            //alert("Data base error ");
-          }
-          else
-          {
-            //alert(JSON.stringify(request));
-            
-            var objectData = request.response.objectData;
-            if(objectData.length > 0)
-            {
-              /*  Get media_resources value from from corresponding record */
-              var processObj = objectData[0];
-              media_res =  processObj.mediaResources;
-              //alert("Media resources : " + media_res);
-              //alert("ProcessObj ( ObjectData[0] ) : " + JSON.stringify(objectData[0]));
-              
-              var media_res_json_array = [];
-              //krishna defect 008268
-              if(media_res.length > 0) {
-               /* media_resources will have comma separated values - Separate the values */
-               var media_res_array = media_res.split(",");
-               var arrayLength = media_res_array.length;
-               // alert("shya" + arrayLength);
-               var templateRecord;
-//               alert("calling GetMediaResourceJSONArray !");
-               GetMediaResourceJSONArray(media_res_array,media_res_json_array,0, templateId, callbackFunction,objectData);
-               }
-               else
-               {
-//                          alert("calling DocDetailsAfterMediaResources !");
-               DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,objectData);
-               }
-
-} /* if(objectData.length > 0) for Doc_template object execute query */
-} /* else part for Doc_template record retrieval from executeQuery */
-}); /* executeQuery for Doc_template record retrieval */
-} /* if(objectData.length > 0) valid scenario for retrieving doc_template_id from Process_id */
-} /* success scenario else condition  for retrieving doc_template_id from Process_id */
-}); /* executeQuery for retrieving doc_template_id from Process_id */
+    /* Get doc_template_id from process_id from SFProcess table */
+    var processId = processIdObj.ProcessId;
+    
+    var objectName = "SFProcess";
+    var fieldNames = [{fieldName:'processId',fieldType:'TEXT'},{fieldName:'docTemplateId',fieldType:'TEXT'}];
+    var criteria = [{fieldName:'processId',fieldValue:processId,operator:'='}];
+    var templateId = 0;
+    $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(request)
+                      {
+                      if(request.response.statusCode != '1')
+                      {
+                      //alert("Data base error ");
+                      }
+                      else
+                      {
+                      //alert(JSON.stringify(request));
+                      
+                      var objectData = request.response.objectData;
+                      if(objectData.length > 0)
+                      {
+                      var processObj = objectData[0];
+                      templateId =  processObj.docTemplateId;
+                      //alert(templateId);
+                      
+                      /* Retireve the Doc_Template record values in JSON string format */
+                      var objectName1 = "DocTemplate";
+                      var fieldNames1 = [{fieldName:'docTemplateName',fieldType:'TEXT'},{fieldName:'idTable',fieldType:'TEXT'},{fieldName:'docTemplateId',fieldType:'TEXT'},{fieldName:'isStandard',fieldType:'Boolean'},{fieldName:'mediaResources',fieldType:'TEXT'}];
+                      var criteria1 = [{fieldName:'idTable',fieldValue:templateId,operator:'='}];
+                      var media_res;
+                      $DAL.executeQuery(objectName1,fieldNames1,criteria1,null,null,function(request)
+                                        {
+                                        if(request.response.statusCode != '1')
+                                        {
+                                        //alert("Data base error ");
+                                        }
+                                        else
+                                        {
+                                        //alert(JSON.stringify(request));
+                                        
+                                        var objectData = request.response.objectData;
+                                        if(objectData.length > 0)
+                                        {
+                                        /*  Get media_resources value from from corresponding record */
+                                        var processObj = objectData[0];
+                                        media_res =  processObj.mediaResources;
+                                        //alert("Media resources : " + media_res);
+                                        //alert("ProcessObj ( ObjectData[0] ) : " + JSON.stringify(objectData[0]));
+                                        
+                                        var media_res_json_array = [];
+                                        //krishna defect 008268
+                                        if(media_res.length > 0) {
+                                        /* media_resources will have comma separated values - Separate the values */
+                                        var media_res_array = media_res.split(",");
+                                        var arrayLength = media_res_array.length;
+                                        // alert("shya" + arrayLength);
+                                        var templateRecord;
+                                        //               alert("calling GetMediaResourceJSONArray !");
+                                        GetMediaResourceJSONArray(media_res_array,media_res_json_array,0, templateId, callbackFunction,objectData);
+                                        }
+                                        else
+                                        {
+                                        //                          alert("calling DocDetailsAfterMediaResources !");
+                                        DocDetailsAfterMediaResources(media_res_array,media_res_json_array,templateId, callbackFunction,objectData);
+                                        }
+                                        
+                                        } /* if(objectData.length > 0) for Doc_template object execute query */
+                                        } /* else part for Doc_template record retrieval from executeQuery */
+                                        }); /* executeQuery for Doc_template record retrieval */
+                      } /* if(objectData.length > 0) valid scenario for retrieving doc_template_id from Process_id */
+                      } /* success scenario else condition  for retrieving doc_template_id from Process_id */
+                      }); /* executeQuery for retrieving doc_template_id from Process_id */
 } /* GetDocumentMetaData ends */
 //GetDocumentMetaData({"ProcessId":"WO_ServiceReport_001"});
 
 
 var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, rec_Local_sf_Id, index, callbackFunction)
 {
-//    alert("GetDataForTemplateDetailsRecord");
-   // 8980 : need local_id and also sfid with conditional OR
+    //    alert("GetDataForTemplateDetailsRecord");
+    // 8980 : need local_id and also sfid with conditional OR
     var localId = rec_Local_sf_Id.local_Id;
     var sfdcid = rec_Local_sf_Id.sf_id;
     
@@ -314,9 +314,9 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
     var dtd_alias = docTemplateDetailRecord.alias;
     
     var dtd_soql_fields = docTemplateDetailRecord.fields;
-
+    
     var dtd_type = docTemplateDetailRecord.type;
-
+    
     var ref_fld_Id = "";
     if(dtd_type  == "Header_Object")
         ref_fld_Id = recordId;
@@ -336,7 +336,7 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
     if(dtd_type  == "Header_Object"){
         hdr_ref_fld = "localId";
     }
-
+    
     var advCriteria = [];
     var advCriteriaExpression = "";
     
@@ -344,10 +344,12 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
     /* Get the expression  */
     /* Get the expression_id from process component table for the given process_id */
     var objectName = "SFProcessComponent";
-    var fieldNames = [{fieldName:'expressionId',fieldType:'TEXT'}];
+    
+    // 012895 - opdoc sort order - added sortingOrder, objectName params
+    var fieldNames = [{fieldName:'expressionId',fieldType:'TEXT'},{fieldName:'sortingOrder',fieldType:'TEXT'}, {fieldName:'objectName',fieldType:'TEXT'}];
     var criteria = [{fieldName:'processId',fieldValue:processSfid,operator:'='},{fieldName:'docTemplateDetailId',fieldValue:dtd_Id,operator:'='}];
     var expression_id = 0;
-   
+    
     $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(request)
                       {
                       if(request.response.statusCode != '1')
@@ -363,8 +365,10 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                       {
                       
                       expr_id =  processCompObj.expressionId;
-                     
-                     
+                      
+                      // 012895 - get inner join and sortOrder string
+                      var innerJoin = processCompObj.innerJoin;
+                      var sortingOrder = processCompObj.sortingOrder;
                       
                       /* Get the expression for the retrieved expression_id */
                       var exptblName = "SFExpression";
@@ -380,7 +384,7 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                         }
                                         else
                                         {
-                                       
+                                        
                                         
                                         var expressionObj = request.response.objectData[0];
                                         if(expressionObj)
@@ -389,14 +393,14 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                         expression_id =  expressionObj.expressionId;
                                         expression = expressionObj.expression;
                                         
-                                       
+                                        
                                         advCriteriaExpression = expression;
                                         
                                         /* Get the expression parsed */
                                         /* Option 1: Get the expression parsed from the appdelegate->databaseInterfaceSFM object */
                                         /* Option 2: Already implemented in javascript for online team, get it from Ranga */
                                         /* Resulting string will be an expression to be used in the query */
-                                       
+                                        
                                         
                                         var objectName = "SFExpressionComponent";
                                         var fieldNames = [{fieldName:'componentSequenceNumber',fieldType:'TEXT'},{fieldName:'componentLHS',fieldType:'TEXT'},{fieldName:'componentRHS',fieldType:'TEXT'},{fieldName:'operatorValue',fieldType:'TEXT'},{fieldName:'fieldType',fieldType:'TEXT'}];
@@ -405,7 +409,7 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                                           {
                                                           if(request.response.statusCode != '1')
                                                           {
-//                                                            alert("Data base error ");
+                                                          //                                                            alert("Data base error ");
                                                           }
                                                           else
                                                           {
@@ -415,16 +419,16 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                                           if(components.length > 0)
                                                           {
                                                           
-                                                                var componentCount = components.length;
-                                                                if(advCriteriaExpression == null || advCriteriaExpression.length < 2) {
-                                                                        advCriteriaExpression = "( 1 ";
-                                                                        for(var counterIn = 2;  counterIn <= componentCount; counterIn++){
-                                                                            advCriteriaExpression = advCriteriaExpression + " AND " + counterIn;
-                                                                        }
+                                                          var componentCount = components.length;
+                                                          if(advCriteriaExpression == null || advCriteriaExpression.length < 2) {
+                                                          advCriteriaExpression = "( 1 ";
+                                                          for(var counterIn = 2;  counterIn <= componentCount; counterIn++){
+                                                          advCriteriaExpression = advCriteriaExpression + " AND " + counterIn;
+                                                          }
                                                           
-                                                                        advCriteriaExpression = advCriteriaExpression + " ) ";
-                                                                }
-                                                         
+                                                          advCriteriaExpression = advCriteriaExpression + " ) ";
+                                                          }
+                                                          
                                                           
                                                           for(var i = 0; i < components.length; i++ )
                                                           {
@@ -438,7 +442,7 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                                           var fieldTyp = fT.toLowerCase();
                                                           
                                                           var advCriterion = {fieldName:lhs,fieldValue:rhs,operator:op,fieldType:fieldTyp};
-                                                         
+                                                          
                                                           if(com_seq_num == (i+1))
                                                           advCriteria[i] = advCriterion;
                                                           
@@ -453,13 +457,13 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                                           /* 11285*/
                                                           if(advCriteria.length > 0)
                                                           {
-                                                            numOfCriteriaFields = advCriteria.length + 1;
-                                                            var numOfCritFldsAfterOR = numOfCriteriaFields + 1;// 8980 : Adding a OR criteria
-                                                            advCriteriaExpression = "("  + advCriteriaExpression + ") and " + "( " + numOfCriteriaFields + " or "+ numOfCritFldsAfterOR + " )";// 8980 : need localId and also sfid with conditional OR
+                                                          numOfCriteriaFields = advCriteria.length + 1;
+                                                          var numOfCritFldsAfterOR = numOfCriteriaFields + 1;// 8980 : Adding a OR criteria
+                                                          advCriteriaExpression = "("  + advCriteriaExpression + ") and " + "( " + numOfCriteriaFields + " or "+ numOfCritFldsAfterOR + " )";// 8980 : need localId and also sfid with conditional OR
                                                           }
                                                           else
                                                           {
-                                                            advCriteriaExpression = "( 1 or 2 )"; // 8980 : need localId and also sfid with conditional OR
+                                                          advCriteriaExpression = "( 1 or 2 )"; // 8980 : need localId and also sfid with conditional OR
                                                           }
                                                           
                                                           advCriteria.push(basicCriterion);
@@ -469,18 +473,24 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                                           templateDetailRecords[index].criteria = advCriteria; // [{fieldName:hdr_ref_fld,fieldValue:ref_fld_Id,operator:'='}];
                                                           templateDetailRecords[index].advancedExpression = advCriteriaExpression;
                                                           
-                                                        
-//                                                          alert(JSON.stringify(templateDetailRecords[index]));
-
+                                                          
+                                                          // 012895 - setting inner join and sorting order
+                                                          templateDetailRecords[index].innerJoin = innerJoin;
+                                                          templateDetailRecords[index].sortingOrder = sortingOrder;
+                                                          
+                                                          
+                                                          
+                                                          //                                                          alert(JSON.stringify(templateDetailRecords[index]));
+                                                          
                                                           // Temporary : To be inserted in the inner most callback function
                                                           var nextIndex = index + 1;
                                                           if(templateDetailRecords.length > nextIndex)
-                                                            GetDataForTemplateDetailsRecord(inputObj, templateDetailRecords, rec_Local_sf_Id, nextIndex, callbackFunction);// 8980 : need localId and also sfid with conditional OR
+                                                          GetDataForTemplateDetailsRecord(inputObj, templateDetailRecords, rec_Local_sf_Id, nextIndex, callbackFunction);// 8980 : need localId and also sfid with conditional OR
                                                           else {
-                                                            
-                                                           callbackFunction(templateDetailRecords);
+                                                          
+                                                          callbackFunction(templateDetailRecords);
                                                           }
-                                                            
+                                                          
                                                           }
                                                           }
                                                           });
@@ -497,16 +507,16 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                       // 8980 : need localId and also sfid with conditional OR
                       templateDetailRecords[index].criteria = [{fieldName:hdr_ref_fld,fieldValue:ref_fld_Id,operator:'='},{fieldName:hdr_ref_fld,fieldValue:sfdcid,operator:'='}];
                       templateDetailRecords[index].advancedExpression = "( 1 or 2 )";
-
+                      
                       // Temporary : To be inserted in the inner most callback function
                       var nextIndex = index + 1;
                       if(templateDetailRecords.length > nextIndex)
-                        GetDataForTemplateDetailsRecord(inputObj, templateDetailRecords, rec_Local_sf_Id, nextIndex, callbackFunction);// 8980 : need localId and also sfid with conditional OR
+                      GetDataForTemplateDetailsRecord(inputObj, templateDetailRecords, rec_Local_sf_Id, nextIndex, callbackFunction);// 8980 : need localId and also sfid with conditional OR
                       else {
-                           
-                            callbackFunction(templateDetailRecords);
+                      
+                      callbackFunction(templateDetailRecords);
                       }
-                       
+                      
                       }
                       }
                       });
@@ -514,7 +524,7 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
 
 function OPDGetDocumentData(inputObj, callbackFunction, context)
 {
-//    alert("Calling OPDGetDocumentData !");
+    //    alert("Calling OPDGetDocumentData !");
     /* Get doc_template_id from process_id from SFProcess table */
     
     var processId = inputObj.ProcessId;
@@ -525,7 +535,7 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
     var procriteria = [{fieldName:'processId',fieldValue:processId,operator:'='}];
     var templateId = 0;
     
-//    alert("Fetch from SFProcess !");
+    //    alert("Fetch from SFProcess !");
     $DAL.executeQuery(proName,profieldNames,procriteria,null,null,function(request)
                       {
                       
@@ -537,9 +547,9 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
                       {
                       
                       
-                        var processRecord = request.response.objectData;
-//                      alert("SFProcess record " + JSON.stringify(processRecord));
-                        if(processRecord.length > 0)
+                      var processRecord = request.response.objectData;
+                      //                      alert("SFProcess record " + JSON.stringify(processRecord));
+                      if(processRecord.length > 0)
                       {
                       
                       /* Get the doc_template_id from Process using ProcessId */
@@ -564,7 +574,7 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
                                         }
                                         else
                                         {
-                                       
+                                        
                                         
                                         var templateDetailRecords = request.response.objectData;
                                         if(templateDetailRecords.length > 0)
@@ -577,11 +587,11 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
                                         {
                                         
                                         tdRecord = templateDetailRecords[i];
-                                       
+                                        
                                         
                                         if(tdRecord.type == "Header_Object")
                                         {
-//                                        alert("Found!! Now break :)");
+                                        //                                        alert("Found!! Now break :)");
                                         break;
                                         }
                                         }
@@ -603,7 +613,7 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
                                                           }
                                                           else
                                                           {
-                                                         
+                                                          
                                                           
                                                           var local_id_obj = request.response.objectData[0];
                                                           //krishna OPDOc offline generation
@@ -619,7 +629,7 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
                                                           // 8980 : need local_id and also sfid with conditional OR
                                                           var sfdcid = local_id_obj.Id;
                                                           if((sfdcid == null) || (sfdcid.length <= 0)) {
-                                                            sfdcid = "handleempty";
+                                                          sfdcid = "handleempty";
                                                           }
                                                           
                                                           
@@ -631,22 +641,22 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
                                                                                           {
                                                                                           
                                                                                           
-                                                                                         // alert("GETC test");
+                                                                                          // alert("GETC test");
                                                                                           var finalOutputArray = [];
                                                                                           continueGetDocumentData(finalOutputArray,result,"5272",0,function(finalResult){
                                                                                                                   
-                                                                                             
-                                                                                               
-                                                                                            
-                                                                                            var outputfinal = {DocumentData:finalResult,Status:true,Message:""};
-                                                                                                                   $COMM.printLog(JSON.stringify(outputfinal));
+                                                                                                                  
+                                                                                                                  
+                                                                                                                  
+                                                                                                                  var outputfinal = {DocumentData:finalResult,Status:true,Message:""};
+                                                                                                                  $COMM.printLog(JSON.stringify(outputfinal));
                                                                                                                   
                                                                                                                   callbackFunction.call(context,outputfinal,'GetDocumentData');
                                                                                                                   
-                                                                                        });
+                                                                                                                  });
                                                                                           
                                                                                           });
-
+                                                          
                                                           
                                                           }
                                                           else
@@ -655,7 +665,7 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
                                                           }
                                                           }
                                                           });
-
+                                        
                                         }
                                         else
                                         {
@@ -670,14 +680,14 @@ function OPDGetDocumentData(inputObj, callbackFunction, context)
                       }
                       }
                       });
-
+    
     
 }
 
 
 
 function continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordId,index,callBackFunction){
-   
+    
     var detailLength = docTemplateDetailArray.length;
     
     if(index < detailLength){
@@ -689,159 +699,163 @@ function continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordI
         
         var advnExpr = detailObject.advancedExpression;
         var aliasName = detailObject.alias;
-       
+        
         var fieldNames = [];
         
-        $DAL.parseSoqlJSOnObject(objectName, fieldNames, criteriaArray, advnExpr,jsonString,function(request){
+        // 012895 - passing sortingOrder, innerJoin to native
+        var sortingOrder = detailObject.sortingOrder;
+        var innerJoin = detailObject.innerJoin;
+        
+        $DAL.parseSoqlJSOnObject(objectName, fieldNames, criteriaArray, advnExpr,jsonString, sortingOrder, innerJoin, function(request){
                                  
                                  if(request.response.statusCode == "1"){
                                  
-                                        var templateDict = {};
-                                        var recordsArray = [];
-                                        var objectData = request.response.objectData;
+                                 var templateDict = {};
+                                 var recordsArray = [];
+                                 var objectData = request.response.objectData;
                                  
-                                        var specialfieldNames = [];
-                                        var fieldNames = request.fieldNames;
-                                        for(var jj = 0; jj< fieldNames.length;jj++) {
-                                                var aField = fieldNames[jj];
-                                                var aFiledName = aField.fieldName;
-                                                var aFieldtype = aField.fieldType;
-                                                if(aFieldtype ==  'datetime' || aFieldtype == 'date'){
-                                                        specialfieldNames.push({fn:aFiledName,ft:aFieldtype});
-                                                }
-                                        }
+                                 var specialfieldNames = [];
+                                 var fieldNames = request.fieldNames;
+                                 for(var jj = 0; jj< fieldNames.length;jj++) {
+                                 var aField = fieldNames[jj];
+                                 var aFiledName = aField.fieldName;
+                                 var aFieldtype = aField.fieldType;
+                                 if(aFieldtype ==  'datetime' || aFieldtype == 'date'){
+                                 specialfieldNames.push({fn:aFiledName,ft:aFieldtype});
+                                 }
+                                 }
                                  
-                                        /* Shravya-7594*/
+                                 /* Shravya-7594*/
                                  //defect 7913 : loading prob opdoc shravya.
-                                        var metaDataJSON = null;;
-                                        var metaDataArray = [];
+                                 var metaDataJSON = null;;
+                                 var metaDataArray = [];
                                  
-                                        if(jsonString.length > 3) {
-                                            metaDataJSON =  JSON.parse(jsonString);
-                                            metaDataArray = metaDataJSON['Metadata'];
-                                        }
-                                                                            
-                                        
-                                      
-                                        var secondLevelSpecialFields = [];
+                                 if(jsonString.length > 3) {
+                                 metaDataJSON =  JSON.parse(jsonString);
+                                 metaDataArray = metaDataJSON['Metadata'];
+                                 }
                                  
-                                        for(var newCounter = 0; newCounter < metaDataArray.length;newCounter++){
-                                            var metaDataObject = metaDataArray[newCounter];
-                                            var newTyp  = metaDataObject.TYP;
-                                            var newRTyp = metaDataObject.RTYP;
-                                            var newRLN = metaDataObject.RLN;
-                                            var newFn = metaDataObject.FN;
-                                            var newRFN = metaDataObject.RFN;
-                                            if(newTyp == 'reference' && newRLN != null && (newRTyp == 'datetime' ||  newRTyp == 'date')){
                                  
-                                                var finalRLN = newRLN;
-                                                finalRLN = finalRLN.replace("__r","__c");
-                                                finalRLN = finalRLN+'.'+newRFN;
-                                                var secondField = {};
-                                                secondField.rln  = newRLN;
-                                                secondField.frln = finalRLN;
-                                                secondField.rfn = newRFN;
-                                                secondField.rtyp = newRTyp;
-                                                secondLevelSpecialFields.push(secondField);
-                                            }
                                  
-                                        }
+                                 var secondLevelSpecialFields = [];
+                                 
+                                 for(var newCounter = 0; newCounter < metaDataArray.length;newCounter++){
+                                 var metaDataObject = metaDataArray[newCounter];
+                                 var newTyp  = metaDataObject.TYP;
+                                 var newRTyp = metaDataObject.RTYP;
+                                 var newRLN = metaDataObject.RLN;
+                                 var newFn = metaDataObject.FN;
+                                 var newRFN = metaDataObject.RFN;
+                                 if(newTyp == 'reference' && newRLN != null && (newRTyp == 'datetime' ||  newRTyp == 'date')){
+                                 
+                                 var finalRLN = newRLN;
+                                 finalRLN = finalRLN.replace("__r","__c");
+                                 finalRLN = finalRLN+'.'+newRFN;
+                                 var secondField = {};
+                                 secondField.rln  = newRLN;
+                                 secondField.frln = finalRLN;
+                                 secondField.rfn = newRFN;
+                                 secondField.rtyp = newRTyp;
+                                 secondLevelSpecialFields.push(secondField);
+                                 }
+                                 
+                                 }
                                  
                                  /* Shravya-7594*/
                                  
-                                        var specialFieldsArray = [];
-                                        for(var counter = 0;counter < objectData.length;counter++) {
-                                                var record = objectData[counter];
-                                                recordsArray[counter] = record;
+                                 var specialFieldsArray = [];
+                                 for(var counter = 0;counter < objectData.length;counter++) {
+                                 var record = objectData[counter];
+                                 recordsArray[counter] = record;
                                  
-                                                var aSpecialField = {};
-                                                var fieldsTobeAdded = [];
-                                                for(var ii = 0;ii <specialfieldNames.length;ii++ ){
-                                                        var fName = specialfieldNames[ii].fn;
-                                                        var fType = specialfieldNames[ii].ft;
-                                                        var fValue = record[''+fName];
+                                 var aSpecialField = {};
+                                 var fieldsTobeAdded = [];
+                                 for(var ii = 0;ii <specialfieldNames.length;ii++ ){
+                                 var fName = specialfieldNames[ii].fn;
+                                 var fType = specialfieldNames[ii].ft;
+                                 var fValue = record[''+fName];
                                  
-                                                        //7594 defect - krishna
-                                                        //changes:Only to make local
-                                                        if(fValue != null && fValue.length > 2){
+                                 //7594 defect - krishna
+                                 //changes:Only to make local
+                                 if(fValue != null && fValue.length > 2){
                                  
                                  //defect 11934
-                                                                if(fType ==  'datetime' ){
-                                                                    fValue = $UTILITY.dateAndTimeForGMTString(fValue);
+                                 if(fType ==  'datetime' ){
+                                 fValue = $UTILITY.dateAndTimeForGMTString(fValue);
                                  
-                                                                }
-                                                                else if (fType == 'date'){
-                                                                    fValue = $UTILITY.dateForGMTString(fValue);
-                                                                }
-                                                        }
+                                 }
+                                 else if (fType == 'date'){
+                                 fValue = $UTILITY.dateForGMTString(fValue);
+                                 }
+                                 }
                                  
-                                                        if(fValue != null && fValue.length > 2){
-                                                                fieldsTobeAdded.push({Key:fName,Value:fValue,Info:fType});
-                                                        }
-                                                }
+                                 if(fValue != null && fValue.length > 2){
+                                 fieldsTobeAdded.push({Key:fName,Value:fValue,Info:fType});
+                                 }
+                                 }
                                  
-                                                /*secondLevel Special fields 7594*/
-                                            for(var newCounter = 0; newCounter < secondLevelSpecialFields.length;newCounter++){
-                                                    var secondLevelObject = secondLevelSpecialFields[newCounter];
-                                                    var newRLN = secondLevelObject.rln;
-                                                    var newRfn = secondLevelObject.rfn;
-                                                    var newFrln = secondLevelObject.frln;
-                                                    var newRtyp = secondLevelObject.rtyp;
+                                 /*secondLevel Special fields 7594*/
+                                 for(var newCounter = 0; newCounter < secondLevelSpecialFields.length;newCounter++){
+                                 var secondLevelObject = secondLevelSpecialFields[newCounter];
+                                 var newRLN = secondLevelObject.rln;
+                                 var newRfn = secondLevelObject.rfn;
+                                 var newFrln = secondLevelObject.frln;
+                                 var newRtyp = secondLevelObject.rtyp;
                                  
-                                                    var secondDictionary = record[''+newRLN];
-                                                    var newRFnValue = secondDictionary[''+newRfn];
-                                                    if(newRFnValue == null || newRFnValue.length < 2){
-                                                            continue;
-                                                    }
-                                                    //7594 defect - krishna
-                                                    //changes:Only to make local
-                                                    if(newRFnValue != null && newRFnValue.length > 2){
+                                 var secondDictionary = record[''+newRLN];
+                                 var newRFnValue = secondDictionary[''+newRfn];
+                                 if(newRFnValue == null || newRFnValue.length < 2){
+                                 continue;
+                                 }
+                                 //7594 defect - krishna
+                                 //changes:Only to make local
+                                 if(newRFnValue != null && newRFnValue.length > 2){
                                  //defect 11934
-                                                    		if(newRtyp ==  'datetime' ){
-                                                        		newRFnValue = $UTILITY.dateAndTimeForGMTString(newRFnValue);
-                                                    		}
-                                                    		else if (newRtyp == 'date'){
-                                                       			newRFnValue = $UTILITY.dateForGMTString(newRFnValue);
-                                                    		}
-
-                                                    }
+                                 if(newRtyp ==  'datetime' ){
+                                 newRFnValue = $UTILITY.dateAndTimeForGMTString(newRFnValue);
+                                 }
+                                 else if (newRtyp == 'date'){
+                                 newRFnValue = $UTILITY.dateForGMTString(newRFnValue);
+                                 }
                                  
-                                                    if(newRFnValue != null && newRFnValue.length > 2){
-                                                            fieldsTobeAdded.push({Key:newFrln,Value:newRFnValue,Info:newRtyp});
-                                                    }
-                                            }
-                                           /* Shravya-7594*/
+                                 }
                                  
-                                                var recSpeKey = record['Id'];
-                                                if(fieldsTobeAdded.length > 0 && recSpeKey != null  ){
-                                                            aSpecialField.Value = fieldsTobeAdded;
-                                                            aSpecialField.Key = record['Id'];
-                                                            specialFieldsArray.push(aSpecialField);
-                                                }
-                                        }
-                                        templateDict.Records = recordsArray;
-                                        templateDict.Key = aliasName;
-                                        templateDict.SpecialFields = specialFieldsArray;
-                                        finalOutputArray.push(templateDict);
-                                        index++;
-                                        if(index < docTemplateDetailArray.length) {
-                                                 continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordId,index,callBackFunction);
-                                                  
-                                        }
-                                        else {
-                                             
-                                              callBackFunction(finalOutputArray);
-                                        }
+                                 if(newRFnValue != null && newRFnValue.length > 2){
+                                 fieldsTobeAdded.push({Key:newFrln,Value:newRFnValue,Info:newRtyp});
+                                 }
+                                 }
+                                 /* Shravya-7594*/
+                                 
+                                 var recSpeKey = record['Id'];
+                                 if(fieldsTobeAdded.length > 0 && recSpeKey != null  ){
+                                 aSpecialField.Value = fieldsTobeAdded;
+                                 aSpecialField.Key = record['Id'];
+                                 specialFieldsArray.push(aSpecialField);
+                                 }
+                                 }
+                                 templateDict.Records = recordsArray;
+                                 templateDict.Key = aliasName;
+                                 templateDict.SpecialFields = specialFieldsArray;
+                                 finalOutputArray.push(templateDict);
+                                 index++;
+                                 if(index < docTemplateDetailArray.length) {
+                                 continueGetDocumentData(finalOutputArray,docTemplateDetailArray,recordId,index,callBackFunction);
                                  
                                  }
                                  else {
-                                        callBackFunction(finalOutputArray);
+                                 
+                                 callBackFunction(finalOutputArray);
                                  }
-        });
-
+                                 
+                                 }
+                                 else {
+                                 callBackFunction(finalOutputArray);
+                                 }
+                                 });
+        
     }
     else {
-         callBackFunction(finalOutputArray);
+        callBackFunction(finalOutputArray);
     }
     return;
 }
@@ -853,21 +867,21 @@ var currentRequestOfSubmitQuery = null;
 
 function SubmitQuery(queryParam, callbackFunction, context){
     
-        if(queryParam.Query == null){
-            return;
-       }
+    if(queryParam.Query == null){
+        return;
+    }
     debugger;
-       var qParams = {query:queryParam.Query,callback:callbackFunction};
-       callbackHolderForSubmitQuery.push(qParams);
+    var qParams = {query:queryParam.Query,callback:callbackFunction};
+    callbackHolderForSubmitQuery.push(qParams);
     
-       
-       if(currentRequestOfSubmitQuery == null) {
-       
-                currentRequestOfSubmitQuery = callbackHolderForSubmitQuery.shift();
-                continueSubmitQuery(qParams.query);
-       }
+    
+    if(currentRequestOfSubmitQuery == null) {
+        
+        currentRequestOfSubmitQuery = callbackHolderForSubmitQuery.shift();
+        continueSubmitQuery(qParams.query);
+    }
 }
-       
+
 function continueSubmitQuery(query){
     
     if(query != null && query.length > 0){
@@ -890,7 +904,7 @@ function continueSubmitQuery(query){
     
 }
 
-/* capture html content with data */ 
+/* capture html content with data */
 function captureData() {
     
     var capturedDat = document.documentElement.innerHTML;
@@ -914,15 +928,15 @@ function OPDGetUserInfo(request, callbackFunction, context)
 {
     
     var objectName = "User";
- 
-        var userFullName = "";
-
+    
+    var userFullName = "";
+    
     var dateFrmt = "";
     var timeFrmt = "";
-
+    
     var amTxt = "";
     var pmTxt = "";
-
+    
     $COMM.requestDataForType("relateduserinput","",function(dateString) {
                              
                              dateFrmt = dateString.dateformat;
@@ -932,55 +946,55 @@ function OPDGetUserInfo(request, callbackFunction, context)
                              amTxt = dateString.amtext;
                              pmTxt = dateString.pmtext;
                              userFullName = dateString.username;
-
-    var fieldNames = [{fieldName:'Id',fieldType:'TEXT'},{fieldName:'Name',fieldType:'TEXT'},{fieldName:'LocaleSidKey',fieldType:'TEXT'},{fieldName:'LanguageLocaleKey',fieldType:'TEXT'},{fieldName:'Street',fieldType:'TEXT'},{fieldName:'City',fieldType:'TEXT'},{fieldName:'State',fieldType:'TEXT'},{fieldName:'Country',fieldType:'TEXT'},{fieldName:'PostalCode',fieldType:'TEXT'}];
-    
-    var criteria = [{fieldName:'Name',fieldValue:userFullName,operator:'='}];
-
-    $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(request){
-                      if(request.response.statusCode != '1')
-                      {
-                      //alert("Data base error ");
-                      }
-                      else
-                      {
-                      
-                      var objectData = request.response.objectData;
-                      if(objectData.length > 0)
-                      {
-                      
-                      var userObj = objectData[0];
-                      
-                      var usrTimeZone = userObj.LocaleSidKey;
-                      var locale = userObj.LanguageLocaleKey;
-                      var userID = userObj.Id;
-                      var userName = userObj.Name;
-                      
-                      var cityString = userObj.City;
-                      var streetString = userObj.Street;
-                      var stateString = userObj.State;
-                      var countryString = userObj.Country;
-                      var postalCode = userObj.PostalCode;
-                      
-                      var address = addressForData(streetString,cityString,stateString,postalCode,countryString);
-           
-                      var d = new Date();
-                      var today = $UTILITY.dateWithTimeStringForDate(d);
-                      var yesterday = $UTILITY.previousDateForDate(d);
-                      var tomorrow = $UTILITY.nextDateForDate(d);
-                      var tod = $UTILITY.dateStringFordate(d);
-
-                      var jsonObj = {Yesterday:yesterday,UserTimeZone:usrTimeZone,UserName:userName,UserId:userID,Tomorrow:tomorrow,Today:tod,Now:today,DateFormat:dateFrmt,Address:address,TimeFormat:timeFrmt,amText:amTxt,pmText:pmTxt,Locale:locale};
-//                      alert(JSON.stringify(jsonObj));
-                      
-                      callbackFunction.call(context, jsonObj, 'GetUserInfo');
-                      OPDGetTemplate(templateData.Input, templateData.Callback, templateData.Context);
-                      
-                                            }
-                      }
-                      });
-
-        });
+                             
+                             var fieldNames = [{fieldName:'Id',fieldType:'TEXT'},{fieldName:'Name',fieldType:'TEXT'},{fieldName:'LocaleSidKey',fieldType:'TEXT'},{fieldName:'LanguageLocaleKey',fieldType:'TEXT'},{fieldName:'Street',fieldType:'TEXT'},{fieldName:'City',fieldType:'TEXT'},{fieldName:'State',fieldType:'TEXT'},{fieldName:'Country',fieldType:'TEXT'},{fieldName:'PostalCode',fieldType:'TEXT'}];
+                             
+                             var criteria = [{fieldName:'Name',fieldValue:userFullName,operator:'='}];
+                             
+                             $DAL.executeQuery(objectName,fieldNames,criteria,null,null,function(request){
+                                               if(request.response.statusCode != '1')
+                                               {
+                                               //alert("Data base error ");
+                                               }
+                                               else
+                                               {
+                                               
+                                               var objectData = request.response.objectData;
+                                               if(objectData.length > 0)
+                                               {
+                                               
+                                               var userObj = objectData[0];
+                                               
+                                               var usrTimeZone = userObj.LocaleSidKey;
+                                               var locale = userObj.LanguageLocaleKey;
+                                               var userID = userObj.Id;
+                                               var userName = userObj.Name;
+                                               
+                                               var cityString = userObj.City;
+                                               var streetString = userObj.Street;
+                                               var stateString = userObj.State;
+                                               var countryString = userObj.Country;
+                                               var postalCode = userObj.PostalCode;
+                                               
+                                               var address = addressForData(streetString,cityString,stateString,postalCode,countryString);
+                                               
+                                               var d = new Date();
+                                               var today = $UTILITY.dateWithTimeStringForDate(d);
+                                               var yesterday = $UTILITY.previousDateForDate(d);
+                                               var tomorrow = $UTILITY.nextDateForDate(d);
+                                               var tod = $UTILITY.dateStringFordate(d);
+                                               
+                                               var jsonObj = {Yesterday:yesterday,UserTimeZone:usrTimeZone,UserName:userName,UserId:userID,Tomorrow:tomorrow,Today:tod,Now:today,DateFormat:dateFrmt,Address:address,TimeFormat:timeFrmt,amText:amTxt,pmText:pmTxt,Locale:locale};
+                                               //                      alert(JSON.stringify(jsonObj));
+                                               
+                                               callbackFunction.call(context, jsonObj, 'GetUserInfo');
+                                               OPDGetTemplate(templateData.Input, templateData.Callback, templateData.Context);
+                                               
+                                               }
+                                               }
+                                               });
+                             
+                             });
 }
 
 /* GetUserInfo related code, which takes all the required fields and creates an address string */
@@ -1011,11 +1025,11 @@ function addressForData(streetString,cityString,stateString,postalCode,countrySt
 var objectNamesArray = [];
 function DescribeObject(objectNameJson, callbackFunction, context) {
     
-                var objectName = objectNameJson.objectName;
+    var objectName = objectNameJson.objectName;
     objectNamesArray[objectName] = callbackFunction;
-                $DAL.describeObject(objectName,function(data){
-                     objectNamesArray[data.response.objectData[0].name].call(context,data.response.objectData[0],'DescribeObject');
-                });
+    $DAL.describeObject(objectName,function(data){
+                        objectNamesArray[data.response.objectData[0].name].call(context,data.response.objectData[0],'DescribeObject');
+                        });
 }
 
 function CaptureSignature(request, callbackFunction, context)
@@ -1053,39 +1067,39 @@ function Finalize(request, callbackFunction, context)
     document.documentElement.innerHTML = "";
     document.documentElement.innerHTML = request.HTMLContent;
     $COMM.requestDataForType("finalize",JSON.stringify(customRequest),null);
- 
+    
 }
 
 //GetDocumentData({"ProcessId":"WO_ServiceReport_001","RecordId":"a1K70000001975VEAQ"});
 
 /*
-var docTemplateDetailArray = [];
-var doc1 = {};
-doc1.object_name = "SVMXC__Service_Order__c";
-doc1.alias = "Work_order";
-doc1.criteria = [{fieldName:"Id",operator:"=",fieldValue:"a1K70000001975VEAQ"}];
-doc1.fields = "";
-docTemplateDetailArray.push(doc1);
-
-var doc2 = {};
-doc2.object_name = "SVMXC__Service_Order__c";
-doc2.alias = "Work_order_line";
-doc2.criteria = [{fieldName:"Id",operator:"=",fieldValue:"a1K700000018iMcEAI"}];
-doc2.fields = "";
-doc2.advancedExpression = "(1 and 1)";
-docTemplateDetailArray.push(doc2);
-
-
-var ss = [];
-
-continueGetDocumentData(ss,docTemplateDetailArray,"a1K70000001975VEAQ",0,function(result){
-                        alert("Success");
-                         $COMM.printLog(JSON.stringify(result));
-                        
-});
-
-//DescribeObject({objectName:"Account"});
-//GetUserInfo();
+ var docTemplateDetailArray = [];
+ var doc1 = {};
+ doc1.object_name = "SVMXC__Service_Order__c";
+ doc1.alias = "Work_order";
+ doc1.criteria = [{fieldName:"Id",operator:"=",fieldValue:"a1K70000001975VEAQ"}];
+ doc1.fields = "";
+ docTemplateDetailArray.push(doc1);
+ 
+ var doc2 = {};
+ doc2.object_name = "SVMXC__Service_Order__c";
+ doc2.alias = "Work_order_line";
+ doc2.criteria = [{fieldName:"Id",operator:"=",fieldValue:"a1K700000018iMcEAI"}];
+ doc2.fields = "";
+ doc2.advancedExpression = "(1 and 1)";
+ docTemplateDetailArray.push(doc2);
+ 
+ 
+ var ss = [];
+ 
+ continueGetDocumentData(ss,docTemplateDetailArray,"a1K70000001975VEAQ",0,function(result){
+ alert("Success");
+ $COMM.printLog(JSON.stringify(result));
+ 
+ });
+ 
+ //DescribeObject({objectName:"Account"});
+ //GetUserInfo();
  
  var isCaptureUnderProcess = false;
  var captureSignatureArray = [];
@@ -1106,55 +1120,55 @@ continueGetDocumentData(ss,docTemplateDetailArray,"a1K70000001975VEAQ",0,functio
  {
  isCaptureUnderProcess = true;
  
-// request.ProcessId : String
-// request.RecordId : String
-// request.UniqueName : String
-// request.CaptureSignature : true/false
+ // request.ProcessId : String
+ // request.RecordId : String
+ // request.UniqueName : String
+ // request.CaptureSignature : true/false
  
-
-var id = request.ProcessId + "_" + request.RecordId + "_" + request.UniqueName;
-if((request.CaptureSignature != undefined) && (request.CaptureSignature == true))
-{
-    $COMM.requestDataForType("capturesignature",id,function(signaturepath) {
-                             
-//                              response.uniqueName
-//                              response.path
-                             
-                             var response = {uniqueName:request.UniqueName,path:signaturepath.Path};
-                             callbackFunction.call(context, response, 'CaptureSignature');
-                             
-                             isCaptureUnderProcess = false;
-                             
-                             if(captureSignatureArray.length > 0)
-                             {
-                             var signObj = captureSignatureArray[0];
-                             OPDCaptureSignature(signObj.request, signObj.callback, signObj.context);
-                             }
-                             
-                             });
-}
-else
-{
-    $COMM.requestDataForType("issignatureavailable",id,function(signaturepath) {
-                             
-//                              response.uniqueName
-//                              response.path
-                             
-                             var response = {uniqueName:request.UniqueName,path:signaturepath.Path};
-                             callbackFunction.call(context, response, 'CaptureSignature');
-                             
-                             isCaptureUnderProcess = false;
-                             if(captureSignatureArray.length > 0)
-                             {
-                             var signObj = captureSignatureArray[0];
-                             OPDCaptureSignature(signObj.request,signObj.callback,signObj.context);
-                             captureSignatureArray.shift();
-                             }
-                             
-                             
-                             });
-}
-}
-
-
-*/
+ 
+ var id = request.ProcessId + "_" + request.RecordId + "_" + request.UniqueName;
+ if((request.CaptureSignature != undefined) && (request.CaptureSignature == true))
+ {
+ $COMM.requestDataForType("capturesignature",id,function(signaturepath) {
+ 
+ //                              response.uniqueName
+ //                              response.path
+ 
+ var response = {uniqueName:request.UniqueName,path:signaturepath.Path};
+ callbackFunction.call(context, response, 'CaptureSignature');
+ 
+ isCaptureUnderProcess = false;
+ 
+ if(captureSignatureArray.length > 0)
+ {
+ var signObj = captureSignatureArray[0];
+ OPDCaptureSignature(signObj.request, signObj.callback, signObj.context);
+ }
+ 
+ });
+ }
+ else
+ {
+ $COMM.requestDataForType("issignatureavailable",id,function(signaturepath) {
+ 
+ //                              response.uniqueName
+ //                              response.path
+ 
+ var response = {uniqueName:request.UniqueName,path:signaturepath.Path};
+ callbackFunction.call(context, response, 'CaptureSignature');
+ 
+ isCaptureUnderProcess = false;
+ if(captureSignatureArray.length > 0)
+ {
+ var signObj = captureSignatureArray[0];
+ OPDCaptureSignature(signObj.request,signObj.callback,signObj.context);
+ captureSignatureArray.shift();
+ }
+ 
+ 
+ });
+ }
+ }
+ 
+ 
+ */

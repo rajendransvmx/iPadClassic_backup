@@ -23,6 +23,8 @@
 @property(nonatomic,strong) NSString   *orderBy;
 @property(nonatomic,strong) DAResponse *responseObject;
 @property(nonatomic,strong) NSString    *query;
+@property(nonatomic,strong) NSString    *innerJoin; // 012895
+
 
 - (id)initWithDictionary:(NSDictionary *)dataDictionary;
 - (NSDictionary *)dictionaryRepresentation;
