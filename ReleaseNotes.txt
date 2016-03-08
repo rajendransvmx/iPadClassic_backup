@@ -3,7 +3,7 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.026
+Version = 16.29.025
  
 ===========================================
 
@@ -15,9 +15,7 @@ Fixed Defects
 -------------
 Feature
 -------------
-1. Selected Account change
-2. Scroll issue in Account drop down
-3. Defects
+ProductIQ UI change rollBack.
 
 ——————
 NOTE:
