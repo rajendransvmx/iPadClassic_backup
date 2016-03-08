@@ -3,7 +3,7 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.025
+Version = 16.29.026
  
 ===========================================
 
@@ -15,8 +15,9 @@ Fixed Defects
 -------------
 Feature
 -------------
-IPAD-3901
-iPad Sync Failure Reporting
+1. Selected Account change
+2. Scroll issue in Account drop down
+3. Defects
 
 ——————
 NOTE:
@@ -24,6 +25,3 @@ NOTE:
 Name Space: SVMXDEV
 
 Known Issues:
-Large data is not handled, hence it will send small hardcoded string to AWS.
-While Opening Sync Error Report in AWS , its throwing error, on which JS team is working.’
-Next build will be having above fixed issues.
