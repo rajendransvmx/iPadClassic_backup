@@ -47,6 +47,8 @@
 #import "ProductIQManager.h"
 #import "TransactionObjectService.h"
 #import "SyncErrorConflictService.h"
+#import "MobileDataUsageExecuter.h"
+#import "SMAppDelegate.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -102,6 +104,8 @@ static SyncManager *_instance;
 
 @property(nonatomic, assign) BOOL isDataSyncRunning;
 @property (nonatomic) BOOL isDataSyncInLoop;
+
+@property(nonatomic,strong)MobileDataUsageExecuter *mdExecuter;
 
 
 - (void)performInitialSync;
@@ -204,7 +208,7 @@ static SyncManager *_instance;
         [self updateDataSyncTimeInterval:600];
         dict = [self getSyncMetaData];
     }
-
+    
     return [[dict objectForKey:dataSyncTimeIntervalKey] doubleValue];
 }
 
@@ -300,32 +304,32 @@ static SyncManager *_instance;
             
         case SyncTypeData:{
             
-                if (![self isDataSyncInProgress])
+            if (![self isDataSyncInProgress])
+            {
+                if ([self isDataPurgeInProgress])
                 {
-                    if ([self isDataPurgeInProgress])
+                    self.dataSyncStatus = SyncStatusInQueue;
+                    [self enqueueSyncQueue:SyncTypeData];
+                }
+                
+                else
+                {
+                    [self performDataSync];
+                    
+                    if (self.isGetPriceCallEnabled)
                     {
-                        self.dataSyncStatus = SyncStatusInQueue;
-                        [self enqueueSyncQueue:SyncTypeData];
+                        self.isGetPriceCallEnabled = NO;
+                        [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
                     }
                     
-                    else
-                    {
-                        [self performDataSync];
-                        
-                        if (self.isGetPriceCallEnabled)
-                        {
-                            self.isGetPriceCallEnabled = NO;
-                            [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
-                        }
-                        
-                        if([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
-                            [self performSelectorInBackground:@selector(initiateProdIQDataSync) withObject:nil];
-                        }
-                        
+                    if([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
+                        [self performSelectorInBackground:@selector(initiateProdIQDataSync) withObject:nil];
                     }
                     
                 }
+                
             }
+        }
             break;
             
         case SyncTypeEvent:
@@ -342,9 +346,9 @@ static SyncManager *_instance;
             {
                 [self performValidateProfile];
             }
-
             
-           
+            
+            
             break;
             
         default:
@@ -354,7 +358,7 @@ static SyncManager *_instance;
 
 - (void)initiateGetPriceInBackGround
 {
-   [[GetPriceManager sharedInstance] intiateGetPriceSync];
+    [[GetPriceManager sharedInstance] intiateGetPriceSync];
 }
 
 - (void)cancelGetPriceInBackGround
@@ -433,7 +437,7 @@ static SyncManager *_instance;
 - (SyncStatus)getSyncStatusFor:(SyncType)syncType
 {
     SyncStatus returnVal = SyncStatusInQueue;
- 
+    
     switch (syncType) {
             
         case SyncTypeInitial:
@@ -483,7 +487,7 @@ static SyncManager *_instance;
 {
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
     [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
-
+    
     [self prepareDatabaseForInitialSync];
     [SMDataPurgeHelper startedConfigSyncTime];
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeResetApp requestParam:nil callerDelegate:self];
@@ -494,7 +498,7 @@ static SyncManager *_instance;
 {
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
     [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
-
+    
     self.configSyncStatus = SyncStatusInProgress;
     [SMDataPurgeHelper startedConfigSyncTime];
     [self enableAllParallelSync:NO];
@@ -509,7 +513,9 @@ static SyncManager *_instance;
 - (void)performDataSync
 {
     [self initiateCustomDataSync];
-   // [self initiateDataSync];
+    SMLogSetLogLevel(1);
+    
+    // [self initiateDataSync];
 }
 
 - (void)performEventSync
@@ -599,12 +605,16 @@ static SyncManager *_instance;
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"Initial Sync Finished");
+        
+        
+        
         [self currentInitialSyncFinished];
         [self updateUserTableIfRecordDoesnotExist];
     }
     else  if ( (responseStatus.syncStatus == SyncStatusFailed) ||  (responseStatus.syncStatus == SyncStatusNetworkError))
     {
         SXLogDebug(@"Initial Sync failed");
+        
         [self currentInitialSyncFailedWithError:responseStatus.syncError];
     }
 }
@@ -619,6 +629,8 @@ static SyncManager *_instance;
         SXLogDebug(@"Data Sync Finished");
         [self PerformSYncBasedOnFlags];
         
+        [self executeSyncErrorReporting];
+        
         //[self currentDataSyncfinished];
     }
     else  if (   (responseStatus.syncStatus == SyncStatusFailed)
@@ -626,6 +638,8 @@ static SyncManager *_instance;
               || (responseStatus.syncStatus == SyncStatusNetworkError))
     {
         SXLogDebug(@"Data Sync failed");
+        
+        [self executeSyncErrorReporting];
         
         if (responseStatus.syncProgressState == SyncStatusFailedWithRevokeTokenFlag)
         {
@@ -645,15 +659,16 @@ static SyncManager *_instance;
     self.configSyncStatus = responseStatus.syncStatus;
     
     if (responseStatus.syncStatus == SyncStatusSuccess)
-    {        
+    {
         [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:YES];
-
+        
         SXLogDebug(@"Config Sync Finished");
         [self currentConfigSyncFinished];
     }
     else  if (responseStatus.syncStatus == SyncStatusFailed ||  responseStatus.syncStatus == SyncStatusNetworkError)
     {
         SXLogDebug(@"Config Sync failed");
+        
         [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:NO];
         [self currentConfigSyncFailedWithError:responseStatus.syncError];
     }
@@ -668,6 +683,7 @@ static SyncManager *_instance;
     if ([status isKindOfClass:[WebserviceResponseStatus class]])
     {
         NSString *notification = nil;
+        
         
         WebserviceResponseStatus *wsResponseStatus = (WebserviceResponseStatus*)status;
         BOOL shouldNotify = YES;
@@ -698,14 +714,14 @@ static SyncManager *_instance;
             {
                 notification = kProfileValidationStatusNotification;
                 if (   (wsResponseStatus.syncStatus == SyncStatusFailed)
-                          || (wsResponseStatus.syncStatus == SyncStatusNetworkError) )
+                    || (wsResponseStatus.syncStatus == SyncStatusNetworkError) )
                 {
                     [self profileValidationFailedWithError:wsResponseStatus.syncError];
                 }
             }
                 break;
-
-    
+                
+                
                 
             case CategoryTypeConfigSync:
             case CategoryTypeOneCallConfigSync:
@@ -767,8 +783,8 @@ static SyncManager *_instance;
 
 - (void)prepareDatabaseForInitialSync
 {
-     DatabaseManager *manager;
-     manager = [DatabaseManager sharedInstance];
+    DatabaseManager *manager;
+    manager = [DatabaseManager sharedInstance];
     [[DatabaseConfigurationManager sharedInstance] performDatabaseConfigurationForSwitchUser];
     [[DatabaseConfigurationManager sharedInstance] preInitialSyncDBPreparation];
     [[SMDataPurgeManager sharedInstance]invalidateAllDataPurgeProcess];
@@ -823,46 +839,46 @@ static SyncManager *_instance;
     dispatch_async(dispatch_get_main_queue(), ^{
         [AppManager updateTabBarBadges];
     });
-        [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
-        [self updateLastSyncTime];
+    [[SuccessiveSyncManager sharedSuccessiveSyncManager] doSuccessiveSync];
+    [self updateLastSyncTime];
+    
+    // if conflicts not resolved, then stop data sync..
+    BOOL conflictsResolved = [self continueDataSyncIfConflictsResolved];
+    
+    BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
+    
+    SXLogDebug(@"SS: didRestartSuccessiveSync: %d", didRestart);
+    
+    if (!didRestart) {
         
-        // if conflicts not resolved, then stop data sync..
-        BOOL conflictsResolved = [self continueDataSyncIfConflictsResolved];
-        
-        BOOL didRestart = (conflictsResolved)?[self restartDataSyncIfNecessary]:NO;
-        
-        SXLogDebug(@"SS: didRestartSuccessiveSync: %d", didRestart);
-        
-        if (!didRestart) {
-            
-            [self updateSyncStatus];
+        [self updateSyncStatus];
         self.isDataSyncInLoop = NO;
-            self.isDataSyncRunning = NO;
-            self.dataSyncStatus = SyncStatusSuccess;
+        self.isDataSyncRunning = NO;
+        self.dataSyncStatus = SyncStatusSuccess;
+        
+        [[SMDataPurgeManager sharedInstance] restartDataPurge];
+        [PlistManager removeLastDataSyncStartGMTTime];
+        [PlistManager removeLastLocalIdFromDefaults];
+        
+        //[self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
+        /* Send data sync Success notification */
+        [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
+        
+        if (conflictsResolved) {
+            /* Clear user deafults utility */
             
-            [[SMDataPurgeManager sharedInstance] restartDataPurge];
-            [PlistManager removeLastDataSyncStartGMTTime];
-            [PlistManager removeLastLocalIdFromDefaults];
+            [PlistManager clearAllWhatIdObjectInformation];
             
-            //[self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
-            /* Send data sync Success notification */
-            [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
-            
-            if (conflictsResolved) {
-                /* Clear user deafults utility */
+            if (![[OpDocHelper sharedManager] isTheOpDocSyncInProgress]) {
                 
-                [PlistManager clearAllWhatIdObjectInformation];
-                
-                if (![[OpDocHelper sharedManager] isTheOpDocSyncInProgress]) {
-                    
-                    [[OpDocHelper sharedManager] initiateFileSync];
-                    [[OpDocHelper sharedManager] setCustomDelegate:self];
-                }
+                [[OpDocHelper sharedManager] initiateFileSync];
+                [[OpDocHelper sharedManager] setCustomDelegate:self];
             }
-            
-            [self manageSyncQueueProcess];
         }
+        
+        [self manageSyncQueueProcess];
     }
+}
 
 
 - (void)OpdocStatus:(BOOL)status forCategory:(CategoryType)category {
@@ -880,7 +896,7 @@ static SyncManager *_instance;
         SXLogDebug(@"OPDoc Success for category %lu",(long)category);
     }
     [self postSyncTimeUpdateNotificationAfterSyncCompletion];
-
+    
 }
 
 - (void)currentDataSyncFailedWithError:(NSError *)error {
@@ -892,8 +908,8 @@ static SyncManager *_instance;
         });
         
         [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
-         self.isDataSyncRunning = NO;
-         [PlistManager removeLastDataSyncStartGMTTime];
+        self.isDataSyncRunning = NO;
+        [PlistManager removeLastDataSyncStartGMTTime];
         [[SMDataPurgeManager sharedInstance] restartDataPurge];
         /* Send data sync Failure notification */
         [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
@@ -906,7 +922,7 @@ static SyncManager *_instance;
                                                   cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                                andOtherButtonTitles:nil];
         }
-         [self manageSyncQueueProcess];
+        [self manageSyncQueueProcess];
     }
 }
 
@@ -980,6 +996,8 @@ static SyncManager *_instance;
 
 - (void)currentConfigSyncFinished
 {
+    [self executeSyncErrorReporting];
+    
     [PlistManager storeLastScheduledConfigSyncGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
     [SMDataPurgeHelper saveConfigSyncTimeSinceSyncCompleted];
     [[SMDataPurgeManager sharedInstance] initiateAllDataPurgeProcess];
@@ -997,9 +1015,11 @@ static SyncManager *_instance;
 
 - (void)currentConfigSyncFailedWithError:(NSError *)error
 {
+    [self executeSyncErrorReporting];
+    
     [self updatePlistWithLastConfigSyncTimeAndStatus:kFailed];
     [self manageSyncQueueProcess];
-   
+    
     if ( (self.configSyncStatus == SyncStatusInProgress) || (self.configSyncStatus == SyncStatusInQueue))
     {
         self.configSyncStatus = SyncStatusFailedWithError;
@@ -1015,12 +1035,12 @@ static SyncManager *_instance;
 {
     NSInteger frequency = 0;
     id mobileSettingService = [FactoryDAO serviceByServiceType:ServiceTypeMobileDeviceSettings];
-   
+    
     if ([mobileSettingService conformsToProtocol:@protocol(MobileDeviceSettingDAO)]) {
         
-       frequency = [mobileSettingService configurationSyncFrequency];
+        frequency = [mobileSettingService configurationSyncFrequency];
     }
-
+    
     if (frequency > 0)
     {
         // Converting into minutes
@@ -1058,7 +1078,7 @@ static SyncManager *_instance;
     }
     
     NSDate *scheduledTime = nil;
-
+    
     if (dateString == nil)
     {
         return nil;
@@ -1101,7 +1121,7 @@ static SyncManager *_instance;
     NSInteger frequency = [self configSyncFrequencyInSeconds];
     
     NSString * dateString  = [PlistManager getLastScheduledConfigSyncGMTTime];
-   
+    
     NSDate *nextSyncTime = [self nextScheduledSyncTimeByLastSyncTime:dateString
                                                         andFrequency:frequency];
     SXLogDebug(@"NextSyncTime   : %@", nextSyncTime );
@@ -1122,7 +1142,7 @@ static SyncManager *_instance;
         
         [[SMLocalNotificationManager sharedInstance] scheduleLocalNotificationOfType:SMLocalNotificationTypeConfigSyncDue
                                                                                   on:nextScheduledTime];
-
+        
     }
 }
 #pragma mark - Config Sync Local Notification methods.
@@ -1216,7 +1236,7 @@ static SyncManager *_instance;
         {
             [self.dataSyncTimer invalidate];
         }
-
+        
         NSTimer *syncTimer = [[NSTimer alloc] initWithFireDate:date
                                                       interval:frequency
                                                         target:self
@@ -1274,6 +1294,7 @@ static SyncManager *_instance;
 
 - (void)currentInitialSyncFinished
 {
+    [self executeSyncErrorReporting];
     [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncCompleted];
     
     [self loadDataIntoInstalledBaseObject];
@@ -1303,7 +1324,9 @@ static SyncManager *_instance;
 
 - (void)currentInitialSyncFailedWithError:(NSError *)error
 {
-    // Yoo initial sync failed!! Lets remove incompleted data 
+    [self executeSyncErrorReporting];
+    
+    // Yoo initial sync failed!! Lets remove incompleted data
     [[DatabaseConfigurationManager sharedInstance] performDatabaseConfigurationForSwitchUser];
     
     [[AppManager sharedInstance] setApplicationFailedStatus:ApplicationStatusInitialSyncFailed];
@@ -1319,7 +1342,7 @@ static SyncManager *_instance;
     {
         self.initialSyncStatus = SyncStatusFailedWithError;
     }
-
+    
     [self manageSyncQueueProcess];
 }
 
@@ -1329,7 +1352,7 @@ static SyncManager *_instance;
     [[PerformanceAnalyser sharedInstance] clearAllData];
     
     if ([[AppManager sharedInstance] applicationStatus] == ApplicationStatusTokenRevoked) {
-       
+        
         [[AlertMessageHandler sharedInstance] showCustomMessage:message
                                                    withDelegate:self
                                                             tag:alertViewTagForInitialSyncRevokeToken
@@ -1346,7 +1369,7 @@ static SyncManager *_instance;
                                                       title:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage]
                                           cancelButtonTitle:retry
                                        andOtherButtonTitles:@[[[TagManager sharedInstance]tagByName:kTagSignOut]]];
-
+    
 }
 
 
@@ -1355,8 +1378,8 @@ static SyncManager *_instance;
 {
     if (error != nil) {
         
-       
-       // [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
+        
+        // [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
         [self updatePlistWithLastConfigSyncTimeAndStatus:kFailed];
         [[AlertMessageHandler sharedInstance] showCustomMessage:[error errorEndUserMessage]
                                                    withDelegate:nil
@@ -1365,7 +1388,7 @@ static SyncManager *_instance;
                                               cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
                                            andOtherButtonTitles:nil];
         
-         [self enableAllParallelSync:YES];
+        [self enableAllParallelSync:YES];
     }
 }
 
@@ -1396,28 +1419,28 @@ static SyncManager *_instance;
                 [self performSelectorOnMainThread:@selector(performLoggout) withObject:nil waitUntilDone:NO];
                 return;
             }
-             /*Send progress view  */
-             [self performInitialSync];
-
+            /*Send progress view  */
+            [self performInitialSync];
+            
         }
-        break;
+            break;
             
         case 1:
         {
             [self performSelectorOnMainThread:@selector(performLoggout) withObject:nil waitUntilDone:NO];
-
+            
         }
         default:
             break;
     }
 }
 
-#pragma mark End 
+#pragma mark End
 
 - (void)performLoggout
 {
     [[SVMXSystemUtility sharedInstance] startNetworkActivity];
-
+    
     @synchronized([self class])
     {
         BOOL isRevoked = [OAuthService revokeAccessToken];
@@ -1455,10 +1478,10 @@ static SyncManager *_instance;
         {
             [self handleInitialSyncAlertViewCallBack:alertView clickedButtonAtIndex:buttonIndex];
         }
-        break;
+            break;
         case alertViewTagForDataSync:
         {
-    
+            
         }
             break;
         default:
@@ -1572,18 +1595,18 @@ static SyncManager *_instance;
     NSString *name = [[CustomerOrgInfo sharedInstance] userDisplayName];
     NSString *userLanguage = [[CustomerOrgInfo sharedInstance] userLanguage];
     
-     NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *recordDictionary = [[NSMutableDictionary alloc] init];
     [recordDictionary setObject:userId forKey:kId];
     if (userName != nil) {
         [recordDictionary setObject:userName forKey:@"Username"];
     }
     if (name != nil) {
-          [recordDictionary setObject:name forKey:@"Name"];
+        [recordDictionary setObject:name forKey:@"Name"];
     }
-   if (userLanguage != nil) {
+    if (userLanguage != nil) {
         [recordDictionary setObject:userLanguage forKey:@"LanguageLocaleKey"];
     }
- 
+    
     TransactionObjectModel *model = [[TransactionObjectModel alloc] init];
     [model mergeFieldValueDictionaryForFields:recordDictionary];
     
@@ -1638,7 +1661,7 @@ static SyncManager *_instance;
         [[SMDataPurgeManager sharedInstance] updateDataPurgeTimer];
     }
     else{
-         [self invalidateScheduleSync];
+        [self invalidateScheduleSync];
         [[SMDataPurgeManager sharedInstance] invalidateDataPurgeTimer];
         /*
          * Since timers are gettings invalidated.
@@ -1683,20 +1706,7 @@ static SyncManager *_instance;
             NSString *aggressiveSyncEnabled = [SFMPageHelper getSettingValueForSettingId:kMobileSettingsAggressiveSync];
             if (![[aggressiveSyncEnabled uppercaseString] isEqualToString:@"FALSE"])
             {
-                   NSString *getPriceEnabled= [SFMPageHelper getSettingValueForSettingId:kMobileSettingsGetPrice];
-                
-                BOOL isGetPrice = [getPriceEnabled boolValue];
-                
-                   if(isGetPrice)
-                   {
-                       self.isGetPriceCallEnabled = YES;
-
-                   }
-                   else{
-                       self.isGetPriceCallEnabled = NO;
-
-                   }
-                
+                self.isGetPriceCallEnabled = NO;
                 [self performSyncWithType:SyncTypeData];
             }
         }
@@ -1736,7 +1746,7 @@ static SyncManager *_instance;
     {
         self.syncQueue = [NSMutableArray array];
     }
-
+    
     int val = (int) syncType;
     
     [self.syncQueue addObject:[NSNumber numberWithInt:val]];
@@ -1812,7 +1822,7 @@ static SyncManager *_instance;
     NSLog(@"Process Sync Queue");
     
     SyncType syncType  = [self dequeueSyncQueue];
-
+    
     switch (syncType)
     {
         case SyncTypeData:
@@ -1824,7 +1834,7 @@ static SyncManager *_instance;
             break;
             
         default:
-           // Woow no Sync in queue
+            // Woow no Sync in queue
             NSLog(@"Woow no Sync in queue");
             break;
     }
@@ -1864,164 +1874,164 @@ static SyncManager *_instance;
 
 - (void)initiateCustomDataSync
 {
-  @synchronized([self class]) {
-      
-    self.isAfterInsert = NO;
-    self.isBeforeUpdate = NO;
-    self.isAfterUpdate = NO;
-    
-//    BOOL isConflictResolved = [self allConflictsResolved];
-    BOOL isConflictResolved = [self continueDataSyncIfConflictsResolved];
-    NSArray *operationArray = [self theModifiedRecords];
-    
-//      Manage decide later for custom webservice calls related record.
-
-    if(operationArray.count && isConflictResolved)
-    {
-    NSArray *afterInsertFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERINSERT"]];
-    NSArray *beforeFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"BEFOREUPDATE"]];
-    NSArray *afterUpdateFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERUPDATE"]];
-
-       NSArray *newOperationArray = [afterInsertFilteredArray arrayByAddingObjectsFromArray:beforeFilteredArray];
-        newOperationArray = [newOperationArray arrayByAddingObjectsFromArray:afterUpdateFilteredArray];
-
-        for(ModifiedRecordModel *model in newOperationArray)
+    @synchronized([self class]) {
+        
+        self.isAfterInsert = NO;
+        self.isBeforeUpdate = NO;
+        self.isAfterUpdate = NO;
+        
+        //    BOOL isConflictResolved = [self allConflictsResolved];
+        BOOL isConflictResolved = [self continueDataSyncIfConflictsResolved];
+        NSArray *operationArray = [self theModifiedRecords];
+        
+        //      Manage decide later for custom webservice calls related record.
+        
+        if(operationArray.count && isConflictResolved)
         {
-            self.cCustomCallRecordModel = model;
-            if([model.operation isEqualToString:@"AFTERINSERT"])
+            NSArray *afterInsertFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERINSERT"]];
+            NSArray *beforeFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"BEFOREUPDATE"]];
+            NSArray *afterUpdateFilteredArray = [operationArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"(%K CONTAINS[c] %@) ", @"operation", @"AFTERUPDATE"]];
+            
+            NSArray *newOperationArray = [afterInsertFilteredArray arrayByAddingObjectsFromArray:beforeFilteredArray];
+            newOperationArray = [newOperationArray arrayByAddingObjectsFromArray:afterUpdateFilteredArray];
+            
+            for(ModifiedRecordModel *model in newOperationArray)
             {
-                self.isBeforeUpdate = NO;
-                self.isAfterInsert = YES;
-                self.isAfterUpdate = NO;
-//                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
-                
-                if ([self isThereAnyRecordForInsertion]) {
-                    
-                    // If all the insert records are already uploaded to server, then no need of initiating the sync again.
-                    [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap];
-
-                    self.isDataSyncRunning = NO;
-                    [self checkNetworkReachabilityAndInitiateDataSync];
-                }
-                else {
-                    
-                   BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:1];
-                    if (!status) {
-                      
-                        [self customCallDidNotInitiateDuetoSomeRaeason];
-
-                    }
-                }
-                
-                break;
-            }
-            else if ([model.operation isEqualToString:@"BEFOREUPDATE"])
-            {
-                self.isBeforeUpdate = YES;
-                self.isAfterInsert = NO;
-                self.isAfterUpdate = NO;
-                
-                /* condition is for insert record checking, If is there any record for insert then perform PUT_INSERT first then make WS call */
-                if ([self isThereAnyRecordForInsertion]) {
-                    
-                    // If all the insert records are already uploaded to server, then no need of initiating the sync again.
-                    [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap];
-                    self.isDataSyncRunning = NO;
-                    self.isBeforeUpdate = NO;
-                    [self checkNetworkReachabilityAndInitiateDataSync];
-                }
-                else{
-                    BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
-                    if (!status) {
-                        [self customCallDidNotInitiateDuetoSomeRaeason];
-                    }
-                }
-                break;
-            }
-            else
-            {
-                
-                //AFTER UPDATE
-                self.isBeforeUpdate = NO;
-                self.isAfterInsert = NO;
-                self.isAfterUpdate = YES;
-//                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
-//                NSInteger conflictsCount = [ResolveConflictsHelper getConflictsCount];
-                NSArray *conflictArray = [ResolveConflictsHelper getConflictsRecords];
-                NSInteger holdConflictCount = 0;
-                for (SyncErrorConflictModel *syncConflictModel in conflictArray) {
-                    if ([syncConflictModel.overrideFlag isEqualToString:@"hold"]) {
-                        holdConflictCount++;
-                    }
-                }
-                if ([self isThereAnyRecordForUpdationOrInsertion] || (conflictArray.count != holdConflictCount) )
+                self.cCustomCallRecordModel = model;
+                if([model.operation isEqualToString:@"AFTERINSERT"])
                 {
-                    self.isDataSyncRunning = NO;
+                    self.isBeforeUpdate = NO;
+                    self.isAfterInsert = YES;
                     self.isAfterUpdate = NO;
-                    [self checkNetworkReachabilityAndInitiateDataSync];
+                    //                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
+                    
+                    if ([self isThereAnyRecordForInsertion]) {
+                        
+                        // If all the insert records are already uploaded to server, then no need of initiating the sync again.
+                        [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap];
+                        
+                        self.isDataSyncRunning = NO;
+                        [self checkNetworkReachabilityAndInitiateDataSync];
+                    }
+                    else {
+                        
+                        BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:1];
+                        if (!status) {
+                            
+                            [self customCallDidNotInitiateDuetoSomeRaeason];
+                            
+                        }
+                    }
+                    
+                    break;
+                }
+                else if ([model.operation isEqualToString:@"BEFOREUPDATE"])
+                {
+                    self.isBeforeUpdate = YES;
+                    self.isAfterInsert = NO;
+                    self.isAfterUpdate = NO;
+                    
+                    /* condition is for insert record checking, If is there any record for insert then perform PUT_INSERT first then make WS call */
+                    if ([self isThereAnyRecordForInsertion]) {
+                        
+                        // If all the insert records are already uploaded to server, then no need of initiating the sync again.
+                        [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap];
+                        self.isDataSyncRunning = NO;
+                        self.isBeforeUpdate = NO;
+                        [self checkNetworkReachabilityAndInitiateDataSync];
+                    }
+                    else{
+                        BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
+                        if (!status) {
+                            [self customCallDidNotInitiateDuetoSomeRaeason];
+                        }
+                    }
+                    break;
                 }
                 else
                 {
-                    BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:3];
                     
-                    if (!status) {
-                        [self customCallDidNotInitiateDuetoSomeRaeason];
+                    //AFTER UPDATE
+                    self.isBeforeUpdate = NO;
+                    self.isAfterInsert = NO;
+                    self.isAfterUpdate = YES;
+                    //                [self.notSyncedDataArrayForCustomeCall removeAllObjects];
+                    //                NSInteger conflictsCount = [ResolveConflictsHelper getConflictsCount];
+                    NSArray *conflictArray = [ResolveConflictsHelper getConflictsRecords];
+                    NSInteger holdConflictCount = 0;
+                    for (SyncErrorConflictModel *syncConflictModel in conflictArray) {
+                        if ([syncConflictModel.overrideFlag isEqualToString:@"hold"]) {
+                            holdConflictCount++;
+                        }
                     }
+                    if ([self isThereAnyRecordForUpdationOrInsertion] || (conflictArray.count != holdConflictCount) )
+                    {
+                        self.isDataSyncRunning = NO;
+                        self.isAfterUpdate = NO;
+                        [self checkNetworkReachabilityAndInitiateDataSync];
+                    }
+                    else
+                    {
+                        BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:3];
+                        
+                        if (!status) {
+                            [self customCallDidNotInitiateDuetoSomeRaeason];
+                        }
+                    }
+                    break;
                 }
-                break;
             }
         }
+        else if(isConflictResolved)
+        {
+            SXLogDebug(@"ELSE if IN initiateCustomDataSync");
+            [self checkNetworkReachabilityAndInitiateDataSync];
+        }
+        else
+        {
+            SXLogDebug(@"Conflicts Present so failure Case");
+            [self currentDataSyncFailedWithError:nil];
+        }
     }
-    else if(isConflictResolved)
-    {
-        SXLogDebug(@"ELSE if IN initiateCustomDataSync");
-        [self checkNetworkReachabilityAndInitiateDataSync];
-    }
-    else
-    {
-        SXLogDebug(@"Conflicts Present so failure Case");
-       [self currentDataSyncFailedWithError:nil];
-    }
-  }
 }
 
 -(void)customCallDidNotInitiateDuetoSomeRaeason
 {
-
-
+    
+    
     if (self.isAfterUpdate) {
         [self currentDataSyncFailedWithError:nil];
-
+        
     }
     else
     {
         /*
-       TODO: manage infinite call loop. SHould use counter for atleast 1 complete data Sync cycle.
-            If for some reason, the custom call fails in afterinsert call, then data sync gets intiated, when tat finishes, again it is checked if a cvustom call has to be initiated. When the custom call is tired to be invoked, again it fails and after that again the data sync call starts. So infiite loop. Manage this.
-           */
-            SXLogDebug(@"IN customCallDidNotInitiateDuetoSomeRaeason for Record model");
-
-            [self.cCustomCallRecordModel explainMe];
+         TODO: manage infinite call loop. SHould use counter for atleast 1 complete data Sync cycle.
+         If for some reason, the custom call fails in afterinsert call, then data sync gets intiated, when tat finishes, again it is checked if a cvustom call has to be initiated. When the custom call is tired to be invoked, again it fails and after that again the data sync call starts. So infiite loop. Manage this.
+         */
+        SXLogDebug(@"IN customCallDidNotInitiateDuetoSomeRaeason for Record model");
         
-                if (!self.isDataSyncInLoop) {
-                    self.isDataSyncInLoop = YES;
-                    [self checkNetworkReachabilityAndInitiateDataSync];
-
-                }
-                else
-                {
-                    self.isDataSyncInLoop = NO;
-                    [self currentDataSyncFailedWithError:nil];
-
-                }
+        [self.cCustomCallRecordModel explainMe];
         
-
+        if (!self.isDataSyncInLoop) {
+            self.isDataSyncInLoop = YES;
+            [self checkNetworkReachabilityAndInitiateDataSync];
+            
+        }
+        else
+        {
+            self.isDataSyncInLoop = NO;
+            [self currentDataSyncFailedWithError:nil];
+            
+        }
+        
+        
     }
     
     self.isBeforeUpdate = NO;
     self.isAfterInsert = NO;
     self.isAfterUpdate = NO;
-
+    
 }
 
 -(BOOL)allConflictsResolved
@@ -2046,7 +2056,7 @@ static SyncManager *_instance;
 {
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]) {
         [self initiateDataSync];
-
+        
     }
     else
     {
@@ -2059,7 +2069,7 @@ static SyncManager *_instance;
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable] && [self doesTheRecordStillExist])
     {
         SFMCustomActionWebServiceHelper *webserviceHelper=[[SFMCustomActionWebServiceHelper alloc] initWithSFMPageRequestData:requestData requestType:requestType];
-
+        
         if (webserviceHelper) {
             
             if (![self isDataSyncInProgress]) {
@@ -2069,7 +2079,7 @@ static SyncManager *_instance;
             return YES;
         }
     }
-        return NO;
+    return NO;
 }
 
 - (void)PerformSYncBasedOnFlags
@@ -2127,7 +2137,7 @@ static SyncManager *_instance;
 - (void)makeNextCallForCustomDataSyncWithResponse:(WebserviceResponseStatus *)responseStatus
 {
     self.initialSyncStatus = responseStatus.syncStatus;
-
+    
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"custom call Finished");
@@ -2142,7 +2152,7 @@ static SyncManager *_instance;
         }
         
         [self nextFlow];
-
+        
     }
     else  if ( (responseStatus.syncStatus == SyncStatusFailed) ||  (responseStatus.syncStatus == SyncStatusNetworkError))
     {
@@ -2191,9 +2201,9 @@ static SyncManager *_instance;
 
 -(BOOL)doesTheRecordStillExist
 {
-
+    
     id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-        
+    
     BOOL status = [modifiedRecordService doesRecordExistForId:self.cCustomCallRecordModel.recordLocalId andOperationType:self.cCustomCallRecordModel.operation];
     return status;
 }
@@ -2203,7 +2213,7 @@ static SyncManager *_instance;
     id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
     
     NSDictionary *insertedRecords = [modifiedRecordService getInsertedSyncRecords];
-
+    
     return (insertedRecords.count?YES:NO);
 }
 
@@ -2284,6 +2294,22 @@ static SyncManager *_instance;
 
 -(void)cancelProdIQDataSync {
     [[ProductIQManager sharedInstance] cancelProdIQDataSync];
+}
+
+
+//SyncErrorReporting Executer
+-(void)executeSyncErrorReporting
+{
+    SMAppDelegate *appDelegate = (SMAppDelegate*)[[UIApplication sharedApplication]delegate];
+    if ([appDelegate.syncReportingType isEqualToString:@"always"] || [appDelegate.syncReportingType isEqualToString:@"error"])
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 10, 10)];
+            self.mdExecuter = [[MobileDataUsageExecuter alloc]initWithParentView:view andFrame:CGRectZero];
+        });
+        ConfigureLoggerAccordingToSettings();
+    }
+    
 }
 
 

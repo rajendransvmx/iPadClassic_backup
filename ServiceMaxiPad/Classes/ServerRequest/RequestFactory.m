@@ -94,7 +94,7 @@
             case RequestTypeChatterFeedInsert:
             case RequestTypeChatterFeedCommnetInsert:
             case RequestTypeCustomActionWebService:
-            case RequestTypeCustomActionWebServiceAfterBefore:
+            case RequestMasterSyncTimeLog:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
             case RequestDependentPicklist:
@@ -214,7 +214,7 @@
             
         case RequestTypeChatterPost:
         case RequestTypeCheckOPDOCUploadStatus:
-
+            
             zksRequestClass = [[ZKSQueryRequest alloc] initWithType:requestType];
             break;
             

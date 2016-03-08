@@ -33,6 +33,9 @@
                            @"com.servicemax.client.installigence",
                            @"com.servicemax.client.sal",
                            @"com.servicemax.client.testframework",
+                           @"com.servicemax.client.native.laptop",
+                           @"com.servicemax.client.offline.sal.model",
+                           @"com.servicemax.client.usage",
                            nil];
     return listOfLibs;
 }
@@ -52,7 +55,7 @@
  *
  */
 + (void) unzipBundledStaticResourceAtPath:(NSString *)path {
-
+    
     @autoreleasepool {
         NSFileManager *fileManager = [NSFileManager defaultManager];
         if (path == nil || [path isEqualToString:@""]) {
@@ -67,12 +70,12 @@
             if ([fileName isEqualToString:@"com.servicemax.client.lib"]) {
                 NSString *clientLibPath = [path stringByDeletingLastPathComponent];
                 if([fileManager fileExistsAtPath:[clientLibPath stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
-                continue;
+                    continue;
                 [self unzipFileAtPath:filepath toFolder:clientLibPath];
             }
             else {
                 if([fileManager fileExistsAtPath:[path stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
-                continue;
+                    continue;
                 [self unzipFileAtPath:filepath toFolder:path];
             }
         }

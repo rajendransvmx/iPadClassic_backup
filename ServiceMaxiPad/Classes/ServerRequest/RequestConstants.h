@@ -37,7 +37,7 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestGetDelete,                     //Initial Data Sync
     RequestgetDeleteDownloadCriteria,
     RequestCleanUpSelect,
-    RequestCleanUp,	
+    RequestCleanUp,
     RequestPutDelete,
     RequestPutInsert,
     requestGetInsert,
@@ -63,6 +63,8 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestStaticResourceLibrary,
     RequestSubmitDocument,
     RequestGeneratePDF,
+    RequestMasterSyncTimeLog,
+    
     
     RequestDataOnDemandGetPriceInfo,
     RequestDataOnDemandGetData,
@@ -85,7 +87,6 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestDocumentInfoFetch,
     RequestTroubleShootDocInfoFetch,
     RequestSyncTimeLogs,
-
     RequestTypeCheckOPDOCUploadStatus,
     RequestTypeOpDocUploading,
     RequestTypeOPDocHTMLAndSignatureSubmit,
@@ -97,7 +98,7 @@ typedef NS_ENUM(NSUInteger, RequestType)
     
     /* DataPurge RequestConstants */
     
-   
+    
     RequestDataPurgeFrequency,
     RequestDatPurgeDownloadCriteria,
     RequestDataPurgeAdvancedDownLoadCriteria,
@@ -108,7 +109,7 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestDataPurgeProductIQData,
     /* ********************************* */
     
-   
+    
     RequestProductManualDownload,
     RequestTroubleshooting,
     RequestTypeAccountHistory,

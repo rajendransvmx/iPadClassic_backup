@@ -821,6 +821,10 @@
 		43B98E671AC18CCC003DCF80 /* APNSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B98E661AC18CCC003DCF80 /* APNSParser.m */; };
 		43C5F4861A138FD60046FF43 /* DODParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C5F4851A138FD60046FF43 /* DODParser.m */; };
 		43E7C2DE1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip in Resources */ = {isa = PBXBuildFile; fileRef = 43E7C2DD1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip */; };
+		43F3CF401C8E72E800181BFD /* MobileDataUsageExecuter.m in Sources */ = {isa = PBXBuildFile; fileRef = 43F3CF321C8E72E800181BFD /* MobileDataUsageExecuter.m */; };
+		43F3CF4B1C8E72E800181BFD /* MobileDataUsageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 43F3CF3F1C8E72E800181BFD /* MobileDataUsageManager.m */; };
+		43F3CF4E1C8E759500181BFD /* MobileDataUsageParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43F3CF4C1C8E759500181BFD /* MobileDataUsageParser.m */; };
+		43F3CF521C8E8AAE00181BFD /* MobileDataUsageFiles.zip in Resources */ = {isa = PBXBuildFile; fileRef = 43F3CF511C8E8AAE00181BFD /* MobileDataUsageFiles.zip */; };
 		57186B5919EF9DDD00B4642A /* TroubleshootingDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B4D19EF9DDD00B4642A /* TroubleshootingDataLoader.m */; };
 		57186B5B19EF9DDD00B4642A /* TroubleshootingDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57186B5019EF9DDD00B4642A /* TroubleshootingDetailViewController.xib */; };
 		57186B5C19EF9DDD00B4642A /* TroubleshootingMasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B5219EF9DDD00B4642A /* TroubleshootingMasterViewController.m */; };
@@ -2598,6 +2602,13 @@
 		43C5F4841A138FD60046FF43 /* DODParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DODParser.h; sourceTree = "<group>"; };
 		43C5F4851A138FD60046FF43 /* DODParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DODParser.m; sourceTree = "<group>"; };
 		43E7C2DD1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sfmbizrules.zip; sourceTree = "<group>"; };
+		43F3CF311C8E72E800181BFD /* MobileDataUsageExecuter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageExecuter.h; sourceTree = "<group>"; };
+		43F3CF321C8E72E800181BFD /* MobileDataUsageExecuter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageExecuter.m; sourceTree = "<group>"; };
+		43F3CF3E1C8E72E800181BFD /* MobileDataUsageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageManager.h; sourceTree = "<group>"; };
+		43F3CF3F1C8E72E800181BFD /* MobileDataUsageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageManager.m; sourceTree = "<group>"; };
+		43F3CF4C1C8E759500181BFD /* MobileDataUsageParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageParser.m; sourceTree = "<group>"; };
+		43F3CF4D1C8E759500181BFD /* MobileDataUsageParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageParser.h; sourceTree = "<group>"; };
+		43F3CF511C8E8AAE00181BFD /* MobileDataUsageFiles.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = MobileDataUsageFiles.zip; sourceTree = "<group>"; };
 		57186B4C19EF9DDD00B4642A /* TroubleshootingDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TroubleshootingDataLoader.h; sourceTree = "<group>"; };
 		57186B4D19EF9DDD00B4642A /* TroubleshootingDataLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TroubleshootingDataLoader.m; sourceTree = "<group>"; };
 		57186B4E19EF9DDD00B4642A /* TroubleshootingDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TroubleshootingDetailViewController.h; sourceTree = "<group>"; };
@@ -4137,6 +4148,8 @@
 		183A9FFF19E6BDB300919345 /* Parser */ = {
 			isa = PBXGroup;
 			children = (
+				43F3CF4C1C8E759500181BFD /* MobileDataUsageParser.m */,
+				43F3CF4D1C8E759500181BFD /* MobileDataUsageParser.h */,
 				57186B6119EF9E4300B4642A /* TroubleshootingParser.h */,
 				57186B6219EF9E4300B4642A /* TroubleshootingParser.m */,
 				183AA00019E6BDB300919345 /* ADCResponseParser.h */,
@@ -5590,6 +5603,7 @@
 		18A2177C19E57E7E00F22EA6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				43F3CF301C8E72E800181BFD /* MobileDataUsage */,
 				844F00B91B848BE3008BC652 /* ProductIQ */,
 				C8E0D03A1B4E8A65008C4AB8 /* CustomTableViewCells */,
 				180E3AAE1B3AE41A0055036D /* FieldUpdateRuleManager */,
@@ -5998,6 +6012,18 @@
 				42F968351A073CF000676C34 /* SuccessiveSyncManager.m */,
 			);
 			path = SuccessiveSync;
+			sourceTree = "<group>";
+		};
+		43F3CF301C8E72E800181BFD /* MobileDataUsage */ = {
+			isa = PBXGroup;
+			children = (
+				43F3CF511C8E8AAE00181BFD /* MobileDataUsageFiles.zip */,
+				43F3CF311C8E72E800181BFD /* MobileDataUsageExecuter.h */,
+				43F3CF321C8E72E800181BFD /* MobileDataUsageExecuter.m */,
+				43F3CF3E1C8E72E800181BFD /* MobileDataUsageManager.h */,
+				43F3CF3F1C8E72E800181BFD /* MobileDataUsageManager.m */,
+			);
+			path = MobileDataUsage;
 			sourceTree = "<group>";
 		};
 		57186B4919EF9DDC00B4642A /* Troubleshooting */ = {
@@ -6930,6 +6956,7 @@
 				57A321021AB7196A00A172E0 /* SRecents@2x.png in Resources */,
 				C3EF97A81A036D7300476293 /* Attachment-Unknown@2x.png in Resources */,
 				C3EF979F1A036D7300476293 /* Attachment-DownloadFileOffline@2x.png in Resources */,
+				43F3CF521C8E8AAE00181BFD /* MobileDataUsageFiles.zip in Resources */,
 				40A06F391B06041400218162 /* SRecents@3x.png in Resources */,
 				18FE08FE19EE827800CB8925 /* checkbox-disabled-unchecked@2x.png in Resources */,
 				9EFE6DFF1A0F33EF0067F9CC /* LinkedProcessViewController.xib in Resources */,
@@ -7131,6 +7158,7 @@
 				9ED694131AB02911007E7EE4 /* ContactInfo.m in Sources */,
 				184A8EF519E7A535006DA6BE /* UICGPolyline.m in Sources */,
 				183AA36F19E6DA9600919345 /* InitialSyncViewController.m in Sources */,
+				43F3CF401C8E72E800181BFD /* MobileDataUsageExecuter.m in Sources */,
 				184A8E5D19E7A0BE006DA6BE /* SMXAddEventPopoverController.m in Sources */,
 				18E5719C1A1A32B500867F8E /* UIPlaceHolderTextView.m in Sources */,
 				C31E66D41AE65EC900A8AE7E /* GetPriceManager.m in Sources */,
@@ -7396,6 +7424,7 @@
 				183A9FE719E6B18500919345 /* TransactionObjectService.m in Sources */,
 				183AA05419E6C84E00919345 /* PageLayoutConstants.m in Sources */,
 				183A9E1A19E69DB000919345 /* AttachmentModel.m in Sources */,
+				43F3CF4E1C8E759500181BFD /* MobileDataUsageParser.m in Sources */,
 				5BEFF7B11A24450C0096B254 /* EditableDataValidator.m in Sources */,
 				184A8E8C19E7A0BE006DA6BE /* TKLabelTextViewCell.m in Sources */,
 				184A8E6419E7A0BE006DA6BE /* SMXDayCell.m in Sources */,
@@ -7405,6 +7434,7 @@
 				183AA1A119E6D26400919345 /* SFMPage.m in Sources */,
 				183A9E9519E6A11800919345 /* SVMXOperationQueue.m in Sources */,
 				8412850F1B8C8D3B00CF8D61 /* ProductIQHomeViewController.m in Sources */,
+				43F3CF4B1C8E72E800181BFD /* MobileDataUsageManager.m in Sources */,
 				183AA1CD19E6D26400919345 /* SFMPageHistoryHeaderSectionView.m in Sources */,
 				183A9F1719E6A15600919345 /* ZKRelatedListSort.m in Sources */,
 				183A9E2919E69DB000919345 /* MetaSyncStatusModel.m in Sources */,

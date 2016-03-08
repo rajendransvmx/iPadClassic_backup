@@ -46,7 +46,7 @@ NS_ENUM(NSInteger, PerformanceLogSettings)
 
 #import <Foundation/Foundation.h>
 
-/** 
+/**
  helper to get the current source file name as NSString
  */
 #define SMLogSourceFileName [[NSString stringWithUTF8String:__FILE__] lastPathComponent]
@@ -123,4 +123,10 @@ NSInteger SMLogLogLevel();
 void SMLogPerformInitialSetup();
 
 void ConfigureLoggerAccordingToSettings();
+
+//HS 29Feb
+NSString* getDataForSyncError();
+
+
+
 @end

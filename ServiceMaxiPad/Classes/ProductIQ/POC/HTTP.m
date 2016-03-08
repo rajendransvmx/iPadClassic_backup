@@ -8,12 +8,17 @@
 
 #import "HTTP.h"
 #import "ProductIQHomeViewController.h"
+#import "CustomerOrgInfo.h"
+#import "MobileDataUsageExecuter.h"
 
 @implementation HTTP
 
 -(void)callServer:(NSString *)params {
-    NSString *accessToken = [[ProductIQHomeViewController getInstance] getAccessToken];
-    NSString *instanceUrl = [[ProductIQHomeViewController getInstance] getInstanceUrl];
+    //NSString *accessToken = [[ProductIQHomeViewController getInstance] getAccessToken];
+    //NSString *instanceUrl = [[ProductIQHomeViewController getInstance] getInstanceUrl];
+    
+    NSString *accessToken = [[CustomerOrgInfo sharedInstance] accessToken];
+    NSString *instanceUrl = [[CustomerOrgInfo sharedInstance] instanceURL];
     
     instanceUrl = [instanceUrl stringByReplacingOccurrencesOfString:@"+" withString:@" "];
     instanceUrl = [instanceUrl stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -30,14 +35,35 @@
     type = d[@"type"];
     methodName = d[@"methodName"];
     jsCallback = d[@"jsCallback"];
+    NSArray *HttpRequestHeaders = d[@"httpRequestHeaders"];
+    BOOL isNonSalesforceURL = (BOOL) d[@"isNonSalesforceUrl"];
     
-    NSMutableURLRequest *request =
-        [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",instanceUrl, uri]]
-        cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
-        timeoutInterval:120.0];
+    NSMutableURLRequest *request = nil;
+    if (isNonSalesforceURL)
+    {
+        request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",uri]]
+                                          cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
+                                      timeoutInterval:120.0];
+    }
+    else{
+        request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",instanceUrl, uri]]
+                                          cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
+                                      timeoutInterval:120.0];
+        [request setValue:[NSString stringWithFormat:@"OAuth %@",accessToken] forHTTPHeaderField:@"Authorization"];
+    }
     
     [request setHTTPMethod:method];
-    [request setValue:[NSString stringWithFormat:@"OAuth %@",accessToken] forHTTPHeaderField:@"Authorization"];
+    /*for (NSDictionary *headerDict in HttpRequestHeaders)
+     {
+     
+     NSString *headerField = [headerDict objectForKey:@"Header"];
+     NSString *headerValue = [headerDict objectForKey:@"Value"];
+     if ([headerField isEqual:@"Content-Type"]) {
+     continue;
+     }
+     [request setValue:headerValue forHTTPHeaderField:headerField];
+     }*/
+    
     
     if([method isEqual:@"GET"]){
         
@@ -45,13 +71,15 @@
         NSData *bodyAsData = [body dataUsingEncoding:NSUTF8StringEncoding];
         [request setHTTPBody:bodyAsData];
         [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request setValue:@"ServiceMaxNow" forHTTPHeaderField:@"referer"];//Hardcoded, need to take dynamic from HTTPRequestHeader
         [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)[bodyAsData length]]
-                                forHTTPHeaderField:@"Content-Length"];
+       forHTTPHeaderField:@"Content-Length"];
     }else{
         SXLogError(@"Unsupported method! %@", method);
         return;
     }
     
+    //check here ....
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate: self];
     responseData = [[NSMutableData alloc]init];
     
@@ -60,6 +88,8 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData*)data {
     [self->responseData appendData:data];
+    
+    
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
@@ -93,9 +123,17 @@
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
+    if (browser == nil)
+    {
+        browser = [[MobileDataUsageExecuter getInstance] getBrowser];
+        
+    }
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodNameLocal, resp];
     SXLogDebug(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];
+    
+    browser = nil;
+    
 }
 @end
 

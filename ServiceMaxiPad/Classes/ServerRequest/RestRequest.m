@@ -26,6 +26,8 @@
 #import "CustomActionXMLRequestHelper.h"
 #import "ProductIQManager.h"
 
+#import "SMAppDelegate.h"
+
 @implementation RestRequest
 @synthesize dataDictionary;
 @synthesize apiType;
@@ -52,6 +54,7 @@
 {
     if (self = [super init]) {
         self.apiType = @""; //TODO : set as REST
+        
         if (!dataDictionary) {
             self.dataDictionary = [NSMutableDictionary dictionary];
         }
@@ -79,7 +82,7 @@
 - (id)initWithType:(RequestType)requestType
 {
     self = [super init];
-	if (self != nil)
+    if (self != nil)
     {
         self.requestType  = requestType;
         self.requestIdentifier =  [AppManager generateUniqueId];
@@ -91,14 +94,14 @@
         self.profileId   = [customerOrgInfoInstance profileId];
         self.userId      = [customerOrgInfoInstance userId];
         
-       self.httpMethod = [self getHttpMethodForRequest:nil];
-     
+        self.httpMethod = [self getHttpMethodForRequest:nil];
+        
         self.contentType = kContentType;
         self.timeOut     = [self timeOutForRequest];
         self.requestType  = requestType;
         [self addParametersForRequestWithType:requestType];
-	}
-	return self;
+    }
+    return self;
     
 }
 
@@ -116,14 +119,14 @@
             /**  Get the Url string Base url + API URL */
             
             NSString *urlString = [self urlByType:self.requestType];
-             if ([self.httpMethod isEqualToString:kHttpMethodGet]) {
-                 
-                 NSString *params = [self getParameterToBeAppendedToQuery];
-                 if (params != nil) {
-                     urlString = [urlString stringByAppendingString:params];
-                 }
-                 
-             }
+            if ([self.httpMethod isEqualToString:kHttpMethodGet]) {
+                
+                NSString *params = [self getParameterToBeAppendedToQuery];
+                if (params != nil) {
+                    urlString = [urlString stringByAppendingString:params];
+                }
+                
+            }
             
             NSURL *apiURL = [NSURL URLWithString:urlString];
             NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:apiURL];
@@ -131,7 +134,7 @@
             /** Set the http method */
             [urlRequest setHTTPMethod:[self getHttpMethodForRequest:self.httpMethod]];
             
-           
+            
             NSInteger timeOutForRequest = [self timeOutForRequest];
             /** Set the request timeout */
             [urlRequest setTimeoutInterval:timeOutForRequest];
@@ -150,20 +153,20 @@
             AFHTTPRequestOperation *requestOp;
             
             if (self.requestType ==    RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore) {
-        
+                
                 [self soapRequest:urlRequest];
                 requestOp  = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
                 requestOp.responseSerializer = [AFXMLParserResponseSerializer serializer];
-
+                
             }
             else
             {
                 [self restRequest:urlRequest];
                 requestOp  = [[AFHTTPRequestOperation alloc] initWithRequest:urlRequest];
-
+                
                 requestOp.responseSerializer = [AFJSONResponseSerializer serializer];
                 requestOp.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:kContentType, @"application/octetstream", @"text/html",nil];
-
+                
             }
             
             //requestOp.requestSerializer = [AFgzipRequestSerializer serializerWithSerializer:[AFJSONRequestSerializer serializer]];
@@ -178,11 +181,11 @@
             [requestOp setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject)
              {
                  SXLogWarning(@"%@ req-s latency : %f sec", self.eventName,[[NSDate date] timeIntervalSinceDate:requestedTime]);
-
-                 //PA
-               [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
                  
-                [self displayRequest:operation];
+                 //PA
+                 [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
+                 
+                 [self displayRequest:operation];
                  if (self.requestType ==  RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
                  {
                      //[self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
@@ -193,9 +196,9 @@
                      [self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
                  }
              }
-             failure:^(AFHTTPRequestOperation *operation, NSError *error)
+                                             failure:^(AFHTTPRequestOperation *operation, NSError *error)
              {
-                    SXLogWarning(@"%@ req-f latency : %f sec", self.eventName, [[NSDate date] timeIntervalSinceDate:requestedTime]);
+                 SXLogWarning(@"%@ req-f latency : %f sec", self.eventName, [[NSDate date] timeIntervalSinceDate:requestedTime]);
                  
                  //PA
                  [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
@@ -209,7 +212,7 @@
                      [parser parse];
                  }
                  else{
-
+                     
                      NSInteger code = error.code;
                      NSHTTPURLResponse *response =  [error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey];
                      
@@ -221,10 +224,10 @@
                      [self didRequestFailedWithError:[NSError errorWithDomain:error.domain code:code userInfo:error.userInfo]
                                          andResponse:operation.responseObject];
                  }
-                }];
+             }];
             
-                [requestOp start];
-           }
+            [requestOp start];
+        }
     }
 }
 
@@ -235,7 +238,7 @@
     for (NSString *key in theErrorMessageDictionary.allKeys) {
         if (message.length==0) {
             [message  appendFormat:@"%@",[theErrorMessageDictionary objectForKey:key]];
-
+            
         }
         else
         {
@@ -246,7 +249,7 @@
     NSMutableDictionary *lUserError = [[NSMutableDictionary alloc] initWithDictionary:error.userInfo];
     [lUserError setObject:message forKey:SMErrorUserMessageKey];
     [lUserError setObject:message forKey:NSLocalizedDescriptionKey];
-
+    
     NSInteger code = error.code;
     NSHTTPURLResponse *response =  [error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey];
     
@@ -262,12 +265,12 @@
 
 -(void)soapRequest:(NSMutableURLRequest *)urlRequest
 {
-//    [urlRequest setValue:@"XML" forHTTPHeaderField:@"Accept"];
+    //    [urlRequest setValue:@"XML" forHTTPHeaderField:@"Accept"];
     [urlRequest addValue: @"text/xml" forHTTPHeaderField:@"Content-Type"];
     [urlRequest setValue:@"servicemax.com/Hello" forHTTPHeaderField:@"SOAPAction"];
     //                [urlRequest setValue:@""      forHTTPHeaderField:@"Content-Encoding"];
-//    [urlRequest setValue:self.oAuthId forHTTPHeaderField:kOAuthSessionTokenKey];
-
+    //    [urlRequest setValue:self.oAuthId forHTTPHeaderField:kOAuthSessionTokenKey];
+    
     NSString *methodName = @"";
     NSString *className = @"";
     NSString *requestBody = @"";
@@ -300,30 +303,30 @@
     NSString *soapBodyStart = [soapHeader stringByAppendingFormat:@"<soapenv:Body>"];
     NSString*soapMethodStart = [soapBodyStart stringByAppendingFormat:@"<tes:%@>",methodName];
     NSString*soapMethodReqStart = [soapMethodStart stringByAppendingFormat:@"<tes:request>"];
-
+    
     NSString*soapMethodParameter = [soapMethodReqStart stringByAppendingFormat:@"%@",requestBody];
     
     NSString*soapMethodReqEnd = [soapMethodParameter stringByAppendingFormat:@"</tes:request>"];
-
+    
     NSString*soapMethodEnd = [soapMethodReqEnd stringByAppendingFormat:@"</tes:%@>",methodName];
-
+    
     NSString *soapBodyEnd = [soapMethodEnd stringByAppendingFormat:@"</soapenv:Body>"];
     NSString *soapEnvelopeEnd = [soapBodyEnd stringByAppendingFormat:@"</soapenv:Envelope>"];
-//    NSString *sSOAPMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-//    "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tes=\"http://soap.sforce.com/schemas/class/TestWebServices1\">"
-//    "<soapenv:Header>"
-//                              "<tes:SessionHeader>"
-//                                "<tes:sessionId>%@</tes:sessionId>"
-//                              "</tes:SessionHeader>"
-//    "</soapenv:Header>"
-//    "<soapenv:Body>"
-//                              
-//                              "<tes:test_WS>"
-//                              "<strTest>something</strTest>"
-//                              "</tes:test_WS>"
-//
-//    "</soapenv:Body>"
-//    "</soapenv:Envelope>", self.oAuthId];
+    //    NSString *sSOAPMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+    //    "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tes=\"http://soap.sforce.com/schemas/class/TestWebServices1\">"
+    //    "<soapenv:Header>"
+    //                              "<tes:SessionHeader>"
+    //                                "<tes:sessionId>%@</tes:sessionId>"
+    //                              "</tes:SessionHeader>"
+    //    "</soapenv:Header>"
+    //    "<soapenv:Body>"
+    //
+    //                              "<tes:test_WS>"
+    //                              "<strTest>something</strTest>"
+    //                              "</tes:test_WS>"
+    //
+    //    "</soapenv:Body>"
+    //    "</soapenv:Envelope>", self.oAuthId];
     SXLogDebug(@"soapEnvelopeEnd:%@",soapEnvelopeEnd);
     NSData* data = [soapEnvelopeEnd dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -344,6 +347,8 @@
         if (httpPostDictionary != nil) {
             
             SXLogDebug(@"httpPostDictionary : %@", [httpPostDictionary description]);
+            NSLog(@"httpPostDictionary : %@", [httpPostDictionary description]);
+            
             
             NSData *someData = [NSJSONSerialization dataWithJSONObject:httpPostDictionary options:0 error:nil];
             [urlRequest setValue:@"gzip"      forHTTPHeaderField:@"Content-Encoding"];
@@ -487,7 +492,8 @@
         case RequestTypeUserTrunk:
         case RequestSFMObjectDefinition:
         case RequestDependantPickListRest:
-
+        case RequestMasterSyncTimeLog:
+            
         case RequestStaticResourceLibrary:
             eventType = kSync;
             break;
@@ -511,7 +517,7 @@
         case RequestRecordType:
             eventType = kMetaSync;
             break;
-  /************* dataPurge requests ****************** */  
+            /************* dataPurge requests ****************** */
         case RequestDataPurgeFrequency:
         case RequestDatPurgeDownloadCriteria:
         case RequestDataPurgeAdvancedDownLoadCriteria:
@@ -522,7 +528,7 @@
         case RequestDataPurgeProductIQData:
             eventType = kSync;
             break ;
-
+            
         case RequestTypeOPDocHTMLAndSignatureSubmit:
         case RequestTypeOPDocGeneratePDF:
             eventType = kSync;
@@ -593,7 +599,7 @@
         case RequestGetPriceCodeSnippet:
         case RequestGroupProfile:
         case RequestRecordType:
-
+            
             url = [self getUrlWithStringApppended:kMetaSyncUrlLink];
             break;
             
@@ -634,6 +640,7 @@
         case RequestDataPurge:
         case RequestSFMSearch:
         case RequestTypeUserTrunk:
+        case RequestMasterSyncTimeLog:
             url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
         case RequestDocumentInfoFetch:
@@ -849,6 +856,9 @@
         case  RequestOneCallDataSync:
             self.eventName = kOneCallSync;
             break;
+        case  RequestMasterSyncTimeLog:
+            self.eventName = @"MASTER_SYNC_LOG";
+            break;
         case RequestServicemaxVersion:
             self.eventName = @"";
             break;
@@ -1021,15 +1031,15 @@
                 }
             }
         }
-        break;
+            break;
         default:
             break;
     }
-
-    CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
-   // [customerOrgInfoInstance explainMe];
     
-   return  [[NSString alloc] initWithFormat:@"%@%@%@",[customerOrgInfoInstance instanceURL],kRestUrlString,stringToAppend];
+    CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
+    // [customerOrgInfoInstance explainMe];
+    
+    return  [[NSString alloc] initWithFormat:@"%@%@%@",[customerOrgInfoInstance instanceURL],kRestUrlString,stringToAppend];
 }
 
 -(NSArray *)seggregateClassNameAndMethodNameForCustomClass:(NSString *)classNameMethodName
@@ -1163,7 +1173,7 @@
  */
 
 -(NSDictionary *) httpPostBodyParameters
- {
+{
     @synchronized([self class])
     {
         @synchronized([self class])
@@ -1173,12 +1183,12 @@
             //Get Client info
             
             if (self.requestType == RequestDependantPickListRest) {
-               
+                
                 return nil;
             }
             else if (self.requestType == RequestTypeChatterFeedInsert) {
-             NSDictionary *dict = self.requestParameter.requestInformation;
-             
+                NSDictionary *dict = self.requestParameter.requestInformation;
+                
                 if (self.dataDictionary == nil) {
                     self.dataDictionary = [NSMutableDictionary new];
                 }
@@ -1187,7 +1197,7 @@
                 [self.dataDictionary setObject:[dict objectForKey:@"Body"] forKey:@"Body"];
                 
                 return self.dataDictionary;
-             
+                
             }
             else if (self.requestType == RequestTypeChatterFeedCommnetInsert) {
                 
@@ -1209,16 +1219,16 @@
             
             NSDictionary *clientDictionary = [[AppMetaData sharedInstance] getApplicationMetaInfo];
             NSMutableDictionary *postDict = [[NSMutableDictionary alloc] initWithDictionary:clientDictionary] ;
-           
+            
             if (self.eventName != nil) {
                 [postDict setObject:self.eventName forKey:kEventName];
             }
             
             if (self.eventType != nil) {
-                 [postDict setObject:self.eventType forKey:kEventType];
+                [postDict setObject:self.eventType forKey:kEventType];
             }
             
-           
+            
             [postDict setObject:self.groupId forKey:kGroupId];
             [postDict setObject:self.profileId forKey:kProfileId];
             [postDict setObject:self.userId forKey:kUserId];
@@ -1377,7 +1387,6 @@
 
 - (void)didRequestFailedWithError:(id)error andResponse:(id)someResponseObj
 {
-    
     [self.serverRequestdelegate didRequestFailedWithError:error Response:someResponseObj andRequestObject:self];
 }
 
@@ -1391,7 +1400,7 @@
     }
     
     @autoreleasepool {
-
+        
         NSString *body = @"";
         
         NSData *reequestBodyData = [[operation request] HTTPBody];
@@ -1406,9 +1415,9 @@
             }
         }
         /*
-        NSLog(@"\nRequest url : %@\nmethod :%@\nheaders : %@\nbody : %@", [[[operation request] URL] absoluteString], [[operation request] HTTPMethod], [(NSMutableURLRequest*)[operation request] allHTTPHeaderFields], body);
-        
-        NSLog(@"\nResponse : %@", operation.responseString);*/
+         NSLog(@"\nRequest url : %@\nmethod :%@\nheaders : %@\nbody : %@", [[[operation request] URL] absoluteString], [[operation request] HTTPMethod], [(NSMutableURLRequest*)[operation request] allHTTPHeaderFields], body);
+         
+         NSLog(@"\nResponse : %@", operation.responseString);*/
         
         if (operation != nil)
         {

@@ -114,6 +114,8 @@ extern NSString *const kTableDataPurgeHeap;
 extern NSString *const kTableRecentsSchema;
 extern NSString *const kProductManualSchema;
 extern NSString *const kTableAttachmentLocalSchema;
+//SyncErrorHandling
+extern NSString *const kTableSFUsageDataSchema;
 
 //Custom url Table
 extern NSString *const kTableSFMCustomActionParams;
