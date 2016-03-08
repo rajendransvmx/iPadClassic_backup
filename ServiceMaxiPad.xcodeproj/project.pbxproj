@@ -7906,7 +7906,7 @@
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxmobilespr16;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "6b4198df-3a41-497c-84b5-cb7483d96363";
+				PROVISIONING_PROFILE = "f1da58bf-dbf3-4b54-bb54-f484212cab38";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -7939,7 +7939,7 @@
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxmobilespr16;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "6b4198df-3a41-497c-84b5-cb7483d96363";
+				PROVISIONING_PROFILE = "f1da58bf-dbf3-4b54-bb54-f484212cab38";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
