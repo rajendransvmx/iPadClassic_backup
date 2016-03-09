@@ -182,39 +182,6 @@ static  MobileDataUsageExecuter *instance;
 
 // END - webview events
 
-//GetDeviceInfo
-/*
--(NSMutableArray *)getDeviceInfo
-{
-    
-    NSMutableArray *deviceInfoArray = [[NSMutableArray alloc]init];
-    UIDevice *currentDevice = [UIDevice currentDevice];
-    
-    NSMutableDictionary *deviceInfoDict  = [[NSMutableDictionary alloc]init];
-    [deviceInfoDict setObject:@"" forKey:@"barcode-enabled"];
-    [deviceInfoDict setObject:currentDevice.model forKey:@"client-type"];
-    [deviceInfoDict setObject:currentDevice.systemName forKey:@"device-platform"];
-    NSMutableArray *detailsArray = [[NSMutableArray alloc]init];
-    NSMutableDictionary *deviceDetailsDict  = [[NSMutableDictionary alloc]init];
-    [deviceInfoDict setObject:currentDevice.systemVersion forKey:@"OperatingSystemName"];
-    [deviceInfoDict setObject:[[AppMetaData sharedInstance]getDeviceVersion] forKey:@"OSArchitecture"];
-    [deviceInfoDict setObject:@"" forKey:@"CurrentTimeZone"];
-    [deviceInfoDict setObject:@"" forKey:@"Caption"];
-    [deviceInfoDict setObject:@"" forKey:@"SystemDirectory"];
-    [deviceInfoDict setObject:currentDevice.name forKey:@"ComputerName"];
-    [deviceInfoDict setObject:currentDevice.name forKey:@"UserName"];
-    [deviceInfoDict setObject:@"Apple" forKey:@"Manufacturer"];
-    [deviceInfoDict setObject:@"" forKey:@"Model"];
-    [deviceInfoDict setObject:@"" forKey:@"TotalPhysicalMemory"];
-    [detailsArray addObject:deviceDetailsDict];
-    [deviceInfoDict setObject:@"" forKey:@"details"];
-    
-    [deviceInfoArray addObject:deviceInfoDict];
-    
-    return deviceInfoArray;
 
-
-}
-*/
 
 @end

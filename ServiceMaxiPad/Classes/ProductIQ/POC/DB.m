@@ -9,6 +9,7 @@
 #import "DB.h"
 #import "DBManager.h"
 #import "ProductIQHomeViewController.h"
+#import "MobileDataUsageExecuter.h"
 
 @implementation DB
 
@@ -45,6 +46,11 @@
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
+    if (browser == nil)
+    {
+        browser = [[MobileDataUsageExecuter getInstance] getBrowser];
+        
+    }
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
     SXLogDebug(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];

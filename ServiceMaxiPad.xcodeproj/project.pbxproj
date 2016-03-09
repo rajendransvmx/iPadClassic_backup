@@ -817,13 +817,13 @@
 		42B1EECE19ECF96C00E3511D /* timing-line.png in Resources */ = {isa = PBXBuildFile; fileRef = 42B1EECB19ECF96C00E3511D /* timing-line.png */; };
 		42B1EED119ECF98700E3511D /* timing-line@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 42B1EED019ECF98700E3511D /* timing-line@2x.png */; };
 		42F968361A073CF000676C34 /* SuccessiveSyncManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F968351A073CF000676C34 /* SuccessiveSyncManager.m */; };
-		4344088A1C9003F900628FFB /* com.servicemax.client.native.laptop.zip in Resources */ = {isa = PBXBuildFile; fileRef = 434408871C9003F900628FFB /* com.servicemax.client.native.laptop.zip */; };
-		4344088B1C9003F900628FFB /* com.servicemax.client.offline.sal.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = 434408881C9003F900628FFB /* com.servicemax.client.offline.sal.model.zip */; };
-		4344088C1C9003F900628FFB /* com.servicemax.client.usage.zip in Resources */ = {isa = PBXBuildFile; fileRef = 434408891C9003F900628FFB /* com.servicemax.client.usage.zip */; };
 		434408931C90041900628FFB /* MobileDataUsageExecuter.m in Sources */ = {isa = PBXBuildFile; fileRef = 4344088F1C90041900628FFB /* MobileDataUsageExecuter.m */; };
-		434408941C90041900628FFB /* MobileDataUsageFiles.zip in Resources */ = {isa = PBXBuildFile; fileRef = 434408901C90041900628FFB /* MobileDataUsageFiles.zip */; };
 		434408951C90041900628FFB /* MobileDataUsageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 434408921C90041900628FFB /* MobileDataUsageManager.m */; };
 		434408981C90043800628FFB /* MobileDataUsageParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 434408971C90043800628FFB /* MobileDataUsageParser.m */; };
+		4344089C1C9035B600628FFB /* com.servicemax.client.native.laptop.zip in Resources */ = {isa = PBXBuildFile; fileRef = 434408991C9035B600628FFB /* com.servicemax.client.native.laptop.zip */; };
+		4344089D1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = 4344089A1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip */; };
+		4344089E1C9035B600628FFB /* com.servicemax.client.usage.zip in Resources */ = {isa = PBXBuildFile; fileRef = 4344089B1C9035B600628FFB /* com.servicemax.client.usage.zip */; };
+		434408A01C90364900628FFB /* MobileDataUsageFiles.zip in Resources */ = {isa = PBXBuildFile; fileRef = 4344089F1C90364900628FFB /* MobileDataUsageFiles.zip */; };
 		4374A8681AAF12F200404768 /* APNSServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4374A8671AAF12F200404768 /* APNSServiceLayer.m */; };
 		43B98E671AC18CCC003DCF80 /* APNSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B98E661AC18CCC003DCF80 /* APNSParser.m */; };
 		43C5F4861A138FD60046FF43 /* DODParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C5F4851A138FD60046FF43 /* DODParser.m */; };
@@ -2598,16 +2598,16 @@
 		42B1EED019ECF98700E3511D /* timing-line@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "timing-line@2x.png"; sourceTree = "<group>"; };
 		42F968341A073CF000676C34 /* SuccessiveSyncManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuccessiveSyncManager.h; sourceTree = "<group>"; };
 		42F968351A073CF000676C34 /* SuccessiveSyncManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SuccessiveSyncManager.m; sourceTree = "<group>"; };
-		434408871C9003F900628FFB /* com.servicemax.client.native.laptop.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.native.laptop.zip; sourceTree = "<group>"; };
-		434408881C9003F900628FFB /* com.servicemax.client.offline.sal.model.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.offline.sal.model.zip; sourceTree = "<group>"; };
-		434408891C9003F900628FFB /* com.servicemax.client.usage.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.usage.zip; sourceTree = "<group>"; };
 		4344088E1C90041900628FFB /* MobileDataUsageExecuter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageExecuter.h; sourceTree = "<group>"; };
 		4344088F1C90041900628FFB /* MobileDataUsageExecuter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageExecuter.m; sourceTree = "<group>"; };
-		434408901C90041900628FFB /* MobileDataUsageFiles.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = MobileDataUsageFiles.zip; sourceTree = "<group>"; };
 		434408911C90041900628FFB /* MobileDataUsageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageManager.h; sourceTree = "<group>"; };
 		434408921C90041900628FFB /* MobileDataUsageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageManager.m; sourceTree = "<group>"; };
 		434408961C90043800628FFB /* MobileDataUsageParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobileDataUsageParser.h; sourceTree = "<group>"; };
 		434408971C90043800628FFB /* MobileDataUsageParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MobileDataUsageParser.m; sourceTree = "<group>"; };
+		434408991C9035B600628FFB /* com.servicemax.client.native.laptop.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.native.laptop.zip; sourceTree = "<group>"; };
+		4344089A1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.offline.sal.model.zip; sourceTree = "<group>"; };
+		4344089B1C9035B600628FFB /* com.servicemax.client.usage.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.usage.zip; sourceTree = "<group>"; };
+		4344089F1C90364900628FFB /* MobileDataUsageFiles.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = MobileDataUsageFiles.zip; sourceTree = "<group>"; };
 		4374A8661AAF12F200404768 /* APNSServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APNSServiceLayer.h; sourceTree = "<group>"; };
 		4374A8671AAF12F200404768 /* APNSServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APNSServiceLayer.m; sourceTree = "<group>"; };
 		43B98E651AC18CCC003DCF80 /* APNSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APNSParser.h; sourceTree = "<group>"; };
@@ -5947,9 +5947,9 @@
 		407252FF19FF6C2900ACA729 /* Static Resources */ = {
 			isa = PBXGroup;
 			children = (
-				434408871C9003F900628FFB /* com.servicemax.client.native.laptop.zip */,
-				434408881C9003F900628FFB /* com.servicemax.client.offline.sal.model.zip */,
-				434408891C9003F900628FFB /* com.servicemax.client.usage.zip */,
+				434408991C9035B600628FFB /* com.servicemax.client.native.laptop.zip */,
+				4344089A1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip */,
+				4344089B1C9035B600628FFB /* com.servicemax.client.usage.zip */,
 				189AE1711BC513FA00AD549D /* com.servicemax.client.testframework.zip */,
 				189AE16F1BC513EB00AD549D /* com.servicemax.client.sal.zip */,
 				189AE1611BC513D500AD549D /* com.servicemax.client.installigence.admin.zip */,
@@ -6026,9 +6026,9 @@
 		4344088D1C90041900628FFB /* MobileDataUsage */ = {
 			isa = PBXGroup;
 			children = (
+				4344089F1C90364900628FFB /* MobileDataUsageFiles.zip */,
 				4344088E1C90041900628FFB /* MobileDataUsageExecuter.h */,
 				4344088F1C90041900628FFB /* MobileDataUsageExecuter.m */,
-				434408901C90041900628FFB /* MobileDataUsageFiles.zip */,
 				434408911C90041900628FFB /* MobileDataUsageManager.h */,
 				434408921C90041900628FFB /* MobileDataUsageManager.m */,
 			);
@@ -6711,6 +6711,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4344089C1C9035B600628FFB /* com.servicemax.client.native.laptop.zip in Resources */,
 				185656AC1A78DE5200DA5C12 /* json2.js in Resources */,
 				427305221A10BD5B005F41E1 /* bizRules-index.js in Resources */,
 				C3EF97A21A036D7300476293 /* Attachment-FileinCloud@2x.png in Resources */,
@@ -6756,6 +6757,7 @@
 				184A9E0F19E7D592006DA6BE /* map_chat@2x.png in Resources */,
 				8B2F4BF71A0C8D0100D2A346 /* u259.png in Resources */,
 				40CA1A0619FE4E9C0097F5A1 /* recapture.png in Resources */,
+				4344089D1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip in Resources */,
 				18FE08FD19EE827800CB8925 /* checkbox-disabled-checked@2x.png in Resources */,
 				183AA37219E6DA9600919345 /* PageContentViewController.xib in Resources */,
 				183AA1D419E6D26400919345 /* SFMPageMasterViewController.xib in Resources */,
@@ -6766,7 +6768,6 @@
 				8410153B1BA94CCA007DFAC8 /* checkbox-selected@2x.png in Resources */,
 				18A2178219E5841900F22EA6 /* Settings.bundle in Resources */,
 				184A9CBE19E7D591006DA6BE /* leftPanelBG@2x.png in Resources */,
-				4344088A1C9003F900628FFB /* com.servicemax.client.native.laptop.zip in Resources */,
 				183AA1EC19E6D36C00919345 /* WizardViewController.xib in Resources */,
 				40A06F3A1B06041400218162 /* STasks@1x.png in Resources */,
 				18779DC519EBEF200086A9B7 /* info.png in Resources */,
@@ -6881,7 +6882,6 @@
 				184A8E9819E7A0BE006DA6BE /* triangledown.png in Resources */,
 				9EB4F7911A44332C00E2A8BD /* ChatterCell.xib in Resources */,
 				57186B5D19EF9DDD00B4642A /* TroubleshootingMasterViewController.xib in Resources */,
-				4344088C1C9003F900628FFB /* com.servicemax.client.usage.zip in Resources */,
 				C3E890811A0CC52000A0653B /* Attachment-SelectionCheckfilled-Small@2x.png in Resources */,
 				4072531019FF6C2900ACA729 /* com.servicemax.client.sfmconsole.ui.web.zip in Resources */,
 				184A9CB419E7D591006DA6BE /* Section_down_arrow@2x.png in Resources */,
@@ -6923,6 +6923,7 @@
 				18800CE81A08D14400930FF9 /* PurgeDataDetailViewController.xib in Resources */,
 				8B932E6A1A1098960002BBB2 /* Attachment-video.png in Resources */,
 				57A320E91AB7178C00A172E0 /* NavBarExplore@2x.png in Resources */,
+				4344089E1C9035B600628FFB /* com.servicemax.client.usage.zip in Resources */,
 				5BE2CC1719ED2B2C00A9721C /* down-arrow-orange.png in Resources */,
 				C362BE661A129FCB0067E09E /* ErrorDownloadedCollectionViewCell.xib in Resources */,
 				C3EF97A31A036D7300476293 /* Attachment-PDF@2x.png in Resources */,
@@ -6949,7 +6950,6 @@
 				C3EF97A11A036D7300476293 /* Attachment-File-Missing@2x.png in Resources */,
 				C3CD32961A0FF9D4002F7705 /* AttachmentWebView.xib in Resources */,
 				184A9CA319E7D591006DA6BE /* checked@2x.png in Resources */,
-				4344088B1C9003F900628FFB /* com.servicemax.client.offline.sal.model.zip in Resources */,
 				183A9E9219E6A11800919345 /* RuleBook.plist in Resources */,
 				4072530C19FF6C2900ACA729 /* com.servicemax.client.mvc.zip in Resources */,
 				18E522B51A6916C000FD9295 /* Sync_Error_White@2x.png in Resources */,
@@ -6962,7 +6962,7 @@
 				183AA1D719E6D26400919345 /* SFMPageShowAllViewController.xib in Resources */,
 				184A9CC119E7D591006DA6BE /* calendar@2x.png in Resources */,
 				183AA1B219E6D26400919345 /* PageEditMasterViewController.xib in Resources */,
-				434408941C90041900628FFB /* MobileDataUsageFiles.zip in Resources */,
+				434408A01C90364900628FFB /* MobileDataUsageFiles.zip in Resources */,
 				40A06F1D1B06033100218162 /* NavBarExplore@3x.png in Resources */,
 				407252F719FF52C700ACA729 /* CommunicationBridgeJS.js in Resources */,
 				9EB4F7951A44332C00E2A8BD /* ChatterViewController.xib in Resources */,
