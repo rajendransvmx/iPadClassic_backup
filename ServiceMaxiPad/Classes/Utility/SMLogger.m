@@ -201,7 +201,7 @@ void SMLogEnqueueLogMessage( NSString *message, NSString *methodContext, NSInteg
     
     if ([joblogViewController isLogSettingsON]) {
         PumpLogIntoDatabase(message, methodContext, logLevel, @"Application Level");
-        if (appDelegate.syncReportingType)
+        if ([appDelegate.syncReportingType isEqualToString:@"always"] || [appDelegate.syncReportingType isEqualToString:@"error"])
         {
             setDataForSyncError(message, methodContext, logLevel, @"Application level");
             
