@@ -215,6 +215,9 @@
     //Load Product IQ resources
     [self installProductIQResources];
     
+    //Load SyncError Handle resources
+    [self installMobileUsageResources];
+    
     [self verifyUserAndApplicationStatus];
 
 }
@@ -237,6 +240,27 @@
     else
     {
         NSLog(@"ProductIQ JS exists!");
+    }
+}
+
+-(void)installMobileUsageResources {
+    NSString *pathToCheck = [FileManager getRootPath];
+    NSString *htmlfilepath = [pathToCheck stringByAppendingPathComponent:@"usage-index.html"];
+    if(![[NSFileManager defaultManager] fileExistsAtPath:htmlfilepath]) {
+        NSString *filepath = [[NSBundle mainBundle] pathForResource:@"MobileDataUsageFiles" ofType:@"zip"];
+        [UnzipUtility unzipFileAtPath:filepath toFolder:pathToCheck];
+        NSString *resourcesPath = [pathToCheck stringByAppendingPathComponent:@"MobileDataUsageFiles"];
+        NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:resourcesPath error:nil];
+        for (NSString *file in files) {
+            [[NSFileManager defaultManager] moveItemAtPath:[resourcesPath stringByAppendingPathComponent:file]
+                                                    toPath:[pathToCheck stringByAppendingPathComponent:file]
+                                                     error:nil];
+        }
+        [[NSFileManager defaultManager] removeItemAtPath:resourcesPath error:nil];
+    }
+    else
+    {
+        NSLog(@"Mobile USage JS exists!");
     }
 }
 #pragma mark - User status management

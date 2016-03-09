@@ -18,6 +18,12 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (copy) void (^backgroundSessionCompletionHandler)();
 
+//HS 29Feb for SyncErrorHandling time based
+//Once we get setting key coming fom server we will update this BOOL
+@property(nonatomic,retain)NSString *syncReportingType;
+@property(nonatomic,retain)NSMutableArray *syncDataArray;
+@property(nonatomic,retain)NSMutableArray *syncErrorDataArray;
+
 /**
  * @name  loadWithController:(UIViewController *)rootController
  *

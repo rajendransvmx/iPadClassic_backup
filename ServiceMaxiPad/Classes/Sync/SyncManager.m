@@ -47,6 +47,8 @@
 #import "ProductIQManager.h"
 #import "TransactionObjectService.h"
 #import "SyncErrorConflictService.h"
+#import "MobileDataUsageExecuter.h"
+#import "SMAppDelegate.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -102,6 +104,7 @@ static SyncManager *_instance;
 
 @property(nonatomic, assign) BOOL isDataSyncRunning;
 @property (nonatomic) BOOL isDataSyncInLoop;
+@property(nonatomic,strong)MobileDataUsageExecuter *mdExecuter;
 
 
 - (void)performInitialSync;
@@ -625,6 +628,7 @@ static SyncManager *_instance;
     {
         SXLogDebug(@"Data Sync Finished");
         [self PerformSYncBasedOnFlags];
+        [self executeSyncErrorReporting];
         
         //[self currentDataSyncfinished];
     }
@@ -633,6 +637,7 @@ static SyncManager *_instance;
               || (responseStatus.syncStatus == SyncStatusNetworkError))
     {
         SXLogDebug(@"Data Sync failed");
+         [self executeSyncErrorReporting];
         
         if (responseStatus.syncProgressState == SyncStatusFailedWithRevokeTokenFlag)
         {
@@ -987,6 +992,7 @@ static SyncManager *_instance;
 
 - (void)currentConfigSyncFinished
 {
+     [self executeSyncErrorReporting];
     [PlistManager storeLastScheduledConfigSyncGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
     [SMDataPurgeHelper saveConfigSyncTimeSinceSyncCompleted];
     [[SMDataPurgeManager sharedInstance] initiateAllDataPurgeProcess];
@@ -1004,6 +1010,7 @@ static SyncManager *_instance;
 
 - (void)currentConfigSyncFailedWithError:(NSError *)error
 {
+     [self executeSyncErrorReporting];
     [self updatePlistWithLastConfigSyncTimeAndStatus:kFailed];
     [self manageSyncQueueProcess];
    
@@ -1281,6 +1288,7 @@ static SyncManager *_instance;
 
 - (void)currentInitialSyncFinished
 {
+     [self executeSyncErrorReporting];
     [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncCompleted];
     
     [self loadDataIntoInstalledBaseObject];
@@ -1310,6 +1318,7 @@ static SyncManager *_instance;
 
 - (void)currentInitialSyncFailedWithError:(NSError *)error
 {
+     [self executeSyncErrorReporting];
     // Yoo initial sync failed!! Lets remove incompleted data 
     [[DatabaseConfigurationManager sharedInstance] performDatabaseConfigurationForSwitchUser];
     
@@ -2291,6 +2300,22 @@ static SyncManager *_instance;
 
 -(void)cancelProdIQDataSync {
     [[ProductIQManager sharedInstance] cancelProdIQDataSync];
+}
+
+
+//SyncErrorReporting Executer
+-(void)executeSyncErrorReporting
+{
+    SMAppDelegate *appDelegate = (SMAppDelegate*)[[UIApplication sharedApplication]delegate];
+    if ([appDelegate.syncReportingType isEqualToString:@"always"] || [appDelegate.syncReportingType isEqualToString:@"error"])
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 10, 10)];
+            self.mdExecuter = [[MobileDataUsageExecuter alloc]initWithParentView:view andFrame:CGRectZero];
+        });
+        ConfigureLoggerAccordingToSettings();
+    }
+    
 }
 
 

@@ -33,6 +33,9 @@ extern NSString *kUpadteWebserviceData;
 @property(nonatomic, assign) BOOL isGetPriceCallEnabled;
 @property (nonatomic,assign) SyncStatus dataPurgeStatus;
 
+//For executing Javascript for syncErrorReproting
+@property(nonatomic,strong)UIView *parentView;
+
 
 // ...
 

@@ -192,7 +192,14 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
                                                                      withRequestType:requestType];
      
         [request addClientRequestIdentifier:self.flowId];
-        request.shouldIncludeTimeLogs = [[ServerRequestManager sharedInstance]isTimeLogEnabledForCategoryType:self.nodecategoryType];
+        
+        if(requestType == RequestMasterSyncTimeLog)
+        {
+            request.shouldIncludeTimeLogs = NO;
+        }
+        else{
+            request.shouldIncludeTimeLogs = [[ServerRequestManager sharedInstance]isTimeLogEnabledForCategoryType:self.nodecategoryType];
+        }
         request.categoryType = self.nodecategoryType;
         
         [self addRequestToRequestArray:request];

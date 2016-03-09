@@ -91,6 +91,16 @@
          [UINavigationBar appearance].tintColor = [UIColor whiteColor];
      }
 */
+     
+     /** Setup Logger  */
+     //HS 29Fev added one key
+     NSMutableArray *arr = [[NSMutableArray alloc]init];
+     self.syncErrorDataArray = arr;
+     
+     NSMutableArray *arr2 = [[NSMutableArray alloc]init];
+     self.syncDataArray = arr2;
+
+     
      /** Setup Logger  */
      SMLogPerformInitialSetup();
      ConfigureLoggerAccordingToSettings();

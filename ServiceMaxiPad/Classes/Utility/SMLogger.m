@@ -45,6 +45,8 @@
 #import "DBRequestSelect.h"
 #import "DatabaseConfigurationManager.h"
 #import "SMLoggerHelper.h"
+#import "SMAppDelegate.h"
+#import "JobLogViewController.h"
 
 @implementation SMLogger
 
@@ -191,9 +193,32 @@ void SMLogPerformInitialSetup()
 
 void SMLogEnqueueLogMessage( NSString *message, NSString *methodContext, NSInteger logLevel)
 {
-    PumpLogIntoDatabase(message, methodContext, logLevel, @"Application Level");
+    // PumpLogIntoDatabase(message, methodContext, logLevel, @"Application Level");
     //use this method to write output to file or database depending on your requirement.
+    
+    JobLogViewController *joblogViewController = [[JobLogViewController alloc]init];
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    
+    if ([joblogViewController isLogSettingsON]) {
+        PumpLogIntoDatabase(message, methodContext, logLevel, @"Application Level");
+        if (appDelegate.syncReportingType)
+        {
+            setDataForSyncError(message, methodContext, logLevel, @"Application level");
+            
+        }
+    }
+    else
+    {
+        setDataForSyncError(message, methodContext, logLevel, @"Application level");
+        
+    }
+    
+    //use this method to write output to file or database depending on your requirement.
+    
+    
+    
 }
+
 
 #pragma mark - application support methods
 
@@ -294,4 +319,59 @@ void PumpLogIntoDatabase(NSString *message, NSString *methodContext, NSInteger l
         [jobLogService deleteJobLogsIfRecordCountCrossedLimit];
     }
 }
+
+
+//HS 29Feb SyncError
+void setDataForSyncError(NSString *message, NSString *methodContext, NSInteger logLevel, NSString *category)
+{
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    
+    if([methodContext length] > kMaxLogMethodLength) {
+        methodContext = [methodContext substringToIndex:kMaxLogMethodLength];
+    }
+    message = [message stringByReplacingOccurrencesOfString:@"\"" withString:@"&quot;"];
+    if ([message length] > kMaxLogMesssageLength) {
+        
+        message = [message substringToIndex:kMaxLogMesssageLength];
+    }
+    JobLogModel *logModel = [[JobLogModel alloc]init];
+    logModel.profileId = [CustomerOrgInfo sharedInstance].currentUserId;
+    logModel.groupId = @"";
+    logModel.type = @"iPad";
+    logModel.category = category;
+    logModel.message = message;
+    logModel.operation = methodContext;
+    logModel.level = logLevel;
+    
+    logModel.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
+    [dict setObject:[CustomerOrgInfo sharedInstance].currentUserId forKey:@"profileId"];
+    [dict setObject:@"" forKey:@"groupId"];
+    [dict setObject:@"iPad" forKey:@"type"];
+    [dict setObject:category forKey:@"category"];
+    [dict setObject:message forKey:@"message"];
+    [dict setObject:methodContext forKey:@"operation"];
+    [dict setObject:[NSString stringWithFormat:@"%ld",(long)logLevel] forKey:@"level"];
+    
+    @autoreleasepool {
+        if ([appDelegate.syncReportingType isEqualToString:@"always"])
+        {
+            //NSString *dataStr = [[NSString alloc]initWithFormat:@"%@",dict];
+            
+            //[appDelegate.syncDataArray appendString:message];
+            
+            [appDelegate.syncDataArray addObject:dict];
+            
+        }
+        else if([appDelegate.syncReportingType isEqualToString:@"error"])
+        {
+            [appDelegate.syncErrorDataArray addObject:dict];
+            
+        }
+        
+    }
+   
+    
+}
+
 @end
