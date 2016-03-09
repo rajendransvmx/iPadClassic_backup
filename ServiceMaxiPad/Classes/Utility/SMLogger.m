@@ -365,7 +365,7 @@ void setDataForSyncError(NSString *message, NSString *methodContext, NSInteger l
         }
         else if([appDelegate.syncReportingType isEqualToString:@"error"])
         {
-            [appDelegate.syncErrorDataArray addObject:dict];
+             [appDelegate.syncErrorDataArray addObject:dict];
             
         }
         
