@@ -157,7 +157,7 @@
 
 - (void)configureFilterBuuton
 {
-    if (self.selectionMode == singleSelectionMode) {
+    if (self.selectionMode == singleSelectionMode || self.selectionMode == multiSelectionMode) {
         if ([self.lookUpObject.advanceFilters count] > 0  || (self.lookUpObject.contextLookupFilter.lookupContext != nil && ![self.lookUpObject.contextLookupFilter.lookupContext isEqualToString:@""] && self.lookUpObject.contextLookupFilter.allowOverride)) {
             self.filterButton.userInteractionEnabled = YES;
         }
@@ -670,7 +670,7 @@
         self.lookUpObject.preFilters = preFilters;
     }
     
-    if (self.selectionMode == singleSelectionMode) {
+    if (self.selectionMode == singleSelectionMode || self.selectionMode == multiSelectionMode) {
         NSArray *advnaceFilter = [self getAdvanceFilterInfo];
         if (advnaceFilter != nil) {
             self.lookUpObject.advanceFilters = advnaceFilter;
@@ -712,7 +712,7 @@
 - (void)applyFilterChanges:(NSArray *)advanceFilter
 {
     [self dismissPoPover];
-    
+    [self.selectedRecords removeAllObjects];
     if ([self.lookUpObject.advanceFilters count] > 0) {
         self.lookUpObject.advanceFilters = nil;
     }
