@@ -64,7 +64,7 @@ static  ProductIQHomeViewController *instance;
 
     [self populateNavigationBar];
     [self testLoadProductIQ];
-    //[self debugButtonForProductIQ];
+   // [self debugButtonForProductIQ];
     
 }
 - (void)viewDidAppear:(BOOL)animated {
@@ -88,13 +88,12 @@ static  ProductIQHomeViewController *instance;
     
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"9.0")) {
         [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(addKeyboardTopBar:) name:UIKeyboardWillShowNotification object:nil];
-        
-        [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(hideKeyBoard:) name:UIKeyboardWillHideNotification object:nil];
 
     } else {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
-
     }
+    [[NSNotificationCenter defaultCenter]  addObserver:self selector:@selector(hideKeyBoard:) name:UIKeyboardWillHideNotification object:nil];
+
     
 }
 
@@ -244,6 +243,7 @@ static  ProductIQHomeViewController *instance;
     SXLogError(@"Failed to load with error :%@",[error debugDescription]);
     
 }
+
 // END - webview events
 
 - (void)startApplicationload:(NSString *)successUrl {
@@ -454,6 +454,7 @@ static  ProductIQHomeViewController *instance;
         [self.barCodeView removeFromSuperview];
         self.barCodeView = nil;
     }
+    [webview stringByEvaluatingJavaScriptFromString:@"window.scroll(0,0)"];
 }
 
 
