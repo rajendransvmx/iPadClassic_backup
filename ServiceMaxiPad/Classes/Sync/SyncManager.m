@@ -315,7 +315,7 @@ static SyncManager *_instance;
                         if (self.isGetPriceCallEnabled)
                         {
                             self.isGetPriceCallEnabled = NO;
-                            [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
+                            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGetPriceNotification:) name:@"DoGetPrice" object:nil];
                         }
                         
                         if([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
@@ -351,7 +351,14 @@ static SyncManager *_instance;
             break;
     }
 }
+- (void)handleGetPriceNotification:(NSNotification *)notification
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"DoGetPrice" object:nil];
 
+    
+    [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
+    
+}
 - (void)initiateGetPriceInBackGround
 {
    [[GetPriceManager sharedInstance] intiateGetPriceSync];
