@@ -62,7 +62,8 @@ static  ProductIQHomeViewController *instance;
      [self.view addSubview:webview];
      */
 
-    [self populateNavigationBar];
+    //[self populateNavigationBar];
+    [self setHidesBackButton:NO];
     [self testLoadProductIQ];
    // [self debugButtonForProductIQ];
     
@@ -148,6 +149,39 @@ static  ProductIQHomeViewController *instance;
 
 }
 
+- (void) setHidesBackButton:(BOOL)hide{
+    
+    if(hide){
+        
+        self.navigationItem.leftBarButtonItem = nil;
+        
+    }else{
+        self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+        UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"OPDocBackArrow.png"]];
+        
+        UILabel *backLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 180, arrow.frame.size.height)];
+        backLabel.text = [[TagManager sharedInstance]tagByName:kTagtBackButtonTitle];
+        backLabel.font = [UIFont systemFontOfSize:17];
+        backLabel.textColor = [UIColor whiteColor];
+        backLabel.backgroundColor = [UIColor clearColor];
+        backLabel.textAlignment = NSTextAlignmentLeft;
+        backLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        
+        UIView *backView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, (arrow.frame.size.width + backLabel.frame.size.width), arrow.frame.size.height)];
+        backView.backgroundColor = [UIColor clearColor];
+        [backView addSubview:arrow];
+        [backView addSubview:backLabel];
+        backView.userInteractionEnabled = YES;
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backView)];
+        [backView addGestureRecognizer:tap];
+        
+        UIBarButtonItem *barBtn = [[UIBarButtonItem alloc] initWithCustomView:backView];
+        self.navigationItem.leftBarButtonItem = barBtn;
+
+        
+    }
+}
 - (void)backView
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:^{}];
@@ -209,6 +243,15 @@ static  ProductIQHomeViewController *instance;
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     
     NSString *url = request.URL.absoluteString;
+   
+    /* hide/show back button whenever search view has opened/closed */
+    if ([url rangeOfString:@"INSTALLIGENCE.SEACH_INSTALLBASE"].location != NSNotFound) {
+        [self setHidesBackButton:YES];
+    }else if ([url rangeOfString:@"SEARCH.SCREEN.CLOSED"].location != NSNotFound) {
+        [self setHidesBackButton:NO];
+        return NO;
+    }
+    
     
     // Testing purposes
     SXLogDebug(@"Loading URL :%@",url);
