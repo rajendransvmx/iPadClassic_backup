@@ -3,21 +3,19 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.028
+Version = 16.29.029
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-
+027547
 
 -------------
 Feature
 -------------
-Updated with changes 
-# IPAD-3901
-iPad Sync Failure Reporting
+
 
 ——————
 NOTE:
