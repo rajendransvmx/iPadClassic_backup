@@ -161,6 +161,14 @@ typedef enum {
                 /* Fill up the parameters based on the previous call */
                 [self continueDataSyncWithCallBackContext:callBack];
             }
+            
+            if(!callBack.callBack)
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"DoGetPrice"
+                                                                    object:self
+                                                                  userInfo:nil];
+                
+            }
             return callBack;
         }
         

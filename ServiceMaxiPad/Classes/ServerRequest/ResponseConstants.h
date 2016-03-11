@@ -409,3 +409,4 @@ extern NSInteger const kMaximumNoOfParallelPageLayoutCalls;
 extern NSInteger const kOBJdefnLimit;
 extern NSString *const kOBJdefList;
 
+extern NSString *const kMobileSettingsGetPrice;
