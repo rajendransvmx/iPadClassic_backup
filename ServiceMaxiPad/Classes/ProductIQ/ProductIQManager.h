@@ -39,4 +39,21 @@
 -(void)initiateProdIQDataSync;
 -(void)cancelProdIQDataSync;
 
+
+/**
+ * @name  validateCustomUrl
+ *
+ * @author Madhusudhan HK
+ *
+ * @brief validate the custom url
+ *
+ * \par
+ *  <Longer description starts here>
+ *
+ *
+ * @return BOOL
+ *
+ */
+- (BOOL)validateCustomUrl: (NSURL *)urlString;
+
 @end

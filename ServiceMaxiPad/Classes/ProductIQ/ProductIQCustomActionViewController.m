@@ -11,7 +11,10 @@
 #import "MBProgressHUD.h"
 #import "SNetworkReachabilityManager.h"
 #import "AlertMessageHandler.h"
+#import "ProductIQManager.h"
 
+#define kInvalidUrlAlert 10000
+#define kNoInternetAlert 10001
 
 @implementation NSURLRequest (NSURLRequestWithIgnoreSSL)
 
@@ -50,10 +53,7 @@
     if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]) {
         [self loadCustomURL];
     } else {
-        [self hideAnimator];
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage] message:[[TagManager sharedInstance]tagByName:kTag_InternetConnectionOffline] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil];
-        
-        [alertView show];
+        [self showAlertView];
     }
 
 }
@@ -138,7 +138,23 @@
 
 - (void)loadCustomURL {
     NSURL *url = [NSURL URLWithString:self.urlString];
-    [self.webview loadRequest:[NSURLRequest requestWithURL:url]];
+    
+    BOOL isValidUrl = [[ProductIQManager sharedInstance] validateCustomUrl:url];
+    if(!isValidUrl){
+        
+        [self hideAnimator];
+        [[AlertMessageHandler sharedInstance] showCustomMessage:@"Invalid URL"//TODO: As we do not have custom-label for Invalid URL,hard codedi the message.
+         
+                                                   withDelegate:self
+                                                            tag:kInvalidUrlAlert
+                                                          title:@"Custom Action"
+                                              cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+                                           andOtherButtonTitles:nil];
+        
+    }else{
+       [self.webview loadRequest:[NSURLRequest requestWithURL:url]];
+    }
+    
 }
 
 - (void)backView
@@ -147,6 +163,13 @@
     
 }
 
+-(void) showAlertView{
+    
+    [self hideAnimator];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage] message:[[TagManager sharedInstance]tagByName:kTag_InternetConnectionOffline] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil];
+    alertView.tag = kNoInternetAlert;
+    [alertView show];
+}
 #pragma mark - Rotation methods
 
 -(BOOL)shouldAutorotate
@@ -178,8 +201,7 @@
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     [self hideAnimator];
     if ( [error code] != NSURLErrorCancelled ){
-        [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeCannotFindHost
-                                                           andDelegate:nil];
+        [self showAlertView];
     }
     
 }
@@ -194,5 +216,17 @@
     // Pass the selected object to the new view controller.
 }
 */
+
+#pragma mark- UIAlertViewDelegate
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (alertView.tag == kInvalidUrlAlert || alertView.tag == kNoInternetAlert){
+        
+        if (buttonIndex==0) {
+            [self backView];
+        }
+        
+        
+    }
+}
 
 @end

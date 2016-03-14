@@ -582,4 +582,10 @@
 }
 
 
+- (BOOL)validateCustomUrl: (NSURL  *)url{
+    
+    return (url && [url scheme] && [url host]);
+    
+}
+
 @end
