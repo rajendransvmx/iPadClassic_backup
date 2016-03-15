@@ -274,6 +274,11 @@
     
     
     NSDictionary * referenceDictionary = [self getReferenceFieldsFor:objectName];
+    if ([objectName isEqualToString:kServicemaxEventObject] && [[recordDictionary objectForKey:kSVMXWhatId] length]>30) {
+        NSMutableDictionary *tempMutDict = [NSMutableDictionary dictionaryWithDictionary:referenceDictionary];
+        [tempMutDict setObject:kWorkOrderTableName forKey:kSVMXWhatId];
+        referenceDictionary = [NSDictionary dictionaryWithDictionary:tempMutDict];
+    }
     
     
     BOOL allReferenceFields = YES;
