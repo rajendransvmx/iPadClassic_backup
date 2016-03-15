@@ -3,12 +3,12 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.030
+Version = 16.29.031
  
 ===========================================
 
-ProductIQ:
-Added latest js files.
+IPAD-3901 iPad Sync Failure Reporting 
+Added logic for Error Handling
 
 ——————
 NOTE:
