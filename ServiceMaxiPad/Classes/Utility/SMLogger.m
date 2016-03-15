@@ -329,7 +329,7 @@ void setDataForSyncError(NSString *message, NSString *methodContext, NSInteger l
     if([methodContext length] > kMaxLogMethodLength) {
         methodContext = [methodContext substringToIndex:kMaxLogMethodLength];
     }
-    message = [message stringByReplacingOccurrencesOfString:@"\"" withString:@"&quot;"];
+    //message = [message stringByReplacingOccurrencesOfString:@"\"" withString:@"&quot;"];
     if ([message length] > kMaxLogMesssageLength) {
         
         message = [message substringToIndex:kMaxLogMesssageLength];
@@ -365,7 +365,7 @@ void setDataForSyncError(NSString *message, NSString *methodContext, NSInteger l
         }
         else if([appDelegate.syncReportingType isEqualToString:@"error"])
         {
-             [appDelegate.syncErrorDataArray addObject:dict];
+             //[appDelegate.syncErrorDataArray addObject:dict];
             
         }
         

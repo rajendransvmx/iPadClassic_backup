@@ -45,6 +45,9 @@
                     
                 }
             }
+            else{
+                appDelegate.syncReportingType = nil;
+            }
           
         }
         callBackObj.callBack = NO;

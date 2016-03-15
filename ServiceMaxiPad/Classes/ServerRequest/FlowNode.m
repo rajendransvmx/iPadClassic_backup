@@ -697,6 +697,11 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
 - (void)didRequestFailedWithError:(NSError *)error Response:(id)responseObject andRequestObject:(id)request
 {
     [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+    if (error !=nil)
+    {
+        [self reportErrorToAWS:error withResponseObject:responseObject withRequestObject:request];
+
+    }
 
     NSLog(@"Request failed with error %@ %@ Request : %@",[error description],[responseObject description],[request description]);
     NSError *serverError = [SMInternalErrorUtility checkForErrorInResponse:responseObject withStatusCode:-999 andError:error];
@@ -711,4 +716,66 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
     }
 }
 
+
+-(void)reportErrorToAWS:(NSError*)error withResponseObject:(id)responseObject withRequestObject:(id)requestObject
+{
+    NSMutableDictionary *errorDict = [NSMutableDictionary dictionaryWithCapacity:1];
+    
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    //appDelegate.syncReportingType = @"error";
+    if([appDelegate.syncReportingType isEqualToString:@"error"] ||[appDelegate.syncReportingType isEqualToString:@"always"])
+    {
+        //errorDict = responseObject
+        //NSDictionary *requestObjectDict = (NSDictionary *)requestObject;
+        if(([responseObject isKindOfClass:[NSArray class]]) && ([[[responseObject objectAtIndex:0]allKeys]containsObject:@"errorCode"]))
+        {
+            [errorDict setObject:responseObject forKey:@"Response"];
+            
+            /*
+            if ([requestObject objectForKey:@"dataDictionary"])
+            {
+                [errorDict setObject:[requestObject objectForKey:@"dataDictionary"] forKey:@"dataDictionary"];
+
+            }
+            if ([requestObject objectForKey:@"eventName"])
+            {
+                [errorDict setObject:[requestObject objectForKey:@"eventName"] forKey:@"eventName"];
+                
+            }
+            if ([requestObject objectForKey:@"eventType"])
+            {
+                [errorDict setObject:[requestObject objectForKey:@"eventType"] forKey:@"eventType"];
+                
+            }
+            if ([requestObject objectForKey:@"profileId"])
+            {
+                [errorDict setObject:[requestObject objectForKey:@"profileId"] forKey:@"profileId"];
+                
+            }
+            if ([requestObject objectForKey:@"userId"])
+            {
+                [errorDict setObject:[requestObject objectForKey:@"userId"] forKey:@"userId"];
+                
+            }
+            if ([requestObject objectForKey:@"apiType"])
+            {
+                [errorDict setObject:[requestObject objectForKey:@"apiType"] forKey:@"apiType"];
+                
+            }
+             */
+            
+            
+
+        }
+        
+    
+        if (errorDict != nil)
+        {
+            [appDelegate.syncErrorDataArray addObject:errorDict];
+
+        }
+        
+    }
+    
+}
 @end

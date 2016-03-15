@@ -119,7 +119,7 @@
      
      NSMutableArray *arr2 = [[NSMutableArray alloc]init];
      self.syncDataArray = arr2;
-
+     //self.syncReportingType = @"error";
      
      /** Setup Logger  */
      SMLogPerformInitialSetup();
