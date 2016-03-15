@@ -535,19 +535,26 @@
         }
         else if ([objectField.type isEqualToString:kSfDTDateTime] || [objectField.type isEqualToString:kSfDTDate])
         {
-            NSString *internalValue = [DateUtil evaluateDateLiteral:recordfield.internalValue  dataType:objectField.type];
-            
-            recordfield.internalValue = internalValue;
-            
-            if ([objectField.type isEqualToString:kSfDTDate]) {
-                if ([recordfield.internalValue length] > 10) {
-                    recordfield.internalValue = [self getDateForValueMapping:recordfield.internalValue];
-                }
-                displayValue = [self getUserReadableDateForValueMapping:internalValue];
+            if([recordfield.internalValue containsString:kLiteralCurrentRecord] || [recordfield.internalValue containsString:kLiteralCurrentRecordHeader] )
+            {
             }
             else
             {
-                displayValue = [self getUserReadableDateTime:internalValue];
+                NSString *internalValue = [DateUtil evaluateDateLiteral:recordfield.internalValue  dataType:objectField.type];
+                
+                recordfield.internalValue = internalValue;
+                
+                if ([objectField.type isEqualToString:kSfDTDate]) {
+                    if ([recordfield.internalValue length] > 10) {
+                        recordfield.internalValue = [self getDateForValueMapping:recordfield.internalValue];
+                    }
+                    displayValue = [self getUserReadableDateForValueMapping:internalValue];
+                }
+                else
+                {
+                    displayValue = [self getUserReadableDateTime:internalValue];
+                }
+                
             }
             
         }
