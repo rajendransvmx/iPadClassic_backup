@@ -53,6 +53,26 @@
    // *** ---  STORED VALUES HERE.... TEXT EDIT ---*////
 }
 
+/*
+ method Name: showlaunchScreenWithCalendarAlert
+ Description: If the Calendar of the Device is not gregorian. The app should be taken to the Login screen and a Alert view should be displayed to ask user to change the Calendar Type to GREGORIAN.
+ Defect#: 025869
+ author: BSP
+ Date: 11-Mar-2016
+ */
+
+-(void)showlaunchScreenWithCalendarAlert{
+  
+    AppManager *appManager = [AppManager sharedInstance];
+    ApplicationStatus previousStatus  = [PlistManager getStoredApplicationPreviousSyncStatus]; //get the previous status of the app. This will have to be again set to the app when the login screen with Calendar error is displayed so that once the calendar is corrected, the app is launched in the previous status.
+    [appManager setApplicationStatus:ApplicationStatusInLaunchScreen];
+
+    [appManager loadScreen];
+    [appManager setApplicationStatus:previousStatus]; // Assigning the previous app status to the app.
+
+    return;
+}
+
 /**
  * @name   loadCookies
  *
@@ -130,23 +150,91 @@
      // Override point for customization after application launch.
      self.window.backgroundColor = [UIColor whiteColor];
      [self.window makeKeyAndVisible];
-     
-     [self testLogin];
-     [self loadCookies];
-     
-     [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
-                                                       object:nil
-                                                        queue:[NSOperationQueue mainQueue]
-                                                   usingBlock:^(NSNotification *note) {
-                                                       [PlistManager updateServerURLFromManagedConfig];
-                                                   }];
+
+     NSString *calendarIdentifier = [NSCalendar autoupdatingCurrentCalendar].calendarIdentifier;
+
+     if (![calendarIdentifier caseInsensitiveCompare:@"gregorian"]==NSOrderedSame) {
+         [self showlaunchScreenWithCalendarAlert];
+         [self showAlert];
+     }
+     else{
+         [self testLogin];
+         [self loadCookies];
+         
+         [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
+                                                           object:nil
+                                                            queue:[NSOperationQueue mainQueue]
+                                                       usingBlock:^(NSNotification *note) {
+                                                           [PlistManager updateServerURLFromManagedConfig];
+                                                       }];
+     }
+
      //[[SyncManager sharedInstance] scheduleSync];
     NSLog(@"------ AapplicationLaunching -------");
      
      return YES;
 }
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex NS_DEPRECATED_IOS(2_0, 9_0);
+{
+    if(alertView.tag == 1001 && buttonIndex == 0)
+        [self showAlert];
+}
 
+/*
+ method Name: showAlert
+ Description: If the Calendar of the Device is not gregorian. Display the AlertView asking the user to change the Calendar.
+ Defect#: 025869
+ author: BSP
+ Date: 11-Mar-2016
+ */
+
+-(void)showAlert{
+    
+    if (SYSTEM_VERSION < 8.0) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"" message:@"Only Gregorian calendar supported. Open Settings, then Language and Region, then Calendar to select Gregorian calendar." delegate:self cancelButtonTitle:@"Reload" otherButtonTitles: nil];
+        alertView.tag = 1001;
+        [alertView show];
+    }
+    else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"" message:@"Only Gregorian calendar supported. Open Settings, then Language and Region, then Calendar to select Gregorian calendar" preferredStyle:(UIAlertControllerStyleAlert)];
+        
+        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Reload" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            [self checkForCalendarType];
+        }];
+        
+        
+        [alertController addAction:okAction];
+
+        if (self.window.rootViewController.presentedViewController) {
+            self.window.rootViewController = self.window.rootViewController.presentedViewController;
+        }
+        
+        [self.window.rootViewController presentViewController:alertController animated:YES completion:^{}];
+    }
+
+}
+
+-(void)checkForCalendarType{
+    NSString *calendarIdentifier = [NSCalendar autoupdatingCurrentCalendar].calendarIdentifier;
+//    NSString *TheCalendarIdentifier = [NSCalendar autoupdatingCurrentCalendar].calendarIdentifier;
+
+    if (![calendarIdentifier caseInsensitiveCompare:@"gregorian"]==NSOrderedSame) {
+        
+        [self showAlert];
+    }
+    else{
+        [self testLogin];
+        [self loadCookies];
+        
+        [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
+                                                          object:nil
+                                                           queue:[NSOperationQueue mainQueue]
+                                                      usingBlock:^(NSNotification *note) {
+                                                          [PlistManager updateServerURLFromManagedConfig];
+                                                      }];
+    }
+}
 - (void)disableIdleTimerForApplication
 {
 //    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
