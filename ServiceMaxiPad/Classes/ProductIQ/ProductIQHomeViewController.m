@@ -81,6 +81,7 @@ static  ProductIQHomeViewController *instance;
     webview.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     webview.delegate = self;
     webview.scalesPageToFit = YES;
+    webview.scrollView.scrollEnabled = NO;
     [self.view addSubview:webview];
 
 }
