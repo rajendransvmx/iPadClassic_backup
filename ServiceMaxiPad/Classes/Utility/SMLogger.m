@@ -356,10 +356,13 @@ void setDataForSyncError(NSString *message, NSString *methodContext, NSInteger l
     @autoreleasepool {
         if ([appDelegate.syncReportingType isEqualToString:@"always"])
         {
-            //NSString *dataStr = [[NSString alloc]initWithFormat:@"%@",dict];
-            
-            //[appDelegate.syncDataArray appendString:message];
-            
+         
+            if (appDelegate.syncDataArray == nil)
+            {
+                NSMutableArray *arr = [[NSMutableArray alloc]init];
+                appDelegate.syncDataArray = arr;
+            }
+           
             [appDelegate.syncDataArray addObject:dict];
             
         }

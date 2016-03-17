@@ -10,6 +10,7 @@
 #import "ProductIQHomeViewController.h"
 #import "CustomerOrgInfo.h"
 #import "MobileDataUsageExecuter.h"
+#import "SMAppDelegate.h"
 
 @implementation HTTP
 
@@ -212,6 +213,12 @@
     [resp setObject:self->jsCallback forKey:@"jsCallback"];
     [resp setObject:responseText forKey:@"responseText"];
     [self respondOnMethod:callback withParams:resp];
+    //ToDo:
+    //DataArray needs to be cleared out as soon we get any flag status from JS side that data has been succesfully uploaded instead of simply clearing out as below as soon connection finish load.
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    appDelegate.syncDataArray = nil;
+    appDelegate.syncErrorDataArray = nil;
+
 }
 
 -(NSDictionary *)parse:(NSString *) str {

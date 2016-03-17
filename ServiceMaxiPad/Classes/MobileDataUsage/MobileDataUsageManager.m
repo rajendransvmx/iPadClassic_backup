@@ -85,7 +85,11 @@
 
     SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
     
-    [resp setObject:appDelegate.syncDataArray forKey:@"error"];
+    if (appDelegate.syncDataArray !=nil)
+    {
+        [resp setObject:appDelegate.syncDataArray forKey:@"error"];
+        
+    }
     
     NSData *data = [NSPropertyListSerialization dataWithPropertyList:appDelegate.syncDataArray format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
       NSLog(@"Size in bytes: %lu - Entries: %lu", (unsigned long)[data length], (unsigned long)appDelegate.syncDataArray.count);
@@ -131,14 +135,18 @@
         [resp setObject:logType forKey:@"logType"];
     }
     NSMutableDictionary *exceptionDict = [[NSMutableDictionary alloc]init];
-    [exceptionDict setObject:appDelegate.syncErrorDataArray forKey:@"errorRecords"];
-    //NSString *responseStr = [[NSString alloc]init]
-    //[exceptionDict setObject:[NSArray arrayWithObject:@"test error"] forKey:@"errorRecords"];
+    if (appDelegate.syncErrorDataArray !=nil)
+    {
+        [exceptionDict setObject:appDelegate.syncErrorDataArray forKey:@"errorRecords"];
+
+    }
+
     [resp setObject:exceptionDict forKey:@"exceptions"];
     [resp setObject:@"INITIAL" forKey:@"syncType"];//have to take actual value of sync type
     [resp setObject:@true forKey:@"status"];
     
     [self respondOnMethod:callback withParams:resp];
+
     
 }
 

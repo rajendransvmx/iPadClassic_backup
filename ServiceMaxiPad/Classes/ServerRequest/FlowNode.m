@@ -764,16 +764,21 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
             }
              */
             
-            
+            if (errorDict != nil)
+            {
+                if (appDelegate.syncErrorDataArray == nil)
+                {
+                    NSMutableArray *arr = [[NSMutableArray alloc]init];
+                    appDelegate.syncErrorDataArray = arr;
+                }
+                [appDelegate.syncErrorDataArray addObject:errorDict];
+                
+            }
 
         }
         
     
-        if (errorDict != nil)
-        {
-            [appDelegate.syncErrorDataArray addObject:errorDict];
-
-        }
+        
         
     }
     
