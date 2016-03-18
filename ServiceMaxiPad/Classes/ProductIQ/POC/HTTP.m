@@ -86,7 +86,10 @@
     type = d[@"type"];
     methodName = d[@"methodName"];
     jsCallback = d[@"jsCallback"];
-    NSArray *HttpRequestHeaders = d[@"httpRequestHeaders"];
+    
+  
+  
+    
     BOOL isNonSalesforceURL;
     
     if (self.tempStr == nil)
@@ -135,6 +138,8 @@
         isNonSalesforceURL = (BOOL) dict[@"isNonSalesforceUrl"];
         body = dict[@"RequestBody"];
         method = dict[@"RequestMethod"];
+        NSError *err = nil;
+        NSArray *HttpRequestHeaders = (NSArray *)[NSJSONSerialization JSONObjectWithData:[dict[@"HttpRequestHeaders"] dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&err];
         
         if (method == nil)
         {
@@ -156,16 +161,7 @@
         }
         
         [request setHTTPMethod:method];
-        /*for (NSDictionary *headerDict in HttpRequestHeaders)
-         {
-         
-         NSString *headerField = [headerDict objectForKey:@"Header"];
-         NSString *headerValue = [headerDict objectForKey:@"Value"];
-         if ([headerField isEqual:@"Content-Type"]) {
-         continue;
-         }
-         [request setValue:headerValue forHTTPHeaderField:headerField];
-         }*/
+      
         
         
         if([method isEqual:@"GET"]){
@@ -174,7 +170,20 @@
             NSData *bodyAsData = [body dataUsingEncoding:NSUTF8StringEncoding];
             [request setHTTPBody:bodyAsData];
             [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-            [request setValue:@"ServiceMaxNow" forHTTPHeaderField:@"referer"];//Hardcoded, need to take dynamic from HTTPRequestHeader
+            for (NSDictionary *headerDict in HttpRequestHeaders)
+            {
+                
+                NSString *headerField = [headerDict objectForKey:@"Header"];
+                NSString *headerValue = [headerDict objectForKey:@"Value"];
+                if ([headerField isEqual:@"Content-Type"]) {
+                    continue;
+                }
+                if (headerValue)
+                {
+                    [request setValue:headerValue forHTTPHeaderField:headerField];
+
+                }
+            }
             [request setValue:[NSString stringWithFormat:@"%lu",(unsigned long)[bodyAsData length]]
            forHTTPHeaderField:@"Content-Length"];
         }else{

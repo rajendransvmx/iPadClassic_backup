@@ -726,43 +726,43 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
     if([appDelegate.syncReportingType isEqualToString:@"error"] ||[appDelegate.syncReportingType isEqualToString:@"always"])
     {
         //errorDict = responseObject
-        //NSDictionary *requestObjectDict = (NSDictionary *)requestObject;
+        RestRequest *requestObjectDict = (RestRequest *)requestObject;
         if(([responseObject isKindOfClass:[NSArray class]]) && ([[[responseObject objectAtIndex:0]allKeys]containsObject:@"errorCode"]))
         {
             [errorDict setObject:responseObject forKey:@"Response"];
             
-            /*
-            if ([requestObject objectForKey:@"dataDictionary"])
+            
+            if ([requestObjectDict dataDictionary])
             {
-                [errorDict setObject:[requestObject objectForKey:@"dataDictionary"] forKey:@"dataDictionary"];
+                [errorDict setObject:[requestObjectDict dataDictionary] forKey:@"dataDictionary"];
 
             }
-            if ([requestObject objectForKey:@"eventName"])
+            if ([requestObjectDict eventName])
             {
-                [errorDict setObject:[requestObject objectForKey:@"eventName"] forKey:@"eventName"];
+                [errorDict setObject:[requestObjectDict eventName] forKey:@"eventName"];
                 
             }
-            if ([requestObject objectForKey:@"eventType"])
+            if ([requestObjectDict eventType])
             {
-                [errorDict setObject:[requestObject objectForKey:@"eventType"] forKey:@"eventType"];
+                [errorDict setObject:[requestObjectDict eventType] forKey:@"eventType"];
                 
             }
-            if ([requestObject objectForKey:@"profileId"])
+            if ([requestObjectDict profileId])
             {
-                [errorDict setObject:[requestObject objectForKey:@"profileId"] forKey:@"profileId"];
+                [errorDict setObject:[requestObjectDict profileId] forKey:@"profileId"];
                 
             }
-            if ([requestObject objectForKey:@"userId"])
+            if ([requestObjectDict userId])
             {
-                [errorDict setObject:[requestObject objectForKey:@"userId"] forKey:@"userId"];
+                [errorDict setObject:[requestObjectDict userId] forKey:@"userId"];
                 
             }
-            if ([requestObject objectForKey:@"apiType"])
+            if ([requestObjectDict apiType])
             {
-                [errorDict setObject:[requestObject objectForKey:@"apiType"] forKey:@"apiType"];
+                [errorDict setObject:[requestObjectDict apiType] forKey:@"apiType"];
                 
             }
-             */
+            
             
             if (errorDict != nil)
             {
