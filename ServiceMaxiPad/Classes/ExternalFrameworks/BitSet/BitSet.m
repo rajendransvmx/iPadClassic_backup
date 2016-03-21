@@ -25,23 +25,32 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     }
     return self;
 }
-    
+
 - (BOOL)testBit:(int) n
 {
     int index = n >> 3;
     //fix for 8978
     
-    NSUInteger len = [nsdata length];
-    Byte *data = (Byte*)calloc(len, sizeof(char));
-    memcpy(data, [nsdata bytes], len);
+    
+    // 27079
+    
+    /*
+     
+     NSUInteger len = [nsdata length];
+     Byte *data = (Byte*)calloc(len, sizeof(char));
+     memcpy(data, [nsdata bytes], len);
+     
+     */
+    
+    
+    uint8_t *data = (uint8_t *)[nsdata bytes];
     
     // Byte * data = (Byte *)[nsdata bytes];//[nsstr characterAtIndex:index];
     //SMLog(kLogLevelVerbose,@"data =========%@",nsdata);
     
     // int value = (data[index] & (0x80 >> n % 8));
     
-    //    Boolean flag = (data[index] & (0x80 >> n % 8)) != 0; // 27079
-    Boolean flag = (data[index] == (0x80 >> n % 8));
+    Boolean flag = (data[index] & (0x80 >> n % 8)) != 0;
     
     //    NSLog(@"%d",n >> 3);
     //    NSLog(@"%d",data[n >> 3]);
@@ -51,7 +60,10 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     //    NSLog(@"%d",n);
     //    NSLog(@"%@",[nsdata description]);
     
-    free(data);
+    
+    
+    //    free(data);
+    
     return flag;
 }
 
