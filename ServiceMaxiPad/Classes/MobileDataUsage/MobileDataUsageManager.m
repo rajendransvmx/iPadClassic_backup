@@ -45,6 +45,7 @@
 
 -(void)getDeviceInfo:(NSString *)params
 {
+    
     NSDictionary *d = [self parse:params];
     NSString *callback = d[@"nativeCallbackHandler"];
     NSString *requestId = d[@"requestId"];
@@ -80,10 +81,37 @@
     [resp setObject:requestId forKey:@"requestId"];
     [resp setObject:type forKey:@"type"];
     [resp setObject:methodName forKey:@"methodName"];
-    [resp setObject:callback forKey:@"nativeCallbackHandler"];
+    [resp setObject:callback forKey:@"nativellbackHandler"];
     [resp setObject:jsCallback forKey:@"jsCallback"];
 
     SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    
+    NSData *data = [NSPropertyListSerialization dataWithPropertyList:appDelegate.syncDataArray format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+    NSLog(@"Size in bytes before: %lu - Entries: %lu", (unsigned long)[data length], (unsigned long)appDelegate.syncDataArray.count);
+    
+    
+    if(data.length>(650*1024)) {
+
+    __block NSInteger dataToBeRemove = data.length-(650*1024);
+    __block NSInteger dataRemoved=0;
+    
+     [appDelegate.syncDataArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+           NSDictionary * logDict = appDelegate.syncDataArray[idx];
+           
+           NSData * dataDict =  [NSPropertyListSerialization dataWithPropertyList:logDict format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+           NSLog(@"size: %lu", (unsigned long)[dataDict length]);
+           
+           if(dataToBeRemove>dataRemoved) {
+               dataRemoved += dataDict.length;
+               [appDelegate.syncDataArray removeObjectAtIndex:idx];
+           } else {
+               *stop = YES;    // Stop enumerating
+           }
+       }];
+    }
+    
+    NSData *dataAfter = [NSPropertyListSerialization dataWithPropertyList:appDelegate.syncDataArray format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+    NSLog(@"Size in bytes after: %lu - Entries: %lu", (unsigned long)[dataAfter length], (unsigned long)appDelegate.syncDataArray.count);
     
     if (appDelegate.syncDataArray !=nil)
     {
@@ -91,11 +119,8 @@
         
     }
     
-    NSData *data = [NSPropertyListSerialization dataWithPropertyList:appDelegate.syncDataArray format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
-      NSLog(@"Size in bytes: %lu - Entries: %lu", (unsigned long)[data length], (unsigned long)appDelegate.syncDataArray.count);
-    //NSMutableArray *dataArray = [[NSMutableArray alloc]init];
 
-    //[resp setObject:dataArray forKey:@"error"];
+ 
 
     [resp setObject:@true forKey:@"Status"];
     
@@ -105,6 +130,7 @@
 
 -(void)getErrorDetails:(NSString *)params
 {
+    NSLog(@"geterrorDetails called");
     NSDictionary *d = [self parse:params];
     NSString *callback = d[@"nativeCallbackHandler"];
     NSString *requestId = d[@"requestId"];
@@ -138,7 +164,9 @@
     if (appDelegate.syncErrorDataArray !=nil)
     {
         [exceptionDict setObject:appDelegate.syncErrorDataArray forKey:@"errorRecords"];
-
+        NSData *dataAfter = [NSPropertyListSerialization dataWithPropertyList:appDelegate.syncErrorDataArray format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
+        NSLog(@"Size in bytes: %lu - Entries: %lu", (unsigned long)[dataAfter length], (unsigned long)appDelegate.syncDataArray.count);
+        
     }
 
     [resp setObject:exceptionDict forKey:@"exceptions"];
