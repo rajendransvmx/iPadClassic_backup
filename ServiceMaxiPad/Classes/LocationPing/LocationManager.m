@@ -48,6 +48,15 @@
     if (nil == _locManager) {
         _locManager = [[CLLocationManager alloc] init];
         _locManager.delegate = self;
+        
+        //028248
+        if ([_locManager respondsToSelector:@selector(setPausesLocationUpdatesAutomatically:)]) {
+            [_locManager setPausesLocationUpdatesAutomatically:NO];
+        }
+        
+        if ([_locManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
+            [_locManager setAllowsBackgroundLocationUpdates:YES];
+        }
     }
     return _locManager;
 }
