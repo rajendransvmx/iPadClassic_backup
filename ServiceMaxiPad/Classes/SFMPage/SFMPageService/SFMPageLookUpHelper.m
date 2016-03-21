@@ -1464,17 +1464,58 @@
 - (void)updateLiteralValueForCriterai:(NSArray *)criteriaObjects
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"rhsValue CONTAINS[c] %@", @"SVMX.CURRENTRECORD"];
-    NSArray *literalArray = [criteriaObjects filteredArrayUsingPredicate:predicate];
+    NSArray *literalArray1 = [criteriaObjects filteredArrayUsingPredicate:predicate];
     
-    for (DBCriteria *criteria in literalArray) {
-            SFMRecordFieldData *recordData = [self.viewControllerdelegate getValueForLiteral:criteria.rhsValue];
-            criteria.rhsValue = (recordData.internalValue != nil)?recordData.internalValue:@"";
-
+    predicate = [NSPredicate predicateWithFormat:@"SELF CONTAINS %@", @"SVMX.CURRENTRECORD"];
+    NSMutableArray *literalArray2 = [NSMutableArray new];
+    for (DBCriteria *criteria in criteriaObjects) {
+        NSArray *filteredArray = [criteria.rhsValues filteredArrayUsingPredicate:predicate];
+        if (filteredArray) {
+            [literalArray2 addObject:criteria];
+            
+        }
+    }
+    
+    for (DBCriteria *criteria in literalArray1) {
+        SFMRecordFieldData *recordData = [self.viewControllerdelegate getValueForLiteral:criteria.rhsValue];
+        criteria.rhsValue = (recordData.internalValue != nil)?recordData.internalValue:@"";
+        
         
         if ([[criteria getSubCriterias] count]) {
             [self updateLiteralValueForSubCriterai:[criteria getSubCriterias] data:recordData];
         }
     }
+    
+    for (DBCriteria *criteria in literalArray2) {
+        
+        for(NSString *rhsString in criteria.rhsValues)
+        {
+            NSMutableArray *resultArray = [NSMutableArray new];
+            
+            NSArray *partsArray =   [rhsString componentsSeparatedByString:@","];
+            
+            
+            for(NSString *rhsValue in partsArray)
+            {
+                SFMRecordFieldData *recordData;
+                
+                recordData = [self.viewControllerdelegate getValueForLiteral:rhsValue];
+                [resultArray addObject:(recordData.internalValue != nil)?recordData.internalValue:@""];
+                
+                if ([[criteria getSubCriterias] count]) {
+                    [self updateLiteralValueForSubCriterai:[criteria getSubCriterias] data:recordData];
+                }
+                
+            }
+            
+            criteria.rhsValues = resultArray;
+        }
+        
+        
+        
+    }
+    
+    
 }
 
 - (NSString *)getNameFieldForId:(NSString *)Id objectName:(NSString *)objectName

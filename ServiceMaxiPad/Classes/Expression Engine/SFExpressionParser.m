@@ -494,6 +494,8 @@
                                                    lhsValue:expComp.componentLHS
                                                    rhsValue:expComp.componentRHS
                                                   fieldType:expComp.fieldType];
+        criteriaObj.dataType = expComp.fieldType;
+
         
         [self addInnerCriteria:criteriaObj expressionComponent:expComp];
         
