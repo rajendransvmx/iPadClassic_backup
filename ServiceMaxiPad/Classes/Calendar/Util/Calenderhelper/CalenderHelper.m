@@ -1645,7 +1645,7 @@
     theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
 
 
-    if (fieldsArray.count) {
+    if (theTitle) {
         NSString *trimmedString = [theTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
 
         [theRecordDict setObject:(trimmedString?trimmedString:@"") forKey:@"eventTitle"];
@@ -1678,7 +1678,7 @@
         settingString = self.svmxEventTitleSettingString;
     }
     
-    if (fieldsArray.count<=0 || !event.isEventTitleSettingDriven) {
+    if (!event.isEventTitleSettingDriven) {
         //not settings driven.
         return;
     }
