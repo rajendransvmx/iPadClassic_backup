@@ -31,4 +31,5 @@
 -(UIWebView *) getBrowser;
 +(MobileDataUsageExecuter*)getInstance;
 -(NSMutableArray *)getDeviceInfo;
+-(void)execute;
 @end

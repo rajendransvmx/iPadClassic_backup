@@ -104,7 +104,6 @@ static SyncManager *_instance;
 
 @property(nonatomic, assign) BOOL isDataSyncRunning;
 @property (nonatomic) BOOL isDataSyncInLoop;
-@property(nonatomic,strong)MobileDataUsageExecuter *mdExecuter;
 
 
 - (void)performInitialSync;
@@ -2302,8 +2301,8 @@ static SyncManager *_instance;
     [[ProductIQManager sharedInstance] cancelProdIQDataSync];
 }
 
+#pragma mark Sync Error Report
 
-//SyncErrorReporting Executer
 -(void)executeSyncErrorReporting
 {
     SMAppDelegate *appDelegate = (SMAppDelegate*)[[UIApplication sharedApplication]delegate];
@@ -2311,8 +2310,10 @@ static SyncManager *_instance;
     {
         dispatch_async(dispatch_get_main_queue(), ^{
             UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 10, 10)];
-            self.mdExecuter = [[MobileDataUsageExecuter alloc]initWithParentView:view andFrame:CGRectZero];
+            __block MobileDataUsageExecuter *executor = [[MobileDataUsageExecuter alloc]initWithParentView:view andFrame:CGRectZero];
+             [executor performSelectorInBackground:@selector(execute) withObject:nil];
         });
+        
         ConfigureLoggerAccordingToSettings();
     }
     

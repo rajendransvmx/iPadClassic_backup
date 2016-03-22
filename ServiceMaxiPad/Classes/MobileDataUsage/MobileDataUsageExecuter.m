@@ -38,8 +38,6 @@ static  MobileDataUsageExecuter *instance;
         clientId = @"3MVG9VmVOCGHKYBRKMhA_p09I93C_GY2N1wz8gvNtsZnJ0SE4cNbqfNLqBV5vFIT8E.Exhq8e0qBlRE3zezAb";
         callbackUrl = @"SVMX://";
         loginUrl = @"https://test.salesforce.com/services/oauth2/authorize?response_type=token&client_id=%@&redirect_uri=%@&display=touch&login_hint=shivaranjini@qa7.com.cfg2";
-               [self loadMobileDataUsage];
-        
     }
     
       return self;
@@ -65,6 +63,11 @@ static  MobileDataUsageExecuter *instance;
     return mdWebView;
 }
 
+-(void)execute
+{
+    [self loadMobileDataUsage];
+}
+
 #pragma mark -
 #pragma mark Webview creation and loading
 
@@ -72,7 +75,7 @@ static  MobileDataUsageExecuter *instance;
     
     UIWebView *webview = [[UIWebView alloc]initWithFrame:newFrame];
     webview.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-   mdWebView = webview;
+    mdWebView = webview;
     webview.delegate = self;
     [self.parentView addSubview:mdWebView];
 
