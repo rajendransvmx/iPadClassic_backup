@@ -189,15 +189,16 @@
  Date: 11-Mar-2016
  */
 
+
 -(void)showAlert{
     
     if (SYSTEM_VERSION < 8.0) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"" message:@"Only Gregorian calendar supported. Open Settings, then Language and Region, then Calendar to select Gregorian calendar." delegate:self cancelButtonTitle:@"Reload" otherButtonTitles: nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"" message:[[TagManager sharedInstance]tagByName:kTag_GregorianCalendarOnlyAlert] delegate:self cancelButtonTitle:@"Reload" otherButtonTitles: nil];
         alertView.tag = 1001;
         [alertView show];
     }
     else {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"" message:@"Only Gregorian calendar supported. Open Settings, then Language and Region, then Calendar to select Gregorian calendar" preferredStyle:(UIAlertControllerStyleAlert)];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"" message:[[TagManager sharedInstance]tagByName:kTag_GregorianCalendarOnlyAlert] preferredStyle:(UIAlertControllerStyleAlert)];
         
         UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Reload" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
             [self checkForCalendarType];

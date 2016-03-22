@@ -455,6 +455,8 @@ extern NSString *const KTagSettingsTitle;
 #define kTag_LookUpTitle @"IPAD014_TAG136"
 #define kTag_AddSingleLine @"IPAD014_TAG137"
 
+#define kTag_GregorianCalendarOnlyAlert @"IPAD006_TAG132"
+
 extern NSString *const kTagJanuary;
 extern NSString *const kTagFebruary;
 extern NSString *const kTagMarch;

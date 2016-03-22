@@ -1290,5 +1290,7 @@
 	<string>ProductIQ</string>
 	<key>IPAD014_TAG141</key>
 	<string>Open tree view</string>
+	<key>IPAD006_TAG132</key>
+	<string>Only Gregorian calendar supported. Open Settings, then Language and Region, then Calendar to select Gregorian calendar.</string>
 </dict>
 </plist>
