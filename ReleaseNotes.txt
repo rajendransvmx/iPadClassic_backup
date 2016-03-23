@@ -3,14 +3,14 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.046
+Version = 16.29.047
 ===========================================
 
 
 
 Defect fix
 =============
-INITIAL SYNC ERROR REPORT ISSUE
+iPad JS change, This change for MFL lookup.
 
 ——————
 NOTE:
