@@ -699,7 +699,7 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
     [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
     if (error !=nil)
     {
-        [self reportErrorToAWS:error withResponseObject:responseObject withRequestObject:request];
+    [self reportErrorToAWS:error withResponseObject:responseObject withRequestObject:request];
 
     }
 

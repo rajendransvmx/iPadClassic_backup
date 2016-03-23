@@ -27,11 +27,12 @@
             NSDictionary *responseDict = (NSDictionary *)responseData;
             NSArray *valueMap = [responseDict objectForKey:@"valueMap"];
             if ([valueMap count] != 0) {
-                NSDictionary *values = [valueMap objectAtIndex:0];
+                
+                NSDictionary *loggingValuesDict = [valueMap objectAtIndex:0];
                 NSString *theSyncReportingType = nil;
-                if ([[values objectForKey:@"key"] isEqualToString:@"USAGE_LOGGING_ENABLED"])
+                if ([[loggingValuesDict objectForKey:@"key"] isEqualToString:@"USAGE_LOGGING_ENABLED"])
                 {
-                    theSyncReportingType = [values objectForKey:@"value"]; //"always" or "error"
+                    theSyncReportingType = [loggingValuesDict objectForKey:@"value"]; //"always" or "error"
                     appDelegate.syncReportingType = theSyncReportingType;
                     if ([appDelegate.syncReportingType isEqualToString:@"always"])
                     {
@@ -44,10 +45,22 @@
                     }
                     
                 }
+                else{
+                    appDelegate.syncReportingType = nil;
+                }
+                
+                NSDictionary *serverURLDict = [valueMap objectAtIndex:1];
+                NSString *defaultServerUrl = @"https://mtools-prod.servicemax-api.com"; //Default set to Production
+                if ([[serverURLDict objectForKey:@"key"] isEqualToString:@"TOOLS_SERVER_URL"])
+                {
+                    defaultServerUrl = [serverURLDict objectForKey:@"value"]; //"always" or "error"
+                    
+                }
+                appDelegate.serverUrl = defaultServerUrl;
+
+
             }
-            else{
-                appDelegate.syncReportingType = nil;
-            }
+            
           
         }
         callBackObj.callBack = NO;

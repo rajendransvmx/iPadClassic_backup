@@ -25,7 +25,10 @@
     NSString *jsCallback = d[@"jsCallback"];
     NSDictionary *paramDict = [self parse:d[@"params"]];
     NSString *serverURLkey = paramDict[@"settingName"];
-    NSString *serverURLvalue = @"https://mtools-prod.servicemax-api.com";
+    //NSString *serverURLvalue = @"https://mtools-prod.servicemax-api.com";
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    NSString *serverURLvalue = appDelegate.serverUrl;
+
     
     //For Viewing
    // https://mtools-prod-host.servicemax-api.com/resource/errorsyncreport/?orgid=00DF00000007BzNMAU
@@ -81,7 +84,7 @@
     [resp setObject:requestId forKey:@"requestId"];
     [resp setObject:type forKey:@"type"];
     [resp setObject:methodName forKey:@"methodName"];
-    [resp setObject:callback forKey:@"nativellbackHandler"];
+    [resp setObject:callback forKey:@"nativeCallbackHandler"];
     [resp setObject:jsCallback forKey:@"jsCallback"];
 
     SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
@@ -174,6 +177,7 @@
     [resp setObject:exceptionDict forKey:@"exceptions"];
     [resp setObject:@"INITIAL" forKey:@"syncType"];//have to take actual value of sync type
     [resp setObject:@true forKey:@"status"];
+    [resp setObject:appDelegate.serverUrl forKey:@"toolsServerURL"];
     
     [self respondOnMethod:callback withParams:resp];
 
