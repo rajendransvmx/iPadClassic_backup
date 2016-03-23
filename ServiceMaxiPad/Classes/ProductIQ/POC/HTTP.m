@@ -169,6 +169,9 @@
         }else if([method isEqual:@"POST"]){
             NSData *bodyAsData = [body dataUsingEncoding:NSUTF8StringEncoding];
             [request setHTTPBody:bodyAsData];
+            
+            NSLog(@"Final http data Size in bytes : %lu,", (unsigned long)[bodyAsData length]);
+
             [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
             for (NSDictionary *headerDict in HttpRequestHeaders)
             {
@@ -209,6 +212,9 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     SXLogError(@"HTTP Error! %@", [error localizedDescription]);
     NSLog(@"HTTP Error! %@", [error localizedDescription]);
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    appDelegate.syncDataArray = nil;
+    appDelegate.syncErrorDataArray = nil;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
