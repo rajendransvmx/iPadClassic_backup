@@ -57,7 +57,7 @@
                     
                 }
                 appDelegate.serverUrl = defaultServerUrl;
-
+                NSLog(@"AWS Server URL[%@]",appDelegate.serverUrl);
 
             }
             

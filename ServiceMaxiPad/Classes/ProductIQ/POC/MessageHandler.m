@@ -60,7 +60,6 @@
     
     UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
     NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
-    SXLogDebug(@"&&& %@", js);
     [browser stringByEvaluatingJavaScriptFromString:js];
 }
 

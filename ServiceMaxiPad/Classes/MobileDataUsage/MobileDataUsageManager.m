@@ -98,12 +98,10 @@
     __block NSInteger dataToBeRemove = data.length-(500*1024);
     __block NSInteger dataRemoved=0;
     __block NSInteger indexUpperLimit=0;
-     NSLog(@"data to be remove %ld", (long)dataToBeRemove);
         
      [appDelegate.syncDataArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
            NSData * dataDict =  [NSPropertyListSerialization dataWithPropertyList:obj format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
-           NSLog(@"size: %lu,data removed,%ld, index %lu", (unsigned long)[dataDict length],(long)dataRemoved,(unsigned long)idx);
-           
+         
            if(dataToBeRemove>dataRemoved) {
                dataRemoved += dataDict.length;
                indexUpperLimit++;
@@ -169,9 +167,6 @@
     if (appDelegate.syncErrorDataArray !=nil)
     {
         [exceptionDict setObject:appDelegate.syncErrorDataArray forKey:@"errorRecords"];
-        NSData *dataAfter = [NSPropertyListSerialization dataWithPropertyList:appDelegate.syncErrorDataArray format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
-        NSLog(@"Size in bytes: %lu - Entries: %lu", (unsigned long)[dataAfter length], (unsigned long)appDelegate.syncDataArray.count);
-        
     }
 
     [resp setObject:exceptionDict forKey:@"exceptions"];
@@ -202,15 +197,20 @@
   
     MobileDataUsageExecuter *mdExecuter = [MobileDataUsageExecuter getInstance];
 
+    dispatch_async(dispatch_get_main_queue(), ^{
     
-    UIWebView *browser = [mdExecuter getBrowser];
-    if(browser != nil)
-    {
-        NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
-        SXLogDebug(@"&&& %@", js);
-        [browser stringByEvaluatingJavaScriptFromString:js];
-    }
-        
+        UIWebView *browser = [mdExecuter getBrowser];
+        if(browser != nil)
+        {
+            NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
+            //SXLogDebug(@"&&& %@", js);
+            NSLog(@"executing js script in mdu before");
+            [browser stringByEvaluatingJavaScriptFromString:js];
+            NSLog(@"executing js script in mdu after");
+
+        }
+    });
+
     
 }
 

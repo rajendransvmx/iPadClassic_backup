@@ -10,6 +10,7 @@
 #import "FileManager.h"
 #import "CustomerOrgInfo.h"
 #import "AppMetaData.h"
+#import "SyncManager.h"
 
 static  MobileDataUsageExecuter *instance;
 
@@ -19,20 +20,18 @@ static  MobileDataUsageExecuter *instance;
                 andFrame:(CGRect)newFrame
 {
     
-    if (newParentView == nil) {
-        
-        self = nil;
-        return nil;
-    }
+   
     self = [super init];
     
     if (self != nil) {
-    self.parentView = newParentView;        
+        self.parentView = newParentView;
         instance = self;
         
         bridge = [[Bridge alloc]init];
         //    webview = [[UIWebView alloc]initWithFrame:CGRectMake(0, 20, 1024,748)];
         [self createWebviewWithFrame:newFrame];
+        
+       
         
         nativeCallUrl = @"native-call://";
         clientId = @"3MVG9VmVOCGHKYBRKMhA_p09I93C_GY2N1wz8gvNtsZnJ0SE4cNbqfNLqBV5vFIT8E.Exhq8e0qBlRE3zezAb";
@@ -73,12 +72,12 @@ static  MobileDataUsageExecuter *instance;
 
 - (void)createWebviewWithFrame:(CGRect)newFrame {
     
-    UIWebView *webview = [[UIWebView alloc]initWithFrame:newFrame];
-    webview.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-    mdWebView = webview;
-    webview.delegate = self;
-    [self.parentView addSubview:mdWebView];
-
+     dispatch_sync(dispatch_get_main_queue(), ^{
+        UIWebView *webview = [[UIWebView alloc]initWithFrame:newFrame];
+        webview.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+        mdWebView = webview;
+        webview.delegate = self;
+     });
 }
 
 
@@ -102,10 +101,6 @@ static  MobileDataUsageExecuter *instance;
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     NSLog(@"Should start navigation" );
     NSString *url = request.URL.absoluteString;
-    
-    // Testing purposes
-    SXLogDebug(@"Loading URL :%@",url);
-    
     
     // if this is a native call
     BOOL isNativeCall = [url hasPrefix:nativeCallUrl];
@@ -154,7 +149,7 @@ static  MobileDataUsageExecuter *instance;
 }
 
 - (void)handleNativeCall:(NSString *)url {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), [[SyncManager sharedInstance] getSyncErrorReportQueue], ^{
         [bridge invoke: url];
     });
 }
@@ -184,7 +179,5 @@ static  MobileDataUsageExecuter *instance;
 }
 
 // END - webview events
-
-
 
 @end

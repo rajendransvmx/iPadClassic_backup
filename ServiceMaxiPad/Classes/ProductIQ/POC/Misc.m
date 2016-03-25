@@ -109,14 +109,18 @@
     NSData *data = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
-    if (browser == nil)
-    {
-        browser = [[MobileDataUsageExecuter getInstance] getBrowser];
-    }
-    NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
-    SXLogDebug(@"&&& %@", js);
-    [browser stringByEvaluatingJavaScriptFromString:js];
+     dispatch_async(dispatch_get_main_queue(), ^{
+        UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
+        if (browser == nil)
+        {
+            browser = [[MobileDataUsageExecuter getInstance] getBrowser];
+        }
+         NSLog(@"executing js script in misc before");
+        NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
+        [browser stringByEvaluatingJavaScriptFromString:js];
+         NSLog(@"executing js script in misc after");
+
+     });
 }
 
 @end

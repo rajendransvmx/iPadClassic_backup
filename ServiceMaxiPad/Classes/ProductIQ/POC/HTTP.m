@@ -11,6 +11,7 @@
 #import "CustomerOrgInfo.h"
 #import "MobileDataUsageExecuter.h"
 #import "SMAppDelegate.h"
+#import "SyncManager.h"
 
 @implementation HTTP
 
@@ -125,6 +126,7 @@
     }
     else
     {
+        [[SyncManager sharedInstance] handleSyncCompletion];
         NSMutableString *finalStr = [[[NSUserDefaults standardUserDefaults]objectForKey:@"tempStr"]mutableCopy];
         if (finalStr == nil)
         {
@@ -195,10 +197,14 @@
         }
         
         //check here ....
-        NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate: self];
-        responseData = [[NSMutableData alloc]init];
-        
-        [connection start];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"nsurl connection in http before");
+            NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate: self];
+            responseData = [[NSMutableData alloc]init];
+            
+            [connection start];
+            NSLog(@"nsurl connection in http after");
+        });
         
         
     }
@@ -210,16 +216,11 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    SXLogError(@"HTTP Error! %@", [error localizedDescription]);
     NSLog(@"HTTP Error! %@", [error localizedDescription]);
-    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
-    appDelegate.syncDataArray = nil;
-    appDelegate.syncErrorDataArray = nil;
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     NSString *responseText = [[NSString alloc] initWithData:self->responseData encoding:NSUTF8StringEncoding];
-    SXLogDebug(@"didfinishLoading: %@",responseText);
     NSLog(@"didfinishLoading: %@",responseText);
     NSMutableDictionary *resp = [[NSMutableDictionary alloc] init];
     [resp setObject:self->requestId forKey:@"requestId"];
@@ -229,12 +230,6 @@
     [resp setObject:self->jsCallback forKey:@"jsCallback"];
     [resp setObject:responseText forKey:@"responseText"];
     [self respondOnMethod:callback withParams:resp];
-    //ToDo:
-    //DataArray needs to be cleared out as soon we get any flag status from JS side that data has been succesfully uploaded instead of simply clearing out as below as soon connection finish load.
-    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
-    appDelegate.syncDataArray = nil;
-    appDelegate.syncErrorDataArray = nil;
-
 }
 
 -(NSDictionary *)parse:(NSString *) str {
@@ -249,15 +244,20 @@
     NSData *data = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
-    if (browser == nil)
-    {
-        browser = [[MobileDataUsageExecuter getInstance] getBrowser];
+    dispatch_async(dispatch_get_main_queue(), ^{
         
-    }
-    NSString *js = [NSString stringWithFormat:@"%@(%@)", methodNameLocal, resp];
-    SXLogDebug(@"&&& %@", js);
-    [browser stringByEvaluatingJavaScriptFromString:js];
+        UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
+        if (browser == nil)
+        {
+            browser = [[MobileDataUsageExecuter getInstance] getBrowser];
+            
+        }
+        NSString *js = [NSString stringWithFormat:@"%@(%@)", methodNameLocal, resp];
+            NSLog(@"executing js script in http before");
+        [browser stringByEvaluatingJavaScriptFromString:js];
+        NSLog(@"executing js script in http after");
+
+    });
 }
 @end
 
