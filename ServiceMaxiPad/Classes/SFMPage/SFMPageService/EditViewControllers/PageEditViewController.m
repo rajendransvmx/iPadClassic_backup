@@ -47,7 +47,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 @interface PageEditViewController () {
     
-    BOOL isBizRuleTerminated; //25582
 }
 
 @property(nonatomic,strong)SFMPageEditManager   *sfmEditPageManager;
@@ -1005,16 +1004,10 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     if (!shouldExecuteBizRule) {
         [self saveRecordData];
     }
-    else {
-        [self performSelector:@selector(terminateBizRule) withObject:nil afterDelay:3.0];
-        isBizRuleTerminated = NO; //25582
-    }
 }
 
 - (void)businessRuleFinishedWithResults:(NSMutableArray *)resultArray
 {
-    isBizRuleTerminated = YES;
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(terminateBizRule) object:nil]; // 25582
     
     [(PageEditDetailViewController *)self.detailViewController  initiateBuissRulesData:resultArray];
     
@@ -1027,12 +1020,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
 }
 
--(void)terminateBizRule {
-    NSLog(@"terminateBizRule: %d",isBizRuleTerminated);
-    if (!isBizRuleTerminated) {
-        [self saveRecordData];
-    }
-}
+
 
 -(void)refreshBizRuleData
 {
