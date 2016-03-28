@@ -2,14 +2,14 @@
 ServiceMax Win 15 SP iPad Release Win15SPBuild
 
 *******************************************
-Version = 15.20.040
+Version = 15.20.041
 ===========================================
 -------------
 Fixed Defects
 -------------
 
-Reverted back changes done for defect 013386. (rev. 5987)
-Enabled iTunes file sharing.
+Back ported:
+23585
 
 -------------
 Known Issues
