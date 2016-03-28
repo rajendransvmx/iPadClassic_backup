@@ -16,6 +16,7 @@
 #define kDAOrderbyVal       @"orderBy"
 #define kDAResponse         @"response"
 #define kSOQLJson           @"jsonSoql"
+#define kInnerJoin          @"innerJoin" // 012895
 
 @implementation DARequest
 
@@ -26,7 +27,7 @@
         
         /* Parse the dictionary */
         self.objectName = [dataDictionary objectForKey:kDAObjectName];
-      
+        
         NSArray *fields = [dataDictionary objectForKey:kDAFieldNameArray];
         if ([fields isKindOfClass:[NSArray class]] && [fields count ] > 0) {
             self.fieldsArray = fields;
@@ -51,6 +52,13 @@
         if (![Utility isStringEmpty:sqlJson]) {
             self.query = sqlJson;
         }
+        
+        // 012895
+        NSString *innerJoin = [dataDictionary objectForKey:kInnerJoin];
+        if (![Utility isStringEmpty:innerJoin]) {
+            self.innerJoin = innerJoin;
+        }
+        
     }
     return self;
 }
@@ -81,7 +89,7 @@
     NSDictionary *response = [self.responseObject dictionaryRepresenation];
     if (response != nil) {
         [finalDictionary setObject:response forKey:kDAResponse];
-
+        
     }
     return finalDictionary;
 }

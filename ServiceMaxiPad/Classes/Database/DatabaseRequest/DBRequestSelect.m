@@ -62,7 +62,7 @@
 
 #pragma mark - Initialize functions
 - (id)initWithTableName:(NSString *)newTableName {
-   [self initAllVariables:newTableName fields:nil criteriaArray:nil andAdavncedExpression:nil];
+    [self initAllVariables:newTableName fields:nil criteriaArray:nil andAdavncedExpression:nil];
     return self;
 }
 
@@ -75,53 +75,53 @@
 - (id)initWithTableName:(NSString *)tableName
           andFieldNames:(NSArray *)fieldNames
           whereCriteria:(DBCriteria *)criteria{
-     [self initAllVariables:tableName fields:fieldNames
-              criteriaArray:[[NSArray alloc]
-                             initWithObjects:criteria, nil] andAdavncedExpression:nil];
+    [self initAllVariables:tableName fields:fieldNames
+             criteriaArray:[[NSArray alloc]
+                            initWithObjects:criteria, nil] andAdavncedExpression:nil];
     return self;
 }
 - (id)initWithTableName:(NSString *)tableName
-          whereCriterias:(NSArray *)criteriaArray
+         whereCriterias:(NSArray *)criteriaArray
    andAdvanceExpression:(NSString *)advanceExpression{
     [self initAllVariables:tableName fields:nil criteriaArray:criteriaArray andAdavncedExpression:advanceExpression];
     return self;
 }
 
 - (id)initWithTableName:(NSString *)tableName
-             andFieldNames:(NSArray *)fieldNames
-          whereCriterias:(NSArray *)criteriaArray
+          andFieldNames:(NSArray *)fieldNames
+         whereCriterias:(NSArray *)criteriaArray
    andAdvanceExpression:(NSString *)advanceExpression{
     [self initAllVariables:tableName fields:fieldNames criteriaArray:criteriaArray andAdavncedExpression:advanceExpression];
     return self;
 }
 
 - (id)initWithTableName:(NSString *)tableName
-           andFieldObjects:(NSArray *)fieldObjects
-          whereCriterias:(NSArray *)criteriaArray
+        andFieldObjects:(NSArray *)fieldObjects
+         whereCriterias:(NSArray *)criteriaArray
    andAdvanceExpression:(NSString *)advanceExpression {
     [self initAllVariables:tableName fields:fieldObjects criteriaArray:criteriaArray andAdavncedExpression:advanceExpression];
     return self;
 }
 
 - (id)initWithTableName:(NSString *)tableName
-              aggregateFunction:(SQLAggregateFunction)newAggregateFunction
-                  whereCriterias:(NSArray *)criteriaArray
-           andAdvanceExpression:(NSString *)advanceExpression {
+      aggregateFunction:(SQLAggregateFunction)newAggregateFunction
+         whereCriterias:(NSArray *)criteriaArray
+   andAdvanceExpression:(NSString *)advanceExpression {
     self.aggregateFunction = newAggregateFunction;
     self.aggregateFunctionExists = YES;
     [self initAllVariables:tableName fields:nil criteriaArray:criteriaArray andAdavncedExpression:advanceExpression];
     return self;
 }
 - (id)initWithField:(DBField *)field
-              aggregateFunction:(SQLAggregateFunction)newAggregateFunction
-                  whereCriterias:(NSArray *)criteriaArray
-           andAdvanceExpression:(NSString *)advanceExpression {
+  aggregateFunction:(SQLAggregateFunction)newAggregateFunction
+     whereCriterias:(NSArray *)criteriaArray
+andAdvanceExpression:(NSString *)advanceExpression {
     
-     self.aggregateFunction = newAggregateFunction;
-     self.aggregateField = field;
-     self.aggregateFunctionExists = YES;
-     [self initAllVariables:field.tableName fields:nil criteriaArray:criteriaArray andAdavncedExpression:advanceExpression];
-      return self;
+    self.aggregateFunction = newAggregateFunction;
+    self.aggregateField = field;
+    self.aggregateFunctionExists = YES;
+    [self initAllVariables:field.tableName fields:nil criteriaArray:criteriaArray andAdavncedExpression:advanceExpression];
+    return self;
 }
 
 - (void)setDistinctRowsOnly {
@@ -129,7 +129,7 @@
 }
 - (void)setDistinctRowsOnField:(NSString *)newDistinctField {
     @synchronized([self class]){
-         self.distinctRows = YES;
+        self.distinctRows = YES;
         self.distinctField = newDistinctField;
     }
 }
@@ -149,7 +149,7 @@
         return [self getFieldNamesSeperatedByCommas];
     }
     else if ([self.fieldObjects count] > 0 ){
-         return [self getFieldNamesWithTableNameSeparatedByCommas];
+        return [self getFieldNamesWithTableNameSeparatedByCommas];
     }
     return nil;
 }
@@ -163,12 +163,18 @@
 
 - (NSArray *)getRearrangedArray {
     @synchronized([self class]){
-       return nil;
+        return nil;
     }
 }
 
-- (NSString *)getAggregateFunction:(SQLAggregateFunction)functionType{
 
+// 012895
+-(void)addJoinString:(NSString *)ajoinString {
+    self.joinString = ajoinString;
+}
+
+- (NSString *)getAggregateFunction:(SQLAggregateFunction)functionType{
+    
     NSString *functionName = nil;
     switch (functionType) {
         case SQLAggregateFunctionCount:
@@ -178,7 +184,7 @@
             functionName = (NSString *)kSQLAggregateFunctionSum;
             break;
         case SQLAggregateFunctionAvg:
-             functionName = (NSString *)kSQLAggregateFunctionAvg;
+            functionName = (NSString *)kSQLAggregateFunctionAvg;
             break;
         case SQLAggregateFunctionTotal:
             functionName = (NSString *)kSQLAggregateFunctionTotal;
@@ -192,82 +198,87 @@
     return functionName;
 }
 - (NSString *)query {
-     @synchronized([self class]){
-         
-         @autoreleasepool {
-             NSMutableString *query = [[NSMutableString alloc] initWithString:@"SELECT "];
-             
-             
-             if (self.aggregateFunctionExists) {
-                 NSString *functionName = [self getAggregateFunction:self.aggregateFunction];
-                 if (self.aggregateField.name != nil) {
-                     if (self.distinctRows) {
-                          [query appendFormat:@" %@(DISTINCT %@) ",functionName,self.aggregateField.name];
-                     }
-                     else{
-                          [query appendFormat:@" %@(%@) ",functionName,self.aggregateField.name];
-                     }
-                }
-                 else{
-                      [query appendFormat:@" %@(*) ",functionName];
-                 }
-             }
-             else{
-                 if ([self hasFields]) {
-                     
-                     NSString *distinctFieldName = @"",*distinctClause = @"";
-                     if (self.distinctRows) {
-                         distinctClause = @"DISTINCT";
-                         if (self.distinctField.length > 1) {
-                             distinctFieldName = [[NSString alloc] initWithFormat:@" %@, ",self.distinctField];
-                         }
-                     }
-                     NSString *fieldString = [self getFieldString];
-                     [query appendFormat:@" %@ %@ %@ ",distinctClause,distinctFieldName,fieldString];
-                 }
-                 else{
-                     [query appendString:@" * "];
-                 }
-             }
-             
-             /* Adding from clause */
-             [query appendFormat:@" FROM '%@' ",self.tableName];
-             
-             /* Add join statements */
-             NSString *joinString = [self getJoinString];
-             if (joinString != nil) {
-                 [query appendFormat:@" %@",joinString];
-             }
-             
-             /* Add where clause if exist */
-             NSString *whereClause = [self whereClause];
-             if (whereClause != nil) {
-                 [query appendFormat:@" WHERE ( %@ )",whereClause];
-             }
-             
+    @synchronized([self class]){
+        
+        @autoreleasepool {
+            NSMutableString *query = [[NSMutableString alloc] initWithString:@"SELECT "];
             
-             
-             /* Add group by */
-             NSString *groupByString = [self getGroupByString];;
-             if (groupByString != nil) {
-                 [query appendFormat:@" GROUP BY %@ ",groupByString];
-             }
-             
-             /* Add order by if exist */
-             NSString *orderByString = [self getOrderByString];
-             if (orderByString != nil) {
-                 [query appendFormat:@" ORDER BY %@ ",orderByString];
-             }
-             
-             
-             /* Add LIMIT and OFFSET  */
-             if (self.limit != 0) {
-                 [query appendFormat:@" LIMIT %ld OFFSET %ld ",(long)self.limit ,(long)self.offSet];
-             }
+            
+            if (self.aggregateFunctionExists) {
+                NSString *functionName = [self getAggregateFunction:self.aggregateFunction];
+                if (self.aggregateField.name != nil) {
+                    if (self.distinctRows) {
+                        [query appendFormat:@" %@(DISTINCT %@) ",functionName,self.aggregateField.name];
+                    }
+                    else{
+                        [query appendFormat:@" %@(%@) ",functionName,self.aggregateField.name];
+                    }
+                }
+                else{
+                    [query appendFormat:@" %@(*) ",functionName];
+                }
+            }
+            else{
+                if ([self hasFields]) {
+                    
+                    NSString *distinctFieldName = @"",*distinctClause = @"";
+                    if (self.distinctRows) {
+                        distinctClause = @"DISTINCT";
+                        if (self.distinctField.length > 1) {
+                            distinctFieldName = [[NSString alloc] initWithFormat:@" %@, ",self.distinctField];
+                        }
+                    }
+                    NSString *fieldString = [self getFieldString];
+                    [query appendFormat:@" %@ %@ %@ ",distinctClause,distinctFieldName,fieldString];
+                }
+                else{
+                    [query appendString:@" * "];
+                }
+            }
+            
+            /* Adding from clause */
+            [query appendFormat:@" FROM '%@' ",self.tableName];
+            
+            /* Add join statements */
+            NSString *joinString = [self getJoinString];
+            if (joinString != nil) {
+                [query appendFormat:@" %@",joinString];
+            }
+            
+            // 012895
+            if ([self.joinString length] > 0) {
+                [query appendString:self.joinString];
+            }
+            
+            /* Add where clause if exist */
+            NSString *whereClause = [self whereClause];
+            if (whereClause != nil) {
+                [query appendFormat:@" WHERE ( %@ )",whereClause];
+            }
+            
+            
+            
+            /* Add group by */
+            NSString *groupByString = [self getGroupByString];;
+            if (groupByString != nil) {
+                [query appendFormat:@" GROUP BY %@ ",groupByString];
+            }
+            
+            /* Add order by if exist */
+            NSString *orderByString = [self getOrderByString];
+            if (orderByString != nil) {
+                [query appendFormat:@" ORDER BY %@ ",orderByString];
+            }
+            
+            
+            /* Add LIMIT and OFFSET  */
+            if (self.limit != 0) {
+                [query appendFormat:@" LIMIT %ld OFFSET %ld ",(long)self.limit ,(long)self.offSet];
+            }
             //NSLog(@"QUERY : %@",query);
-             return query;
-         }
-     }
+            return query;
+        }
+    }
 }
 
 #pragma mark -End
@@ -295,7 +306,7 @@
 }
 
 - (void)addLeftOuterJoinTable:(NSString *)joinTableName
-  andPrimaryTableFieldName:(NSString *)leftFieldName {
+     andPrimaryTableFieldName:(NSString *)leftFieldName {
     
     if (self.joinTablesDict == nil) {
         self.joinTablesDict = [[NSMutableDictionary alloc] init];
@@ -307,7 +318,7 @@
     }
     else{
         [oldJoinObject addFieldName:leftFieldName];
-
+        
     }
 }
 
