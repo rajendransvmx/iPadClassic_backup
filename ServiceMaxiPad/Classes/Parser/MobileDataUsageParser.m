@@ -50,7 +50,7 @@
                 }
                 
                 NSDictionary *serverURLDict = [valueMap objectAtIndex:1];
-                NSString *defaultServerUrl = @"https://mtools-prod.servicemax-api.com"; //Default set to Production
+                NSString *defaultServerUrl = @"https://mtools.servicemax-api.com"; //Default set to Production
                 if ([[serverURLDict objectForKey:@"key"] isEqualToString:@"TOOLS_SERVER_URL"])
                 {
                     defaultServerUrl = [serverURLDict objectForKey:@"value"]; //"always" or "error"
