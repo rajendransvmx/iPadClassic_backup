@@ -48,6 +48,15 @@
     if (nil == _locManager) {
         _locManager = [[CLLocationManager alloc] init];
         _locManager.delegate = self;
+        
+        //028248
+        if ([_locManager respondsToSelector:@selector(setPausesLocationUpdatesAutomatically:)]) {
+            [_locManager setPausesLocationUpdatesAutomatically:NO];
+        }
+        
+        if ([_locManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
+            [_locManager setAllowsBackgroundLocationUpdates:YES];
+        }
     }
     return _locManager;
 }
@@ -144,10 +153,10 @@
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
     if (shouldUseNotifications) {
-    // notify failed location update
-    [[NSNotificationCenter defaultCenter] postNotificationName:kLocationManagerNotificationFailedName
-                                                        object:self
-                                                      userInfo:@{@"error": error}];
+        // notify failed location update
+        [[NSNotificationCenter defaultCenter] postNotificationName:kLocationManagerNotificationFailedName
+                                                            object:self
+                                                          userInfo:@{@"error": error}];
     }
     
     if (self.delegate) {
@@ -164,8 +173,8 @@
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     
     if (shouldUseNotifications) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kLocationManagerNotificationAuthorizationChangedName
-                                                        object:self userInfo:@{@"status": @(status)}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kLocationManagerNotificationAuthorizationChangedName
+                                                            object:self userInfo:@{@"status": @(status)}];
     }
     if (self.delegate) {
         
