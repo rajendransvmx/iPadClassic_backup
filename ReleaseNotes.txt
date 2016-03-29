@@ -3,16 +3,16 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.050
+Version = 16.29.051
 ===========================================
 
 
 
 Defect fix
 =============
-New JS file replaced, JS file has the changes of refactored code
+-
 
 ——————
 NOTE:
 
-Name Space: SVMXDEV
+Name Space: SVMXC
