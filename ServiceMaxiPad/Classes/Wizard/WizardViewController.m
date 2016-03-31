@@ -169,11 +169,6 @@
                             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
                             cell.accessoryView = [self setIcon:[UIColor colorWithHexString:kTextFieldFontColor]];
                         }
-                        else if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"URL"]) {
-                            textLabel.enabled = NO;
-                            cell.userInteractionEnabled = NO;
-                            [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-                        }
                         else{
                             textLabel.enabled = YES;
                             cell.userInteractionEnabled = YES;
