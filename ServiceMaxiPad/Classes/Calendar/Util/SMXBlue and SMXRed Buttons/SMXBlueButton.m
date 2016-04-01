@@ -392,7 +392,7 @@
 
     if (self.event.isWorkOrder) {
         WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:self.event.whatId];
-         lLocation = (self.event.isWorkOrder ? [CalenderHelper getServiceLocation:self.event.whatId]:@"");
+        lLocation = [CalenderHelper getServiceLocation:self.event.whatId];
 
         lEventTitle = (model.companyName.length ? model.companyName : self.event.subject);
         priorityString = model.priorityString;
@@ -409,7 +409,7 @@
         lEventTitle = (self.event.subject?self.event.subject:@"");
 
     }
-    if(self.event.isEventTitleSettingDriven && self.event.isWorkOrder)
+    if(self.event.isEventTitleSettingDriven)
         lEventTitle = self.event.title;
         
 
@@ -420,12 +420,6 @@
     if (!lLocation) {
         lLocation = @"";
     }
-//    CGRect frame = self.eventName.frame;
-//    //    frame.size.height = [self dynamicHeightOfLabel:self.eventName withWidth:self.eventName.frame.size.width].height;
-//    if (frame.size.height>self.frame.size.height) {
-//        frame.size.height = self.frame.size.height - 5;
-//    }
-//    
     
     NSString *text;
     
@@ -467,22 +461,20 @@
             UIColor *lDayIndexColor = [UIColor whiteColor];
             UIColor *lDayIndexBackgroundColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
             
-            NSRange lDayIndexTextRange = [text rangeOfString:dayIndexString];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
+            NSRange lDayIndexTextRange = [text rangeOfString:dayIndexString];
             [attributedText setAttributes:@{NSForegroundColorAttributeName:lDayIndexColor, NSBackgroundColorAttributeName:lDayIndexBackgroundColor,NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-Medium" size: 16.0]}
                                     range:lDayIndexTextRange];
         }
         
-        if (lEventTitle) {
+        if (lEventTitle.length) {
             // Green text attributes
             UIColor *lEventTitleColor = [UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
-            NSRange lEventTitleTextRange = [text rangeOfString:lEventTitle];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
+            NSRange lEventTitleTextRange = [text rangeOfString:lEventTitle];
             [attributedText setAttributes:@{NSForegroundColorAttributeName:lEventTitleColor}
                                     range:lEventTitleTextRange];
         }
-       
         
-        
-        if (lLocation && !self.event.isEventTitleSettingDriven)
+        if (lLocation.length && !self.event.isEventTitleSettingDriven)
         {
         
         // Purple and bold text attributes
@@ -493,7 +485,6 @@
                                         NSFontAttributeName:lLocationFont}
                                 range:lLocationTextRange];
         }
-        
         
         self.eventName.attributedText = attributedText;
     }

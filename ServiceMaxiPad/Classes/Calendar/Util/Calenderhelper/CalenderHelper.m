@@ -1641,7 +1641,7 @@
         }
     }
     theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
+//    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
     theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
 
 
@@ -1775,7 +1775,7 @@
     }
     
     theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
+//    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
     theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
 
     event.title = (theTitle?theTitle:@"");
