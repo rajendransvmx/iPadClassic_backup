@@ -83,6 +83,10 @@
         SFWizardModel *wizard = [wizardArray objectAtIndex:i];
         if([wizard.expressionId length] > 0)
         {
+            if([wizard.wizardName isEqualToString:@"Work Order Toolbox"])
+            {
+                NSLog(@"ItCame");
+            }
             parser.expressionId = wizard.expressionId;
             BOOL isEntryCriteriaMatched = [parser isEntryCriteriaMatchingForRecordId:recordId];
             if (isEntryCriteriaMatched) {
