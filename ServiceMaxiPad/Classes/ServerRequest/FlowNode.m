@@ -699,7 +699,7 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
     [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
     if (error !=nil)
     {
-    [self reportErrorToAWS:error withResponseObject:responseObject withRequestObject:request];
+    [FlowNode reportErrorToAWS:error withResponseObject:responseObject withRequestObject:request];
 
     }
 
@@ -717,7 +717,7 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
 }
 
 
--(void)reportErrorToAWS:(NSError*)error withResponseObject:(id)responseObject withRequestObject:(id)requestObject
++(void)reportErrorToAWS:(NSError*)error withResponseObject:(id)responseObject withRequestObject:(id)requestObject
 {
     NSMutableDictionary *errorDict = [NSMutableDictionary dictionaryWithCapacity:1];
     
@@ -727,7 +727,7 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
     {
         //errorDict = responseObject
         RestRequest *requestObjectDict = (RestRequest *)requestObject;
-        if(([responseObject isKindOfClass:[NSArray class]]) && ([[[responseObject objectAtIndex:0]allKeys]containsObject:@"errorCode"]))
+        if(([responseObject isKindOfClass:[NSArray class]]) && (([[[responseObject objectAtIndex:0]allKeys]containsObject:@"errorCode"]) || [[[responseObject objectAtIndex:0]allKeys]containsObject:@"errors"]))
         {
             [errorDict setObject:responseObject forKey:@"Response"];
             
