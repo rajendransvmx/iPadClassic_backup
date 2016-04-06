@@ -37,7 +37,6 @@
 	<string>16.29.062</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>drawloop</string>
 		<string>fgcskysm</string>
 		<string>goformz</string>
 		<string>postman.svmxinc</string>
