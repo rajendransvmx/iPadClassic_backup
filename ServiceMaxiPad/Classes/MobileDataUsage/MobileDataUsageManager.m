@@ -17,6 +17,7 @@
 
 -(void)getSettingValue:(NSString *)params
 {
+    NSLog(@"getSettingValue called");
     NSDictionary *d = [self parse:params];
     NSString *callback = d[@"nativeCallbackHandler"];
     NSString *requestId = d[@"requestId"];
@@ -48,7 +49,7 @@
 
 -(void)getDeviceInfo:(NSString *)params
 {
-    
+    NSLog(@"getDeviceInfo called");
     NSDictionary *d = [self parse:params];
     NSString *callback = d[@"nativeCallbackHandler"];
     NSString *requestId = d[@"requestId"];
@@ -73,6 +74,7 @@
 
 -(void)getReadOpenFile:(NSString *)params
 {
+    NSLog(@"getReadOpenFile called");
     NSDictionary *d = [self parse:params];
     NSString *callback = d[@"nativeCallbackHandler"];
     NSString *requestId = d[@"requestId"];
