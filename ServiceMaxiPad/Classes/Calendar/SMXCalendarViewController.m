@@ -1164,7 +1164,13 @@
             self.navigationItem.rightBarButtonItem.enabled = NO;
             [self.mySideBar removeContentViewInSideBar:self.tempViewController.view];
         }
+    }
+    else {
 
+        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
+        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
+        [leftButton.titleLabel sizeToFit];
+        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
     }
 }
 
@@ -1467,10 +1473,13 @@
         [self checkOrientationAndSetNavButtons];
         [self updateAddEventBtnUI];
 
-        
-
-     
-        
+        if (self.navigationItem.leftBarButtonItem.enabled && segment.selectedSegmentIndex != 0) {
+            
+            [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
+            [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
+            [leftButton.titleLabel sizeToFit];
+            leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
+        }
     }
 }
 
@@ -1715,22 +1724,30 @@
                 leftButton.titleEdgeInsets = UIEdgeInsetsMake(0, -leftButton.imageView.frame.size.width, 0, leftButton.imageView.frame.size.width);
             }
         }
-    }else if(cSegmentedControl.selectedSegmentIndex == 1){
+    }else {
+        [self leftBarButtonItemAction];
         [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
         [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-        [leftButton sizeToFit];
+        [leftButton.titleLabel sizeToFit];
         leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
-    }else if(cSegmentedControl.selectedSegmentIndex == 2){
-        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
-        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-        [leftButton sizeToFit];
-        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
-    }else if(cSegmentedControl.selectedSegmentIndex == 3){
-        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
-        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
-        [leftButton sizeToFit];
     }
+//    }else if(cSegmentedControl.selectedSegmentIndex == 1){
+//        [self leftBarButtonItemAction];
+//        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
+//        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
+//        [leftButton sizeToFit];
+//        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
+//    }else if(cSegmentedControl.selectedSegmentIndex == 2){
+//        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
+//        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
+//        [leftButton sizeToFit];
+//        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
+//    }else if(cSegmentedControl.selectedSegmentIndex == 3){
+//        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
+//        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
+//        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
+//        [leftButton sizeToFit];
+//    }
     
 }
 
