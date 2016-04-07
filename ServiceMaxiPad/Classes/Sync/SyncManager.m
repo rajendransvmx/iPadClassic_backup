@@ -484,6 +484,7 @@ static SyncManager *_instance;
     [SMDataPurgeHelper startedConfigSyncTime];
     [self enableAllParallelSync:NO];
     [self performDBBackUp];
+    [FileManager recopyStaticResourcesFromBundle]; // 27690
     [self setSyncProgressFlag];
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeIncrementalOneCallMetaSync
                                              requestParam:nil

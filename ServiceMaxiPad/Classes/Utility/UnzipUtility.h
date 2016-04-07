@@ -12,4 +12,5 @@
 + (NSArray *) getListOfCoreLibraries;
 + (void) unzipBundledStaticResourceAtPath:(NSString *)path;
 + (void) unzipFileAtPath:(NSString *)filepath toFolder:(NSString *)destinationFolder;
++ (void) unzipAndReplaceBundledStaticResourceAtPath:(NSString *)path; // 27690
 @end
