@@ -373,10 +373,6 @@
         NSMutableArray *lFieldNameInLayoutOrder = [NSMutableArray new];
         
         for (SFObjectMappingComponentModel * mappingModel in mappingArray ) {
-            
-            if (mappingArray.count==9) {
-                NSLog(@"mappingArray:%@",mappingArray);
-            }
             /*  ===================================================  */
                 /*Defect: 018999, non translated display values */
             /*  ===================================================  */
