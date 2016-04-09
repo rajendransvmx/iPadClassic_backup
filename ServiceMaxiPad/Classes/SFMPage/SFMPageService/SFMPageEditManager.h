@@ -29,7 +29,7 @@
                                objectname:(NSString *)objectApiName
                              recordTypeId:(NSString *)recordTypeId;
 
-- (void)applyValueMapWithMappingObject:(ValueMappingModel *)modelObj;
+-(void)applyValueMapWithMappingObject:(ValueMappingModel *)modelObj withFieldOrder:(NSArray *)fieldOrder;
 -(SFMRecordFieldData *)getDisplayValueForLiteral:(NSString *)mappingValue  mappingObject:(ValueMappingModel *)mappingModel;
 
 

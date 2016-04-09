@@ -1200,7 +1200,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     valueMapModel.currentObjectName = self.detailLayout.objectName;
     valueMapModel.headerRecord = self.sfmPage.headerRecord;
     valueMapModel.valueMappingDict = [self.sfmPage.process.valueMappingDict objectForKey:self.detailLayout.processComponentId];
-    [manager applyValueMapWithMappingObject:valueMapModel];
+    [manager applyValueMapWithMappingObject:valueMapModel withFieldOrder:[self.sfmPage.process.valueMappingArrayInLayoutOrder objectForKey:self.detailLayout.processComponentId]];
 }
 #pragma mark - END
 

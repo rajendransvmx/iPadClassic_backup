@@ -354,7 +354,8 @@
     NSDictionary * componentsArray =  sfmPage.process.component;
     
     NSMutableDictionary * valueMappingDict = nil;
-    
+    NSMutableDictionary * valueMappingFieldsInLayoutOrderDict = nil; //Defect#028966
+
     for (NSString * componentId in componentsArray) {
         
         SFProcessComponentModel * componentModel= [sfmPage.process.component objectForKey:componentId];
@@ -365,11 +366,17 @@
         if( valueMappingDict == nil)
         {
             valueMappingDict = [[NSMutableDictionary alloc] init];
+            valueMappingFieldsInLayoutOrderDict = [NSMutableDictionary new];
         }
         
         NSMutableDictionary * eachDict = [[NSMutableDictionary alloc] init];
+        NSMutableArray *lFieldNameInLayoutOrder = [NSMutableArray new];
+        
         for (SFObjectMappingComponentModel * mappingModel in mappingArray ) {
             
+            if (mappingArray.count==9) {
+                NSLog(@"mappingArray:%@",mappingArray);
+            }
             /*  ===================================================  */
                 /*Defect: 018999, non translated display values */
             /*  ===================================================  */
@@ -401,6 +408,7 @@
             if(mappingModel.targetFieldName != nil){
                 
                 [eachDict setObject:recordField forKey:mappingModel.targetFieldName];
+                [lFieldNameInLayoutOrder addObject:mappingModel.targetFieldName];
             }
         }
         if([eachDict count] == 0 )
@@ -408,9 +416,11 @@
             continue;
         }
         [valueMappingDict setObject:eachDict forKey:componentId];
+        [valueMappingFieldsInLayoutOrderDict setObject:lFieldNameInLayoutOrder forKey:componentId];
     }
     
     sfmPage.process.valueMappingDict = valueMappingDict;
+    sfmPage.process.valueMappingArrayInLayoutOrder = valueMappingFieldsInLayoutOrderDict; // Defect #028966
 }
 
 -(void)fillUpDisplayValuesForValueMapping:(SFMPage *)page
@@ -490,7 +500,8 @@
     
     NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
     
-    for (NSString * fieldName  in [valueMappingDict allKeys]) {
+    
+       for (NSString * fieldName  in [valueMappingDict allKeys]) {
         SFMRecordFieldData * recordfield = [valueMappingDict objectForKey:fieldName];
         
         NSString * displayValue = nil;
@@ -599,7 +610,7 @@
     {
         SFProcessComponentModel * componentModel = [processComponents objectForKey:componentId];
         NSDictionary  * valueMapDict =  [sfmPage.process.valueMappingDict objectForKey:componentId];
-        
+        NSArray *valueMapArrayOfFieldLayout = [sfmPage.process.valueMappingArrayInLayoutOrder objectForKey:componentId];
         NSString * objectName = componentModel.objectName;
         if(valueMapDict == nil || [valueMapDict count] <= 0)
         {
@@ -613,16 +624,16 @@
             mappingModel.headerRecord = headerDict;
             mappingModel.currentObjectName = objectName;
             mappingModel.headerObjectName = objectName;
-            [self applyValueMapWithMappingObject:mappingModel];
+            [self applyValueMapWithMappingObject:mappingModel withFieldOrder:valueMapArrayOfFieldLayout];
         }
         
     }
     
 }
 
--(void)applyValueMapWithMappingObject:(ValueMappingModel *)modelObj
+-(void)applyValueMapWithMappingObject:(ValueMappingModel *)modelObj withFieldOrder:(NSArray *)fieldOrder
 {
-    NSArray * fieldNames = [modelObj.valueMappingDict allKeys];
+    NSArray * fieldNames = fieldOrder;// [modelObj.valueMappingDict allKeys];
     for( NSString *fieldName in fieldNames)
     {
         SFMRecordFieldData * recordfield = [modelObj.valueMappingDict objectForKey:fieldName];

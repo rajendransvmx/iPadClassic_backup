@@ -30,6 +30,8 @@
 @property(nonatomic, strong) SFMPageLayout *pageLayout;
 
 @property(nonatomic, strong) NSMutableDictionary *valueMappingDict;
+@property(nonatomic, strong) NSMutableDictionary *valueMappingArrayInLayoutOrder; //Defect#028966
+
 @property(nonatomic, strong) NSMutableDictionary *fieldMappingData;
 
 @property(nonatomic,strong)  NSDictionary *sourceObjectUpdate;
