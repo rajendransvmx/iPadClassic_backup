@@ -91,7 +91,8 @@ typedef NS_ENUM(NSUInteger, SyncStatus) {
     
     //Added for Data Purge
     DataPurgeInProgress,
-    DataPurgeCompleted
+    DataPurgeCompleted,
+    DataPurgeCancelled
 };
 
 

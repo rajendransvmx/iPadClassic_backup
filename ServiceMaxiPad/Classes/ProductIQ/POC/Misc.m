@@ -77,6 +77,8 @@
         [loginUserInfoDictionary setObject:@"" forKey:@"IsSyncOnLogin"];
         [loginUserInfoDictionary setObject:@"" forKey:@"TimeZone"];
         [loginUserInfoDictionary setObject:@"" forKey:@"Locale"];
+        [loginUserInfoDictionary setObject:[userDefaults objectForKey:@"ps_loggedIn_user_id"] forKey:@"SFUserID"];
+
         [loginUserInfoDictionary setObject:[userDefaults valueForKey:@"preference_identifier"] forKey:@"EnvDefault"];
         [loginUserInfoDictionary setObject:@"" forKey:@"EnvTag"];
         [loginUserInfoDictionary setObject:@"" forKey:@"TimeZoneOffSet"];

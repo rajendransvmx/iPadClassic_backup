@@ -231,13 +231,14 @@
     [deviceInfoDict setObject:currentDevice.systemVersion forKey:@"OperatingSystemName"];
     [deviceInfoDict setObject:@"armv_64" forKey:@"OSArchitecture"];
     [deviceInfoDict setObject:@"" forKey:@"CurrentTimeZone"];
-    [deviceInfoDict setObject:@"" forKey:@"Caption"];
+    [deviceInfoDict setObject:currentDevice.systemVersion forKey:@"Caption"];
     [deviceInfoDict setObject:@"" forKey:@"SystemDirectory"];
     [deviceInfoDict setObject:currentDevice.name forKey:@"ComputerName"];
     [deviceInfoDict setObject:currentDevice.name forKey:@"UserName"];
     [deviceInfoDict setObject:@"Apple" forKey:@"Manufacturer"];
     [deviceInfoDict setObject:@"" forKey:@"Model"];
-    [deviceInfoDict setObject:@"" forKey:@"TotalPhysicalMemory"];
+    NSString *physicalMemory = [NSString stringWithFormat:@"%llu",[NSProcessInfo processInfo].physicalMemory];
+    [deviceInfoDict setObject:physicalMemory forKey:@"TotalPhysicalMemory"];
     [detailsArray addObject:deviceDetailsDict];
     [deviceInfoDict setObject:@"" forKey:@"details"];
     

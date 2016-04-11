@@ -48,16 +48,21 @@
                 else{
                     appDelegate.syncReportingType = nil;
                 }
-                
-                NSDictionary *serverURLDict = [valueMap objectAtIndex:1];
-                NSString *defaultServerUrl = @"https://mtools.servicemax-api.com"; //Default set to Production
-                if ([[serverURLDict objectForKey:@"key"] isEqualToString:@"TOOLS_SERVER_URL"])
+                //DefectFix:029303
+                if ([valueMap count] == 2)
                 {
-                    defaultServerUrl = [serverURLDict objectForKey:@"value"]; //"always" or "error"
-                    
+                    NSDictionary *serverURLDict = [valueMap objectAtIndex:1];
+                    NSString *defaultServerUrl = @"https://mtools.servicemax-api.com"; //Default set to Production
+                    if ([[serverURLDict objectForKey:@"key"] isEqualToString:@"TOOLS_SERVER_URL"])
+                    {
+                        defaultServerUrl = [serverURLDict objectForKey:@"value"]; //"always" or "error"
+                        
+                    }
+                    appDelegate.serverUrl = defaultServerUrl;
+                    NSLog(@"AWS Server URL[%@]",appDelegate.serverUrl);
+
                 }
-                appDelegate.serverUrl = defaultServerUrl;
-                NSLog(@"AWS Server URL[%@]",appDelegate.serverUrl);
+               
 
             }
             

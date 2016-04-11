@@ -315,7 +315,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             
                 if (![self isDataSyncInProgress])
                 {
-                    if ([self isDataPurgeInProgress])
+                    if([[SMDataPurgeManager sharedInstance] isDataPurgeInProgress])
                     {
                         self.dataSyncStatus = SyncStatusInQueue;
                         [self enqueueSyncQueue:SyncTypeData];
@@ -1528,10 +1528,10 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     }
 }
 
-//DefectFix:026563
 - (BOOL)isDataPurgeInProgress
 {
-    if (self.dataPurgeStatus == DataPurgeInProgress)
+    //DefectFix:029269
+    if ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusPurgingInProgress)
     {
         return YES;
     }
@@ -1539,6 +1539,8 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     {
         return NO;
     }
+  
+    
 }
 
 - (void)updateDataPurgeStatus:(SyncStatus)status

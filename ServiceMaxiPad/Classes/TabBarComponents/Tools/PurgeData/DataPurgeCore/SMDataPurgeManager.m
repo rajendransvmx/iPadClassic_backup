@@ -207,6 +207,19 @@ const float progress = 0.05;
     
 }
 
+//Defect Fix:029269
+-(BOOL)isDataPurgeInProgress
+{
+    //DefectFix:029269 //
+    if (([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusScheduled) || ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForLastModifiedDate) || ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForDownloadCriteria) || ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForAdvancedDownloadCriteria) ||([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForGetPrice) ||([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForCleanup)||([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusDataProcessing)|| ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusPurgingInProgress))
+    {
+        return YES;
+    }
+    else
+    {
+        return NO;
+    }
+}
 
 - (void)generatePurgeReport
 {
@@ -467,6 +480,7 @@ const float progress = 0.05;
     [[TaskManager sharedInstance] cancelFlowNodeWithId:self.dataPurgeTaskID];
     
     self.purgeStatus = DataPurgeStatusCancelled;
+  
     
     [self updateTimerAndNextDPTime:[NSDate date]];
     [self clearIfPurgeDueFlagSet];
