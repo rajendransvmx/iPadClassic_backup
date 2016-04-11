@@ -164,7 +164,6 @@
 
 - (void)setUpSearchBar
 {
-    [self.searchView becomeFirstResponder];
     self.searchView.delegate = self;
     self.SerachObjectName.text = self.lookUpObject.serachName;
 }
