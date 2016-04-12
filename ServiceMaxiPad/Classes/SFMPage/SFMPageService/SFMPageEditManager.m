@@ -568,7 +568,9 @@
         else if ([objectField.type isEqualToString:kSfDTBoolean] )
         {
             displayValue = [SFMPageHelper  valueOfLiteral:recordfield.internalValue dataType:objectField.type];
-            recordfield.internalValue = displayValue;
+            if (displayValue) {
+                recordfield.internalValue = displayValue;
+            }
         }
         else
         {

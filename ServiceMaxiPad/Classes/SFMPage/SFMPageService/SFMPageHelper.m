@@ -745,11 +745,16 @@
 //        else
 //            literalValue = @"0";
         
-        if ([StringUtil isItTrue:literal]) {
-            literalValue = kTrue;
+        if ([literal containsString:kLiteralCurrentRecord]) { // Defect#029314
+            
         }
         else{
-            literalValue = kFalse;
+            if ([StringUtil isItTrue:literal]) {
+                literalValue = kTrue;
+            }
+            else{
+                literalValue = kFalse;
+            }
         }
         
     }
