@@ -226,21 +226,22 @@
     [deviceInfoDict setObject:@"" forKey:@"barcode-enabled"];
     [deviceInfoDict setObject:currentDevice.model forKey:@"client-type"];
     [deviceInfoDict setObject:currentDevice.systemName forKey:@"device-platform"];
+    
     NSMutableArray *detailsArray = [[NSMutableArray alloc]init];
     NSMutableDictionary *deviceDetailsDict  = [[NSMutableDictionary alloc]init];
-    [deviceInfoDict setObject:currentDevice.systemVersion forKey:@"OperatingSystemName"];
-    [deviceInfoDict setObject:@"armv_64" forKey:@"OSArchitecture"];
-    [deviceInfoDict setObject:@"" forKey:@"CurrentTimeZone"];
-    [deviceInfoDict setObject:currentDevice.systemVersion forKey:@"Caption"];
-    [deviceInfoDict setObject:@"" forKey:@"SystemDirectory"];
-    [deviceInfoDict setObject:currentDevice.name forKey:@"ComputerName"];
-    [deviceInfoDict setObject:currentDevice.name forKey:@"UserName"];
-    [deviceInfoDict setObject:@"Apple" forKey:@"Manufacturer"];
-    [deviceInfoDict setObject:@"" forKey:@"Model"];
+    [deviceDetailsDict setObject:currentDevice.systemVersion forKey:@"OperatingSystemName"];
+    [deviceDetailsDict setObject:@"armv_64" forKey:@"OSArchitecture"];
+    [deviceDetailsDict setObject:@"" forKey:@"CurrentTimeZone"];
+    [deviceDetailsDict setObject:currentDevice.systemVersion forKey:@"Caption"];
+    [deviceDetailsDict setObject:@"" forKey:@"SystemDirectory"];
+    [deviceDetailsDict setObject:currentDevice.name forKey:@"ComputerName"];
+    [deviceDetailsDict setObject:currentDevice.name forKey:@"UserName"];
+    [deviceDetailsDict setObject:@"Apple" forKey:@"Manufacturer"];
+    [deviceDetailsDict setObject:@"" forKey:@"Model"];
     NSString *physicalMemory = [NSString stringWithFormat:@"%llu",[NSProcessInfo processInfo].physicalMemory];
-    [deviceInfoDict setObject:physicalMemory forKey:@"TotalPhysicalMemory"];
+    [deviceDetailsDict setObject:physicalMemory forKey:@"TotalPhysicalMemory"];
     [detailsArray addObject:deviceDetailsDict];
-    [deviceInfoDict setObject:@"" forKey:@"details"];
+    [deviceInfoDict setObject:detailsArray forKey:@"details"];
     
     [deviceInfoArray addObject:deviceInfoDict];
     
