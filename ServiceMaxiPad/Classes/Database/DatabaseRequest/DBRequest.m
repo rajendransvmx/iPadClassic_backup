@@ -72,10 +72,8 @@
       andExpression:(NSString *)expression {
     @autoreleasepool {
         @synchronized([self class]) {
-           NSMutableArray *tempCriteria =[criterias mutableCopy];
-            NSMutableArray  *deleteArray = [NSMutableArray new];
-            NSMutableArray *addArray = [NSMutableArray new];
             
+            NSMutableArray *tempCriteria =[criterias mutableCopy];
             
             for (DBCriteria *criteria in tempCriteria)
             {
@@ -83,30 +81,24 @@
                 {
                     if(criteria.operatorType == SQLOperatorIsNull)
                     {
-                        DBCriteria *criteria1 = [[DBCriteria alloc] init];
-                        criteria1.lhsValue = criteria.lhsValue;
-                        criteria1.operatorType = SQLOperatorIsNull;
-                        [addArray addObject:criteria1];
-                        [deleteArray addObject:criteria];
+                        criteria.lhsValue = criteria.lhsValue;
+                        criteria.operatorType = SQLOperatorIsNull;
+                        criteria.subCriterias = nil;
                     }
-                    criteria.rhsValue = @"IgnoreThis";
-                    criteria.operatorType = SQLOperatorEqual;
+                    else{
+                        criteria.rhsValue = @"IgnoreThis";
+                        criteria.operatorType = SQLOperatorEqual;
+                        
+                    }
                 }
             }
-            
-            if([addArray count] >0)
-            {
-                [tempCriteria removeObjectsInArray:deleteArray];
-                [tempCriteria addObjectsFromArray:addArray];
-                
-            }
-        self.criteriaArray = tempCriteria;
-        self.advancedExpression = expression;
-        return [self isValidExpression];
+            self.criteriaArray = tempCriteria;
+            self.advancedExpression = expression;
+            return [self isValidExpression];
+        }
+        
     }
     
-}
-
 }
 
 
