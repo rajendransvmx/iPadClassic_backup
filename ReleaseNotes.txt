@@ -3,13 +3,13 @@ ServiceMax iPad SPR16Build
 
 *******************************************
 
-Version = 16.29.069
+Version = 16.29.070
 ===========================================
 
 
 Defect fix
 =============
-28479
+ProductIQ name space change from SVMXDEV to SVMXC
 
 ——————
 NOTE:
