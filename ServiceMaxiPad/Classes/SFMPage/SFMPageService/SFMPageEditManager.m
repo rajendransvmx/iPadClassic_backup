@@ -1043,6 +1043,14 @@
             if (canUpdate) {
                 
                 isDetailChanged = YES;
+                
+                if ([syncRecord.sfId length] < 2) {
+                    id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+                    
+                    NSString *sfID =   [transObjectService getSfIdForLocalId:localIdField.internalValue forObjectName:syncRecord.objectName];
+                    syncRecord.sfId = sfID;
+                }
+
                 /*Insert record into trailer table */
                 if(![modifiedRecords containsObject:localIdField.internalValue] )
                 {
@@ -2680,6 +2688,13 @@
     
     FieldMergeHelper *fieldMergeHelper = [[FieldMergeHelper alloc]init];
     self.dataDictionaryBeforeModification = [NSMutableDictionary dictionaryWithDictionary:[fieldMergeHelper getDataDictionaryBeforeModificationFromTable:objectName withLocalId:recordId fieldNames:[self.dataDictionaryAfterModification allKeys]]];
+    
+    if(sfid == nil)
+    {
+        id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+        
+        sfid =   [transObjectService getSfIdForLocalId:recordId forObjectName:objectName];
+    }
     
     if ((sfid == nil) && (recordId != nil))
     {
