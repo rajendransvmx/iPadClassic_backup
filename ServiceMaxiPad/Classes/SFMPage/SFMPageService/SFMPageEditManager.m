@@ -499,23 +499,30 @@
     
     for (NSString * fieldName  in [valueMappingDict allKeys]) {
         SFMRecordFieldData * recordfield = [valueMappingDict objectForKey:fieldName];
-        if([recordfield.internalValue containsString:kLiteralCurrentRecord] || [recordfield.internalValue containsString:kLiteralCurrentRecordHeader] )
-        {
-            NSArray *array = [recordfield.internalValue componentsSeparatedByString:@"."];
-            
-            if([array count] > 2)
-            {
-                NSString *tempFieldName = [array objectAtIndex:2];
-                if(![StringUtil isStringEmpty:tempFieldName])
-                {
-                    SFMRecordFieldData *tempRecordfield = [valueMappingDict objectForKey:[array objectAtIndex:2]];
-                    recordfield.internalValue = tempRecordfield.internalValue;
-                    recordfield.displayValue = tempRecordfield.displayValue;
-                    
-                }
-            }
-            
-        }
+      if([recordfield.internalValue containsString:kLiteralCurrentRecord] || [recordfield.internalValue containsString:kLiteralCurrentRecordHeader] )
+      {
+          
+          NSArray *array = [recordfield.internalValue componentsSeparatedByString:@"."];
+          
+          if([array count] > 2)
+          {
+              NSString *tempFieldName = [array objectAtIndex:2];
+              if(![StringUtil isStringEmpty:tempFieldName])
+              {
+                  SFMRecordFieldData *tempRecordfield = [valueMappingDict objectForKey:[array objectAtIndex:2]];
+                  if(tempRecordfield != nil)
+                  {
+                      recordfield.internalValue = tempRecordfield.internalValue;
+                      recordfield.displayValue = tempRecordfield.displayValue;
+                      
+                      
+                  }
+              }
+          }
+          
+          
+          
+      }
         
         NSString * displayValue = nil;
         NSString * fieldName = recordfield.name;
