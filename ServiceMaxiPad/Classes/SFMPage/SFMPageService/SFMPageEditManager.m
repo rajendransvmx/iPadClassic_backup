@@ -497,8 +497,25 @@
     NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
     
     
-       for (NSString * fieldName  in [valueMappingDict allKeys]) {
+    for (NSString * fieldName  in [valueMappingDict allKeys]) {
         SFMRecordFieldData * recordfield = [valueMappingDict objectForKey:fieldName];
+        if([recordfield.internalValue containsString:kLiteralCurrentRecord] || [recordfield.internalValue containsString:kLiteralCurrentRecordHeader] )
+        {
+            NSArray *array = [recordfield.internalValue componentsSeparatedByString:@"."];
+            
+            if([array count] > 2)
+            {
+                NSString *tempFieldName = [array objectAtIndex:2];
+                if(![StringUtil isStringEmpty:tempFieldName])
+                {
+                    SFMRecordFieldData *tempRecordfield = [valueMappingDict objectForKey:[array objectAtIndex:2]];
+                    recordfield.internalValue = tempRecordfield.internalValue;
+                    recordfield.displayValue = tempRecordfield.displayValue;
+                    
+                }
+            }
+            
+        }
         
         NSString * displayValue = nil;
         NSString * fieldName = recordfield.name;
@@ -549,9 +566,16 @@
             {
                 NSString *internalValue = [DateUtil evaluateDateLiteral:recordfield.internalValue  dataType:objectField.type];
                 
-                recordfield.internalValue = internalValue;
-                
-                if ([objectField.type isEqualToString:kSfDTDate]) {
+                if(![StringUtil isStringEmpty:internalValue])
+                {
+                    recordfield.internalValue = internalValue;
+                }
+                else{
+                    internalValue =  recordfield.internalValue;
+                }
+                if ([objectField.type isEqualToString:kSfDTDate])
+                {
+                    
                     if ([recordfield.internalValue length] > 10) {
                         recordfield.internalValue = [self getDateForValueMapping:recordfield.internalValue];
                     }
@@ -561,7 +585,6 @@
                 {
                     displayValue = [self getUserReadableDateTime:internalValue];
                 }
-                
             }
             
         }
@@ -635,6 +658,10 @@
     for( NSString *fieldName in fieldNames)
     {
         SFMRecordFieldData * recordfield = [modelObj.valueMappingDict objectForKey:fieldName];
+        if(recordfield == nil)
+        {
+            continue;
+        }
         NSString * targetFieldName = recordfield.name;
         NSString * mappingValue =   recordfield.internalValue;
         NSString * displayValue =   recordfield.displayValue;
