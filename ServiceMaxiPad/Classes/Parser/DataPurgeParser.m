@@ -973,6 +973,11 @@
             }
         }
     }
+    else
+    {//Defect Fix:029743
+         [SMDataPurgeManager sharedInstance].responseLastConfigTime = @"";
+    }
+    
     return callbk;
 }
 
