@@ -9,7 +9,7 @@ Version = 16.29.076
 
 Defect fix
 =============
-
+PostMan app URL schema has been updated with correct one
 Added latest JS files for ProductIQ.
 
 ——————
