@@ -23,6 +23,6 @@
 #endif
 
 
-#define ORG_NAME_SPACE               @"SVMXDEV"
-//#define ORG_NAME_SPACE               @"SVMXC"
+//#define ORG_NAME_SPACE               @"SVMXDEV"
+#define ORG_NAME_SPACE               @"SVMXC"
 #define PREFFERED_API_VERSION		 @"20"
