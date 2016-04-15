@@ -463,4 +463,6 @@
 
 - (NSDictionary*)beforeModificationDictionaryWithFieldsAsString;
 
+- (NSDictionary*)resultDictionaryForProductIQ; // get the fields from DB for ProductIQ.
+
 @end

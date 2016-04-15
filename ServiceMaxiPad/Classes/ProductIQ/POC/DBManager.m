@@ -150,7 +150,7 @@ static sqlite3_stmt *statement = nil;
                 while ([resultSet next]) {
                     
 //                    NSDictionary * dict = [resultSet resultDictionary];
-                    NSDictionary * dict = [resultSet beforeModificationDictionaryWithFieldsAsString];
+                    NSDictionary * dict = [resultSet resultDictionaryForProductIQ];
                     [records addObject:dict];
                     
                 }
