@@ -228,19 +228,19 @@
     [deviceInfoDict setObject:currentDevice.systemName forKey:@"device-platform"];
     
     NSMutableArray *detailsArray = [[NSMutableArray alloc]init];
-    NSMutableDictionary *deviceDetailsDict  = [[NSMutableDictionary alloc]init];
-    [deviceDetailsDict setObject:currentDevice.systemVersion forKey:@"OperatingSystemName"];
-    [deviceDetailsDict setObject:@"armv_64" forKey:@"OSArchitecture"];
-    [deviceDetailsDict setObject:@"" forKey:@"CurrentTimeZone"];
-    [deviceDetailsDict setObject:currentDevice.systemVersion forKey:@"Caption"];
-    [deviceDetailsDict setObject:@"" forKey:@"SystemDirectory"];
-    [deviceDetailsDict setObject:currentDevice.name forKey:@"ComputerName"];
-    [deviceDetailsDict setObject:currentDevice.name forKey:@"UserName"];
-    [deviceDetailsDict setObject:@"Apple" forKey:@"Manufacturer"];
-    [deviceDetailsDict setObject:@"" forKey:@"Model"];
     NSString *physicalMemory = [NSString stringWithFormat:@"%llu",[NSProcessInfo processInfo].physicalMemory];
-    [deviceDetailsDict setObject:physicalMemory forKey:@"TotalPhysicalMemory"];
-    [detailsArray addObject:deviceDetailsDict];
+
+    [detailsArray addObject:@{@"Key":@"OperatingSystemName", @"Value":currentDevice.systemVersion}];
+    [detailsArray addObject:@{@"Key":@"OSArchitecture",@"Value":@"armv_64"}];
+    [detailsArray addObject:@{@"Key":@"CurrentTimeZone",@"Value":@""}];
+    [detailsArray addObject:@{@"Key":@"Caption",@"Value":currentDevice.systemVersion}];
+    [detailsArray addObject:@{@"Key":@"SystemDirectory",@"Value":@""}];
+    [detailsArray addObject:@{@"Key":@"ComputerName",@"Value":currentDevice.name}];
+    [detailsArray addObject:@{@"Key":@"UserName",@"Value":currentDevice.name}];
+    [detailsArray addObject:@{@"Key":@"Manufacturer",@"Value":@"Apple"}];
+    [detailsArray addObject:@{@"Key":@"Model",@"Value":@""}];
+    [detailsArray addObject:@{@"Key":@"TotalPhysicalMemory",@"Value":physicalMemory}];
+
     [deviceInfoDict setObject:detailsArray forKey:@"details"];
     
     [deviceInfoArray addObject:deviceInfoDict];
