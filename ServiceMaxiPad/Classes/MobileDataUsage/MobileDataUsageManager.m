@@ -10,7 +10,7 @@
 #import "MobileDataUsageExecuter.h"
 #import "SMAppDelegate.h"
 #import "AppMetaData.h"
-
+#import <sys/utsname.h> // import it in your header or implementation file.
 
 
 @implementation MobileDataUsageManager
@@ -230,15 +230,20 @@
     NSMutableArray *detailsArray = [[NSMutableArray alloc]init];
     NSString *physicalMemory = [NSString stringWithFormat:@"%llu",[NSProcessInfo processInfo].physicalMemory];
 
+    NSString *OSArchitecture =@"64-bit";
+    if (sizeof(void*) == 4) {
+        OSArchitecture = @"32-bit";
+    }
+    
     [detailsArray addObject:@{@"Key":@"OperatingSystemName", @"Value":currentDevice.systemVersion}];
-    [detailsArray addObject:@{@"Key":@"OSArchitecture",@"Value":@"armv_64"}];
+    [detailsArray addObject:@{@"Key":@"OSArchitecture",@"Value":OSArchitecture}];
     [detailsArray addObject:@{@"Key":@"CurrentTimeZone",@"Value":@""}];
     [detailsArray addObject:@{@"Key":@"Caption",@"Value":currentDevice.systemVersion}];
     [detailsArray addObject:@{@"Key":@"SystemDirectory",@"Value":@""}];
     [detailsArray addObject:@{@"Key":@"ComputerName",@"Value":currentDevice.name}];
     [detailsArray addObject:@{@"Key":@"UserName",@"Value":currentDevice.name}];
     [detailsArray addObject:@{@"Key":@"Manufacturer",@"Value":@"Apple"}];
-    [detailsArray addObject:@{@"Key":@"Model",@"Value":@""}];
+    [detailsArray addObject:@{@"Key":@"Model",@"Value":[self deviceName]}];
     [detailsArray addObject:@{@"Key":@"TotalPhysicalMemory",@"Value":physicalMemory}];
 
     [deviceInfoDict setObject:detailsArray forKey:@"details"];
@@ -250,4 +255,12 @@
     
 }
 
+-(NSString*)deviceName
+{
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine
+                              encoding:NSUTF8StringEncoding];
+}
 @end
