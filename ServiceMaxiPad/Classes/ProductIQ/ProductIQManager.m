@@ -225,7 +225,7 @@
     for (TransactionObjectModel *model in records) {
         NSDictionary *dictionary = [model getFieldValueDictionary];
         NSString *installBaseId = [dictionary objectForKey:kSerialNumber];
-        if (![StringUtil isStringEmpty:installBaseId]) {
+        if (![StringUtil isStringEmpty:installBaseId] && ![self.recordIds containsObject:installBaseId]) {
             [self.recordIds addObject:installBaseId];
         }
     }
