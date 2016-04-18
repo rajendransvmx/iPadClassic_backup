@@ -3,13 +3,13 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.30.001
+Version = 16.30.002
 ===========================================
 
 
 Defect fix
 =============
-nil
+Device type and version info update sync error report fixed
 
 ——————
 
