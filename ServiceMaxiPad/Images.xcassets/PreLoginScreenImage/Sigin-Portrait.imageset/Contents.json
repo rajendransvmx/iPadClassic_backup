@@ -2,11 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x",
-      "filename" : "Sigin-Portrait.png"
+      "filename" : "Sign in cluster.png",
+      "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "Sign in cluster@2x.png",
       "scale" : "2x"
     },
     {

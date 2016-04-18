@@ -1,19 +1,19 @@
 --------------------------------------------------------------------------------------------
-ServiceMax iPad SPR16Build
+ServiceMax iPad
 
 *******************************************
 
-Version = 16.29.081
+Version = 16.29.082
 ===========================================
 
 
 Defect fix
 =============
-
-Fixed: Tree view gets opened upto level 7 if invoked from IB/search/WO, if level 8 IB is invoked nothing will work (random hangs) need to restart PIQ.
+nil
 
 ——————
 
 NOTE:
 
 Name Space: SVMXC
+New Icons & App name Reverted to Original
