@@ -3,17 +3,16 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.30.002
+Version = 16.30.003
 ===========================================
 
 
 Defect fix
 =============
-Device type and version info update sync error report fixed
+ProductIq defects.
 
 ——————
 
 NOTE:
 
 Name Space: SVMXC
-New Icons & App name Reverted to Original
