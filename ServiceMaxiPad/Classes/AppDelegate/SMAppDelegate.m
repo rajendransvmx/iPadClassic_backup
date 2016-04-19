@@ -258,6 +258,9 @@
 
 - (void)loadWithController:(UIViewController *)rootController
 {
+   NSString *projectTitle = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+
+    rootController.title = projectTitle;
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window setRootViewController:rootController];
     [self.window makeKeyAndVisible];
