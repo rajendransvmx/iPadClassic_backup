@@ -3,13 +3,13 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.30.003
+Version = 16.30.004
 ===========================================
 
 
 Defect fix
 =============
-ProductIq defects.
+Adding latest JS files for PIQ.
 
 ——————
 
