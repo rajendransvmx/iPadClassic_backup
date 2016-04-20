@@ -258,9 +258,11 @@
 
 - (void)loadWithController:(UIViewController *)rootController
 {
-   NSString *projectTitle = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
-
+ /* This was introduced to help Automation team for Identifying the title of the App. Should not go in App store Build. Hence reverting.
+  
+    NSString *projectTitle = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
     rootController.title = projectTitle;
+ */
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window setRootViewController:rootController];
     [self.window makeKeyAndVisible];
