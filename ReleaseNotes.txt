@@ -3,13 +3,13 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.30.006
+Version = 16.30.007
 ===========================================
 
 
 Defect fix
 =============
-On 3rd attempt,If filter(not WO) applied and tapped IB on search,it lands to loc. Invoking PIQ from WO,opens with filter pre-checked.Need to reset app
+Added latest JS files for ProductIQ.
 ——————
 
 NOTE:
