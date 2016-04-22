@@ -28,6 +28,11 @@
 #import <Availability.h>
 #import <Security/Security.h>
 
+//025428
+#import "MobileDeviceSettingService.h"
+#import "StringUtil.h"
+
+
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 #import <UIKit/UIKit.h>
 #endif
@@ -48,23 +53,34 @@
     if (!self) {
         return nil;
     }
-
+    
     // Ensure terminal slash for baseURL path, so that NSURL +URLWithString:relativeToURL: works as expected
     if ([[url path] length] > 0 && ![[url absoluteString] hasSuffix:@"/"]) {
         url = [url URLByAppendingPathComponent:@""];
     }
-
+    
     self.baseURL = url;
-
+    
     self.requestSerializer = [AFHTTPRequestSerializer serializer];
     self.responseSerializer = [AFJSONResponseSerializer serializer];
-
-    self.securityPolicy = [AFSecurityPolicy defaultPolicy];
-
+    
+    //025428
+    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET023"];
+    BOOL isPinningEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+    
+    if (isPinningEnabled) {
+        self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    }
+    else {
+        self.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    }
+    
+    
     self.reachabilityManager = [AFNetworkReachabilityManager sharedManager];
-
+    
     self.operationQueue = [[NSOperationQueue alloc] init];
-
+    
     return self;
 }
 
@@ -79,13 +95,13 @@
 
 - (void)setRequestSerializer:(AFHTTPRequestSerializer <AFURLRequestSerialization> *)requestSerializer {
     NSParameterAssert(requestSerializer);
-
+    
     _requestSerializer = requestSerializer;
 }
 
 - (void)setResponseSerializer:(AFHTTPResponseSerializer <AFURLResponseSerialization> *)responseSerializer {
     NSParameterAssert(responseSerializer);
-
+    
     _responseSerializer = responseSerializer;
 }
 
@@ -100,9 +116,9 @@
     operation.shouldUseCredentialStorage = self.shouldUseCredentialStorage;
     operation.credential = self.credential;
     operation.securityPolicy = self.securityPolicy;
-
+    
     [operation setCompletionBlockWithSuccess:success failure:failure];
-
+    
     return operation;
 }
 
@@ -116,7 +132,7 @@
     NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:@"GET" URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:nil];
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request success:success failure:failure];
     [self.operationQueue addOperation:operation];
-
+    
     return operation;
 }
 
@@ -132,7 +148,7 @@
         }
     } failure:failure];
     [self.operationQueue addOperation:operation];
-
+    
     return operation;
 }
 
@@ -144,7 +160,7 @@
     NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:@"POST" URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:nil];
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request success:success failure:failure];
     [self.operationQueue addOperation:operation];
-
+    
     return operation;
 }
 
@@ -157,7 +173,7 @@
     NSMutableURLRequest *request = [self.requestSerializer multipartFormRequestWithMethod:@"POST" URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters constructingBodyWithBlock:block error:nil];
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request success:success failure:failure];
     [self.operationQueue addOperation:operation];
-
+    
     return operation;
 }
 
@@ -169,7 +185,7 @@
     NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:@"PUT" URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:nil];
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request success:success failure:failure];
     [self.operationQueue addOperation:operation];
-
+    
     return operation;
 }
 
@@ -181,7 +197,7 @@
     NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:@"PATCH" URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:nil];
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request success:success failure:failure];
     [self.operationQueue addOperation:operation];
-
+    
     return operation;
 }
 
@@ -193,7 +209,7 @@
     NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:@"DELETE" URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:nil];
     AFHTTPRequestOperation *operation = [self HTTPRequestOperationWithRequest:request success:success failure:failure];
     [self.operationQueue addOperation:operation];
-
+    
     return operation;
 }
 
@@ -201,15 +217,15 @@
 
 - (id)initWithCoder:(NSCoder *)decoder {
     NSURL *baseURL = [decoder decodeObjectForKey:NSStringFromSelector(@selector(baseURL))];
-
+    
     self = [self initWithBaseURL:baseURL];
     if (!self) {
         return nil;
     }
-
+    
     self.requestSerializer = [decoder decodeObjectForKey:NSStringFromSelector(@selector(requestSerializer))];
     self.responseSerializer = [decoder decodeObjectForKey:NSStringFromSelector(@selector(responseSerializer))];
-
+    
     return self;
 }
 
@@ -223,7 +239,7 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     AFHTTPRequestOperationManager *HTTPClient = [[[self class] allocWithZone:zone] initWithBaseURL:self.baseURL];
-
+    
     HTTPClient.requestSerializer = [self.requestSerializer copyWithZone:zone];
     HTTPClient.responseSerializer = [self.responseSerializer copyWithZone:zone];
     

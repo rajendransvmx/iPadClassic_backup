@@ -1035,6 +1035,8 @@
 		D9F7EEF61A1083270098F8AF /* BizRulesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F7EEF41A1083270098F8AF /* BizRulesViewController.xib */; };
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
+		EC809F091CC78C60004E1A8E /* intermediate.cer in Resources */ = {isa = PBXBuildFile; fileRef = EC809F071CC78C60004E1A8E /* intermediate.cer */; };
+		EC809F0A1CC78C60004E1A8E /* root.cer in Resources */ = {isa = PBXBuildFile; fileRef = EC809F081CC78C60004E1A8E /* root.cer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2918,6 +2920,8 @@
 		DE9E10CC1AA9A28C00A87768 /* PushNotificationWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceHelper.h; sourceTree = "<group>"; };
 		DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationWebServiceHelper.m; sourceTree = "<group>"; };
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
+		EC809F071CC78C60004E1A8E /* intermediate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = intermediate.cer; sourceTree = "<group>"; };
+		EC809F081CC78C60004E1A8E /* root.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = root.cer; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5407,6 +5411,7 @@
 		18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */ = {
 			isa = PBXGroup;
 			children = (
+				EC809F061CC78C31004E1A8E /* Certificates */,
 				407252FF19FF6C2900ACA729 /* Static Resources */,
 				18A2177C19E57E7E00F22EA6 /* Classes */,
 				18A2173419E57C5A00F22EA6 /* Images.xcassets */,
@@ -6375,6 +6380,15 @@
 			path = GetPrice;
 			sourceTree = "<group>";
 		};
+		EC809F061CC78C31004E1A8E /* Certificates */ = {
+			isa = PBXGroup;
+			children = (
+				EC809F071CC78C60004E1A8E /* intermediate.cer */,
+				EC809F081CC78C60004E1A8E /* root.cer */,
+			);
+			name = Certificates;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -6549,6 +6563,7 @@
 				C3E890801A0CC52000A0653B /* Attachment-SelectionCheckempty@2x.png in Resources */,
 				184A9E1519E7D592006DA6BE /* map_priorityflag@2x.png in Resources */,
 				184A9DEA19E7D592006DA6BE /* login-servicemax-logo@2x.png in Resources */,
+				EC809F091CC78C60004E1A8E /* intermediate.cer in Resources */,
 				8BA32EAA19EE3F9300BFA769 /* day_triangle-down.png in Resources */,
 				5BB909BE19EE4CEC004AA281 /* triangle-down@2x.png in Resources */,
 				57BA2CDE1A1105080081389B /* ProductManualDetail.xib in Resources */,
@@ -6686,6 +6701,7 @@
 				183AA37919E6DAFE00919345 /* LaunchViewController.xib in Resources */,
 				183AA1D719E6D26400919345 /* SFMPageShowAllViewController.xib in Resources */,
 				184A9CC119E7D591006DA6BE /* calendar@2x.png in Resources */,
+				EC809F0A1CC78C60004E1A8E /* root.cer in Resources */,
 				183AA1B219E6D26400919345 /* PageEditMasterViewController.xib in Resources */,
 				40A06F1D1B06033100218162 /* NavBarExplore@3x.png in Resources */,
 				407252F719FF52C700ACA729 /* CommunicationBridgeJS.js in Resources */,
