@@ -7946,7 +7946,7 @@
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxmobilespr16;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
 				WRAPPER_EXTENSION = app;
@@ -7979,7 +7979,7 @@
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/Database",
 				);
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxmobilespr16;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
 				WRAPPER_EXTENSION = app;
