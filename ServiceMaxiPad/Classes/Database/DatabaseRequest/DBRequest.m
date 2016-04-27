@@ -70,13 +70,37 @@
 
 - (BOOL)setCriteria:(NSArray *)criterias
       andExpression:(NSString *)expression {
-    @synchronized([self class]) {
-        self.criteriaArray = criterias;
-        self.advancedExpression = expression;
-        return [self isValidExpression];
+    @autoreleasepool {
+        @synchronized([self class]) {
+            
+            NSMutableArray *tempCriteria =[criterias mutableCopy];
+            
+            for (DBCriteria *criteria in tempCriteria)
+            {
+                if([criteria.lhsValue isEqualToString:@"RecordTypeId"])
+                {
+                    if(criteria.operatorType == SQLOperatorIsNull)
+                    {
+                        criteria.lhsValue = criteria.lhsValue;
+                        criteria.operatorType = SQLOperatorIsNull;
+                        criteria.subCriterias = nil;
+                    }
+                    else{
+                        criteria.rhsValue = @"IgnoreThis";
+                        criteria.operatorType = SQLOperatorEqual;
+                        
+                    }
+                }
+            }
+            self.criteriaArray = tempCriteria;
+            self.advancedExpression = expression;
+            return [self isValidExpression];
+        }
+        
     }
     
 }
+
 
 
 - (void)addOrderByFields:(NSArray *)newfields andDefaultOrderByOrder:(SQLOrderByType)newDefaultOrderType{
