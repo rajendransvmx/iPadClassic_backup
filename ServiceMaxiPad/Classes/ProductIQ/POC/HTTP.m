@@ -198,12 +198,10 @@
         
         //check here ....
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"nsurl connection in http before");
             NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate: self];
             responseData = [[NSMutableData alloc]init];
             
             [connection start];
-            NSLog(@"nsurl connection in http after");
         });
         
         
@@ -216,12 +214,10 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    NSLog(@"HTTP Error! %@", [error localizedDescription]);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     NSString *responseText = [[NSString alloc] initWithData:self->responseData encoding:NSUTF8StringEncoding];
-    NSLog(@"didfinishLoading: %@",responseText);
     NSMutableDictionary *resp = [[NSMutableDictionary alloc] init];
     [resp setObject:self->requestId forKey:@"requestId"];
     [resp setObject:self->type forKey:@"type"];
@@ -253,9 +249,7 @@
             
         }
         NSString *js = [NSString stringWithFormat:@"%@(%@)", methodNameLocal, resp];
-            NSLog(@"executing js script in http before");
         [browser stringByEvaluatingJavaScriptFromString:js];
-        NSLog(@"executing js script in http after");
 
     });
 }

@@ -117,10 +117,8 @@
         {
             browser = [[MobileDataUsageExecuter getInstance] getBrowser];
         }
-         NSLog(@"executing js script in misc before");
         NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
         [browser stringByEvaluatingJavaScriptFromString:js];
-         NSLog(@"executing js script in misc after");
 
      });
 }

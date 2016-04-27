@@ -22,9 +22,7 @@
     NSString *methodName = d[@"methodName"];
     NSString *jsCallback = d[@"jsCallback"];
     NSString *query = d[@"query"];
-    NSLog(@"DB execution from JS before");
     NSMutableArray *rows = [[DBManager getSharedInstance] executeQuery:query];
-    NSLog(@"DB execution from JS after");
     NSMutableDictionary *resp = [[NSMutableDictionary alloc] init];
     [resp setObject:requestId forKey:@"requestId"];
     [resp setObject:type forKey:@"type"];
@@ -55,10 +53,7 @@
             browser = [[MobileDataUsageExecuter getInstance] getBrowser];
         }
         NSString *js = [NSString stringWithFormat:@"%@(%@)", methodName, resp];
-         NSLog(@"executing js script in db before");
-         NSLog(@"executing js [%@]",js);
         [browser stringByEvaluatingJavaScriptFromString:js];
-         NSLog(@"executing js script in db after");
      });
 }
 

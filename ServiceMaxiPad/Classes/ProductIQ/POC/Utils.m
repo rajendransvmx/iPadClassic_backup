@@ -47,9 +47,7 @@
         {
             browser = [[MobileDataUsageExecuter getInstance] getBrowser];
         }
-        NSLog(@"executing js script in util before");
         [browser stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", methodName, resp]];
-        NSLog(@"executing js script in util after");
 
     });
 }
