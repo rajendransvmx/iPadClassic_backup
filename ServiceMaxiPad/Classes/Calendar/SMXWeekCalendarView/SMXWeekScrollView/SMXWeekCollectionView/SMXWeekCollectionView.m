@@ -123,7 +123,7 @@
         SMXEvent *lEvent = [lEventArray objectAtIndex:0];
         if (!lEvent.newData) {
             shouldReload = YES;
-            [self getSLAAndPriorityDataFromDB:lEventArray forCell:cell withIndex:indexPath];
+            [self getSLAAndPriorityDataFromDB:lEventArray forCellDate:cell.date withIndex:indexPath];
         }
     }
 
@@ -153,10 +153,10 @@
     return SPACE_COLLECTIONVIEW_CELL;
 }
 
--(void)getSLAAndPriorityDataFromDB:(NSArray *)lEventArray forCell:(SMXWeekCell *)cell withIndex:(NSIndexPath *)indexpath
+-(void)getSLAAndPriorityDataFromDB:(NSArray *)lEventArray forCellDate:(NSDate *)date withIndex:(NSIndexPath *)indexpath
 {
     
-    CalenderHelper *lCalendarHelper = self.prioritySLADBInProgressDict[cell.date];
+    CalenderHelper *lCalendarHelper = self.prioritySLADBInProgressDict[date];
     if (lCalendarHelper == nil)
     {
         cLatestCellDataDownloadedIndexpath = indexpath;
@@ -167,10 +167,10 @@
             
             NSMutableDictionary*lEventDict = [[SMXDateManager sharedManager] dictEvents];
             
-            [lEventDict setObject:eventArray forKey:cell.date];
+            [lEventDict setObject:eventArray forKey:date];
             [[SMXDateManager sharedManager] setDictEvents:lEventDict];
             
-            [self.prioritySLADBInProgressDict removeObjectForKey:cell.date];
+            [self.prioritySLADBInProgressDict removeObjectForKey:date];
             //          [self reloadItemsAtIndexPaths:[NSArray arrayWithObjects:indexpath, nil]];
             
             //            [self performSelectorOnMainThread:@selector(reloadItemsAtIndexPaths:) withObject:[NSArray arrayWithObjects:indexpath, nil] waitUntilDone:NO];
@@ -179,7 +179,7 @@
         }];
         [lCalendarHelper performSelectorInBackground:@selector(getSLAPriorityForEventArray:) withObject:lEventArray];
         
-        [self.prioritySLADBInProgressDict setObject:lCalendarHelper forKey:cell.date];
+        [self.prioritySLADBInProgressDict setObject:lCalendarHelper forKey:date];
     }
 }
 
