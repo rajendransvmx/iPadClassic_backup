@@ -717,7 +717,6 @@
 		18B532C41B9D72350092D91F /* SVMXGetPriceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B532C31B9D72350092D91F /* SVMXGetPriceHelper.m */; };
 		18B8AEC91A1DFE36006781D2 /* up_arrow_gray.png in Resources */ = {isa = PBXBuildFile; fileRef = 18B8AEC81A1DFE36006781D2 /* up_arrow_gray.png */; };
 		18BB0A4B19E8F80400162524 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 18BB0A4A19E8F80400162524 /* MBProgressHUD.m */; };
-		18BB0A6C19E9088600162524 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18BB0A6519E9088600162524 /* libzbar.a */; };
 		18BB0A6D19E9088600162524 /* zbar-back.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6719E9088600162524 /* zbar-back.png */; };
 		18BB0A6E19E9088600162524 /* zbar-help.html in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6819E9088600162524 /* zbar-help.html */; };
 		18BB0A6F19E9088600162524 /* zbar-helpicons.png in Resources */ = {isa = PBXBuildFile; fileRef = 18BB0A6919E9088600162524 /* zbar-helpicons.png */; };
@@ -1006,6 +1005,17 @@
 		9EFE6DFE1A0F33EF0067F9CC /* LinkedProcessViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9EFE6DFC1A0F33EF0067F9CC /* LinkedProcessViewController.m */; };
 		9EFE6DFF1A0F33EF0067F9CC /* LinkedProcessViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9EFE6DFD1A0F33EF0067F9CC /* LinkedProcessViewController.xib */; };
 		A61A1B901B202B1200B1C9C8 /* AutoLockManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */; };
+		A64AAD971CEDCB61008839FB /* HitachiStudio in Resources */ = {isa = PBXBuildFile; fileRef = A64AAD961CEDCB61008839FB /* HitachiStudio */; };
+		A64AAD9C1CEDCBF3008839FB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD981CEDCBF3008839FB /* IOKit.framework */; };
+		A64AAD9D1CEDCBF3008839FB /* libHitachiStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */; };
+		A64AAD9F1CEDCBF3008839FB /* Resource.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD9B1CEDCBF3008839FB /* Resource.bundle */; };
+		A64AADA11CEDCC27008839FB /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA01CEDCC27008839FB /* libicucore.tbd */; };
+		A64AADA31CEDCC37008839FB /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA21CEDCC37008839FB /* libiconv.tbd */; };
+		A64AADA51CEDCC4F008839FB /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA41CEDCC4F008839FB /* CoreFoundation.framework */; };
+		A64AADA71CEDCC89008839FB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA61CEDCC89008839FB /* CoreTelephony.framework */; };
+		A64AADA91CEDCCA7008839FB /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA81CEDCCA7008839FB /* AdSupport.framework */; };
+		A64AADAA1CEDCCE9008839FB /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD9A1CEDCBF3008839FB /* libzbar.a */; };
+		A64AADAC1CEDCD40008839FB /* Resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A64AADAB1CEDCD40008839FB /* Resource.bundle */; };
 		C31E66D11AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */; };
 		C31E66D41AE65EC900A8AE7E /* GetPriceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C31E66D31AE65EC900A8AE7E /* GetPriceManager.m */; };
 		C3216E151B27E18B006A0515 /* UTStringUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C3216E141B27E18B006A0515 /* UTStringUtil.m */; };
@@ -2923,6 +2933,17 @@
 		9EFE6DFD1A0F33EF0067F9CC /* LinkedProcessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LinkedProcessViewController.xib; sourceTree = "<group>"; };
 		A61A1B8E1B202B1200B1C9C8 /* AutoLockManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLockManager.h; sourceTree = "<group>"; };
 		A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLockManager.m; sourceTree = "<group>"; };
+		A64AAD961CEDCB61008839FB /* HitachiStudio */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HitachiStudio; sourceTree = "<group>"; };
+		A64AAD981CEDCBF3008839FB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = file; name = IOKit.framework; path = HitachiStudio/IOKit.framework; sourceTree = "<group>"; };
+		A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHitachiStudio.a; path = HitachiStudio/libHitachiStudio.a; sourceTree = "<group>"; };
+		A64AAD9A1CEDCBF3008839FB /* libzbar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzbar.a; path = HitachiStudio/libzbar.a; sourceTree = "<group>"; };
+		A64AAD9B1CEDCBF3008839FB /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Resource.bundle; path = HitachiStudio/Resource.bundle; sourceTree = "<group>"; };
+		A64AADA01CEDCC27008839FB /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
+		A64AADA21CEDCC37008839FB /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		A64AADA41CEDCC4F008839FB /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		A64AADA61CEDCC89008839FB /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		A64AADA81CEDCCA7008839FB /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		A64AADAB1CEDCD40008839FB /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Resource.bundle; path = HitachiStudio/Resource.bundle; sourceTree = "<group>"; };
 		C31E66CF1AE65DBE00A8AE7E /* GetPriceDataServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceDataServiceLayer.h; sourceTree = "<group>"; };
 		C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetPriceDataServiceLayer.m; sourceTree = "<group>"; };
 		C31E66D21AE65EC900A8AE7E /* GetPriceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceManager.h; sourceTree = "<group>"; };
@@ -3054,6 +3075,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A64AADAA1CEDCCE9008839FB /* libzbar.a in Frameworks */,
+				A64AADA91CEDCCA7008839FB /* AdSupport.framework in Frameworks */,
+				A64AADA71CEDCC89008839FB /* CoreTelephony.framework in Frameworks */,
+				A64AADA51CEDCC4F008839FB /* CoreFoundation.framework in Frameworks */,
+				A64AADA31CEDCC37008839FB /* libiconv.tbd in Frameworks */,
+				A64AADA11CEDCC27008839FB /* libicucore.tbd in Frameworks */,
+				A64AAD9C1CEDCBF3008839FB /* IOKit.framework in Frameworks */,
+				A64AAD9D1CEDCBF3008839FB /* libHitachiStudio.a in Frameworks */,
+				A64AAD9F1CEDCBF3008839FB /* Resource.bundle in Frameworks */,
 				6BBFB76719F67565002070BC /* libsqlite3.0.dylib in Frameworks */,
 				18A2175C19E57CDE00F22EA6 /* libsqlite3.dylib in Frameworks */,
 				18A2176019E57CF200F22EA6 /* libiconv.dylib in Frameworks */,
@@ -3070,7 +3100,6 @@
 				18A2176C19E57D3B00F22EA6 /* MediaPlayer.framework in Frameworks */,
 				18A2176A19E57D3200F22EA6 /* MapKit.framework in Frameworks */,
 				18A2176819E57D2400F22EA6 /* AVFoundation.framework in Frameworks */,
-				18BB0A6C19E9088600162524 /* libzbar.a in Frameworks */,
 				18A2176619E57D1800F22EA6 /* SystemConfiguration.framework in Frameworks */,
 				18A2176419E57D0E00F22EA6 /* Security.framework in Frameworks */,
 				6A13E9CC1A9AB6DC00D12CED /* libsqlcipher.a in Frameworks */,
@@ -5511,6 +5540,8 @@
 		18A2171019E57C5A00F22EA6 = {
 			isa = PBXGroup;
 			children = (
+				A64AADAB1CEDCD40008839FB /* Resource.bundle */,
+				A64AAD961CEDCB61008839FB /* HitachiStudio */,
 				18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */,
 				18A2174119E57C5A00F22EA6 /* ServiceMaxiPadTests */,
 				18A2171B19E57C5A00F22EA6 /* Frameworks */,
@@ -5530,6 +5561,15 @@
 		18A2171B19E57C5A00F22EA6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A64AADA81CEDCCA7008839FB /* AdSupport.framework */,
+				A64AADA61CEDCC89008839FB /* CoreTelephony.framework */,
+				A64AADA41CEDCC4F008839FB /* CoreFoundation.framework */,
+				A64AADA21CEDCC37008839FB /* libiconv.tbd */,
+				A64AADA01CEDCC27008839FB /* libicucore.tbd */,
+				A64AAD981CEDCBF3008839FB /* IOKit.framework */,
+				A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */,
+				A64AAD9A1CEDCBF3008839FB /* libzbar.a */,
+				A64AAD9B1CEDCBF3008839FB /* Resource.bundle */,
 				6BBFB76619F67565002070BC /* libsqlite3.0.dylib */,
 				18A2177919E57D8100F22EA6 /* CoreVideo.framework */,
 				18A2177719E57D7100F22EA6 /* CoreText.framework */,
@@ -6711,6 +6751,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A64AADAC1CEDCD40008839FB /* Resource.bundle in Resources */,
 				4344089C1C9035B600628FFB /* com.servicemax.client.native.laptop.zip in Resources */,
 				185656AC1A78DE5200DA5C12 /* json2.js in Resources */,
 				427305221A10BD5B005F41E1 /* bizRules-index.js in Resources */,
@@ -6735,6 +6776,7 @@
 				C3EF97891A036CAE00476293 /* DocumentsViewController.xib in Resources */,
 				184A9C0C19E7D591006DA6BE /* iOS-Email-Retina-Orange@2x.png in Resources */,
 				57A321001AB7196A00A172E0 /* SCalendar@2x.png in Resources */,
+				A64AAD971CEDCB61008839FB /* HitachiStudio in Resources */,
 				1195544D1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib in Resources */,
 				57A320E81AB7178C00A172E0 /* NavBarCal@2x.png in Resources */,
 				184A9CC519E7D591006DA6BE /* recentlyCreated@2x.png in Resources */,
@@ -7928,6 +7970,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/HitachiStudio",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -7943,12 +7989,17 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/ExternalFrameworks/ZBarSDK",
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/Database",
+					"$(PROJECT_DIR)/HitachiStudio",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
+				OTHER_LDFLAGS = (
+					"-objc",
+					"-all_load",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
+				PROVISIONING_PROFILE = "fa90971c-26fb-4a88-99f4-110ad4cbca2d";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -7958,10 +8009,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: ServiceMax Inc (4B24F56ULW)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/HitachiStudio",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -7977,11 +8032,16 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/ExternalFrameworks/ZBarSDK",
 					"$(PROJECT_DIR)/ServiceMaxiPad/Classes/Database",
+					"$(PROJECT_DIR)/HitachiStudio",
 				);
 				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
+				OTHER_LDFLAGS = (
+					"-objc",
+					"-all_load",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
+				PROVISIONING_PROFILE = "fa90971c-26fb-4a88-99f4-110ad4cbca2d";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
