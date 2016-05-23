@@ -4010,7 +4010,7 @@
 		A61A1B8E1B202B1200B1C9C8 /* AutoLockManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLockManager.h; sourceTree = "<group>"; };
 		A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLockManager.m; sourceTree = "<group>"; };
 		A64AAD961CEDCB61008839FB /* HitachiStudio */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HitachiStudio; sourceTree = "<group>"; };
-		A64AAD981CEDCBF3008839FB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = file; name = IOKit.framework; path = HitachiStudio/IOKit.framework; sourceTree = "<group>"; };
+		A64AAD981CEDCBF3008839FB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = HitachiStudio/IOKit.framework; sourceTree = "<group>"; };
 		A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHitachiStudio.a; path = HitachiStudio/libHitachiStudio.a; sourceTree = "<group>"; };
 		A64AAD9A1CEDCBF3008839FB /* libzbar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzbar.a; path = HitachiStudio/libzbar.a; sourceTree = "<group>"; };
 		A64AAD9B1CEDCBF3008839FB /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Resource.bundle; path = HitachiStudio/Resource.bundle; sourceTree = "<group>"; };
@@ -10330,7 +10330,7 @@
 					"/usr/lib;",
 					"sqlcipher-static-ios/include",
 				);
-				INFOPLIST_FILE = "ServiceMaxiPad-Info.plist";
+				INFOPLIST_FILE = "ServiceMaxiPad/ServiceMaxiPad-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10373,7 +10373,7 @@
 					"/usr/lib;",
 					"sqlcipher-static-ios/include",
 				);
-				INFOPLIST_FILE = "ServiceMaxiPad-Info.plist";
+				INFOPLIST_FILE = "ServiceMaxiPad/ServiceMaxiPad-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
