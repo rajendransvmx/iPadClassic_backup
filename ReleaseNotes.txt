@@ -4,7 +4,7 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.008
+Version = 16.20.009
  
 ===========================================
 
@@ -16,6 +16,9 @@ Forward ported
 
 28248
 12895
+
+BackF ported:
+030322
 
 
 Namespace - SVMXC
