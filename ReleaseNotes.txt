@@ -3,17 +3,16 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.39.001
+Version = 16.39.004
 ===========================================
 
 
 Defect fix
 =============
-Added latest JS files for ProductIQ.
-025309
+
 …
 ——————
 
 NOTE:
 
-Name Space: SVMXC
+Name Space: SVMXDEV
