@@ -277,7 +277,7 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
 }
 
 /* This function return true for same version and false for New App version */
-+(BOOL)isAppWithSameVersion{
++ (BOOL)isAppWithSameVersion{
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *currentAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
