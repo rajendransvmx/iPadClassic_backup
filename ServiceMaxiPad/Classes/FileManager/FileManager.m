@@ -260,7 +260,8 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
     if(array.count)
     {
         pathToCheck = [pathToCheck stringByAppendingPathComponent:array[0]];
-        if(![[NSFileManager defaultManager] fileExistsAtPath:pathToCheck]) // If core library already exists then DONOT unzip
+        //if(![[NSFileManager defaultManager] fileExistsAtPath:pathToCheck]) // If core library already exists then DONOT unzip
+        if (![FileManager isAppWithSameVersion])
         {
             [UnzipUtility unzipBundledStaticResourceAtPath:[FileManager getCoreLibSubDirectoryPath]];
         }
@@ -273,6 +274,30 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
     {
         NSLog(@"No bundled core library found!");
     }
+}
+
+/* This function return true for same version and false for New App version */
++(BOOL)isAppWithSameVersion{
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    NSString *previousVersion = [defaults objectForKey:@"SVMXappVersion"];
+    if (!previousVersion) {
+        // first launch
+        
+        [defaults setObject:currentAppVersion forKey:@"SVMXappVersion"];
+        [defaults synchronize];
+    } else if ([previousVersion isEqualToString:currentAppVersion]) {
+        // same version
+        
+        return TRUE;
+    } else {
+        // other version
+        
+        [defaults setObject:currentAppVersion forKey:@"SVMXappVersion"];
+        [defaults synchronize];
+    }
+    return FALSE;
 }
 
 + (BOOL)excludeItemForBackupAtURL:(NSURL *)urlToExcludeForBackup
