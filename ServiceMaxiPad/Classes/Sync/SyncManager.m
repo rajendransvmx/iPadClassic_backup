@@ -2033,6 +2033,17 @@ static SyncManager *_instance;
         {
             self.isDataSyncRunning = NO;
             [self initiateCustomDataSync];
+            
+            // 030783
+                NSString *getPriceEnabled = [SFMPageHelper getSettingValueForSettingId:kMobileSettingsGetPrice];
+                self.isGetPriceCallEnabled = [getPriceEnabled boolValue];
+                
+                if (self.isGetPriceCallEnabled) {
+                    SXLogDebug(@"GP: CALLED IN QUEUE");
+                    self.isGetPriceCallEnabled = NO;
+                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGetPriceNotification:) name:@"DoGetPrice" object:nil];
+                }
+            
         }
         else {
             [self currentDataSyncfinished];
