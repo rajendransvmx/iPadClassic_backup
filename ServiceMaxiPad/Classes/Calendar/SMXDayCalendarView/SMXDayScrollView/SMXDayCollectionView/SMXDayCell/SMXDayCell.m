@@ -620,7 +620,15 @@
     //changing from float/double to long as the comparision was giving issues with the 3rd & 4th position decimal numbers.
     long oldbuttonHeight = (oldEvent.frame.origin.y + oldEvent.frame.size.height);
     //long newButtonHeight = (event.frame.origin.y + event.frame.size.height);
+    /*
     if ((oldbuttonHeight >= event.frame.origin.y) && (oldEvent.frame.origin.y <=  event.frame.origin.y))
+    {
+        return YES;
+    }
+     */
+    
+    //Defect Fix:031209
+    if ((oldEvent.frame.origin.y<=event.frame.origin.y) && ((oldEvent.frame.origin.y+oldEvent.frame.size.height)>event.frame.origin.y))
     {
         return YES;
     }
