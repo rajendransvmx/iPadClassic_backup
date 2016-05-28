@@ -62,27 +62,62 @@
             path = [FileManager getCoreLibSubDirectoryPath];
         }
         NSArray *listOflibraries = [self getListOfCoreLibraries];
-        
+        BOOL isAppWithSameVersion = [UnzipUtility isAppWithSameVersion];
         for(NSString *fileName in listOflibraries)
         {
             NSString *filepath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"zip"];
             
             if ([fileName isEqualToString:@"com.servicemax.client.lib"]) {
                 NSString *clientLibPath = [path stringByDeletingLastPathComponent];
-                if([fileManager fileExistsAtPath:[clientLibPath stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
-                continue;
-                [self unzipFileAtPath:filepath toFolder:clientLibPath];
+                
+                if (!isAppWithSameVersion){
+                    [self unzipFileAtPath:filepath toFolder:clientLibPath];
+                }else{
+                    if([fileManager fileExistsAtPath:[clientLibPath stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
+                        continue;
+                    [self unzipFileAtPath:filepath toFolder:clientLibPath];
+                }
             }
             else {
-                if([fileManager fileExistsAtPath:[path stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
-                continue;
-                [self unzipFileAtPath:filepath toFolder:path];
+                if (!isAppWithSameVersion){
+                    [self unzipFileAtPath:filepath toFolder:path];
+                }else{
+                    if([fileManager fileExistsAtPath:[path stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
+                        continue;
+                    [self unzipFileAtPath:filepath toFolder:path];
+                }
             }
         }
         [fileManager removeItemAtPath:[path stringByAppendingPathComponent:@"__MACOSX"] error:NULL];
         
     }
 }
+
+/* This function return true for same version and false for New App version */
++ (BOOL)isAppWithSameVersion{
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *currentAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    NSString *previousVersion = [defaults objectForKey:@"SVMXappVersion_Each"];
+    if (!previousVersion) {
+        // first launch
+        
+        [defaults setObject:currentAppVersion forKey:@"SVMXappVersion_Each"];
+        [defaults synchronize];
+    } else if ([previousVersion isEqualToString:currentAppVersion]) {
+        // same version
+        
+        return TRUE;
+    } else {
+        // other version
+        
+        [defaults setObject:currentAppVersion forKey:@"SVMXappVersion_Each"];
+        [defaults synchronize];
+    }
+    return FALSE;
+}
+
+
 /**
  * @name  unzipFileAtPath
  *
