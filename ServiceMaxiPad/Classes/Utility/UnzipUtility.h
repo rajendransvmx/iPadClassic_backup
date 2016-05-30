@@ -12,4 +12,5 @@
 + (NSArray *) getListOfCoreLibraries;
 + (void) unzipBundledStaticResourceAtPath:(NSString *)path;
 + (void) unzipFileAtPath:(NSString *)filepath toFolder:(NSString *)destinationFolder;
++ (BOOL)isAppWithSameVersion:(NSString *)versionKey;
 @end

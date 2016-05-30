@@ -62,7 +62,7 @@
             path = [FileManager getCoreLibSubDirectoryPath];
         }
         NSArray *listOflibraries = [self getListOfCoreLibraries];
-        BOOL isAppWithSameVersion = [UnzipUtility isAppWithSameVersion];
+        BOOL isAppWithSameVersion = [UnzipUtility isAppWithSameVersion:@"SVMXappVersion_Each"];
         for(NSString *fileName in listOflibraries)
         {
             NSString *filepath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"zip"];
@@ -94,15 +94,15 @@
 }
 
 /* This function return true for same version and false for New App version */
-+ (BOOL)isAppWithSameVersion{
++ (BOOL)isAppWithSameVersion:(NSString *)versionKey{
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *currentAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    NSString *previousVersion = [defaults objectForKey:@"SVMXappVersion_Each"];
+    NSString *previousVersion = [defaults objectForKey:versionKey];
     if (!previousVersion) {
         // first launch
         
-        [defaults setObject:currentAppVersion forKey:@"SVMXappVersion_Each"];
+        [defaults setObject:currentAppVersion forKey:versionKey];
         [defaults synchronize];
     } else if ([previousVersion isEqualToString:currentAppVersion]) {
         // same version
@@ -111,7 +111,7 @@
     } else {
         // other version
         
-        [defaults setObject:currentAppVersion forKey:@"SVMXappVersion_Each"];
+        [defaults setObject:currentAppVersion forKey:versionKey];
         [defaults synchronize];
     }
     return FALSE;
