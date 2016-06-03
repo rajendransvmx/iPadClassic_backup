@@ -28,6 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>svmxmobilepulsesum15</string>
+				<string>bayersvmxscheme</string>
 			</array>
 		</dict>
 	</array>

@@ -220,6 +220,13 @@ forLocalNotification:(UILocalNotification *)notification
             [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
         }
     }
+    
+    if ([[url scheme] isEqualToString:@"bayersvmxscheme"])
+    {
+        
+        
+    }
+    
     return YES; 
 }
 
