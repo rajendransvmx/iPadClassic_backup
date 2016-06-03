@@ -42,7 +42,6 @@
 //Language localization display
 +(NSString *)localDateTimeStringFromDate:(NSDate *)date;
 +(NSString *)localDateTimeStringFromDate:(NSDate *)date inFormat:(NSString*)format;
-+(NSString *)localDateStringFromDate:(NSDate *)date;
 
 + (NSString *)stringTime12hrDate:(NSDate *)date;
 + (NSString *)stringWeekDayDate:(NSDate *)date;

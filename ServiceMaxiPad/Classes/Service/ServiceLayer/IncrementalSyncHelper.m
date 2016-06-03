@@ -18,8 +18,6 @@
 #import "SFChildRelationshipDAO.h"
 #import "StringUtil.h"
 #import "PlistManager.h"
-#import "CacheManager.h"
-#import "RequestConstants.h"
 
 @implementation IncrementalSyncHelper
 
@@ -137,9 +135,6 @@
                                                         andSyncRecord:aRecord];
                 if (!canContinue) {
                     aRecord.cannotSendToServer = YES;
-                    
-                    [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap]; // Nothing To do with after insert. This is to break the flow of the Data sync in case where the unsynced record is a reference to existing record. Defect#23785
-
                     continue;
                 }
                 
@@ -148,9 +143,6 @@
                    aRecord.sfId = [self getSfIDForRecord:aRecord];
                     if([StringUtil isStringEmpty:aRecord.sfId]){
                     aRecord.cannotSendToServer = YES;
-                        
-                    [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap]; // Nothing To do with after insert. This is to break the flow of the Data sync in case where the unsynced record is a reference to existing record. Defect#23785
-                        
                     continue;
                     }
                     else
@@ -169,21 +161,11 @@
                     recordDictionary = [jsonDictionary objectForKey:@"AFTER_SAVE"];
                     [recordDictionary setObject:aRecord.sfId forKey:@"Id"];
                     
-                    /* replacing localId with sfId */
-                    [self replaceLookUpIds:recordDictionary objectName:objectName];
-                    
                     if([[jsonDictionary allKeys] containsObject:@"CLIENT_OVERRIDE"]) {
                         aRecord.overrideFlag = @"CLIENT_OVERRIDE";
                     }
                 }
-                
-                NSData * jsonData = nil;
-                
-                if([recordDictionary count] > 0)
-                {
-                     jsonData = [NSJSONSerialization dataWithJSONObject:recordDictionary options:0 error:&error];
-                }
-              
+                NSData * jsonData = [NSJSONSerialization dataWithJSONObject:recordDictionary options:0 error:&error];
 
                 if (!jsonData) {
                 } else {
@@ -191,38 +173,13 @@
                     NSString *JSONString = [[NSString alloc] initWithBytes:[jsonData bytes] length:[jsonData length] encoding:NSUTF8StringEncoding];
                     aRecord.jsonRecord = JSONString;
                 }
+                
             }
         }
+
     }
-
+    
 }
-
--(void)replaceLookUpIds:(NSMutableDictionary *)recordDictionary objectName:(NSString *)objectName
-{
-    NSDictionary * referenceDictionary = [self getReferenceFieldsFor:objectName];
-    id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-    for (NSString *key in referenceDictionary)
-    {
-        NSString *tempReferenceId = [recordDictionary objectForKey:key];
-        NSString *referenceId = nil;
-        if(![StringUtil isStringEmpty:tempReferenceId])
-        {
-            referenceId = tempReferenceId;
-        }
-        NSString *referenceTo = [referenceDictionary objectForKey:key];
-        if (referenceId.length > 30 && referenceTo.length > 1)
-        {
-            /* It is local Id , so get the sfid */
-            NSString *sfIdValue =   [transObj getSfIdForLocalId:referenceId forObjectName:referenceTo];
-            if (sfIdValue.length > 3) //sfId is there
-            {
-                /* Sfid exist and can be replaced */
-                [recordDictionary setObject:sfIdValue forKey:key];
-            }
-        }
-    }
-}
-
 
 -(NSArray *)getRecordForObjectName:(NSString *)objectName  withFieldsArray:(NSArray *)fieldsArray expression:(NSString *)expresseion criteria:(NSArray *)criteria
 {
@@ -274,11 +231,6 @@
     
     
     NSDictionary * referenceDictionary = [self getReferenceFieldsFor:objectName];
-    if ([objectName isEqualToString:kServicemaxEventObject] && [[recordDictionary objectForKey:kSVMXWhatId] length]>30) {
-        NSMutableDictionary *tempMutDict = [NSMutableDictionary dictionaryWithDictionary:referenceDictionary];
-        [tempMutDict setObject:kWorkOrderTableName forKey:kSVMXWhatId];
-        referenceDictionary = [NSDictionary dictionaryWithDictionary:tempMutDict];
-    }
     
     
     BOOL allReferenceFields = YES;
@@ -312,9 +264,8 @@
             /* It is local Id , so get the sfid */
             NSString *sfIdValue =   [transObj getSfIdForLocalId:referenceId forObjectName:referenceTo];  //[self sfIdForLocalId:referenceId inTable:referenceTo];
             
-            //if (sfIdValue.length > 3) {   //sfId is there
-            //This localId change for productIQ, In productIQ we are copying local id of the record in place of SFID for unsynced record.
-            if ((![StringUtil checkIfStringEmpty:sfIdValue]) && (sfIdValue.length < 30) && (sfIdValue.length > 3)) {   //sfId is there
+            if (sfIdValue.length > 3) {
+                
                 /* Sfid exist and can be replaced */
                 [recordDictionary setObject:sfIdValue forKey:key];
                 
@@ -329,12 +280,6 @@
             }
             else {
                 /* TO BE DONE: Conflict handling need to be done */
-                //
-                if ([StringUtil checkIfStringEmpty:sfIdValue])
-                {
-                    /* If is there not sfId of refrence field,Then not making update call for this record */
-                     allReferenceFields = NO;
-                }
                 
                 BOOL recordExist  =  [transObj isRecordExistsForObject:referenceTo forRecordLocalId:referenceId ];// [self isRecordExist:referenceId inTable:referenceTo];
                 if (recordExist) {

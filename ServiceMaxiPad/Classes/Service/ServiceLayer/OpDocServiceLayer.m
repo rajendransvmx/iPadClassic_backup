@@ -427,7 +427,6 @@
     
     if (self.requestType == RequestTypeCheckOPDOCUploadStatus) {
         
-        SXLogDebug(@"OPD: RequestTypeCheckOPDOCUploadStatus request");
         
         param = [[RequestParamModel alloc] init];
         param.value = [[OpDocHelper sharedManager] getQueryForCheckingOPDOCFileUploadStatus];
@@ -476,8 +475,6 @@
         param.values = array;
         param.context = dict;
         
-        SXLogDebug(@"OPD: RequestTypeOpDocUploading request");
-        
     }
     else if (self.requestType == RequestTypeOPDocHTMLAndSignatureSubmit){ // For SUBMITTING the list of HTML and Signature files to Server
         
@@ -505,8 +502,6 @@
         param = [[RequestParamModel alloc] init];
         param.valueMap = @[htmlValueMap, signatureValueMap];
         
-        SXLogDebug(@"OPD: RequestTypeOPDocHTMLAndSignatureSubmit request");
-        
     }
     else if (self.requestType == RequestTypeOPDocGeneratePDF){  // For Generating the PDF in the server of the HTML File Submitted already.
         
@@ -527,8 +522,6 @@
         
         param = [[RequestParamModel alloc] init];
         param.valueMap = @[htmlValueMap, signatureValueMap];
-        
-        SXLogDebug(@"OPD: RequestTypeOPDocGeneratePDF request");
         
     }
     

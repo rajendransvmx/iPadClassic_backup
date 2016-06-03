@@ -44,12 +44,8 @@
 #import "SFMPageHelper.h"
 #import "CacheConstants.h"
 #import "StringUtil.h"
-#import "ProductIQManager.h"
 #import "TransactionObjectService.h"
 #import "SyncErrorConflictService.h"
-#import "MobileDataUsageExecuter.h"
-#import "SMAppDelegate.h"
-#import "AutoLockManager.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -79,13 +75,10 @@ NSString *syncMetaDataFile                  = @"SyncMetaData.plist";
 
 //static dispatch_once_t _sharedSyncManagerInstanceGuard;
 static SyncManager *_instance;
-static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncReportQueueSpecificKey;
 
 
 @interface SyncManager ()<UIAlertViewDelegate>
-{
-     dispatch_queue_t    _queue;
-}
+
 @property (nonatomic, strong) SyncScheduler *configSyncScheduler;
 @property (nonatomic, strong) SyncScheduler *dataSyncScheduler;
 
@@ -106,8 +99,9 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 @property (nonatomic) BOOL isAfterInsert;
 @property (nonatomic) BOOL isAfterUpdate;
 
-@property (nonatomic, assign) BOOL isDataSyncRunning;
+@property(nonatomic, assign) BOOL isDataSyncRunning;
 @property (nonatomic) BOOL isDataSyncInLoop;
+
 
 - (void)performInitialSync;
 - (void)performConfigSync;
@@ -264,19 +258,11 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     self.initialSyncStatus = SyncStatusCompleted;
     self.configSyncStatus = SyncStatusCompleted;
     self.dataSyncStatus = SyncStatusCompleted;
-    _queue = dispatch_queue_create([[NSString stringWithFormat:@"syncreport.%@", self] UTF8String], NULL);
-    dispatch_queue_set_specific(_queue, kDispatchSyncReportQueueSpecificKey, (__bridge void *)self, NULL);
-    
-
     return self;
 }
 
 - (void)dealloc {
     // Should never be called, but just here for clarity really.
-    if (_queue) {
-        _queue = nil;
-        _queue = 0x00;
-    }
 }
 
 #pragma mark - Class Methods
@@ -315,28 +301,13 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             
                 if (![self isDataSyncInProgress])
                 {
-                    if([[SMDataPurgeManager sharedInstance] isDataPurgeInProgress])
+                    [self performDataSync];
+                
+                    if (self.isGetPriceCallEnabled)
                     {
-                        self.dataSyncStatus = SyncStatusInQueue;
-                        [self enqueueSyncQueue:SyncTypeData];
+                        self.isGetPriceCallEnabled = NO;
+                        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGetPriceNotification:) name:@"DoGetPrice" object:nil];
                     }
-                    
-                    else
-                    {
-                        [self performDataSync];
-                        
-                        if (self.isGetPriceCallEnabled)
-                        {
-                            self.isGetPriceCallEnabled = NO;
-                            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleGetPriceNotification:) name:@"DoGetPrice" object:nil];
-                        }
-                        
-                        if([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
-                            [self performSelectorInBackground:@selector(initiateProdIQDataSync) withObject:nil];
-                        }
-                        
-                    }
-                    
                 }
             }
             break;
@@ -367,7 +338,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 - (void)handleGetPriceNotification:(NSNotification *)notification
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"DoGetPrice" object:nil];
-
+    
     
     [self performSelectorInBackground:@selector(initiateGetPriceInBackGround) withObject:nil];
     
@@ -485,8 +456,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 - (void)performInitialSync
 {
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
-    [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
-    
     [self enableAllParallelSync:NO];
     self.initialSyncStatus = SyncStatusInProgress;
     [self prepareDatabaseForInitialSync];
@@ -502,8 +471,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 - (void)performResetApp
 {
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
-    [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
-
     [self prepareDatabaseForInitialSync];
     [SMDataPurgeHelper startedConfigSyncTime];
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeResetApp requestParam:nil callerDelegate:self];
@@ -513,8 +480,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 - (void)performConfigSync
 {
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
-    [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
-
     self.configSyncStatus = SyncStatusInProgress;
     [SMDataPurgeHelper startedConfigSyncTime];
     [self enableAllParallelSync:NO];
@@ -615,46 +580,46 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 - (void)recievedInitialSyncResponse:(WebserviceResponseStatus *)responseStatus
 {
     self.initialSyncStatus = responseStatus.syncStatus;
-    self.syncType = SyncTypeInitial;
-    self.syncResponseStatus = responseStatus;
     
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"Initial Sync Finished");
-        [self executeSyncErrorReporting];
+        [self currentInitialSyncFinished];
+        [self updateUserTableIfRecordDoesnotExist];
     }
     else  if ( (responseStatus.syncStatus == SyncStatusFailed) ||  (responseStatus.syncStatus == SyncStatusNetworkError))
     {
-         SXLogDebug(@"Initial Sync Failed");
-        if(responseStatus.syncError!=nil) {
-            self.syncError=[responseStatus.syncError copy];
-        }
-        [self executeSyncErrorReporting];
+        SXLogDebug(@"Initial Sync failed");
+        [self currentInitialSyncFailedWithError:responseStatus.syncError];
     }
-
 }
 
 
 - (void)recievedDataSyncResponse:(WebserviceResponseStatus *)responseStatus
 {
     self.dataSyncStatus = responseStatus.syncStatus;
-    self.syncType = SyncTypeData;
-    self.syncResponseStatus = responseStatus;
     
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"Data Sync Finished");
-        [self executeSyncErrorReporting];
+        [self PerformSYncBasedOnFlags];
+        
+        //[self currentDataSyncfinished];
     }
     else  if (   (responseStatus.syncStatus == SyncStatusFailed)
               || (responseStatus.syncStatus == SyncStatusRefreshTokenFailedWithError)
               || (responseStatus.syncStatus == SyncStatusNetworkError))
     {
-        if(responseStatus.syncError!=nil) {
-            self.syncError=[responseStatus.syncError copy];
+        SXLogDebug(@"Data Sync failed");
+        
+        if (responseStatus.syncProgressState == SyncStatusFailedWithRevokeTokenFlag)
+        {
+            [self currentDataSyncFailedWithError:nil];
         }
-        SXLogDebug(@"Data Sync Failed");
-        [self executeSyncErrorReporting];
+        else
+        {
+            [self currentDataSyncFailedWithError:responseStatus.syncError];
+        }
     }
     SXLogDebug(@"Data Sync - %d", responseStatus.syncStatus);
 }
@@ -663,21 +628,19 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 - (void)recievedConfigSyncResponse:(WebserviceResponseStatus *)responseStatus
 {
     self.configSyncStatus = responseStatus.syncStatus;
-    self.syncResponseStatus = responseStatus;
-    self.syncType = SyncTypeConfig;
-   
-    if (self.syncResponseStatus.syncStatus == SyncStatusSuccess)
-    {
+    
+    if (responseStatus.syncStatus == SyncStatusSuccess)
+    {        
+        [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:YES];
+
         SXLogDebug(@"Config Sync Finished");
-        [self executeSyncErrorReporting];
+        [self currentConfigSyncFinished];
     }
-    else  if (self.syncResponseStatus.syncStatus == SyncStatusFailed ||  self.syncResponseStatus.syncStatus == SyncStatusNetworkError)
+    else  if (responseStatus.syncStatus == SyncStatusFailed ||  responseStatus.syncStatus == SyncStatusNetworkError)
     {
-        SXLogDebug(@"Config Sync Failed");
-        if(responseStatus.syncError!=nil) {
-            self.syncError=[responseStatus.syncError copy];
-        }
-        [self executeSyncErrorReporting];
+        SXLogDebug(@"Config Sync failed");
+        [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:NO];
+        [self currentConfigSyncFailedWithError:responseStatus.syncError];
     }
 }
 
@@ -701,10 +664,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             {
                 notification = kInitialSyncStatusNotification;
                 [self recievedInitialSyncResponse:wsResponseStatus];
-                if(wsResponseStatus.syncStatus == SyncStatusSuccess)
-                {
-                    shouldNotify = NO;
-                }
             }
                 break;
                 
@@ -739,10 +698,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             {
                 notification = kConfigSyncStatusNotification;
                 [self recievedConfigSyncResponse:wsResponseStatus];
-                if(wsResponseStatus.syncStatus == SyncStatusSuccess)
-                {
-                    shouldNotify = NO;
-                }
             }
                 break;
             case CategoryTypeCustomWebServiceCall: //call for webservice
@@ -1029,7 +984,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 {
     [self updatePlistWithLastConfigSyncTimeAndStatus:kFailed];
     [self manageSyncQueueProcess];
-    
+   
     if ( (self.configSyncStatus == SyncStatusInProgress) || (self.configSyncStatus == SyncStatusInQueue))
     {
         self.configSyncStatus = SyncStatusFailedWithError;
@@ -1306,8 +1261,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 {
     [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncCompleted];
     
-    [self loadDataIntoInstalledBaseObject];
-    
     [self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
     [self updatePlistWithLastConfigSyncTimeAndStatus:kSuccess];
     [[SMDataPurgeManager sharedInstance] initiateAllDataPurgeProcess];
@@ -1325,15 +1278,9 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     [self manageSyncQueueProcess];
 }
 
-
-- (void)loadDataIntoInstalledBaseObject {
-    
-    [[ProductIQManager sharedInstance] loadDataIntoInstalledBaseObject];
-}
-
 - (void)currentInitialSyncFailedWithError:(NSError *)error
 {
-    // Yoo initial sync failed!! Lets remove incompleted data
+    // Yoo initial sync failed!! Lets remove incompleted data 
     [[DatabaseConfigurationManager sharedInstance] performDatabaseConfigurationForSwitchUser];
     
     [[AppManager sharedInstance] setApplicationFailedStatus:ApplicationStatusInitialSyncFailed];
@@ -1528,31 +1475,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     }
 }
 
-- (BOOL)isDataPurgeInProgress
-{
-    //DefectFix:029269
-    if ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusPurgingInProgress)
-    {
-        return YES;
-    }
-    else
-    {
-        return NO;
-    }
-  
-    
-}
-
-- (void)updateDataPurgeStatus:(SyncStatus)status
-{
-    if ((status == SyncStatusSuccess) || (status == SyncStatusFailed))
-    {
-        self.dataPurgeStatus = DataPurgeCompleted;
-    }
-    [self manageSyncQueueProcess];
-    
-}
-
 - (BOOL)syncInProgress
 {
     if (   [self isConfigSyncInProgress]
@@ -1715,19 +1637,19 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             NSString *aggressiveSyncEnabled = [SFMPageHelper getSettingValueForSettingId:kMobileSettingsAggressiveSync];
             if (![[aggressiveSyncEnabled uppercaseString] isEqualToString:@"FALSE"])
             {
-                   NSString *getPriceEnabled= [SFMPageHelper getSettingValueForSettingId:kMobileSettingsGetPrice];
+                NSString *getPriceEnabled= [SFMPageHelper getSettingValueForSettingId:kMobileSettingsGetPrice];
                 
                 BOOL isGetPrice = [getPriceEnabled boolValue];
                 
-                   if(isGetPrice)
-                   {
-                       self.isGetPriceCallEnabled = YES;
-
-                   }
-                   else{
-                       self.isGetPriceCallEnabled = NO;
-
-                   }
+                if(isGetPrice)
+                {
+                    self.isGetPriceCallEnabled = YES;
+                    
+                }
+                else{
+                    self.isGetPriceCallEnabled = NO;
+                    
+                }
                 
                 [self performSyncWithType:SyncTypeData];
             }
@@ -1952,22 +1874,12 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                 self.isBeforeUpdate = YES;
                 self.isAfterInsert = NO;
                 self.isAfterUpdate = NO;
+
+               BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
+                if (!status) {
+                    [self customCallDidNotInitiateDuetoSomeRaeason];
+                }
                 
-                /* condition is for insert record checking, If is there any record for insert then perform PUT_INSERT first then make WS call */
-                if ([self isThereAnyRecordForInsertion]) {
-                    
-                    // If all the insert records are already uploaded to server, then no need of initiating the sync again.
-                    [[CacheManager sharedInstance] pushToCache:@"AfterInsert" byKey:kAfterSaveInsertCustomCallValueMap];
-                    self.isDataSyncRunning = NO;
-                    self.isBeforeUpdate = NO;
-                    [self checkNetworkReachabilityAndInitiateDataSync];
-                }
-                else{
-                    BOOL status = [self customAPICallwithModifiedRecordModelRequestData:model.requestData andRequestType:2];
-                    if (!status) {
-                        [self customCallDidNotInitiateDuetoSomeRaeason];
-                    }
-                }
                 break;
             }
             else
@@ -2253,7 +2165,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 }
 
 
-
 // check if there is any record in ModifiedRecords. Also, check if all the records in this table meet following conditions: recordType - DETAIL, operation - INSERT, parent record is unsynced with a conflict (& 'decide later' status). If all records in ModifiedRecords meet these conditions, then dont trigger data sync - for defect 020834
 -(BOOL)checkIfModifiedRecordsExist {
     BOOL doesExist = NO;
@@ -2308,125 +2219,5 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     return doesExist;
 }
 
-#pragma mark - Product IQ
-
--(void)initiateProdIQDataSync {
-    [[ProductIQManager sharedInstance] initiateProdIQDataSync];
-}
-
--(void)cancelProdIQDataSync {
-    [[ProductIQManager sharedInstance] cancelProdIQDataSync];
-}
-
-#pragma mark Sync Error Report
-
--(void)executeSyncErrorReporting
-{
-    SMAppDelegate *appDelegate = (SMAppDelegate*)[[UIApplication sharedApplication]delegate];
-    if ([appDelegate.syncReportingType isEqualToString:@"always"] || [appDelegate.syncReportingType isEqualToString:@"error"])
-    {
-        dispatch_async(_queue, ^{
-             MobileDataUsageExecuter *executor = [[MobileDataUsageExecuter alloc]initWithParentView:nil andFrame:CGRectZero];
-            [executor execute];
-        });
-        
-        ConfigureLoggerAccordingToSettings();
-    }
-    else
-    {
-        [self handleSyncCompletion];
-    }
-}
-
-- (void)handleSyncCompletion
-{
-    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
-    appDelegate.syncDataArray = nil;
-    appDelegate.syncErrorDataArray = nil;
-
-    switch (self.syncType) {
-        case SyncTypeInitial:
-            [self handleInitialSyncCompletion];
-            break;
-        case SyncTypeConfig:
-            [self handleConfigSyncCompletion];
-            break;
-        case SyncTypeData:
-            [self handleDataSyncCompletion];
-            break;
-        default:
-            break;
-    }
-    self.syncResponseStatus = nil;
-}
-
-- (void)handleInitialSyncCompletion
-{
-    if (self.syncResponseStatus.syncStatus == SyncStatusSuccess)
-    {
-        [self currentInitialSyncFinished];
-        [self updateUserTableIfRecordDoesnotExist];
-        [[AutoLockManager sharedManager] enableAutoLockSettingFor:initialSyncAL]; // Enable the user controlled device lock. 26-May-2015
-        [self notifyStatus:kInitialSyncStatusNotification];
-    }
-    else  if ( (self.syncResponseStatus.syncStatus == SyncStatusFailed) ||  (self.syncResponseStatus.syncStatus == SyncStatusNetworkError))
-    {
-        [self currentInitialSyncFailedWithError:self.syncError];
-    }
-}
-
-- (void)handleConfigSyncCompletion
-{
-    if (self.syncResponseStatus.syncStatus == SyncStatusSuccess)
-    {
-        [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:YES];
-        [self currentConfigSyncFinished];
-        [self notifyStatus:kConfigSyncStatusNotification];
-    }
-    else  if (self.syncResponseStatus.syncStatus == SyncStatusFailed ||  self.syncResponseStatus.syncStatus == SyncStatusNetworkError)
-    {
-        [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:NO];
-        [self currentConfigSyncFailedWithError:self.syncError];
-    }
-}
-
-- (void)notifyStatus:(NSString*)notification {
-    SyncProgressStatusHandler *syncProgressHandler = [[SyncProgressStatusHandler alloc] init];
-    SyncProgressDetailModel   *syncProgressModel = [syncProgressHandler getProgressDetailsForStatus:self.syncResponseStatus];
-    
-    syncProgressModel.syncError = self.syncError;
-    NSDictionary *syncStatus = nil;
-    
-    if (syncProgressModel != nil)
-    {
-        syncStatus = [NSDictionary dictionaryWithObject:syncProgressModel forKey:@"syncstatus"];
-    }
-    else
-    {
-        syncStatus = [NSDictionary dictionaryWithObject:@"In Progress" forKey:@"syncstatus"];
-    }
-    
-    [self sendNotification:notification andUserInfo:syncStatus];
-}
-
-- (void)handleDataSyncCompletion
-{
-    if (self.syncResponseStatus.syncStatus == SyncStatusSuccess)
-    {
-        [self PerformSYncBasedOnFlags];
-    }
-    else  if (   (self.syncResponseStatus.syncStatus == SyncStatusFailed)
-              || (self.syncResponseStatus.syncStatus == SyncStatusRefreshTokenFailedWithError)
-              || (self.syncResponseStatus.syncStatus == SyncStatusNetworkError))
-    {
-        [self currentDataSyncFailedWithError:self.syncError];
-    }
-    
-}
-
-- (dispatch_queue_t)getSyncErrorReportQueue
-{
-    return _queue;
-}
 
 @end

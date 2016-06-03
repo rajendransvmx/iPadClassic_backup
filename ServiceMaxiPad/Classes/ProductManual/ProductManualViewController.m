@@ -30,7 +30,6 @@
 #import "StringUtil.h"
 #import "SNetworkReachabilityManager.h"
 #import "SVMXSystemConstant.h"
-#import "AlertViewHandler.h"
 
 @interface ProductManualViewController ()
 
@@ -106,37 +105,18 @@
             }
             else
             {
-                
-                //                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-                //                [alertView show];
-                
-                
-                AlertViewHandler *alert = [[AlertViewHandler alloc] init];
-                [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                                      Message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent]
-                                     Delegate:self
-                                 cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
-                               andOtherButton:nil];
-                
+
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+                [alertView show];
             }
             [self removeActivityAndLoadingLabel];
         }
     }
     else
     {
-        
-        //        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-        //        [alertView show];
-        
-        AlertViewHandler *alert = [[AlertViewHandler alloc] init];
-        [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                              Message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent]
-                             Delegate:self
-                         cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
-                       andOtherButton:nil];
-        
-        
-        
+
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+        [alertView show];
         
         [self removeActivityAndLoadingLabel];
     }
@@ -188,16 +168,8 @@
                         [self loadTableViewAndWebView];
                     }
                     else{
-                        //                        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
-                        //                        [alertView show];
-                        
-                        
-                        AlertViewHandler *alert = [[AlertViewHandler alloc] init];
-                        [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                                              Message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent]
-                                             Delegate:self
-                                         cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
-                                       andOtherButton:nil];
+                        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError] message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent] delegate:self cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil, nil];
+                        [alertView show];
                         
                     }
                 }

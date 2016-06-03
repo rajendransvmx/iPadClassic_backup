@@ -75,7 +75,7 @@
     self.view.clipsToBounds = YES;
 }
 
-#pragma mark - Memory management
+#pragma mark - Memory management 
 
 - (void)dealloc {
     
@@ -117,7 +117,7 @@
     }
     cell.textLabel.text = title;
     cell.badgeNumber = 0;
-    
+   
     return cell;
 }
 
@@ -134,17 +134,17 @@
     NSArray *detailsArray = self.pageLayout.detailLayouts;
     switch (section) {
             
-            /*Header section*/
+        /*Header section*/
         case SFMEditPageMasterSectionTypeHeader:
             rowCount = [headerLayout.sections count];
             break;
-            
-            /*Line Items*/
+        
+        /*Line Items*/
         case SFMEditPageMasterSectionTypeChild:
             rowCount = [detailsArray count];
             break;
-            
-            /*Attachments*/
+        
+        /*Attachments*/
         case SFMEditPageMasterSectionTypeAttachment:
             if ([self isAttachmentEnabled])
             {
@@ -167,14 +167,14 @@
     
     switch (section) {
             
-            /*Header section*/
+        /*Header section*/
         case SFMEditPageMasterSectionTypeHeader:
             if ([headerLayout.sections count]>0) {
                 headerTitle = self.sfmPage.objectLabel;
             }
             break;
             
-            /*Line Items*/
+        /*Line Items*/
         case SFMEditPageMasterSectionTypeChild:
             if ([detailsArray count]>0) {
                 
@@ -255,7 +255,7 @@
 {
     
     SFMPageMasterSectionView *pageSectionView = nil;
-    
+   
     if ([self titleForHeaderInSection:section] != nil) {
         static NSString *headerViewIdentifier = @"Header Identifier";
         pageSectionView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:headerViewIdentifier];
@@ -277,7 +277,7 @@
             [self setShowAllSection:NO sender:pageSectionView.rightButton];
             
         }
-        
+
     }
     return pageSectionView;
 }
@@ -315,7 +315,7 @@
     
     switch (indexPath.section) {
             
-            /*Header section*/
+        /*Header section*/
         case SFMEditPageMasterSectionTypeHeader:
             if ([headerSections count]>indexPath.row) {
                 title = [[headerSections objectAtIndex:indexPath.row] title];
@@ -325,8 +325,8 @@
             }
             
             break;
-            
-            /*Line Items*/
+
+        /*Line Items*/
         case SFMEditPageMasterSectionTypeChild:
             if ([detailSections count]>indexPath.row) {
                 title = [[detailSections objectAtIndex:indexPath.row] name];
@@ -336,8 +336,8 @@
             }
             
             break;
-            
-            /*Attachments*/
+        
+        /*Attachments*/
         case SFMEditPageMasterSectionTypeAttachment:
             if ([self isAttachmentEnabled]) {
                 if (indexPath.row == 0 ) {
@@ -420,12 +420,12 @@
     SFMHeaderLayout *headerLayout = self.pageLayout.headerLayout;
     NSArray *headerSections = [headerLayout sections];
     if ([headerSections count]>indexPath.row) {
-        
+
         //TODO : change it to required VC, change from ChildEditViewController to ViewControllerPageViewHeader.
         
         viewController = (ChildEditViewController *)[ViewControllerFactory createViewControllerByContext:ViewControllerSFMEditHeader];
         
-        //        viewController.view.backgroundColor = [UIColor clearColor];
+//        viewController.view.backgroundColor = [UIColor clearColor];
         [viewController setSelectedIndexPath:indexPath];
         [viewController setSfmPage:self.sfmPage];
         
@@ -520,11 +520,11 @@
 
 - (NSArray *) loadShowAllViewControllerForSection:(int)selectedSection
 {
-    //    ChildEditViewController *showAllViewController = [ViewControllerFactory createViewControllerByContext:ViewControllerPageViewShowAll];
+//    ChildEditViewController *showAllViewController = [ViewControllerFactory createViewControllerByContext:ViewControllerPageViewShowAll];
     
     NSArray *allViewControllers = nil;
     switch (selectedSection) {
-            
+        
         case SFMEditPageMasterSectionTypeHeader:/*Header section*/
             allViewControllers = [self allHeaderViewControllers];
             break;
@@ -540,7 +540,7 @@
             break;
     }
     return allViewControllers;
-    //Add view controllers to the detail view.
+//Add view controllers to the detail view.
 }
 - (void)reloadData {
     
@@ -556,12 +556,12 @@
     [self tappedOnButton:pageHeaderSectionView.rightButton withIndex:0];
     
     [self.masterTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
-    
+  
     //[self.masterTableView reloadData];
     
     //Select first row of first section by default.
-    //    [self.masterTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:0];
-    //    [self.masterTableView.delegate tableView:self.masterTableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+//    [self.masterTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:0];
+//    [self.masterTableView.delegate tableView:self.masterTableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
 }
 
@@ -581,7 +581,6 @@
     PageEditDetailViewController *detailViewController = (PageEditDetailViewController *)[self.containerViewControlerDelegate detailViewController];
     
     [detailViewController addChildViewControllersToData:@[[self detailChildViewControllerForIndexPath:indexPath]]];
-    
     
     [detailViewController reloadData];
 }
@@ -611,8 +610,8 @@
     [self setShowAllSection:NO sender:sender];
     self.selectedSection = index;
     
-    NSString *sectionName = [self titleForHeaderInSection:index];
-    [self setPotraitDetailButtonTitle: sectionName];
+        NSString *sectionName = [self titleForHeaderInSection:index];
+        [self setPotraitDetailButtonTitle: sectionName];
     
     [self.masterTableView deselectRowAtIndexPath:[self.masterTableView indexPathForSelectedRow] animated:NO];
     

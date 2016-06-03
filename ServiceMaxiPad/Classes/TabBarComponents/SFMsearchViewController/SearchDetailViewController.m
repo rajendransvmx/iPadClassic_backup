@@ -322,8 +322,7 @@
             value = [numValue stringValue];
         }
         BOOL istrue = [Utility isItTrue:value];
-        //value = istrue ? kYes : kNo;//HS Fix:020290
-        value = istrue ? [[TagManager sharedInstance]tagByName:kTagYes]:[[TagManager sharedInstance]tagByName:kTagNo];
+        value = istrue ? kYes : kNo;
     }
     else
     {
@@ -491,9 +490,9 @@
     
     if (![self isCellExpandedForSection:section]) {
         return 0;
-        
+
     }
-    
+
     SFMSearchObjectModel *srchObj = [self.searchProcess.searchObjects objectAtIndex:section];
     NSArray *list = [self.dataList objectForKey:srchObj.objectId];
     
@@ -501,7 +500,7 @@
     //resultsCount += list.count;
     //    [self.lblItemsCount setText:[NSString stringWithFormat:@"%d %@",resultsCount,@"items found"]];
     
-    
+
     return list.count;
 }
 
@@ -862,8 +861,7 @@
     if (show) {
       
         if (!self.loadingHUD) {
-            //Madhusudhan, App crash. View mush not be nill, So changed to app's key window from self.view.window.
-            self.loadingHUD = [[MBProgressHUD alloc] initWithView:[[UIApplication sharedApplication] keyWindow]];
+            self.loadingHUD = [[MBProgressHUD alloc] initWithView:self.view.window];
         }
         [self.view.window addSubview:self.loadingHUD];
         self.loadingHUD.mode = MBProgressHUDModeIndeterminate;
@@ -964,12 +962,10 @@
                    searchObject:searchModel
            andTransactionObject:transactionModel];
     
-    self.dodPopoverController = [[UIPopoverController alloc]initWithContentViewController:dodVC];
+ self.dodPopoverController = [[UIPopoverController alloc]initWithContentViewController:dodVC];
     
     self.dodPopoverController.delegate = dodVC;
     self.dodPopoverController.popoverContentSize = CGSizeMake(320, 320);
-    
-    //GETTING WIDTH OF THE TEXT AND POINTING POPOVER VIWE CONTROLLER.
     CGFloat width = [self widthOfString:cell.titleLabel.text withFont:[UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18]];
     CGRect rect = CGRectMake(cell.titleLabel.frame.origin.x, cell.titleLabel.frame.origin.y, width, cell.titleLabel.frame.size.height);
     [self.dodPopoverController presentPopoverFromRect:rect inView:cell permittedArrowDirections:UIPopoverArrowDirectionLeft animated:YES];
@@ -1126,7 +1122,7 @@
         self.barCodeScanner = [[BarCodeScannerUtility alloc] init];
         self.barCodeScanner.scannerDelegate = self;
     }
-    [self.barCodeScanner loadScannerOnViewController:self forModalPresentationStyle:0];
+    [self.barCodeScanner loadScannerOnViewController:self];
 }
 - (void)barcodeSuccessfullyDecodedWithData:(NSString *)decodedData
 {

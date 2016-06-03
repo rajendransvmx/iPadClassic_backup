@@ -41,7 +41,7 @@
     if (!eventInit) {
         NSDateComponents *comp = [NSDate componentsOfCurrentDate];
         eventInit = [SMXEvent new];
-        eventInit.title = @"";
+        eventInit.stringCustomerName = @"";
         eventInit.ActivityDateDay = [NSDate date];
         eventInit.dateTimeBegin = [NSDate dateWithHour:comp.hour min:comp.minute];
         eventInit.dateTimeEnd = [NSDate dateWithHour:comp.hour min:comp.minute+15];

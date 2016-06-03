@@ -37,8 +37,7 @@
 @property (nonatomic, strong) NSArray *advanceFilters;
 @property (strong, nonatomic) SFMLookUpFilter *contextLookupFilter;
 
+// defect- 23783
 @property (strong, nonatomic) NSString *defaultObjectColumnName; // Used this for include online Item to show default Object table name, if defaultColumnName value does not exits.
-@property (strong, nonatomic) NSArray *defaultColumsnFieldRelationships;// Used this for include online Item.
- 
 
 @end

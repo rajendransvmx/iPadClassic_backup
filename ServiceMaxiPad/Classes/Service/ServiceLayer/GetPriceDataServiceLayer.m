@@ -120,8 +120,6 @@
                 [valueMaps addObject:currencyDict];
             }
             
-            /* Price book change for */
-            
             NSArray *pricebookIds = [self getPricebookIds];
             if (pricebookIds == nil) {
                 pricebookIds = @[];
@@ -142,6 +140,7 @@
                 NSDictionary *servicepricebookIdsDict = [NSDictionary dictionaryWithObjectsAndKeys:@"SERVICE_PRICEBOOK_IDs",kSVMXRequestKey,servicepricebookIds, kSVMXRequestValues, nil];
                 [valueMaps addObject:servicepricebookIdsDict];
             }
+            
             [valueMaps addObject:[NSDictionary dictionaryWithObjectsAndKeys:kGetPriceDataLastIndex,kSVMXKey,@2,kSVMXValue, nil]];
             paramObj.valueMap = [NSArray arrayWithArray:valueMaps];
             
@@ -213,33 +212,12 @@
     }
     for(TransactionObjectModel *transObjectModel in objectsList)
     {
-        //getting currency from WO table
+        //getting price Book currency for WO table
         if ([transObjectModel valueForField:@"CurrencyIsoCode"]) {
             [values addObject:[transObjectModel valueForField:@"CurrencyIsoCode"]];
         }
     }
     return values;
-}
-
-
-- (NSArray *)getTxFetcRequestParamsForRequestCount:(NSInteger )requestCount {
-    @autoreleasepool
-    {
-        TXFetchHelper *helper = [[TXFetchHelper alloc] init];
-        NSMutableArray *requestParams = [[NSMutableArray alloc] initWithCapacity:0];
-        for (int counter = 0; counter < requestCount; counter++)
-        {
-            NSDictionary *recordIdDict =  [helper getIdListFromSyncHeapTableWithLimit:kOverallIdLimit forParallelSyncType:kParallelGetPriceSync];
-            if ([recordIdDict count] <= 0) {
-                break;
-            }
-            RequestParamModel *paramObj = [[RequestParamModel alloc]init];
-            paramObj.requestInformation = recordIdDict;
-            paramObj.valueMap = [helper getValueMapDictionary:recordIdDict];
-            [requestParams addObject:paramObj];
-        }
-        return requestParams;
-    }
 }
 
 -(NSArray*)getPricebookIds
@@ -255,6 +233,7 @@
     NSArray *sfidsArrayObj = [list getServicePricebookIds];
     return [sfidsArrayObj arrayByAddingObjectsFromArray:[self getServicePricebookIdsFromHeapTable]];
 }
+
 -(NSArray*)getPricebookIdsFromHeapTable
 {
     NSArray *sfidsArray = [[NSArray alloc] init];
@@ -276,4 +255,24 @@
     }
     return sfidsArray;
 }
+- (NSArray *)getTxFetcRequestParamsForRequestCount:(NSInteger )requestCount {
+    @autoreleasepool
+    {
+        TXFetchHelper *helper = [[TXFetchHelper alloc] init];
+        NSMutableArray *requestParams = [[NSMutableArray alloc] initWithCapacity:0];
+        for (int counter = 0; counter < requestCount; counter++)
+        {
+            NSDictionary *recordIdDict =  [helper getIdListFromSyncHeapTableWithLimit:kOverallIdLimit forParallelSyncType:kParallelGetPriceSync];
+            if ([recordIdDict count] <= 0) {
+                break;
+            }
+            RequestParamModel *paramObj = [[RequestParamModel alloc]init];
+            paramObj.requestInformation = recordIdDict;
+            paramObj.valueMap = [helper getValueMapDictionary:recordIdDict];
+            [requestParams addObject:paramObj];
+        }
+        return requestParams;
+    }
+}
+
 @end

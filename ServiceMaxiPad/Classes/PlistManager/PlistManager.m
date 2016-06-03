@@ -102,10 +102,8 @@ static NSString *const kTechnicianLastLocationStatus    = @"TechnicianLastLocati
 static NSString *const kProductionOrg     = @"https://login.salesforce.com";
 static NSString *const kSandboxOrg        = @"https://test.salesforce.com";
 
-/*
- Fixed Issue :023391
- HS 7Oct2016 Changed BaseURL from "www.salesforce.com" to "https://login.salesforce.com" as per Salesforce confirmation under below statement
- As of January 1, 2016, the internal routing will be retired, and any API endpoints will need to be changed if from www.salesforce.com to https://login.salesforce.com.
+/* HS 22Sep2016 Changed BaseURL from "www.salesforce.com" to "https://login.salesforce.com" as per Salesforce confirmation under below statement
+ As of January 1, 2016, the internal routing will be retired, and any API endpoints will need to be changed if from www.salesforce.com to https://login.salesforce.com. 
  */
 //static NSString *const kDefaultBaseOrg    = @"https://www.salesforce.com";
 
@@ -118,8 +116,7 @@ static NSString *const kPersistantStorageOneCallSyncPutUpdateTime     = @"one_ca
 static NSString *const kPersistantStorageOneCallSyncTemporaryTime     = @"one_call_sync_temp_time";
 static NSString *const kOneCallLastLocalid                            = @"kOneCallLastLocalid";
 static NSString *const kPersistantStorageInitialSyncTime              = @"InitailSyncTime";
-static NSString *const kPersistantStorageGetPriceSyncTime             = @"GetPriceSyncTime";
-static NSString *const kPersistantStorageProdIQSyncTime               = @"ProdIQSyncTime";
+static NSString *const kPersistantStorageGetPriceSyncTime                    = @"GetPriceSyncTime";
 
 static NSString *const kRefreshToken    = @"rfrt";
 
@@ -1423,21 +1420,6 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
 {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:kPreferenceAccessToken] boolValue];
     
-}
-
-
-
-#pragma mark - Product IQ
-
-+(NSString *)getProdIQDataSyncTime {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:kPersistantStorageProdIQSyncTime];
-}
-
-+(void)storeProdIQDataSyncTime:(NSString *)time {
-    if (time != nil) {
-        [[NSUserDefaults standardUserDefaults] setObject:time forKey:kPersistantStorageProdIQSyncTime];
-        [[NSUserDefaults standardUserDefaults]  synchronize];
-    }
 }
 
 

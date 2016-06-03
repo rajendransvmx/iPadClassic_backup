@@ -11,7 +11,4 @@
 
 @interface JobLogViewController : DetailParentViewController
 
-//Make it public to access for SyncReporting
-- (BOOL)isLogSettingsON;
-
 @end

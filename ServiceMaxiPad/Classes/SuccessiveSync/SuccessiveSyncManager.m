@@ -32,7 +32,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
 #pragma mark - Initialization Methods
 
 - (id)init {
-    
+
     self = [super init];
     
     if (self != nil) {
@@ -66,18 +66,18 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
         
         id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
         BOOL doesExistInModifiedRecordTable = [modifiedRecordService doesRecordExistForId:localId];
-        
+
         
         id <ModifiedRecordsDAO> heapRecordService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
         BOOL doesExistInSyncHeapTable = [heapRecordService doesRecordExistForId:localId];
-        
+
         
         if (isSyncInProgress && (doesExistInModifiedRecordTable || doesExistInSyncHeapTable)) {
-            
+
             //NSLog(@"Successive sync should trigger");
             isSuccessiveSync = YES;
         }
-        
+
         return isSuccessiveSync;
     }
 }
@@ -149,7 +149,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
 
 
 - (void) doSuccessiveSync{
-    
+   
     /*Check whether entry exixts in the respective table*/
     /*If exists make update the values in the table*/
     /*Make entry in the ModifiedRecords table*/
@@ -159,7 +159,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
         //SFMPageEditHelper *editHelper = [[SFMPageEditHelper alloc] init];
         
         NSArray *allLocalIds = [self.succSyncRecords allKeys];
-        
+       
         for (NSString *localId in allLocalIds) {
             
             @autoreleasepool {
@@ -218,12 +218,12 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
 {
     @synchronized([self class]){
         
-        //        NSLog(@"shouldPerformSyccessiveSync");
+//        NSLog(@"shouldPerformSyccessiveSync");
         
         if ([self shouldPerformSyccessiveSync:syncRecord.recordLocalId]) {
             
             if ([record isKindOfClass:[NSDictionary class]]) {
-                //                NSLog(@"Successive sync call");
+//                NSLog(@"Successive sync call");
                 
                 syncRecord.recordDictionary  = [[NSMutableDictionary alloc]initWithDictionary:record];
             }
@@ -233,21 +233,21 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
 }
 
 /*
- - (NSMutableDictionary *) createDictionaryForEvent:(SMXEvent *)event forRecord:(ModifiedRecordModel *)syncRecord
- {
- NSMutableDictionary *fieldDictionary = [[NSMutableDictionary alloc]init];
- NSString *startDateString = [DateUtil getDatabaseStringForDate:event.dateTimeBegin];
- NSString *endDateString = [DateUtil getDatabaseStringForDate:event.dateTimeEnd];;
- SFMRecordFieldData *startTimeRecordField = [[SFMRecordFieldData alloc] initWithFieldName:@"StartDateTime" value:startDateString andDisplayValue:startDateString];
- 
- SFMRecordFieldData *endTimeRecordField = [[SFMRecordFieldData alloc] initWithFieldName:@"EndDateTime" value:endDateString andDisplayValue:endDateString];
- SFMRecordFieldData *activityTimeRecordField = [[SFMRecordFieldData alloc] initWithFieldName:@"ActivityDateTime" value:startDateString andDisplayValue:startDateString];
- [fieldDictionary setObject:startTimeRecordField forKey:@"StartDateTime"];
- [fieldDictionary setObject:endTimeRecordField forKey:@"EndDateTime"];
- [fieldDictionary setObject:activityTimeRecordField forKey:@"ActivityDateTime"];
- return fieldDictionary;
- }
- */
+- (NSMutableDictionary *) createDictionaryForEvent:(SMXEvent *)event forRecord:(ModifiedRecordModel *)syncRecord
+{
+    NSMutableDictionary *fieldDictionary = [[NSMutableDictionary alloc]init];
+    NSString *startDateString = [DateUtil getDatabaseStringForDate:event.dateTimeBegin];
+    NSString *endDateString = [DateUtil getDatabaseStringForDate:event.dateTimeEnd];;
+    SFMRecordFieldData *startTimeRecordField = [[SFMRecordFieldData alloc] initWithFieldName:@"StartDateTime" value:startDateString andDisplayValue:startDateString];
+    
+    SFMRecordFieldData *endTimeRecordField = [[SFMRecordFieldData alloc] initWithFieldName:@"EndDateTime" value:endDateString andDisplayValue:endDateString];
+    SFMRecordFieldData *activityTimeRecordField = [[SFMRecordFieldData alloc] initWithFieldName:@"ActivityDateTime" value:startDateString andDisplayValue:startDateString];
+    [fieldDictionary setObject:startTimeRecordField forKey:@"StartDateTime"];
+    [fieldDictionary setObject:endTimeRecordField forKey:@"EndDateTime"];
+    [fieldDictionary setObject:activityTimeRecordField forKey:@"ActivityDateTime"];
+    return fieldDictionary;
+}
+*/
 - (BOOL)updateRecord:(NSDictionary *)record inObjectName:(NSString *)objectName andLocalId:(NSString *)localId {
     
     NSMutableDictionary *eachRecord = [[NSMutableDictionary alloc] init];
@@ -271,8 +271,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
         if (fieldValue == nil) {
             fieldValue = @"";
         }
-        
-        
+
         if (fieldValue != nil) {
             [eachRecord setObject:fieldValue forKey:fieldName];
         }
@@ -308,7 +307,7 @@ static SuccessiveSyncManager *successiveSyncManager = nil;
     successiveSyncModel.cannotSendToServer = syncRecord.cannotSendToServer;
     successiveSyncModel.jsonRecord = syncRecord.jsonRecord;
     successiveSyncModel.overrideFlag = syncRecord.overrideFlag;
-    //    successiveSyncModel.recordDictionary = syncRecord.recordDictionary; // c 28124
+//    successiveSyncModel.recordDictionary = syncRecord.recordDictionary; // 28124
 }
 
 -(ModifiedRecordModel *)getSyncRecordModelFromSuccessiveSyncRecords:(NSString *)localId {

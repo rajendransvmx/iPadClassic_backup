@@ -23,7 +23,7 @@
 @implementation DBRequest
 
 - (id)init {
-    
+
     self = [super init];
     if (self != nil) {
         
@@ -57,7 +57,7 @@
                 self.fieldObjects = fields;
             }
         }
-        
+
     }
 }
 
@@ -70,34 +70,11 @@
 
 - (BOOL)setCriteria:(NSArray *)criterias
       andExpression:(NSString *)expression {
-    @autoreleasepool {
-        @synchronized([self class]) {
-            
-            NSMutableArray *tempCriteria =[criterias mutableCopy];
-            
-            for (DBCriteria *criteria in tempCriteria)
-            {
-                if([criteria.lhsValue isEqualToString:@"RecordTypeId"])
-                {
-                    if(criteria.operatorType == SQLOperatorIsNull)
-                    {
-                        criteria.lhsValue = criteria.lhsValue;
-                        criteria.operatorType = SQLOperatorIsNull;
-                        criteria.subCriterias = nil;
-                    }
-                    else{
-                        criteria.rhsValue = @"IgnoreThis";
-                        criteria.operatorType = SQLOperatorEqual;
-                        
-                    }
-                }
-            }
-            self.criteriaArray = tempCriteria;
+     @synchronized([self class]) {
+            self.criteriaArray = criterias;
             self.advancedExpression = expression;
             return [self isValidExpression];
-        }
-        
-    }
+     }
     
 }
 
@@ -115,32 +92,32 @@
 }
 
 - (void)addGroupByFields:(NSArray *)fieldNames {
-    self.groupByFields= fieldNames;
+     self.groupByFields= fieldNames;
 }
 
 - (NSString *)getGroupByString {
     if (self.requestQueryType != DBRequestQueryTypeInsert) {
-        return  [StringUtil getConcatenatedStringFromArray:self.groupByFields withSingleQuotesAndBraces:NO];
+          return  [StringUtil getConcatenatedStringFromArray:self.groupByFields withSingleQuotesAndBraces:NO];
     }
     return nil;
 }
 
 - (NSString *)getOrderByString {
     
-    if (self.requestQueryType != DBRequestQueryTypeInsert) {
+     if (self.requestQueryType != DBRequestQueryTypeInsert) {
         
-        if ([self.orderByFields count] > 0) {
-            id instanceVar = [self.orderByFields objectAtIndex:0];
-            if ([instanceVar isKindOfClass:[NSString class]]) {
-                return  [StringUtil getConcatenatedStringFromArray:self.orderByFields withSingleQuotesAndBraces:NO];
-            }
-            else{
-                return [self getOrderByStringFromDbFields];
-            }
-            
-        }
-        
-    }
+         if ([self.orderByFields count] > 0) {
+                id instanceVar = [self.orderByFields objectAtIndex:0];
+             if ([instanceVar isKindOfClass:[NSString class]]) {
+                 return  [StringUtil getConcatenatedStringFromArray:self.orderByFields withSingleQuotesAndBraces:NO];
+             }
+             else{
+                 return [self getOrderByStringFromDbFields];
+             }
+             
+         }
+         
+     }
     return nil;
 }
 
@@ -190,7 +167,7 @@
     return NO;
 }
 - (NSString *)getFieldNamesSeperatedByCommas {
-    
+  
     if ([self isJoinExists]) {
         NSMutableString *concatenatedString = [[NSMutableString alloc] init];
         for (int counter = 0; counter < [self.fieldNames count]; counter++) {
@@ -209,7 +186,7 @@
     
     
     // 012895
-    else if ([self.joinString length] > 0) {
+   else if ([self.joinString length] > 0) {
         NSMutableString *concatenatedString = [[NSMutableString alloc] init];
         for (int counter = 0; counter < [self.fieldNames count]; counter++) {
             
@@ -225,7 +202,7 @@
         return  concatenatedString;
     }
     
-    return  [StringUtil getConcatenatedStringFromArray:self.fieldNames withSingleQuotesAndBraces:NO];
+   return  [StringUtil getConcatenatedStringFromArray:self.fieldNames withSingleQuotesAndBraces:NO];
 }
 
 - (NSString *)getFieldNamesWithTableNameSeparatedByCommas {
@@ -237,7 +214,7 @@
             DBField *aField = [self.fieldObjects objectAtIndex:counter];
             [fieldNames addObject:aField.name];
         }
-        return [StringUtil getConcatenatedStringFromArray:fieldNames withSingleQuotesAndBraces:YES];
+       return [StringUtil getConcatenatedStringFromArray:fieldNames withSingleQuotesAndBraces:YES];
     }
     else{
         for (int counter = 0; counter < [self.fieldObjects count]; counter++) {
@@ -251,7 +228,7 @@
                 [concatenatedString appendFormat:@",%@.%@",tableNameStr,aField.name];
             }
         }
-        
+
     }
     return concatenatedString;
 }

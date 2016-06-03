@@ -141,7 +141,6 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
     
     [cell setTextFieldDataType:pageField.dataType];
     [cell setPrecision:pageField.precision.doubleValue scale:pageField.scale.doubleValue];
-    [cell setLengthVariable:pageField.lengthValue];
     [cell setFieldNameForeText:pageField.label];
     return cell;
 }
@@ -517,7 +516,7 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
         self.barcodeScanner.scannerDelegate = self;
     }
     self.barcodeScanner.indexPath = indexPath;
-    [self.barcodeScanner loadScannerOnViewController:self forModalPresentationStyle:0];
+    [self.barcodeScanner loadScannerOnViewController:self];
 }
 
 #pragma mark End

@@ -25,7 +25,6 @@
 #import "SMLocalNotificationManager.h"
 #import "AlertMessageHandler.h"
 #import "NonTagConstant.h"
-#import "ProductIQManager.h"
 
 const int percentage = 5;
 const float progress = 0.05;
@@ -153,12 +152,6 @@ const float progress = 0.05;
                 
             case DataPurgeStatusWSForCleanup:
             {
-                
-                if ([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
-                    [SMDataPurgeHelper saveLocationSfIdsFromDataPurgeTableForWorkOrderObject];
-                }
-                
-                
                 self.purgeStatus = DataPurgeStatusDataProcessing;
                 self.purgeMap = [SMDataPurgeHelper populatePurgeMapFromDataPurgeTable];
                 double delayInSeconds = 0.5;
@@ -207,19 +200,6 @@ const float progress = 0.05;
     
 }
 
-//Defect Fix:029269
--(BOOL)isDataPurgeInProgress
-{
-    //DefectFix:029269 //
-    if (([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusScheduled) || ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForLastModifiedDate) || ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForDownloadCriteria) || ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForAdvancedDownloadCriteria) ||([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForGetPrice) ||([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusWSForCleanup)||([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusDataProcessing)|| ([SMDataPurgeManager sharedInstance].purgeStatus == DataPurgeStatusPurgingInProgress))
-    {
-        return YES;
-    }
-    else
-    {
-        return NO;
-    }
-}
 
 - (void)generatePurgeReport
 {
@@ -480,7 +460,6 @@ const float progress = 0.05;
     [[TaskManager sharedInstance] cancelFlowNodeWithId:self.dataPurgeTaskID];
     
     self.purgeStatus = DataPurgeStatusCancelled;
-  
     
     [self updateTimerAndNextDPTime:[NSDate date]];
     [self clearIfPurgeDueFlagSet];
@@ -508,10 +487,6 @@ const float progress = 0.05;
     }
     else
     {
-        //Defect:026563
-        SyncManager *syncMan = [SyncManager sharedInstance];
-        syncMan.dataPurgeStatus = DataPurgeInProgress;
-        
         [self postDataPurgeStartedNotification];
         self.purgeStatus = DataPurgeStatusScheduled;
         [SMDataPurgeHelper clearDataPurgeTableContents];
@@ -1710,9 +1685,6 @@ const float progress = 0.05;
                         /* using consatnt value for Data purge status */
                         [SMDataPurgeHelper saveDataPurgeStatusSinceCompleted:kFailed];
                         [self manageDataPurge];
-                        //DefectFix:26563
-                        SyncManager *syncManager = [SyncManager sharedInstance];
-                        [syncManager updateDataPurgeStatus:SyncStatusSuccess];
                     }
                     else
                     {
@@ -1733,10 +1705,6 @@ const float progress = 0.05;
             {
                 if (st.syncStatus == SyncStatusSuccess)
                 {
-                    //DefectFix:26563
-                    SyncManager *syncManager = [SyncManager sharedInstance];
-                    [syncManager updateDataPurgeStatus:SyncStatusSuccess];
-                    
                     [self manageDataPurge];
                 }
                 else if ((st.syncStatus == SyncStatusFailed)
@@ -1755,10 +1723,6 @@ const float progress = 0.05;
 }
 
 - (void)dataPurgeWebserviceFailedWithError:(NSError *)error {
-    
-    //DefectFix:26563
-    SyncManager *syncManager = [SyncManager sharedInstance];
-    [syncManager updateDataPurgeStatus:SyncStatusFailed];
     
     if (![self isRescheduled])
     {

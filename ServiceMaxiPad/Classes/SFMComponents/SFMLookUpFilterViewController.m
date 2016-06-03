@@ -13,7 +13,6 @@
 @interface SFMLookUpFilterViewController ()
 @property (weak, nonatomic) IBOutlet UITableView *filterTableView;
 @property (weak, nonatomic) IBOutlet UIButton *applyButton;
-@property (strong, nonatomic) NSMutableArray *theFilterArray;
 
 @end
 
@@ -34,8 +33,6 @@
     // Do any additional setup after loading the view from its nib.
     [self setUpUI];
     [self.filterTableView registerNib:[UINib nibWithNibName:@"SFMLookUpFilterCell" bundle:nil] forCellReuseIdentifier:@"LookUpFilterCellIdentifier"];
-
-     self.theFilterArray = [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:self.dataSource]];
 }
 
 - (void)setUpUI
@@ -56,14 +53,14 @@
 - (IBAction)applyChanges:(id)sender {
     
     if ([self.delegate conformsToProtocol:@protocol(LookUpFilterDelegate)]) {
-        [self.delegate applyFilterChanges:self.theFilterArray];
+        [self.delegate applyFilterChanges:self.dataSource];
     }
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.theFilterArray count];
+    return [self.dataSource count];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -80,7 +77,7 @@
         
         cell = [[SFMLookUpFilterCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"LookUpFilterCellIdentifier"];
     }
-    SFMLookUpFilter *filterModel = [self.theFilterArray objectAtIndex:indexPath.row];
+    SFMLookUpFilter *filterModel = [self.dataSource objectAtIndex:indexPath.row];
     
     [self updateCheckBoxTypeForCell:cell model:filterModel];
     [cell setFilterNameForLabel:filterModel.name];
@@ -140,8 +137,8 @@
 
 - (void)filterValueChanged:(BOOL)value forInexpath:(NSIndexPath *)indexPath
 {
-    if ([self.theFilterArray count] >= indexPath.row) {
-        SFMLookUpFilter *filter = [self.theFilterArray objectAtIndex:indexPath.row];
+    if ([self.dataSource count] >= indexPath.row) {
+        SFMLookUpFilter *filter = [self.dataSource objectAtIndex:indexPath.row];
         filter.defaultOn = value;
     }
 }

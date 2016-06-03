@@ -31,8 +31,6 @@
 #import "APNSServiceLayer.h"
 #import "GetPriceDataServiceLayer.h"
 #import "CustomActionWebServiceLayer.h"
-#import "SFMOnlineLookUpServiceLayer.h"
-#import "ProdIQDataServiceLayer.h"
 
 @implementation ServiceFactory
 
@@ -258,17 +256,6 @@
             case CategoryTypeCustomWebServiceAfterBeforeCall:
             {
                 baseServiceLayer =[[CustomActionWebServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
-            }
-                break;
-                
-            case CategoryTypeLookupSearch: {
-                
-                baseServiceLayer = [[SFMOnlineLookUpServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
-                
-            }
-                break;
-            case CategoryTypeProductIQData: {
-                baseServiceLayer = [[ProdIQDataServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
             }
                 break;
             default:

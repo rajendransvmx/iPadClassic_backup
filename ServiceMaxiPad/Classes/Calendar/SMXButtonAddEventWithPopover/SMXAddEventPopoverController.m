@@ -62,7 +62,7 @@
     
     NSDateComponents *comp = [NSDate componentsOfCurrentDate];
     event = [SMXEvent new];
-    event.title = @"";
+    event.stringCustomerName = @"";
     event.ActivityDateDay = [NSDate date];
     event.dateTimeBegin = [NSDate dateWithHour:comp.hour min:comp.minute];
     event.dateTimeEnd = [NSDate dateWithHour:comp.hour min:comp.minute+15.];
@@ -90,7 +90,7 @@
     //    [[SVProgressHUD sharedView] setBackgroundColor:[UIColor lighterGrayCustom]];
     
     SMXEvent *eventNew = [SMXEvent new];
-    eventNew.title = searchBarCustom.stringClientName;
+    eventNew.stringCustomerName = searchBarCustom.stringClientName;
     eventNew.numCustomerID = searchBarCustom.numCustomerID;
     eventNew.ActivityDateDay = buttonDate.dateOfButton;
     eventNew.dateTimeBegin = buttonTimeBegin.dateOfButton;

@@ -40,10 +40,10 @@
 {
     self = [super init];
     if (self) {
-        _tabBarTitle = title;
-        _pageData = model;
+    _tabBarTitle = title;
+    _pageData = model;
         self.textView.delegate = self;
-        
+
     }
     return self;
 }
@@ -91,15 +91,15 @@
     [self.titleView setTitleTextAttributes:@{NSFontAttributeName: [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18],NSForegroundColorAttributeName :[UIColor  blackColor]} forState:UIControlStateNormal];
     self.titleView.enabled = NO;
     
-    //    self.textView.delegate = self;
-    //    self.textView.editable = NO;
-    //    self.textView.text = self.pageData.displayValue;
+//    self.textView.delegate = self;
+//    self.textView.editable = NO;
+//    self.textView.text = self.pageData.displayValue;
     
     self.textView.editable = NO;
     self.textView.userInteractionEnabled = NO;
     self.textView.backgroundColor = [UIColor clearColor];
-    
-    //    Note: TextView in xib is not being used anymore as the constraint is causing different positions for ios7/ios8/ios9. New Textview is sub-viewed and frame hardcoded. 25-Sept-2015
+
+//    Note: TextView in xib is not being used anymore as the constraint is causing different positions for ios7/ios8/ios9. New Textview is sub-viewed and frame hardcoded. 25-Sept-2015
     
     self.cTextView = [[UITextView alloc] initWithFrame:CGRectMake(20, 65, 560, 330)];
     self.textViewFrame = self.cTextView.frame;
@@ -132,7 +132,7 @@
 }
 
 - (IBAction)done:(id)sender {
-    
+
     self.pageData.internalValue = self.cTextView.text;
     self.pageData.displayValue = self.cTextView.text;
     
@@ -158,8 +158,8 @@
     
     // get the height of the keyboard by taking into account the orientation of the device too
     CGRect windowFrame = [self.view.window convertRect:self.view.frame fromView:self.view];
-    self.keyboardFrame = CGRectIntersection (windowFrame, keyboardInfoFrame);
-    self.coveredFrame = [self.view.window convertRect:self.keyboardFrame toView:self.view];
+     self.keyboardFrame = CGRectIntersection (windowFrame, keyboardInfoFrame);
+     self.coveredFrame = [self.view.window convertRect:self.keyboardFrame toView:self.view];
     [self reconfigureTheFrameOfTextView];
 }
 
@@ -172,11 +172,11 @@
 {
     if (self.keyboardFrame.size.height>0)
     {
-        CGRect line = [self.cTextView caretRectForPosition: self.cTextView.selectedTextRange.start];
-        CGRect frame =  self.cTextView.frame;
-        frame.size.height = self.textViewFrame.size.height - self.coveredFrame.size.height/2 - line.size.height*2;
-        [self.cTextView setFrame:frame];
-        [self.cTextView scrollRangeToVisible:[self.cTextView selectedRange]];
+            CGRect line = [self.cTextView caretRectForPosition: self.cTextView.selectedTextRange.start];
+            CGRect frame =  self.cTextView.frame;
+            frame.size.height = self.textViewFrame.size.height - self.coveredFrame.size.height/2 - line.size.height*2;
+            [self.cTextView setFrame:frame];
+            [self.cTextView scrollRangeToVisible:[self.cTextView selectedRange]];
     }
 }
 

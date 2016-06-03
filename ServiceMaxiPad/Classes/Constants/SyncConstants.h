@@ -60,12 +60,6 @@ typedef NS_ENUM(NSUInteger, CategoryType) {
     /***CustomAction--Call webView*****/
     CategoryTypeCustomWebServiceCall,
     CategoryTypeCustomWebServiceAfterBeforeCall,
-    
-    /*** Lookup Online Search ***/
-     CategoryTypeLookupSearch,
-    
-    /** Product IQ **/
-    CategoryTypeProductIQData
 };
 
 typedef NS_ENUM(NSUInteger, SyncType) {
@@ -87,12 +81,7 @@ typedef NS_ENUM(NSUInteger, SyncStatus) {
     SyncStatusConflict,
     SyncStatusNetworkError,
     SyncStatusRefreshTokenFailedWithError,
-    SyncStatusInCancelled,
-    
-    //Added for Data Purge
-    DataPurgeInProgress,
-    DataPurgeCompleted,
-    DataPurgeCancelled
+    SyncStatusInCancelled
 };
 
 

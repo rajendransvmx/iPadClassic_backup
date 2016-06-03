@@ -60,7 +60,7 @@
             recordTypeNameTemp = @"";
         }
          self.recordtypeLabel = recordTypeNameTemp;
-        
+
 	}
 	return self;
 }

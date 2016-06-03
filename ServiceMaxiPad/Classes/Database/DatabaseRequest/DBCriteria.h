@@ -21,7 +21,6 @@
 @property(nonatomic,strong)NSString *dataType;
 @property(nonatomic,strong)NSString *tableName;
 @property(nonatomic,assign)BOOL     isCaseInsensitive;
-@property(nonatomic,strong)NSArray *subCriterias;
 
 
 - (id)initWithFieldName:(NSString *)fieldName

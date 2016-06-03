@@ -12,8 +12,6 @@
 NSString *const groupProfile       = @"GROUP_PROFILE";
 
 NSString *const validateProfile    = @"VALIDATE_PROFILE";
-NSString *const  recordType        =  @"RECORD_TYPE";
-
 
 NSString *const kContentType        = @"application/json";
 NSString *const kHttpMethodPost     = @"POST";
@@ -186,15 +184,5 @@ NSString *const kSFMSearchRecordLimit = @"RecordLimit";
 
 
 NSString *const kAfterSaveInsertCustomCallValueMap = @"After_Insert_Web_Service";
-NSString *const kOnlineLookUpURL = @"getLookUpResults";
 
-/** Product IQ **/
-
-NSString *const kRestUrlProductIQ = @"/services/apexrest/"ORG_NAME_SPACE"/svmx/rest/ProductIQServiceIntf/";
-NSString *const kProductIQUserConfigUrl = @"getUserConfiguration/9.0/";
-NSString *const kProductIQTranslationsUrl = @"getTranslations/9.0/";
-NSString *const kProductIQObjectDescribeUrl = @"/services/data/v34.0/sobjects/%@/describe";
-NSString *const kProductIQSyncData = @"SYNC_PRODUCTIQ_DATA";
-NSString *const kProdIQLastSyncTime = @"PRODUCTIQ_LAST_SYNC";
-NSString *const kProdIQGetDeleteData = @"GET_DELETE_PRODUCTIQ_DATA";
 

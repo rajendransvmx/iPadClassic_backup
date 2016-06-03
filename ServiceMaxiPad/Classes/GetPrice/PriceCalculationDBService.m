@@ -623,29 +623,20 @@
             
             /*get the reference id from manifest */
             NSString *snippetId =  [self getCodeSnippetRefererenceForId:codeSnippetId];
-            //Defect Fix:025261 , checking nil for snippetId, if there is no longer reference for snippet in manifest table
-            if (snippetId !=nil)
-            {
-                NSDictionary *tempDictionary =  [self getCodeSnippetForNameOrId:snippetId];
-                if ([tempDictionary count] > 0) {
-                    codeSnippetId = [tempDictionary objectForKey:@"Id"];//instead of codesnipper id we shd use only referernce id
-                    NSString *tempStr = [tempDictionary objectForKey:kCodeSnippetData];
-                    if(![StringUtil isStringEmpty:codeSnippetId] && ![StringUtil isStringEmpty:tempStr] ) {
-                        [codeSnippetFinal appendFormat:@" %@",tempStr];
-                    }
-                    else {
-                        codeSnippetId = nil;
-                    }
+            NSDictionary *tempDictionary =  [self getCodeSnippetForNameOrId:snippetId];
+            if ([tempDictionary count] > 0) {
+                codeSnippetId = [tempDictionary objectForKey:@"Id"];
+                NSString *tempStr = [tempDictionary objectForKey:kCodeSnippetData];
+                if(![StringUtil isStringEmpty:codeSnippetId] && ![StringUtil isStringEmpty:tempStr] ) {
+                    [codeSnippetFinal appendFormat:@" %@",tempStr];
                 }
                 else {
                     codeSnippetId = nil;
                 }
             }
-            else
-            {
+            else {
                 codeSnippetId = nil;
             }
-          
             
         }
     }

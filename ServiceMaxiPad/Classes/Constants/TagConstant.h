@@ -450,12 +450,7 @@ extern NSString *const KTagSettingsTitle;
 #define kTag_Started @"IPAD025_TAG013"
 #define kTag_InProgress @"IPAD018_TAG059"
 
-#define kTag_AddEditFilters @"IPAD014_TAG142"  //lookup
-#define kTag_IncludeOnline @"IPAD014_TAG143"
-#define kTag_LookUpTitle @"IPAD014_TAG136"
-#define kTag_AddSingleLine @"IPAD014_TAG137"
 
-#define kTag_GregorianCalendarOnlyAlert @"IPAD006_TAG132"
 
 extern NSString *const kTagJanuary;
 extern NSString *const kTagFebruary;
@@ -883,10 +878,6 @@ extern NSString *const kPurgeProgressMessage ;
 extern NSString *const kPurgeWarningMessage ;
 extern NSString *const kSignIn ;
 extern NSString *const kPurgeDataLogs;
-
-//ProductIQ tags
-extern NSString *const KWizardNameForProductIQ;
-extern NSString *const KStepNameForProductIQ;
 
 
 //@end

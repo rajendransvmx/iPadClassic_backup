@@ -37,10 +37,7 @@
 #import "NSDate+SMXDaysCount.h"
 #import "Utility.h"
 
-@interface SFMPageLookUpHelper () {
-    BOOL isCircularRefEnabled;
-    BOOL includeOfflineRecords;
-}
+@interface SFMPageLookUpHelper ()
 
 @property (nonatomic, strong) NSMutableDictionary * pickListData;
 @property (nonatomic, strong) NSMutableDictionary * recordTypeData;
@@ -55,8 +52,8 @@
 -(void)loadLookUpConfigarationForLookUpObject:(SFMLookUp *)lookUpObj
 {
     if(lookUpObj == nil){
-       lookUpObj = [[SFMLookUp alloc] init];
-       
+        lookUpObj = [[SFMLookUp alloc] init];
+        
     }
     /* fill up LooUp details*/
     [self fillLookUpMetaDataLookUp:lookUpObj];
@@ -65,12 +62,11 @@
     [self fillLookUpComponentsForLookUpObject:lookUpObj];
     
     
-   lookUpObj.fieldInfoDict = [self getFieldInformation:lookUpObj];
-   lookUpObj.defaultColumsnFieldRelationships = [self getFieldInformationForDefaultColumns:lookUpObj];
+    lookUpObj.fieldInfoDict = [self getFieldInformation:lookUpObj];
     
     /*fill up look up filtes*/
     
-   // [self fillDataForLookUpObject:lookUpObj];
+    // [self fillDataForLookUpObject:lookUpObj];
     self.isCriteriaExistsForPreFilter = NO;
     self.isCriteriaExistsForAdvilter  = NO;
     
@@ -81,64 +77,41 @@
     NSArray * criteriaArray = nil;
     DBCriteria * criteria1 = nil;
     DBCriteria * criteria2 = nil;
-    DBCriteria * criteria3 = nil;
-    BOOL islookIDNil = NO;
-
+    
     if([StringUtil isStringEmpty:lookUpObj.lookUpId]){
         criteria1 = [[DBCriteria alloc] initWithFieldName:@"isStandard" operatorType:SQLOperatorEqual andFieldValue:@"1"];
-        criteria3 = [[DBCriteria alloc] initWithFieldName:@"isDefault" operatorType:SQLOperatorEqual andFieldValue:@"1"];
-        islookIDNil = YES;
     }
     else
     {
         criteria1 = [[DBCriteria alloc] initWithFieldName:@"namedSearchId" operatorType:SQLOperatorEqual andFieldValue:lookUpObj.lookUpId];
     }
-
-    criteria2 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:lookUpObj.objectName];
-
-    criteriaArray = [[NSArray alloc] initWithObjects:criteria1,criteria2,criteria3, nil];
-
-    NSString * advExpression = nil;
-    if (criteria3) {
-        advExpression = @"((1 OR 3) AND 2)";
-    }
-    else{
-        advExpression = @"(1 AND 2)";
-    }
     
-    NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"noOfLookupRecords",@"defaultLookupColumn",@"searchName", @"namedSearchId", @"isStandard", @"isDefault",nil];
+    criteria2 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:lookUpObj.objectName];
+    
+    criteriaArray = [[NSArray alloc] initWithObjects:criteria1,criteria2, nil];
 
-    SFNamedSearchModel * namedSearchModel;
-    NSArray *theNamedList;
+    NSString * advExpression = @"(1 AND 2)";
+
+    NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"noOfLookupRecords",@"defaultLookupColumn",@"searchName", @"namedSearchId",nil];
+
     id<SFNamedSearchDAO>   namedSearchObj =  [FactoryDAO serviceByServiceType:ServiceTypeNamedSearch];
-
-    if (islookIDNil) {
-            theNamedList =  [namedSearchObj getLookUpRecordListForDBCriterias:criteriaArray advancedExpression:advExpression fields:fieldsArray];
-        for (SFNamedSearchModel * searchModel in theNamedList) {
-
-            namedSearchModel = searchModel;
-            if (searchModel.isDefault && !searchModel.isStandard) {
-                break;
-            }
-        }
-    }
-    else
+    
+    SFNamedSearchModel * namedSearchModel =  [namedSearchObj getLookUpRecordsForDBCriteria:criteriaArray advancedExpression:advExpression fields:fieldsArray];
+            
+    if([StringUtil isStringEmpty:lookUpObj.lookUpId])
     {
-        namedSearchModel =  [namedSearchObj getLookUpRecordsForDBCriteria:criteriaArray advancedExpression:advExpression fields:fieldsArray];
+        lookUpObj.lookUpId = namedSearchModel.namedSearchId;
     }
-     if([StringUtil isStringEmpty:lookUpObj.lookUpId])
-     {
-         lookUpObj.lookUpId = namedSearchModel.namedSearchId;
-     }
     lookUpObj.recordLimit = [namedSearchModel.noOfLookupRecords intValue];
     lookUpObj.defaultColoumnName = namedSearchModel.defaultLookupColumn;
     lookUpObj.serachName = namedSearchModel.searchName;
     
     //Get the defaultColumn Name for the selected lookup object.This is requried for include online item.
-    
+    // defect- 23783
+
     lookUpObj.defaultObjectColumnName  = [SFMPageHelper getNameFieldForObject:lookUpObj.objectName];
     
-
+    
     if([StringUtil isStringEmpty:lookUpObj.defaultColoumnName])
     {
         lookUpObj.defaultColoumnName  = [SFMPageHelper getNameFieldForObject:lookUpObj.objectName];
@@ -160,7 +133,7 @@
     
     NSString * advExpression = @"(1 AND 2)";
     
-    NSArray * fieldsArray = [[NSArray alloc] initWithObjects: @"fieldName",@"searchObjectFieldType", @"fieldDataType", @"namedSearchId",@"fieldRelationshipName",@"keyNameField",nil];
+    NSArray * fieldsArray = [[NSArray alloc] initWithObjects: @"fieldName",@"searchObjectFieldType", @"fieldDataType", @"namedSearchId",nil];
     
     
     id<SFNamedSearchComponentDAO>   namedSearchObj =  [FactoryDAO serviceByServiceType:ServiceTypeSearchObjectDetail];
@@ -168,35 +141,30 @@
     
     NSDictionary * componentInfo =  [namedSearchObj getNamedSearchComponentWithDBcriteria:criteriaArray advanceExpression:advExpression fields:fieldsArray orderbyField:[NSArray arrayWithObject:@"sequence"] distinct:YES];
     
-
-   lookUpObj.searchFields  = [componentInfo objectForKey:kSearchFieldTypeSearch];
-   lookUpObj.displayFields = [componentInfo objectForKey:kSearchFieldTypeResult];
+    
+    lookUpObj.searchFields  = [componentInfo objectForKey:kSearchFieldTypeSearch];
+    lookUpObj.displayFields = [componentInfo objectForKey:kSearchFieldTypeResult];
 }
 
 -(void)fillDataForLookUpObject:(SFMLookUp *)lookUpObj
 {
-    
     NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
     
-    NSArray * criteriaArray = [self getWhereclause:lookUpObj forLocalRecords:NO];
+    NSArray * criteriaArray = [self getWhereclause:lookUpObj];
     
     NSString * advanceExpression = [self advanceExpression:lookUpObj];
     
     id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
     
     NSArray * dataArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
-  
+    
     NSArray * recordsArray = [self getRecordArrayFromTransactionModel:dataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
     
     lookUpObj.dataArray = recordsArray;
     
 }
 
-/*
- Method: getDefaultColumnNameDataForLookup
- Defect fixed: 023314 and 023783
- Description: This method will display the default lookup values on edit sfm.
- */
+// defect- 23783
 
 - (NSDictionary*)getDefaultColumnNameDataForLookup:(SFMLookUp*)lookupObject withSfId:(NSString*)sfId  {
     
@@ -216,7 +184,7 @@
     NSArray *fieldInfo = [self getFieldInformationForDefaultColumns:lookupObject];
     
     NSString *fieldRelationshipName = nil;
-
+    
     NSString *referenceTo = nil;
     for (SFObjectFieldModel *objectField in fieldInfo) {
         
@@ -232,7 +200,7 @@
     }
     
     NSDictionary *dictioanry = [[dataArray firstObject] getFieldValueDictionary];;
-
+    
     if (![StringUtil isStringEmpty:fieldRelationshipName]) {
         
         
@@ -258,233 +226,18 @@
         }
         
     }
-
+    
     return dictioanry;
 }
 
-/*
-  Method:fillOnlineLookupData:forLookupObject
-  Params:onlineDataArray,lookUpObj
-  Description:
-  1.Get all sifids from onlineDataArray.
-  2.Get all local records which matches with online sifds.
-  3.Update localIds with onlineDataArray if sfid is available.This will indicate that record exits in local DB.
-  4.Now get all locally created records which doesn't have sfid with circular check.
-  5.Add locally created records with onlineDataArray.
- */
-
-- (void)fillOnlineLookupData:(NSMutableArray*)onlineDataArray forLookupObject:(SFMLookUp*)lookUpObj {
-    
-    NSMutableArray *finalArray = [[NSMutableArray alloc] init];
-
-    if (onlineDataArray.count > 0) {
-        NSMutableArray *allSfids = [[NSMutableArray alloc] initWithCapacity:0];
-        
-        for (TransactionObjectModel *objectModel in onlineDataArray) {
-            NSDictionary *currentDictionary = [objectModel getFieldValueDictionary];
-            NSString *sfID = [currentDictionary objectForKey:kId];
-            if (![Utility isStringEmpty:sfID]) {
-                [allSfids addObject:sfID];
-            }
-        }
-        
-        NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
-        NSArray * criteriaArray = [self getWhereclauseForOnlineLookupData:lookUpObj withSFIds:allSfids];
-        
-        //    NSString * advanceExpression = [self advanceExpressionForOnlineData:lookUpObj withSFId:allSfids];
-        NSString * advanceExpression = nil;
-        
-        id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-        
-        NSArray * dataArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
-        
-        NSArray * localRecordsArray = [self getRecordArrayFromTransactionModel:dataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
-        
-        NSArray * onlineRecordsArray = [self getRecordArrayFromTransactionModelForOnline:onlineDataArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
-        
-        [self updateLocalIdsForOnlineData:onlineRecordsArray withLocalData:localRecordsArray];
-        if (onlineRecordsArray.count > 0) {
-            [finalArray addObjectsFromArray:onlineRecordsArray];
-        }
-    }
-    
-    //Get locally created records if sfids are not matched.
-    NSMutableArray *localRecords = nil;
-    if (onlineDataArray.count < lookUpObj.recordLimit) {
-        localRecords = (NSMutableArray *)[self getOfflineLookupRecordsForLookupObject:lookUpObj];
-    }
-    
-    if (localRecords.count > 0) {
-        NSInteger index = finalArray.count;
-        for (NSInteger i = index; i < lookUpObj.recordLimit; i++)
-        {
-            if([localRecords count ] >0)
-            {
-                [finalArray addObject:[localRecords objectAtIndex:0]];
-                [localRecords removeObjectAtIndex:0];
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
-    
-    
-    NSMutableSet *addedRecords = [NSMutableSet set];
-    NSPredicate *dupRecordPred = [NSPredicate predicateWithBlock: ^BOOL(id obj, NSDictionary *bind) {
-        NSDictionary *e = (NSDictionary*)obj;
-        
-        id object = [[e objectForKey:@"localId"] internalValue];
-        if (!object) {
-            object = [[e objectForKey:@"Id"] internalValue];
-        }
-        BOOL seen = [addedRecords containsObject:object];
-        if (!seen) {
-            [addedRecords addObject:object];
-        }
-        return !seen;
-    }];
-    
-    NSArray *filtered = [finalArray filteredArrayUsingPredicate:dupRecordPred];
-    
-    lookUpObj.dataArray = filtered;
-}
-
-/*
- Method: getOfflineLookupRecordsForLookupObject
- Params: lookUpObj
- Description:
- Get all the locally created if sfid is null and circular reference should not happen.
- */
-
-- (NSArray*)getOfflineLookupRecordsForLookupObject:(SFMLookUp*)lookUpObj {
-    
-    NSArray *lookupArray = nil;
-    NSArray * fieldsArray = [self getDisplayFields:lookUpObj];
-    NSArray * criteriaArray = [self getWhereclause:lookUpObj forLocalRecords:NO];
-    NSString * advanceExpression = [self advanceExpression:lookUpObj];
-    
-    id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-    
-    lookupArray = [transactionModel fetchDataForObject:lookUpObj.objectName fields:fieldsArray expression:advanceExpression criteria:criteriaArray recordsLimit:lookUpObj.recordLimit];
-    
-    NSArray * recordsArray = [self getRecordArrayFromTransactionModel:lookupArray lookUpObject:lookUpObj forDisplayFields:fieldsArray];
-    
-    return recordsArray;
-    
-}
-
-/*
- Method: getReferenceFieldsFor
- Params: objectName
- Description:
- This method will get reference columns for specified table.
- */
--(NSDictionary *)getReferenceFieldsFor:(NSString *)objectName
-{
-    NSMutableDictionary *referenceToDict = [[NSMutableDictionary alloc] init];
-    
-    DBCriteria * criteia1 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
-    
-    
-    DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:@"referenceTo" operatorType:SQLOperatorNotEqual andFieldValue:@"\\"];
-    
-    DBCriteria * criteria3 = [[DBCriteria alloc] initWithFieldName:@"referenceTo" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
-    
-    
-    id <SFObjectFieldDAO> objFieldDAO = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
-    
-    
-    //   NSArray * sfFieldObjects =   [objFieldDAO fetchSFObjectFieldsInfoByFields:[NSArray arrayWithObjects:@"fieldName", @"referenceTo" , nil] andCriteria:[NSArray arrayWithObjects:criteia1,criteria2,criteria3, nil]];
-    
-    NSArray * sfFieldObjects =   [objFieldDAO fetchSFObjectFieldsInfoByFields:[NSArray arrayWithObjects:@"fieldName", @"referenceTo" , nil] andCriteriaArray:[NSArray arrayWithObjects:criteia1,criteria2,criteria3, nil] advanceExpression:@"(1 AND 2 AND 3)"];
-    
-    for (SFObjectFieldModel * objField in sfFieldObjects) {
-        [referenceToDict setObject:objField.fieldName forKey:objField.referenceTo];
-    }
-    
-    return referenceToDict;
-}
-/*
- Method: getReferenceColumnNameFromReferenceDictionary
- Params: referenceDictioanry,parentObject
- Description:
- This method will get reference column from specified table with refDictioanry.
- */
-- (NSString*)getReferenceColumnNameFromReferenceDictionary:(NSDictionary*)referenceDictioanry forContextObject:(NSString*)parentObject {
-    
-    NSString *referenceFieldName = nil;
-    
-    referenceFieldName = [referenceDictioanry objectForKey:parentObject];
-    
-    return referenceFieldName;
-}
-/*
- Method: updateLocalIdsForOnlineData
- Params: onlineArray,localRecordsArray
- Description:
- This method will localIds with onlineArray.This will indicate that online record exits in local DB.
- */
-- (void)updateLocalIdsForOnlineData:(NSArray*)onlineArray withLocalData:(NSArray*)localRecordsArray {
-    
-    @autoreleasepool {
-        for (NSMutableDictionary *localDictionary in localRecordsArray) {
-            
-            SFMRecordFieldData *localSfIdRecord = [localDictionary objectForKey:kId];
-            SFMRecordFieldData *localIdrecord = [localDictionary objectForKey:kLocalId];
-            
-            for (NSMutableDictionary *onlineDictionary in onlineArray) {
-                SFMRecordFieldData *onlineSfIdRecord = [onlineDictionary objectForKey:kId];
-                
-                if ([localSfIdRecord.internalValue isEqualToString:onlineSfIdRecord.internalValue]) {
-                    
-                    //Update with local id for online record that indicates record already exits.
-                    if (![Utility isStringEmpty:localIdrecord.internalValue]) {
-                        SFMRecordFieldData *fieldData = [[SFMRecordFieldData alloc] initWithFieldName:kLocalId value:localIdrecord.internalValue andDisplayValue:localIdrecord.internalValue];
-                        [onlineDictionary setObject:fieldData forKey:kLocalId];
-                    }
-                }
-            }
-        }
-    }
-}
-/*
- Method: getCircularReferenceRecordsForParentObject
- Params: parentObject
- Description:
- This method will get the circular ref records localIds */
-- (NSArray*)getCircularReferenceRecordsForParentObject:(NSString*)parentObject {
- 
-    NSArray *circularRefRecords = nil;
-    NSMutableArray * criteriaArray = [[NSMutableArray alloc] initWithCapacity:0];
-    NSMutableArray *fieldsArray = [[NSMutableArray alloc] initWithCapacity:0];
-    [fieldsArray addObject:@"localId"];
-    
-    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNull andFieldValue:nil];
-    [criteriaArray addObject:criteria];
-    
-    id <TransactionObjectDAO> transactionModel = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-    
-    circularRefRecords = [transactionModel fetchDataForObject:parentObject
-                                                       fields:fieldsArray
-                                                   expression:nil
-                                                     criteria:criteriaArray
-                          ];
-    NSMutableArray *refRecords = [[NSMutableArray alloc] initWithCapacity:0];
-    for (TransactionObjectModel *model in circularRefRecords) {
-        NSDictionary *dictionary = [model getFieldValueDictionary];
-        NSString *localId = [dictionary objectForKey:kLocalId];
-        if (![Utility isStringEmpty:localId]) {
-            [refRecords addObject:localId];
-        }
-    }
-    
-    return refRecords;
-}
 
 -(NSArray *)getRecordArrayFromTransactionModel:(NSArray *)dataArray  lookUpObject:(SFMLookUp *)lookUpObject forDisplayFields:(NSArray *)displayFields
 {
+    NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
+    
+    
     NSMutableDictionary * dataTypeVsFieldsDict =[self getFieldDataTypeMap:[lookUpObject.fieldInfoDict allValues]];
     
     [self fillPickPickListAndRecordTypeInfo:dataTypeVsFieldsDict andObjectName:lookUpObject.objectName];
@@ -493,9 +246,6 @@
     NSMutableArray *recordArray = [[NSMutableArray alloc]init];
     for(TransactionObjectModel * model in dataArray)
     {
-        NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
-        NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
-
         NSMutableDictionary * eachDataDict = [[NSMutableDictionary alloc] init];
         NSDictionary * dict =  [model getFieldValueDictionary];
         
@@ -503,7 +253,7 @@
             
             SFMRecordFieldData * fieldDataObj = [[SFMRecordFieldData alloc] initWithFieldName:eachField value:[dict objectForKey:eachField] andDisplayValue:[dict objectForKey:eachField]];
             
-           SFObjectFieldModel * aPageField =  [lookUpObject.fieldInfoDict objectForKey:eachField];
+            SFObjectFieldModel * aPageField =  [lookUpObject.fieldInfoDict objectForKey:eachField];
             
             NSString * displayValue = nil;
             
@@ -532,172 +282,14 @@
                 }
             }
             else if ([aPageField.type isEqualToString:kSfDTBoolean]) {
-                
-                 if ([fieldDataObj.internalValue isKindOfClass:[NSString class]]) {
-                     if ([fieldDataObj.internalValue isEqualToString:@"1"]) {
-                         displayValue = kTrue;
-                     }
-                     else if ([fieldDataObj.internalValue isEqualToString:@"0"]) {
-                         displayValue = kFalse;
-                     }
-                 } else {
-                     if ([fieldDataObj.internalValue isKindOfClass:[NSNumber class]]) {
-                         NSNumber *number = (NSNumber*) fieldDataObj.internalValue ;
-                         displayValue = number.stringValue;
-                         if ([displayValue isEqualToString:@"1"]) {
-                             displayValue = kTrue;
-                         }
-                         else if ([displayValue isEqualToString:@"0"]) {
-                             displayValue = kFalse;
-                         }
-                     }
-                 }
-                
-            } else if([aPageField.type isEqualToString:kSfDTCurrency]
-                      || [aPageField.type isEqualToString:kSfDTDouble]
-                      || [aPageField.type isEqualToString:kSfDTPercent]
-                      || [aPageField.type isEqualToString:kSfDTInteger]) {
-                
-                if ([fieldDataObj.internalValue isKindOfClass:[NSString class]]) {
-                    displayValue = fieldDataObj.internalValue;
-                } else {
-                    if ([fieldDataObj.internalValue isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = (NSNumber*) fieldDataObj.internalValue ;
-                        displayValue = number.stringValue;
-                    }
+                if ([fieldDataObj.internalValue isEqualToString:@"1"]) {
+                    displayValue = kTrue;
                 }
-            } 
-           if(![StringUtil isStringEmpty:displayValue])
-           {
-               fieldDataObj.displayValue = displayValue;
-           }
+                else if ([fieldDataObj.internalValue isEqualToString:@"0"]) {
+                    displayValue = kFalse;
+                }
+            }
 
-           [eachDataDict setObject:fieldDataObj forKey:eachField];
-        }
-        
-        /*Update each dict with picklist ,  multi picklist and  recordTypeId display values */
-        [self updatePicklistDisplayValues:eachDataDict picklistFields:[dataTypeVsFieldsDict objectForKey:kSfDTPicklist] multiPicklistFields:[dataTypeVsFieldsDict objectForKey:kSfDTMultiPicklist] ];
-        
-        [self updateRecordTypeDisplayValue:eachDataDict];
-        
-        if ([fieldNameAndInternalValue count] > 0)
-        {
-            [self updateReferenceFieldDisplayValues:fieldNameAndInternalValue andFieldObjectNames:fieldNameAndObjectApiName];
-            for (NSString *fieldName in fieldNameAndObjectApiName) {
-                SFMRecordFieldData *fieldData = [eachDataDict objectForKey:fieldName];
-                NSString *displayValue = [fieldNameAndInternalValue objectForKey:fieldName];
-                if (displayValue != nil && ![displayValue isEqualToString:@""]) {
-                    fieldData.displayValue = displayValue;
-                }
-            }
-        }
-        
-        [recordArray addObject:eachDataDict];
-    }
-    return recordArray;
-}
-
--(NSArray *)getRecordArrayFromTransactionModelForOnline:(NSArray *)dataArray  lookUpObject:(SFMLookUp *)lookUpObject forDisplayFields:(NSArray *)displayFields
-{
-    NSMutableDictionary * dataTypeVsFieldsDict =[self getFieldDataTypeMap:[lookUpObject.fieldInfoDict allValues]];
-    
-    [self fillPickPickListAndRecordTypeInfo:dataTypeVsFieldsDict andObjectName:lookUpObject.objectName];
-    
-    
-    NSMutableArray *recordArray = [[NSMutableArray alloc]init];
-    for(TransactionObjectModel * model in dataArray)
-    {
-        NSMutableDictionary * fieldNameAndInternalValue = [[NSMutableDictionary alloc] initWithCapacity:0];
-        NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
-        
-        NSMutableDictionary * eachDataDict = [[NSMutableDictionary alloc] init];
-        NSDictionary * dict =  [model getFieldValueDictionary];
-        
-        for ( NSString * eachField in displayFields) {
-            
-            SFMRecordFieldData * fieldDataObj = [[SFMRecordFieldData alloc] initWithFieldName:eachField value:[dict objectForKey:eachField] andDisplayValue:[dict objectForKey:eachField]];
-            
-            SFObjectFieldModel * aPageField =  [lookUpObject.fieldInfoDict objectForKey:eachField];
-            
-            NSString * displayValue = nil;
-            
-            if ([aPageField.type isEqualToString:kSfDTReference]) {
-                if (![StringUtil isStringEmpty:fieldDataObj.internalValue]) {
-//                    [fieldNameAndInternalValue setObject:fieldDataObj.internalValue forKey:aPageField.fieldName];
-//                    if (aPageField.referenceTo != nil) {
-//                        [fieldNameAndObjectApiName setObject:aPageField.referenceTo forKey:aPageField.fieldName];
-//                    }
-                }
-                
-                //Logic to update online reference records.
-                
-                if ([aPageField.fieldName isEqualToString:eachField]) {
-                    NSString * nameField = [SFMPageHelper getNameFieldForObject:aPageField.referenceTo];
-                    NSDictionary *relationNameDictioanry = [dict objectForKey:aPageField.relationName];
-                    NSString *referenceId = [relationNameDictioanry objectForKey:kId];
-                    if (![StringUtil isStringEmpty:referenceId]) {
-                        fieldDataObj.internalValue = referenceId;
-                    }
-                    NSString *nameString = [relationNameDictioanry objectForKey:nameField];
-                    if (![StringUtil isStringEmpty:referenceId]) {
-                        fieldDataObj.displayValue = nameString;
-                    }
-                }
-                
-                
-            }
-            else if ([aPageField.type isEqualToString:kSfDTDateTime]) {
-                if (![StringUtil isStringEmpty:fieldDataObj.internalValue]) {
-                    NSString *dateTime =[self getUserReadableDateTime:fieldDataObj.internalValue];
-                    if (dateTime != nil) {
-                        displayValue = dateTime;
-                    }
-                }
-            }
-            else if ([aPageField.type isEqualToString:kSfDTDate]) {
-                if (![StringUtil isStringEmpty:fieldDataObj.internalValue]) {
-                    NSString *dateString = [self getUserReadableDate:fieldDataObj.internalValue];
-                    if (dateString != nil) {
-                        displayValue = dateString;
-                    }
-                }
-            }
-            else if ([aPageField.type isEqualToString:kSfDTBoolean]) {
-                
-                if ([fieldDataObj.internalValue isKindOfClass:[NSString class]]) {
-                    if ([fieldDataObj.internalValue isEqualToString:@"1"]) {
-                        displayValue = kTrue;
-                    }
-                    else if ([fieldDataObj.internalValue isEqualToString:@"0"]) {
-                        displayValue = kFalse;
-                    }
-                } else {
-                    if ([fieldDataObj.internalValue isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = (NSNumber*) fieldDataObj.internalValue ;
-                        displayValue = number.stringValue;
-                        if ([displayValue isEqualToString:@"1"]) {
-                            displayValue = kTrue;
-                        }
-                        else if ([displayValue isEqualToString:@"0"]) {
-                            displayValue = kFalse;
-                        }
-                    }
-                }
-                
-            } else if([aPageField.type isEqualToString:kSfDTCurrency]
-                      || [aPageField.type isEqualToString:kSfDTDouble]
-                      || [aPageField.type isEqualToString:kSfDTPercent]
-                      || [aPageField.type isEqualToString:kSfDTInteger]) {
-                
-                if ([fieldDataObj.internalValue isKindOfClass:[NSString class]]) {
-                    displayValue = fieldDataObj.internalValue;
-                } else {
-                    if ([fieldDataObj.internalValue isKindOfClass:[NSNumber class]]) {
-                        NSNumber *number = (NSNumber*) fieldDataObj.internalValue ;
-                        displayValue = number.stringValue;
-                    }
-                }
-            }
             if(![StringUtil isStringEmpty:displayValue])
             {
                 fieldDataObj.displayValue = displayValue;
@@ -760,48 +352,25 @@
     {
         [displayFields addObject:lookUpObj.defaultColoumnName];
     }
+    
+    // defect- 23783
+
     if(![StringUtil isStringEmpty:lookUpObj.defaultObjectColumnName])
     {
         [displayFields addObject:lookUpObj.defaultObjectColumnName];
     }
     [displayFields addObject:@"Id"];
-    [displayFields addObject:@"localId"]; 
     
     return displayFields;
 }
 
--(NSArray *)getWhereclause:(SFMLookUp *)lookUpObj forLocalRecords:(BOOL)localRecords
+-(NSArray *)getWhereclause:(SFMLookUp *)lookUpObj 
 {
     NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
     
-    /******** Circular reference check **************/
-    NSArray *circularRefArray = [self getCircularReferenceRecordsForParentObject:lookUpObj.contextLookupFilter.lookupContextParentObject];
+    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
     
-    NSDictionary *referenceDictionary = [self getReferenceFieldsFor:lookUpObj.objectName];
-    
-    NSString *referenceFieldName = [self getReferenceColumnNameFromReferenceDictionary:referenceDictionary forContextObject:lookUpObj.contextLookupFilter.lookupContextParentObject];
-    
-    if (circularRefArray.count > 0 && ![Utility isStringEmpty:referenceFieldName]) {
-        
-        isCircularRefEnabled = YES;
-        DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:referenceFieldName operatorType:SQLOperatorNotIn andFieldValues:circularRefArray];
-        
-        [criteriaArray addObject:criteria];
-        
-        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:referenceFieldName operatorType:SQLOperatorIsNull andFieldValues:nil];
         [criteriaArray addObject:criteria1];
-    }
-    
-    if (localRecords == YES) {
-        includeOfflineRecords = YES;
-        //Get local records if SFID is null.
-        DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNull andFieldValue:nil];
-        [criteriaArray addObject:criteria];
-    }
-    
-//    DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIsNotNull andFieldValue:nil];
-    
-//    [criteriaArray addObject:criteria1];
     
     if(![StringUtil isStringEmpty:lookUpObj.searchString])
     {
@@ -819,13 +388,13 @@
                 DBCriteria * insserCiteria = [[DBCriteria alloc] initWithFieldName:nameField operatorType:SQLOperatorLike andFieldValue:lookUpObj.searchString];
                 
                 DBRequestSelect *innerSelect = [[DBRequestSelect alloc] initWithTableName:referenceTo andFieldNames:[NSArray arrayWithObject:@"Id"] whereCriteria:insserCiteria];
-
-                 tempCriteria =  [[DBCriteria alloc] initWithFieldName:compModel.fieldName operatorType:SQLOperatorIn andInnerQUeryRequest:innerSelect];
+                
+                tempCriteria =  [[DBCriteria alloc] initWithFieldName:compModel.fieldName operatorType:SQLOperatorIn andInnerQUeryRequest:innerSelect];
                 
             }
             else
             {
-                 tempCriteria =  [[DBCriteria alloc] initWithFieldName:compModel.fieldName operatorType:SQLOperatorLike andFieldValue:lookUpObj.searchString];
+                tempCriteria =  [[DBCriteria alloc] initWithFieldName:compModel.fieldName operatorType:SQLOperatorLike andFieldValue:lookUpObj.searchString];
             }
             //ReferenceCheck
             
@@ -854,166 +423,25 @@
     return criteriaArray;
 }
 
--(NSArray *)getWhereclauseForOnlineLookupData:(SFMLookUp *)lookUpObj withSFIds:(NSMutableArray*)allSFIds
-{
-    NSMutableArray * criteriaArray = [[NSMutableArray alloc] init];
-    
-    
-    if (allSFIds != nil && allSFIds.count > 0) { // get local records which matches with online records.
-        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:allSFIds];
-        
-        [criteriaArray addObject:criteria1];
-    }
-    
-    return criteriaArray;
-}
-
-
-
 -(NSString *)advanceExpression:(SFMLookUp *)lookUpObj
 {
     NSMutableString *advanceExpression  = [[NSMutableString alloc] init];
     NSMutableString *searchFieldsCount = [[NSMutableString alloc] init];
-    
-    if (isCircularRefEnabled) {
-        for ( int counter = 0 ; counter <  [lookUpObj.searchFields count]; counter ++)
-        {
-            if(counter != 0){
-                [searchFieldsCount appendString:@" OR "];
-            }
-            if (includeOfflineRecords) {
-                [searchFieldsCount appendFormat:@" %d " , (counter +4)];
-            } else {
-                [searchFieldsCount appendFormat:@" %d " , (counter +3)];
-            }
-        }
-    } else {
-        for ( int counter = 0 ; counter <  [lookUpObj.searchFields count]; counter ++)
-        {
-            if(counter != 0){
-                [searchFieldsCount appendString:@" OR "];
-            }
-            if (includeOfflineRecords) {
-                [searchFieldsCount appendFormat:@" %d " , (counter +2)];
-            } else {
-                [searchFieldsCount appendFormat:@" %d " , (counter +1)];
-
-            }
-        }
-    }
-    
-    //Forming the advance expression here.
-    if(![StringUtil isStringEmpty:lookUpObj.searchString])
-    {
-        if (isCircularRefEnabled) {
-            
-            if (includeOfflineRecords) {
-                if (searchFieldsCount.length == 0) {
-                    [advanceExpression appendFormat:@"( ( (1 OR 2) AND 3) "];
-
-                } else {
-                    [advanceExpression appendFormat:@"( ( (1 OR 2) AND 3)  AND (%@) )",searchFieldsCount];
-                }
-            } else {
-                
-                if (searchFieldsCount.length == 0) {
-                    [advanceExpression appendFormat:@"( (1 OR 2) "];
-
-                } else {
-                    [advanceExpression appendFormat:@"( (1 OR 2)  AND (%@) )",searchFieldsCount];
-                }
-            }
-
-        } else {
-            
-            if (includeOfflineRecords) {
-                if (searchFieldsCount.length == 0) {
-                    [advanceExpression appendFormat:@"( 1 )"];
-                } else {
-                    [advanceExpression appendFormat:@"(1 AND (%@) )",searchFieldsCount];
-                }
-            } else {
-                
-                if (searchFieldsCount.length == 0) {
-                    [advanceExpression appendFormat:@""];
-                } else {
-                    [advanceExpression appendFormat:@"(%@)",searchFieldsCount];
-                }
-            }
-        }
-    }
-    else
-    {
-        if (isCircularRefEnabled) {
-            if (includeOfflineRecords) {
-                [advanceExpression appendFormat:@"((1 OR 2) AND 3 )"];
-            } else {
-                [advanceExpression appendFormat:@"(1 OR 2)"];
-            }
-        } else {
-            
-            if (includeOfflineRecords) {
-                [advanceExpression appendFormat:@"( 1 )"];
-            } else {
-                [advanceExpression appendFormat:@""];
-            }
-        }
-    }
-    
-
-    [self updateExpressionCount:lookUpObj];
-    
-    if ([lookUpObj.preFilters count] > 0) {
-        [self updateAdvanceExpressionForFiltes:lookUpObj.preFilters expression:advanceExpression];
-    }
-    
-    if ([lookUpObj.advanceFilters count] > 0) {
-        [self updateAdvanceExpressionForAdvanceFiltes:lookUpObj.advanceFilters expression:advanceExpression];
-    }
-    if (lookUpObj.contextLookupFilter.lookupContext != nil && lookUpObj.contextLookupFilter.lookupContext.length > 0 && lookUpObj.contextLookupFilter.defaultOn ) {
-        [self updateAdvancedExpressionForContextFilter:advanceExpression];
-    }
-    
-    //Reset the values.
-    isCircularRefEnabled = NO;
-    includeOfflineRecords = NO;
-
-    
-    return advanceExpression;
-}
-
--(NSString *)advanceExpressionForOnlineData:(SFMLookUp *)lookUpObj withSFId:(NSArray*)sfIds
-{
-    NSMutableString *advanceExpression  = [[NSMutableString alloc] init];
-    NSMutableString *searchFieldsCount = [[NSMutableString alloc] init];
-    
     
     for ( int counter = 0 ; counter <  [lookUpObj.searchFields count]; counter ++)
     {
         if(counter != 0){
             [searchFieldsCount appendString:@" OR "];
         }
-        if (sfIds.count > 0) {
-            [searchFieldsCount appendFormat:@" %d " , (counter +2)];
-        } else {
-            [searchFieldsCount appendFormat:@" %d " , (counter +1)];
-        }
+        [searchFieldsCount appendFormat:@" %d " , (counter +2)];
     }
-    
-    
     if(![StringUtil isStringEmpty:lookUpObj.searchString])
     {
-        if (sfIds.count > 0) {
-            [advanceExpression appendFormat:@"(1  AND (%@) )",searchFieldsCount];
-
-        } else {
-            [advanceExpression appendFormat:@"(%@)",searchFieldsCount];
-        }
-        
+        [advanceExpression appendFormat:@"(1  AND (%@) )",searchFieldsCount];
     }
     else
     {
-        [advanceExpression appendFormat:@"(1)"];
+        [advanceExpression appendFormat:@"(1 )"];
     }
     
     [self updateExpressionCount:lookUpObj];
@@ -1030,7 +458,6 @@
     }
     return advanceExpression;
 }
-
 
 -(NSMutableDictionary *)getFieldInformation:(SFMLookUp *)lookUpObject
 {
@@ -1045,14 +472,20 @@
     for ( int counter = 0 ; counter <  [lookUpObject.searchFields count]; counter ++)
     {
         SFNamedSearchComponentModel * compModel  =   [lookUpObject.searchFields objectAtIndex:counter];
+        
+        // defect- 23783
+
         if(compModel.fieldName != nil && ![displayFields containsObject:compModel.fieldName]){
             [displayFields addObject:compModel.fieldName];
         }
     }
     if(![StringUtil isStringEmpty:lookUpObject.defaultColoumnName] && ![displayFields containsObject:lookUpObject.defaultColoumnName])
     {
-            [displayFields addObject:lookUpObject.defaultColoumnName];
+        [displayFields addObject:lookUpObject.defaultColoumnName];
     }
+    
+    // defect- 23783
+
     
     if(![StringUtil isStringEmpty:lookUpObject.defaultObjectColumnName] && ![displayFields containsObject:lookUpObject.defaultObjectColumnName])
     {
@@ -1078,6 +511,8 @@
     }
     return fieldLabelDict;
 }
+
+// defect- 23783
 
 -(NSArray *)getFieldInformationForDefaultColumns:(SFMLookUp *)lookUpObject
 {
@@ -1343,7 +778,7 @@
 
 -(NSString *)getObjectLabel:(NSString *)objectName
 {
-   return [SFMPageHelper getObjectLabelForObjectName:objectName];
+    return [SFMPageHelper getObjectLabelForObjectName:objectName];
 }
 
 /* Reference handling  in Where  clause*/
@@ -1370,7 +805,7 @@
     
     if ([searchFilterService conformsToProtocol:@protocol(SFNamedSearchFilterDAO)]) {
         
-       resultset = [searchFilterService fetchSFNameSearchFiltersInfoByFields:nil andCriteria:[NSArray arrayWithObjects:criteriaId, criteriaType, nil]];
+        resultset = [searchFilterService fetchSFNameSearchFiltersInfoByFields:nil andCriteria:[NSArray arrayWithObjects:criteriaId, criteriaType, nil]];
     }
     
     NSMutableArray *records = [NSMutableArray new];
@@ -1400,7 +835,7 @@
 
 
 - (BOOL)isObjectHasPermission:(NSString *)objectName
-{    
+{
     return [SFMPageEditHelper getObjectFieldCountForObject:objectName];
 }
 
@@ -1446,37 +881,27 @@
 
 - (NSArray *)getCriteriaObjectForfilter:(SFMLookUpFilter *)filter {
     SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:nil
-                                                    objectName:filter.sourceObjectName];
+                                                                                 objectName:filter.sourceObjectName];
     SFExpressionModel *model = [[SFExpressionModel alloc] init];
     model.expressionId = filter.searchId;
     model.expression = filter.advanceExpression;
     model.sourceObjectName = filter.sourceObjectName;
-
+    
     [expressionParser setExpressionData:model];
     
     NSArray *criteriaObjects = [expressionParser expressionCriteriaObjectsForFilters];
     
     [self updateLiteralValueForCriterai:criteriaObjects];
-
+    
     return criteriaObjects;
 }
 
 - (void)updateLiteralValueForCriterai:(NSArray *)criteriaObjects
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"rhsValue CONTAINS[c] %@", @"SVMX.CURRENTRECORD"];
-    NSArray *literalArray1 = [criteriaObjects filteredArrayUsingPredicate:predicate];
+    NSArray *literalArray = [criteriaObjects filteredArrayUsingPredicate:predicate];
     
-    predicate = [NSPredicate predicateWithFormat:@"SELF CONTAINS %@", @"SVMX.CURRENTRECORD"];
-    NSMutableArray *literalArray2 = [NSMutableArray new];
-    for (DBCriteria *criteria in criteriaObjects) {
-        NSArray *filteredArray = [criteria.rhsValues filteredArrayUsingPredicate:predicate];
-        if (filteredArray) {
-            [literalArray2 addObject:criteria];
-            
-        }
-    }
-    
-    for (DBCriteria *criteria in literalArray1) {
+    for (DBCriteria *criteria in literalArray) {
         SFMRecordFieldData *recordData = [self.viewControllerdelegate getValueForLiteral:criteria.rhsValue];
         criteria.rhsValue = (recordData.internalValue != nil)?recordData.internalValue:@"";
         
@@ -1485,37 +910,6 @@
             [self updateLiteralValueForSubCriterai:[criteria getSubCriterias] data:recordData];
         }
     }
-    
-    for (DBCriteria *criteria in literalArray2) {
-        
-        for(NSString *rhsString in criteria.rhsValues)
-        {
-            NSMutableArray *resultArray = [NSMutableArray new];
-            
-            NSArray *partsArray =   [rhsString componentsSeparatedByString:@","];
-            
-            
-            for(NSString *rhsValue in partsArray)
-            {
-                SFMRecordFieldData *recordData;
-                
-                recordData = [self.viewControllerdelegate getValueForLiteral:rhsValue];
-                [resultArray addObject:(recordData.internalValue != nil)?recordData.internalValue:@""];
-                
-                if ([[criteria getSubCriterias] count]) {
-                    [self updateLiteralValueForSubCriterai:[criteria getSubCriterias] data:recordData];
-                }
-                
-            }
-            
-            criteria.rhsValues = resultArray;
-        }
-        
-        
-        
-    }
-    
-    
 }
 
 - (NSString *)getNameFieldForId:(NSString *)Id objectName:(NSString *)objectName
@@ -1554,7 +948,7 @@
             for (DBCriteria *criteria1 in innerCriteria) {
                 criteria1.rhsValue = (recordData.displayValue != nil)?recordData.displayValue:@"";
             }
-        }        
+        }
     }
 }
 
@@ -1573,29 +967,17 @@
     
     //DBCriteria *criteriaLocalId = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorIn andInnerQUeryRequest:select];
     
-   // return [NSArray arrayWithObjects:criteriaId, criteriaLocalId, nil];
+    // return [NSArray arrayWithObjects:criteriaId, criteriaLocalId, nil];
     
     return [NSArray arrayWithObjects:criteriaId, nil];
 }
 
 - (void)updateExpressionCount:(SFMLookUp *)lookUpObj
 {
-//    NSInteger count = 1;
-    
-    NSInteger count = 0;
-    if (isCircularRefEnabled) {
-        count = 1;
-        if (includeOfflineRecords) {
-            count = 2;
-        }
-    }
-    if (includeOfflineRecords) {
-        count = 1;
-    }
-    
+    NSInteger count = 1;
     if ([lookUpObj.searchFields count] >0 && ![StringUtil isStringEmpty:lookUpObj.searchString]) {
         NSUInteger c = [lookUpObj.searchFields count];
-        count = c;// + 1; Defect#024967
+        count = c + 1;
     }
     self.expressionCount = count;
 }
@@ -1604,7 +986,7 @@
                               expression:(NSMutableString *)advanceexpression
 {
     for (int count = 0; count <[filters count]; count++) {
-
+        
         SFMLookUpFilter *model = [filters objectAtIndex:count];
         
         if (model != nil) {
@@ -1613,19 +995,14 @@
             }
             NSString *expression = [self getAdvanceExpression:model.advanceExpression criteriaCount:self.expressionCount];
             if (![StringUtil isStringEmpty:expression]) {
-//                [advanceexpression appendFormat:@" AND (%@)", expression];
-                if (isCircularRefEnabled == NO && includeOfflineRecords == NO && advanceexpression.length == 0) {
-                    [advanceexpression appendFormat:@"(%@)", expression];
-                } else {
                     [advanceexpression appendFormat:@" AND (%@)", expression];
                 }
             }
         }
     }
-}
 
 - (void)updateAdvanceExpressionForAdvanceFiltes:(NSArray *)filters
-                              expression:(NSMutableString *)advanceexpression
+                                     expression:(NSMutableString *)advanceexpression
 {
     for (int count = 0; count <[filters count]; count++) {
         
@@ -1642,16 +1019,11 @@
                 model.advanceExpression = [self getExpresionForExpressionId:model.searchId];
             }
             if ([model.advanceExpression length] > 0) {
-//                NSString *expression = [NSString stringWithFormat:@" %d OR %d ", (int)self.expressionCount+1,
-//                              (int)(self.expressionCount +2)];
+                //                NSString *expression = [NSString stringWithFormat:@" %d OR %d ", (int)self.expressionCount+1,
+                //                              (int)(self.expressionCount +2)];
                 
                 NSString *expression = [NSString stringWithFormat:@" %d ", (int)self.expressionCount+1];
-                if (isCircularRefEnabled == NO && includeOfflineRecords == NO && advanceexpression.length == 0) {
-                    [advanceexpression appendFormat:@" ( %@ )", expression];
-                } else {
                     [advanceexpression appendFormat:@" AND  ( %@ )", expression];
-                }
-//                [advanceexpression appendFormat:@" AND  ( %@ )", expression];
                 self.expressionCount += 1;
             }
         }
@@ -1680,7 +1052,7 @@
                 self.expressionCount++;
             }
         }
-
+        
     }
     return modifiedExpression;
 }
@@ -1693,7 +1065,7 @@
     newExpression = [newExpression stringByReplacingOccurrencesOfString:@"AND" withString:@"#and#" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [newExpression length])];
     newExpression = [newExpression stringByReplacingOccurrencesOfString:@"OR" withString:@"#OR#" options:NSCaseInsensitiveSearch range:NSMakeRange(0, [newExpression length])];
     
-   return [newExpression componentsSeparatedByString:@"#"];
+    return [newExpression componentsSeparatedByString:@"#"];
 }
 
 
@@ -1728,7 +1100,7 @@
     return [self.viewControllerdelegate getValueForContextFilterForfieldName:fieldName forHeaderObject:headerValue];
 }
 - (NSArray *) getCriteriaArrayForContextLookUp:(SFMLookUp *)lookup {
-
+    
     NSString *filtervalue = @"";
     NSString *displayValue = @"";
     if (lookup.contextLookupFilter.lookupContext != nil && lookup.contextLookupFilter.lookupContext.length > 0 && lookup.contextLookupFilter.defaultOn) {
@@ -1736,16 +1108,11 @@
         SFMRecordFieldData *recordData = [self getFieldValueForFieldName:lookup.contextLookupFilter.lookupContext forHeaderField:lookup.contextLookupFilter.sourceObjectName];
         
         displayValue = (recordData.displayValue.length > 0) ? recordData.displayValue : @"";;
-        //Remvoe the white spaces from string.
-        if (displayValue.length > 0) {
-            displayValue = [displayValue stringByTrimmingCharactersInSet:
-                            [NSCharacterSet whitespaceCharacterSet]];;
-        }
         
         if (self.dataTypeUtil == nil) {
             self.dataTypeUtil = [[DataTypeUtility alloc] init];
         }
-
+        
         SFMLookUpFilter *filter = [lookup.advanceFilters firstObject];
         if (filter !=nil && filter.lookupContext.length > 0 ) {
             
@@ -1771,7 +1138,6 @@
         }
         
         DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:lookup.contextLookupFilter.lookupQuery operatorType:SQLOperatorEqual andFieldValue:filtervalue];
-        criteria.isCaseInsensitive = YES;
         return @[criteria];
     }
     return @[];
@@ -1779,16 +1145,8 @@
 }
 - (void) updateAdvancedExpressionForContextFilter:(NSMutableString *)expression {
     
-//    [expression appendFormat:@"AND ( %d )",(int)self.expressionCount+1];
-    if (isCircularRefEnabled == NO && includeOfflineRecords == NO && expression.length == 0  ) {
-        if (self.expressionCount > 0) {
-            [expression appendFormat:@"( %d )",(int)self.expressionCount];
-        } else {
-            [expression appendFormat:@""];
-        }
-    } else {
         [expression appendFormat:@"AND ( %d )",(int)self.expressionCount+1];
-    }
+    
 }
 #pragma mark - END
 @end

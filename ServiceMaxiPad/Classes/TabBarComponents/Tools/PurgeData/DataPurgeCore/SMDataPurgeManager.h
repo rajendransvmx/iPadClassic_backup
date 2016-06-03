@@ -93,6 +93,4 @@ typedef enum DataPurgeStatus
 - (void)initiateAllDataPurgeProcess;
 - (void)rescheduleDataPurgeTimer;
 - (void)invalidateDataPurgeTimer;
-
--(BOOL)isDataPurgeInProgress;
 @end

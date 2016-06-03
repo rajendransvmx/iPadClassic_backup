@@ -61,7 +61,5 @@ typedef NS_ENUM(NSUInteger, NodeStatus)
 
 - (void)cancelFlow;
 
-+(void)reportErrorToAWS:(NSError*)error withResponseObject:(id)responseObject withRequestObject:(id)requestObject;
-
 
 @end

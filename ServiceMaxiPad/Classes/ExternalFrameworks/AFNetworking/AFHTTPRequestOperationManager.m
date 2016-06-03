@@ -59,7 +59,7 @@
     self.requestSerializer = [AFHTTPRequestSerializer serializer];
     self.responseSerializer = [AFJSONResponseSerializer serializer];
 
-    self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    self.securityPolicy = [AFSecurityPolicy defaultPolicy];
 
     self.reachabilityManager = [AFNetworkReachabilityManager sharedManager];
 

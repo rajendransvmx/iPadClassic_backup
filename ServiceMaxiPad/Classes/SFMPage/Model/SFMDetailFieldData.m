@@ -21,7 +21,7 @@
         return nil;
     }
     if (([self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetAll] ||
-        [self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetChild] )&& [[self.fieldsArray objectAtIndex:0] isKindOfClass:[NSString class]]) {
+         [self.sourceToTargetType isEqualToString:kProcessTypeSRCToTargetChild] )&& [[self.fieldsArray objectAtIndex:0] isKindOfClass:[NSString class]]) {
         return [NSMutableArray arrayWithArray:self.fieldsArray];
     }
     

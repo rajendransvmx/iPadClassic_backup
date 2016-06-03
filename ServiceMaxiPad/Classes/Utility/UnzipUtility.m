@@ -13,8 +13,8 @@
 
 + (NSArray *) getListOfCoreLibraries {
     
-    NSArray *listOfLibs = [NSArray arrayWithObjects:@"com.servicemax.client.mvc",
-                           @"com.servicemax.client.lib",
+    NSArray *listOfLibs = [NSArray arrayWithObjects:@"com.servicemax.client.lib",
+                           @"com.servicemax.client.mvc",
                            @"com.servicemax.client.runtime",
                            @"com.servicemax.client.sal.sfmconsole.model",
                            @"com.servicemax.client.sfmbizrules",
@@ -24,18 +24,6 @@
                            @"com.servicemax.client.sfmopdocdelivery",
                            @"com.servicemax.client.tablet.sal.sfmopdoc.model",
                            @"com.servicemax.client",
-                           @"com.servicemax.client.installigence.admin",
-                           @"com.servicemax.client.installigence.native",
-                           @"com.servicemax.client.installigence.offline.model",
-                           @"com.servicemax.client.installigence.sync",
-                           @"com.servicemax.client.installigence.ui.components",
-                           @"com.servicemax.client.installigence.utils",
-                           @"com.servicemax.client.installigence",
-                           @"com.servicemax.client.sal",
-                           @"com.servicemax.client.testframework",
-                           @"com.servicemax.client.native.laptop",
-                           @"com.servicemax.client.offline.sal.model",
-                           @"com.servicemax.client.usage",
                            nil];
     return listOfLibs;
 }
@@ -62,62 +50,20 @@
             path = [FileManager getCoreLibSubDirectoryPath];
         }
         NSArray *listOflibraries = [self getListOfCoreLibraries];
-        BOOL isAppWithSameVersion = [UnzipUtility isAppWithSameVersion:@"SVMXappVersion_Each"];
+        
         for(NSString *fileName in listOflibraries)
         {
             NSString *filepath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"zip"];
             
-            if ([fileName isEqualToString:@"com.servicemax.client.lib"]) {
-                NSString *clientLibPath = [path stringByDeletingLastPathComponent];
-                
-                if (!isAppWithSameVersion){
-                    [self unzipFileAtPath:filepath toFolder:clientLibPath];
-                }else{
-                    if([fileManager fileExistsAtPath:[clientLibPath stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
-                        continue;
-                    [self unzipFileAtPath:filepath toFolder:clientLibPath];
-                }
-            }
-            else {
-                if (!isAppWithSameVersion){
-                    [self unzipFileAtPath:filepath toFolder:path];
-                }else{
-                    if([fileManager fileExistsAtPath:[path stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
-                        continue;
-                    [self unzipFileAtPath:filepath toFolder:path];
-                }
-            }
+            if([fileManager fileExistsAtPath:[path stringByAppendingPathComponent:[[filepath lastPathComponent] stringByDeletingPathExtension]]])
+                continue;
+            
+            [self unzipFileAtPath:filepath toFolder:path];
         }
         [fileManager removeItemAtPath:[path stringByAppendingPathComponent:@"__MACOSX"] error:NULL];
-        
+
     }
 }
-
-/* This function return true for same version and false for New App version */
-+ (BOOL)isAppWithSameVersion:(NSString *)versionKey{
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *currentAppVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    NSString *previousVersion = [defaults objectForKey:versionKey];
-    if (!previousVersion) {
-        // first launch
-        
-        [defaults setObject:currentAppVersion forKey:versionKey];
-        [defaults synchronize];
-    } else if ([previousVersion isEqualToString:currentAppVersion]) {
-        // same version
-        
-        return TRUE;
-    } else {
-        // other version
-        
-        [defaults setObject:currentAppVersion forKey:versionKey];
-        [defaults synchronize];
-    }
-    return FALSE;
-}
-
-
 /**
  * @name  unzipFileAtPath
  *

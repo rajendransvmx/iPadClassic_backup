@@ -107,12 +107,6 @@ NSString *const kWorkOrderOrderStatus           = ORG_NAME_SPACE@"__Order_Status
 NSString *const kWorkOrderScheduledDateTime     = ORG_NAME_SPACE@"__Scheduled_Date_Time__c";
 NSString *const kWorkOrderSite                  = ORG_NAME_SPACE@"__Site__c";
 
-/*Work Detail Summary*/
-NSString *const kSerialNumber                   = ORG_NAME_SPACE@"__Serial_Number__c";
-
-/*Location*/
-NSString *const kSiteAccountId                  = ORG_NAME_SPACE@"__Account__c";
-
 
 /* PROCESS constants*/
 NSString *const kProcessTypeView                = @"VIEW RECORD";
@@ -180,7 +174,6 @@ NSString *const kLiteralCurrentRecord       = @"SVMX.CURRENTRECORD";
 NSString *const kLiteralCurrentRecordHeader = @"SVMX.CURRENTRECORDHEADER";
 NSString *const kLiteralUserTrunk           = @"SVMX.USERTRUNK";
 NSString *const kLiteralSVMXNow             = @"SVMX.NOW";
-NSString *const kLiteralCurrentUserId       = @"SVMX.CURRENTUSERID";
 
 
 /*SFProcess column constants*/
@@ -365,9 +358,6 @@ NSString *const kCRFieldNameField = @"fieldName";
 
 NSString *const kInstalledProductTableName = ORG_NAME_SPACE@"__Installed_Product__c";
 NSString *const kIPProductNameField   = ORG_NAME_SPACE@"__Product_Name__c";
-
-//SubLocation table
-NSString *const KSubLocationTableName = ORG_NAME_SPACE@"__Sub_Location__c";
 
 //Product Table
 NSString *const KProductTable=@"Product2";

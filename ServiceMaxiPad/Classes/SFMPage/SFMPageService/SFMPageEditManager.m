@@ -52,7 +52,6 @@
 #import "FieldUpdateRuleManager.h"
 #import "Utility.h"
 #import "SFMDetailLayout.h"
-#import "CustomerOrgInfo.h"
 
 @interface SFMPageEditManager ()<BusinessRuleManagerDelegate>
 
@@ -354,8 +353,7 @@
     NSDictionary * componentsArray =  sfmPage.process.component;
     
     NSMutableDictionary * valueMappingDict = nil;
-    NSMutableDictionary * valueMappingFieldsInLayoutOrderDict = nil; //Defect#028966
-
+    
     for (NSString * componentId in componentsArray) {
         
         SFProcessComponentModel * componentModel= [sfmPage.process.component objectForKey:componentId];
@@ -366,13 +364,11 @@
         if( valueMappingDict == nil)
         {
             valueMappingDict = [[NSMutableDictionary alloc] init];
-            valueMappingFieldsInLayoutOrderDict = [NSMutableDictionary new];
         }
         
         NSMutableDictionary * eachDict = [[NSMutableDictionary alloc] init];
-        NSMutableArray *lFieldNameInLayoutOrder = [NSMutableArray new];
-        
         for (SFObjectMappingComponentModel * mappingModel in mappingArray ) {
+            
             /*  ===================================================  */
                 /*Defect: 018999, non translated display values */
             /*  ===================================================  */
@@ -404,7 +400,6 @@
             if(mappingModel.targetFieldName != nil){
                 
                 [eachDict setObject:recordField forKey:mappingModel.targetFieldName];
-                [lFieldNameInLayoutOrder addObject:mappingModel.targetFieldName];
             }
         }
         if([eachDict count] == 0 )
@@ -412,11 +407,9 @@
             continue;
         }
         [valueMappingDict setObject:eachDict forKey:componentId];
-        [valueMappingFieldsInLayoutOrderDict setObject:lFieldNameInLayoutOrder forKey:componentId];
     }
     
     sfmPage.process.valueMappingDict = valueMappingDict;
-    sfmPage.process.valueMappingArrayInLayoutOrder = valueMappingFieldsInLayoutOrderDict; // Defect #028966
 }
 
 -(void)fillUpDisplayValuesForValueMapping:(SFMPage *)page
@@ -496,33 +489,8 @@
     
     NSMutableDictionary * fieldNameAndObjectApiName =  [[NSMutableDictionary alloc] initWithCapacity:0];
     
-    
     for (NSString * fieldName  in [valueMappingDict allKeys]) {
         SFMRecordFieldData * recordfield = [valueMappingDict objectForKey:fieldName];
-      if([recordfield.internalValue containsString:kLiteralCurrentRecord] || [recordfield.internalValue containsString:kLiteralCurrentRecordHeader] )
-      {
-          
-          NSArray *array = [recordfield.internalValue componentsSeparatedByString:@"."];
-          
-          if([array count] > 2)
-          {
-              NSString *tempFieldName = [array objectAtIndex:2];
-              if(![StringUtil isStringEmpty:tempFieldName])
-              {
-                  SFMRecordFieldData *tempRecordfield = [valueMappingDict objectForKey:[array objectAtIndex:2]];
-                  if(tempRecordfield != nil)
-                  {
-                      recordfield.internalValue = tempRecordfield.internalValue;
-                      recordfield.displayValue = tempRecordfield.displayValue;
-                      
-                      
-                  }
-              }
-          }
-          
-          
-          
-      }
         
         NSString * displayValue = nil;
         NSString * fieldName = recordfield.name;
@@ -532,17 +500,6 @@
         if ([objectField.type isEqualToString:kSfDTReference] && ![objectField.fieldName isEqualToString:kSfDTRecordTypeId])
         {
             if (![StringUtil isStringEmpty:recordfield.internalValue]) {
-                
-                displayValue = [SFMPageHelper  valueOfLiteral:recordfield.internalValue dataType:@""];
-                if(displayValue == nil) {
-                    displayValue = recordfield.displayValue;
-                }
-                else {
-                    if(([recordfield.internalValue caseInsensitiveCompare:kLiteralCurrentUser]== NSOrderedSame) || ([recordfield.internalValue caseInsensitiveCompare:kLiteralOwner]== NSOrderedSame) || ([recordfield.internalValue caseInsensitiveCompare:kLiteralCurrentUserId] == NSOrderedSame)) {
-                        recordfield.internalValue = [[CustomerOrgInfo sharedInstance]currentUserId];
-                    }
-                }
-                
                 [fieldNameAndInternalValue setObject:recordfield.internalValue forKey:objectField.fieldName];
                 if (objectField.referenceTo != nil) {
                     [fieldNameAndObjectApiName setObject:objectField.referenceTo forKey:objectField.fieldName];
@@ -566,46 +523,32 @@
         }
         else if ([objectField.type isEqualToString:kSfDTDateTime] || [objectField.type isEqualToString:kSfDTDate])
         {
-            if([recordfield.internalValue containsString:kLiteralCurrentRecord] || [recordfield.internalValue containsString:kLiteralCurrentRecordHeader] )
-            {
+            NSString *internalValue = [DateUtil evaluateDateLiteral:recordfield.internalValue  dataType:objectField.type];
+            
+            recordfield.internalValue = internalValue;
+            
+            if ([objectField.type isEqualToString:kSfDTDate]) {
+                if ([recordfield.internalValue length] > 10) {
+                    recordfield.internalValue = [self getDateForValueMapping:recordfield.internalValue];
+                }
+                displayValue = [self getUserReadableDateForValueMapping:internalValue];
             }
             else
             {
-                NSString *internalValue = [DateUtil evaluateDateLiteral:recordfield.internalValue  dataType:objectField.type];
-                
-                if(![StringUtil isStringEmpty:internalValue])
-                {
-                    recordfield.internalValue = internalValue;
-                }
-                else{
-                    internalValue =  recordfield.internalValue;
-                }
-                if ([objectField.type isEqualToString:kSfDTDate])
-                {
-                    
-                    if ([recordfield.internalValue length] > 10) {
-                        recordfield.internalValue = [self getDateForValueMapping:recordfield.internalValue];
-                    }
-                    displayValue = [self getUserReadableDateForValueMapping:internalValue];
-                }
-                else
-                {
-                    displayValue = [self getUserReadableDateTime:internalValue];
-                }
+                displayValue = [self getUserReadableDateTime:internalValue];
             }
             
         }
         else if ([objectField.type isEqualToString:kSfDTBoolean] )
         {
             displayValue = [SFMPageHelper  valueOfLiteral:recordfield.internalValue dataType:objectField.type];
-            if (displayValue) {
-                recordfield.internalValue = displayValue;
-            }
+            recordfield.internalValue = displayValue;
         }
         else
         {
             displayValue = [SFMPageHelper  valueOfLiteral:recordfield.internalValue dataType:@""];
-            if(displayValue == nil) {
+            if(displayValue == nil)
+            {
                 displayValue = recordfield.displayValue;
             }
         }
@@ -638,7 +581,7 @@
     {
         SFProcessComponentModel * componentModel = [processComponents objectForKey:componentId];
         NSDictionary  * valueMapDict =  [sfmPage.process.valueMappingDict objectForKey:componentId];
-        NSArray *valueMapArrayOfFieldLayout = [sfmPage.process.valueMappingArrayInLayoutOrder objectForKey:componentId];
+        
         NSString * objectName = componentModel.objectName;
         if(valueMapDict == nil || [valueMapDict count] <= 0)
         {
@@ -652,34 +595,24 @@
             mappingModel.headerRecord = headerDict;
             mappingModel.currentObjectName = objectName;
             mappingModel.headerObjectName = objectName;
-            [self applyValueMapWithMappingObject:mappingModel withFieldOrder:valueMapArrayOfFieldLayout];
+            [self applyValueMapWithMappingObject:mappingModel];
         }
         
     }
     
 }
 
--(void)applyValueMapWithMappingObject:(ValueMappingModel *)modelObj withFieldOrder:(NSArray *)fieldOrder
+-(void)applyValueMapWithMappingObject:(ValueMappingModel *)modelObj
 {
-    NSArray * fieldNames = fieldOrder;// [modelObj.valueMappingDict allKeys];
+    NSArray * fieldNames = [modelObj.valueMappingDict allKeys];
     for( NSString *fieldName in fieldNames)
     {
         SFMRecordFieldData * recordfield = [modelObj.valueMappingDict objectForKey:fieldName];
-        if(recordfield == nil)
-        {
-            continue;
-        }
         NSString * targetFieldName = recordfield.name;
         NSString * mappingValue =   recordfield.internalValue;
         NSString * displayValue =   recordfield.displayValue;
         
         if ([StringUtil containsString:kLiteralCurrentRecord inString:mappingValue])
-        {
-            SFMRecordFieldData * literalField = [self getDisplayValueForLiteral:mappingValue mappingObject:modelObj];
-            mappingValue = literalField.internalValue;
-            displayValue = literalField.displayValue;
-        }
-        if(([mappingValue caseInsensitiveCompare:kLiteralCurrentUserId] == NSOrderedSame) || ([mappingValue caseInsensitiveCompare:kLiteralCurrentUser] == NSOrderedSame) || ([mappingValue caseInsensitiveCompare:kLiteralOwner] == NSOrderedSame))
         {
             SFMRecordFieldData * literalField = [self getDisplayValueForLiteral:mappingValue mappingObject:modelObj];
             mappingValue = literalField.internalValue;
@@ -942,6 +875,7 @@
         }
     }
 }
+
 - (BOOL)saveDetailRecords:(SFMPage *)sfmPage {
     
     BOOL isDetailChanged = NO;
@@ -1000,8 +934,6 @@
             {
                 //Insert record into object table
                 syncRecord.operation = kModificationTypeInsert;
-                //Defect#026616- Currency from WO to WD.
-                [self updateRecordforCurrencyCode:eachDetailDict andObjectName:processComponent.objectName forSFMPageObject:sfmPage];
                 recordUpdatedSuccessFully = [editHelper insertRecord:eachDetailDict intoObjectName:syncRecord.objectName];
             }
             else{
@@ -1043,14 +975,6 @@
             if (canUpdate) {
                 
                 isDetailChanged = YES;
-                
-                if ([syncRecord.sfId length] < 2) {
-                    id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-                    
-                    NSString *sfID =   [transObjectService getSfIdForLocalId:localIdField.internalValue forObjectName:syncRecord.objectName];
-                    syncRecord.sfId = sfID;
-                }
-
                 /*Insert record into trailer table */
                 if(![modifiedRecords containsObject:localIdField.internalValue] )
                 {
@@ -1064,11 +988,11 @@
                         if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
                              BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localIdField.internalValue];
                             if (!doesExist) {
-                                [modifiedRecordService saveRecordModel:syncRecord];
+                                BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
                             }
                         }
                         else{
-                            [modifiedRecordService saveRecordModel:syncRecord];
+                            BOOL  isRecordInsertionSucces = [modifiedRecordService saveRecordModel:syncRecord];
                         }
                     }
                 }else{
@@ -1247,8 +1171,6 @@
     for (SFObjectMappingComponentModel *model in fieldMappings) {
         
         NSString *fieldValue = nil;
-        NSString *internalValue = @"";
-        
         if (model.sourceFieldName.length < 1) {
             //Check for currentrecord literal
             if ([StringUtil containsString:kLiteralCurrentRecord inString:model.mappingValue]) {
@@ -1257,28 +1179,16 @@
                 }
                 fieldValue = [self getCurrentRecordValue:currentHeaderData targetRecord:recordDcitionary
                                             mappingValue:model.mappingValue];
-                internalValue = fieldValue;
             }
             else {
                 //Checking for literals
                 NSString *type = [fieldinfo objectForKeyedSubscript:model.targetFieldName];
                 NSString *lietralvalue = [self getLiteralValue:model.mappingValue forType:type];
-                
-                
-                
-                
                 if (![StringUtil isStringEmpty:lietralvalue]) {
                     fieldValue = lietralvalue;
                 }
                 else {
                     fieldValue = model.mappingValue;
-                }
-                if([type isEqualToString:@"reference"] && (([model.mappingValue caseInsensitiveCompare:kLiteralCurrentUser] == NSOrderedSame)|| ([model.mappingValue caseInsensitiveCompare:kLiteralCurrentUserId] == NSOrderedSame) || ([model.mappingValue caseInsensitiveCompare:kLiteralOwner] == NSOrderedSame)))
-                {
-                    internalValue = [[CustomerOrgInfo sharedInstance]currentUserId];
-                }
-                else{
-                    internalValue = fieldValue;
                 }
             }
         }
@@ -1286,12 +1196,10 @@
             fieldValue = [sourceDcitionary objectForKey:model.sourceFieldName];
             if ([model.sourceFieldName isEqualToString:kId] && fieldValue.length < 5) {
                 fieldValue =  [sourceDcitionary objectForKey:kLocalId];
-                internalValue = fieldValue;
             }
             if ([fieldValue isKindOfClass:[NSNumber class]]) {
                 NSNumber *number = (NSNumber *)fieldValue;
                 fieldValue = [number stringValue];
-                internalValue = [number stringValue];;
             }
             
             if (fieldValue.length <= 0) {
@@ -1299,7 +1207,6 @@
                     fieldValue = [sourceDcitionary objectForKey:model.preference2];
                     if (fieldValue.length <= 0 && ![StringUtil isStringEmpty:model.preference3]) {
                         fieldValue = [sourceDcitionary objectForKey:model.preference3];
-                        internalValue = fieldValue;
                     }
                 }
             }
@@ -1308,22 +1215,15 @@
             if ([fieldValue isKindOfClass:[NSNumber class]]) {
                 NSNumber *number = (NSNumber *)fieldValue;
                 fieldValue = [number stringValue];
-                internalValue = fieldValue;
             }
             
             SFMRecordFieldData *recordData = [recordDcitionary objectForKey:model.targetFieldName];
             if (recordData == nil) {
-//                recordData = [[SFMRecordFieldData alloc] initWithFieldName:model.targetFieldName value:internalValue andDisplayValue:fieldValue];
-                recordData = [[SFMRecordFieldData alloc] initWithFieldName:model.targetFieldName value:(internalValue.length?internalValue:fieldValue) andDisplayValue:fieldValue]; //Defect #024344 -27/Nov/2015
-
+                recordData = [[SFMRecordFieldData alloc] initWithFieldName:model.targetFieldName value:fieldValue andDisplayValue:fieldValue];
                 [recordDcitionary setObject:recordData forKey:model.targetFieldName];
             }
             else{
                 recordData.internalValue = fieldValue;
-                
-                if ([StringUtil isStringEmpty:model.sourceFieldName] && ([model.mappingValue isEqualToString:kLiteralCurrentUser] || [model.mappingValue isEqualToString:kLiteralCurrentUserId] || [model.mappingValue isEqualToString:kLiteralOwner])) {
-                    recordData.internalValue =  [[CustomerOrgInfo sharedInstance]currentUserId];
-                }
                 
                 NSString *pickListDisplayValue;
                 
@@ -2007,28 +1907,6 @@
 
 #pragma mark - End
 
-/* Defect#026616 */
--(void)updateRecordforCurrencyCode:(NSMutableDictionary *)eachDetailDict andObjectName:(NSString *)objectName forSFMPageObject:(SFMPage *)sfmPage{
-    if ([sfmPage.objectName isEqualToString:kWorkOrderTableName] && [objectName isEqualToString:kWorkOrderDetailTableName] ) {
-        
-        NSString *parentSfId =  [sfmPage  getHeaderSalesForceId];
-        SFMRecordFieldData *parentLocalField=  [sfmPage.headerRecord objectForKey:kLocalId];
-        id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-        /* Check if record exist */
-        DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:parentSfId];
-        DBCriteria * criteria2 = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:parentLocalField.internalValue];
-        TransactionObjectModel * model =  [transObjectService getDataForObject:kWorkOrderTableName fields:@[@"CurrencyIsoCode"] expression:@"(1 OR 2)" criteria:@[criteria1, criteria2]];
-        NSDictionary *fieldDictionary = [model getFieldValueDictionary];
-        NSString *currencyValue = [fieldDictionary objectForKey:@"CurrencyIsoCode"];
-        if (currencyValue != nil) {
-            SFMRecordFieldData *currencyField = [eachDetailDict objectForKey:@"CurrencyIsoCode"];
-            if (currencyField == nil) {
-                currencyField = [[SFMRecordFieldData alloc] initWithFieldName:@"CurrencyIsoCode" value:currencyValue andDisplayValue:currencyValue];
-                [eachDetailDict setObject:currencyField forKey:@"CurrencyIsoCode"];
-            }
-        }
-    }
-}
 
 #pragma makr - Added new recent record
 
@@ -2689,13 +2567,6 @@
     FieldMergeHelper *fieldMergeHelper = [[FieldMergeHelper alloc]init];
     self.dataDictionaryBeforeModification = [NSMutableDictionary dictionaryWithDictionary:[fieldMergeHelper getDataDictionaryBeforeModificationFromTable:objectName withLocalId:recordId fieldNames:[self.dataDictionaryAfterModification allKeys]]];
     
-    if(sfid == nil)
-    {
-        id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-        
-        sfid =   [transObjectService getSfIdForLocalId:recordId forObjectName:objectName];
-    }
-    
     if ((sfid == nil) && (recordId != nil))
     {
         // It is new record whcih is not sync.
@@ -2824,7 +2695,7 @@
     NSDictionary *tempDict = (NSDictionary *)[Utility objectFromJsonString:response];
     NSDictionary *responseDict = [tempDict objectForKey:@"response"];
     
-    NSLog(@"FORMULA RESULT: %@", responseDict);
+//    NSLog(@"FORMULA RESULT: %@", responseDict);
     
     NSArray *allKeys = [responseDict allKeys];
     
@@ -2959,7 +2830,6 @@
     }
 }
 
-
 -(BOOL)isStringDate:(NSString *)value {
     BOOL isDate = NO;
     if (![StringUtil isStringEmpty:value]) {
@@ -2983,7 +2853,7 @@
 -(NSString *)fetchIntervalValueForPicklistInternal:(NSString *)intValue ForFieldName:(NSString *)fieldName andObjectName:(NSString *)objectName {
     
     id <SFPicklistDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
-    
+
     DBCriteria * criteriaObjectName1 = [[DBCriteria alloc] initWithFieldName:kfieldname operatorType:SQLOperatorEqual andFieldValue:fieldName];
     DBCriteria * criteriaObjectName2 = [[DBCriteria alloc] initWithFieldName:kobjectName operatorType:SQLOperatorEqual andFieldValue:objectName];
     DBCriteria * criteriaObjectName3 = [[DBCriteria alloc] initWithFieldName:kvalue operatorType:SQLOperatorEqual andFieldValue:intValue];

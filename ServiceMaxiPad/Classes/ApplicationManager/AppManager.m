@@ -27,7 +27,6 @@
 #import "CustomTabBar.h"
 #import "SMDataPurgeManager.h"
 #import "SyncManager.h"
-#import "UnzipUtility.h"
 
 //#import "PushNotificationWebServiceHelper.h"
 
@@ -212,57 +211,10 @@
     // Load Existing customer org info
     [PlistManager loadCustomerOrgInfo];
     
-    //Load Product IQ resources
-    [self installProductIQResources];
-    
-    //Load SyncError Handle resources
-    [self installMobileUsageResources];
-    
     [self verifyUserAndApplicationStatus];
-
 }
 
--(void)installProductIQResources {
-    NSString *pathToCheck = [FileManager getRootPath];
-    NSString *htmlfilepath = [pathToCheck stringByAppendingPathComponent:@"installigence-index.html"];
-    if(![[NSFileManager defaultManager] fileExistsAtPath:htmlfilepath]) {
-        NSString *filepath = [[NSBundle mainBundle] pathForResource:@"ProductIQ" ofType:@"zip"];
-        [UnzipUtility unzipFileAtPath:filepath toFolder:pathToCheck];
-        NSString *ProductIQPath = [pathToCheck stringByAppendingPathComponent:@"ProductIQ"];
-        NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:ProductIQPath error:nil];
-        for (NSString *file in files) {
-            [[NSFileManager defaultManager] moveItemAtPath:[ProductIQPath stringByAppendingPathComponent:file]
-                        toPath:[pathToCheck stringByAppendingPathComponent:file]
-                         error:nil];
-        }
-        [[NSFileManager defaultManager] removeItemAtPath:ProductIQPath error:nil];
-    }
-    else
-    {
-        NSLog(@"ProductIQ JS exists!");
-    }
-}
 
--(void)installMobileUsageResources {
-    NSString *pathToCheck = [FileManager getRootPath];
-    NSString *htmlfilepath = [pathToCheck stringByAppendingPathComponent:@"usage-index.html"];
-    if(![[NSFileManager defaultManager] fileExistsAtPath:htmlfilepath]) {
-        NSString *filepath = [[NSBundle mainBundle] pathForResource:@"MobileDataUsageFiles" ofType:@"zip"];
-        [UnzipUtility unzipFileAtPath:filepath toFolder:pathToCheck];
-        NSString *resourcesPath = [pathToCheck stringByAppendingPathComponent:@"MobileDataUsageFiles"];
-        NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:resourcesPath error:nil];
-        for (NSString *file in files) {
-            [[NSFileManager defaultManager] moveItemAtPath:[resourcesPath stringByAppendingPathComponent:file]
-                                                    toPath:[pathToCheck stringByAppendingPathComponent:file]
-                                                     error:nil];
-        }
-        [[NSFileManager defaultManager] removeItemAtPath:resourcesPath error:nil];
-    }
-    else
-    {
-        NSLog(@"Mobile USage JS exists!");
-    }
-}
 #pragma mark - User status management
 
 /**
@@ -573,8 +525,6 @@
     {
        // Verify user status
        [self doPostLoggedInUserVerification];
-        
-        [self saveCookies];
     }
     else if (status == ApplicationStatusAuthorizationFailedWithError)
     {
@@ -1116,28 +1066,6 @@
         });
 }
 
-/**
- * @name   saveCookies
- *
- * @author Madhusudhan HK
- *
- * @brief save the cookies in NSUserDefaults.
- *
- * \par
- *  <Longer description starts here>
- *
- *
- * @return void
- *
- */
-
-- (void)saveCookies
-{
-    NSData         *cookiesData = [NSKeyedArchiver archivedDataWithRootObject: [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]];
-    NSUserDefaults *defaults    = [NSUserDefaults standardUserDefaults];
-    [defaults setObject: cookiesData forKey: @"cookies"];
-    [defaults synchronize];
-}
 
 @end
 

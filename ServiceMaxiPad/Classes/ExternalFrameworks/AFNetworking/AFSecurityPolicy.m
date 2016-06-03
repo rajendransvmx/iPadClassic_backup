@@ -205,7 +205,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
 
 + (instancetype)defaultPolicy {
     AFSecurityPolicy *securityPolicy = [[self alloc] init];
-    securityPolicy.SSLPinningMode = AFSSLPinningModeNone;
+    securityPolicy.SSLPinningMode = AFSSLPinningModeNone; 
     
     return securityPolicy;
 }
@@ -225,7 +225,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
         return nil;
     }
 
-    self.validatesCertificateChain = NO;
+    self.validatesCertificateChain = YES;
 
     return self;
 }
@@ -289,7 +289,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
             NSUInteger trustedPublicKeyCount = 0;
             NSArray *publicKeys = AFPublicKeyTrustChainForServerTrust(serverTrust);
             if (!self.validatesCertificateChain && [publicKeys count] > 0) {
-//                publicKeys = @[[publicKeys firstObject]];
+                publicKeys = @[[publicKeys firstObject]];
             }
 
             for (id trustChainPublicKey in publicKeys) {

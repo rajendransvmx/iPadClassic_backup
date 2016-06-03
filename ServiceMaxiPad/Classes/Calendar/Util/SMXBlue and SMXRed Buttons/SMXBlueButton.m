@@ -47,10 +47,6 @@
 @synthesize cLeftButtonBorder;
 @synthesize cBottomButtonBorder;
 @synthesize eventIndex;
-//====== overlapingEvent======
-@synthesize xPosition;
-@synthesize wDivision;
-@synthesize intOverLapWith;
 
 @synthesize eventSubject; //Single Label For All. TODO:Check if the implementation is correct or else remove.
 
@@ -60,12 +56,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        
-        //====== overlapingEvent======
-        self.xPosition = 1;
-        self.wDivision = 1;
-        self.intOverLapWith= -1;
-        
         // Initialization code
         
         [self setBackgroundColor:[UIColor colorWithRed:228.0/255. green:228.0/255. blue:228.0/255. alpha:1.0]];
@@ -387,32 +377,28 @@
     //adding 1 with index, event starting with 0 like normal array
     NSString *dayIndexString = (self.event.isMultidayEvent? [@(self.eventIndex+1) stringValue] : @"");
     NSString *lEventTitle;
-    NSString *lLocation;
+    NSString *lLocation = (self.event.isWorkOrder ? [CalenderHelper getServiceLocation:self.event.whatId]:@"");
+    
     NSString *priorityString = nil;
 
     if (self.event.isWorkOrder) {
         WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:self.event.whatId];
-        lLocation = [CalenderHelper getServiceLocation:self.event.whatId];
-
-        lEventTitle = (model.companyName.length ? model.companyName : self.event.subject);
+        lEventTitle = (model.companyName.length ? model.companyName : self.event.stringCustomerName);
         priorityString = model.priorityString;
         
     } else if (self.event.isCaseEvent){
         
         CaseObjectModel *model = [[SMXCalendarViewController sharedInstance].cCaseDetailsDict objectForKey:self.event.whatId];
         priorityString = model.priorityString;
-        lEventTitle = (self.event.subject?self.event.subject:@"");
+
+         lEventTitle = self.event.stringCustomerName;
 
     }
-    else
-    {
-        lEventTitle = (self.event.subject?self.event.subject:@"");
-
-    }
-    if(self.event.isEventTitleSettingDriven)
-        lEventTitle = self.event.title;
+    else{
+        lEventTitle = self.event.stringCustomerName;
         
-
+    }
+    
     lEventTitle = [lEventTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     if (!lEventTitle) {
         lEventTitle = @"";
@@ -420,26 +406,23 @@
     if (!lLocation) {
         lLocation = @"";
     }
+//    CGRect frame = self.eventName.frame;
+//    //    frame.size.height = [self dynamicHeightOfLabel:self.eventName withWidth:self.eventName.frame.size.width].height;
+//    if (frame.size.height>self.frame.size.height) {
+//        frame.size.height = self.frame.size.height - 5;
+//    }
+//    
     
     NSString *text;
     
     if (self.event.isMultidayEvent) {
         dayIndexString = [NSString stringWithFormat:@"day %@",dayIndexString];
-        if (!self.event.isEventTitleSettingDriven) {
-            
-              text = [NSString stringWithFormat:@"%@\n%@\n%@", dayIndexString, lEventTitle, lLocation];
-        }
-        else
-            text = [NSString stringWithFormat:@"%@\n%@", dayIndexString, lEventTitle];
-
+        text = [NSString stringWithFormat:@"%@\n%@\n%@", dayIndexString, lEventTitle, lLocation];
+        
     }
     else
     {
-        if (!self.event.isEventTitleSettingDriven) {
-            text = [NSString stringWithFormat:@"%@\n%@", lEventTitle, lLocation];
-        }
-        else
-            text = [NSString stringWithFormat:@"%@", lEventTitle];
+        text = [NSString stringWithFormat:@"%@\n%@", lEventTitle, lLocation];
     }
     
     // If attributed text is supported (iOS6+)
@@ -461,26 +444,27 @@
             UIColor *lDayIndexColor = [UIColor whiteColor];
             UIColor *lDayIndexBackgroundColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
             
-            NSRange lDayIndexTextRange = [text rangeOfString:dayIndexString];
+            NSRange lDayIndexTextRange = [text rangeOfString:dayIndexString];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
             [attributedText setAttributes:@{NSForegroundColorAttributeName:lDayIndexColor, NSBackgroundColorAttributeName:lDayIndexBackgroundColor,NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-Medium" size: 16.0]}
                                     range:lDayIndexTextRange];
         }
         
-        if (lEventTitle.length) {
+        if (lEventTitle) {
             // Green text attributes
             UIColor *lEventTitleColor = [UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
-            NSRange lEventTitleTextRange = [text rangeOfString:lEventTitle];
+            NSRange lEventTitleTextRange = [text rangeOfString:lEventTitle];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
             [attributedText setAttributes:@{NSForegroundColorAttributeName:lEventTitleColor}
                                     range:lEventTitleTextRange];
         }
+       
         
-        if (lLocation.length && !self.event.isEventTitleSettingDriven)
+        if (lLocation)
         {
         
         // Purple and bold text attributes
         UIColor *lLocationColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
         UIFont *lLocationFont = [UIFont fontWithName:@"HelveticaNeue-Light" size: 16.0];;
-        NSRange lLocationTextRange = [text rangeOfString:lLocation];
+        NSRange lLocationTextRange = [text rangeOfString:lLocation];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
         [attributedText setAttributes:@{NSForegroundColorAttributeName:lLocationColor,
                                         NSFontAttributeName:lLocationFont}
                                 range:lLocationTextRange];
@@ -492,7 +476,6 @@
     else {
         self.eventName.text = text;
     }
-
     [self setFlagColor:priorityString];
 
 }
@@ -524,23 +507,5 @@
     self.borderView.backgroundColor = borderColor;//[UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
 }
 
--(void)setSubViewFramw
-{
-    /* Here reducing width of the Line, equal to event size */
-    CGRect rect = cTopBorder.frame;
-    rect.size.width = self.frame.size.width;
-    cTopBorder.frame = rect;
-    
-    /* Here reducing width of the label, equal to event size */
-    CGRect rectLabel = eventName.frame;
-    rectLabel.size.width = self.frame.size.width;
-    rectLabel.size.width = self.frame.size.width - eventName.frame.origin.x;
-    eventName.frame = rectLabel;
-    
-    /* For concurrent event, We are not showing the any flag */
-    if (wDivision>1)
-        self.thirdImageView.hidden = YES;
-    else
-        self.thirdImageView.hidden = NO;
-}
+
 @end

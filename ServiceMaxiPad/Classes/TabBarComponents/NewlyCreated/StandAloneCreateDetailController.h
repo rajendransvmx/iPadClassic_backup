@@ -17,6 +17,5 @@ SMSplitViewControllerDelegate,PageEditViewControllerDelegate>
 @property(nonatomic,assign)SMSplitViewController *smSplitViewController;
 @property(nonatomic,strong)NSMutableArray *detailProcessArray;
 @property(nonatomic,strong)SFObjectModel *objectModel;
-@property(nonatomic,assign) BOOL shouldProductIQEnabled;
 - (void)reloaData;
 @end

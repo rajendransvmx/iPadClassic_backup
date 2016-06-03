@@ -30,8 +30,8 @@
 #import "SMAppDelegate.h"
 #import "AlertMessageHandler.h"
 #import "TagManager.h"
-#import "MBProgressHUD.h"
 
+#import "MBProgressHUD.h"
 @interface OAuthLoginViewController ()
 {
     BOOL loadFailedBool;
@@ -124,8 +124,6 @@ NSInteger webViewLoadCounter;
             }
             CGRect viewRect = self.view.bounds;
             viewRect.origin.y = 86; //Space for servicemaxlogo.
-            //defect 23630: As Y position has moved 86px down, we sould reduce height by 86px.
-            viewRect.size.height = viewRect.size.height - viewRect.origin.y;
             self.webview = [[UIWebView alloc]initWithFrame:viewRect];
             self.webview.delegate = self;
             [self.webview setScalesPageToFit:YES];
@@ -317,9 +315,7 @@ NSInteger webViewLoadCounter;
     
 	if (navigationType == UIWebViewNavigationTypeLinkClicked)
 	{
-        // Krishna : Fixed With reference to defect 011758.
-        // Apart from Custom domain lets redirect to mobile safari.
-        // logout.jsp, because 'Not you?' in confirmation page should not redirect to mobile safari
+        
         
         if ([StringUtil containsString:@"forgotpassword.jsp" inString:[request.URL absoluteString]] ) // Defect#025424. Only coded for Forgot Password. Other links will open up in the App itself. Have to be handled as and when they appear in future in Salesforce Login Page.
         {
@@ -330,8 +326,12 @@ NSInteger webViewLoadCounter;
             return NO;
         }
         
-  /*
-        if (![StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]] )
+        /*
+        
+        // Krishna : Fixed With reference to defect 011758.
+        // Apart from Custom domain lets redirect to mobile safari.
+        // logout.jsp, because 'Not you?' in confirmation page should not redirect to mobile safari
+        if (![StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]])
 		{
             //  User in forgot password page, lets redirect to mobile safari
 			[[UIApplication sharedApplication] openURL:request.URL];
@@ -339,7 +339,7 @@ NSInteger webViewLoadCounter;
             
 			return NO;
 		}
-   */
+         */
 	}
     
     if ([[request.URL absoluteString] hasPrefix:kRedirectURL])
@@ -380,9 +380,9 @@ NSInteger webViewLoadCounter;
 	else if ([StringUtil containsString:@"logout.jsp" inString:[request.URL absoluteString]])
 	{
         SXLogDebug(@" OAuth :  logout.jsp");
-//        [webView stopLoading];
         [self reloadAuthorization];
-        return NO;
+        
+        return NO;  //Defect#025424 crashing in iOS9+.
 	}
     else
     {
@@ -421,15 +421,15 @@ NSInteger webViewLoadCounter;
     }
 }
 
--(void)webViewFinishLoadWithCondition
-{
-    //if(webViewLoadCounter==0){
+-(void)webViewFinishLoadWithCondition{
+    
+   // if(webViewLoadCounter==0){
         //We can be safe to treat this as place where everything is loaded.
         if (([[AppManager sharedInstance] applicationStatus] == ApplicationStatusInAuthenticationPage))
         {
             [self removeActivityAndLoadingLabel];
         }
-    //}
+   // }
 }
 
 - (void)viewDidDisappear:(BOOL)animated {

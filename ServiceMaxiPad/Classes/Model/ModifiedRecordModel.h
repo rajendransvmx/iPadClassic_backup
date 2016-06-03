@@ -45,7 +45,6 @@
 @property(nonatomic, strong) NSString *requestId;
 @property(nonatomic, strong) NSString *timeStamp;
 @property(nonatomic, strong) NSString *fieldsModified;
-@property(nonatomic, strong) NSString *Pending;
 
 @property(nonatomic) BOOL cannotSendToServer;
 @property(nonatomic, strong) NSString *jsonRecord;
@@ -55,8 +54,6 @@
 
 - (id)init;
 
-/* data type is creating problem, So in this methos we are checking data type  and taking value from dictionary */
--(void)addValuefromDictionary:(NSDictionary *)dict;
 - (void)explainMe;
 
 @end

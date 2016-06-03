@@ -24,8 +24,6 @@
 -(void)updateModifiedRecord:(ModifiedRecordModel *)model;
 -(void)updateFieldsModifed:(ModifiedRecordModel *)model;
 - (NSString *)fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordId:(NSString*)recordId andSfId:(NSString*)sfId;
-- (ModifiedRecordModel *)fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordIdForProductIQ:(NSString*)recordId
-                                                                                          andSfId:(NSString*)sfId;
 - (BOOL)doesRecordExistForId:(NSString *)recordId andOperationType:(NSString *)operationType;
 - (BOOL)doesRecordExistForId:(NSString *)recordId andOperationType:(NSString *)operationType andparentID:(NSString *)parentID;
 

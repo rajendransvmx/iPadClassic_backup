@@ -127,54 +127,7 @@
         tableName = [[NSString alloc] initWithFormat:@"'%@'.",dbCriteria.tableName];
     }
     else{
-        tableName = [[NSString alloc] initWithFormat:@"'%@'.",self.primaryTable];
-    }
-    
-    if ([dbCriteria.dataType isEqualToString:@"multipicklist"]) {
-        NSString *theRHSValue = nil;
-        if (dbCriteria.operatorType == SQLOperatorIn)
-        {
-            operatorString = (NSString *)kSqlOperatorLike;
-            theRHSValue = [dbCriteria.rhsValues componentsJoinedByString:@";"];
-        }
-        
-        else
-        {
-            operatorString = (NSString *)kSqlOperatorNotLike;
-            theRHSValue = dbCriteria.rhsValue ;
-            
-        }
-        
-        //         (instr(product2.ProdMultipicklist__c, ';New;') > 0 OR instr(ProdMultipicklist__c, 'New;') > 0  OR instr(ProdMultipicklist__c, ';New') > 0 OR ProdMultipicklist__c = 'New')
-        
-        NSString *criteria = nil;
-        if (theRHSValue.length) {
-            if(dbCriteria.operatorType == SQLOperatorIn)
-            {
-                NSString *firstCondition = [NSString stringWithFormat:@"instr(%@%@, ';%@;') > 0",tableName,dbCriteria.lhsValue,theRHSValue];
-                NSString *secondCondition = [NSString stringWithFormat:@"instr(%@%@, '%@;') > 0",tableName,dbCriteria.lhsValue,theRHSValue];
-                NSString *thirdCondition = [NSString stringWithFormat:@"instr(%@%@, ';%@') > 0",tableName,dbCriteria.lhsValue,theRHSValue];
-                NSString *fourthCondition = [NSString stringWithFormat:@"%@%@='%@'",tableName,dbCriteria.lhsValue,theRHSValue];
-                
-                criteria = [[NSString alloc] initWithFormat:@" (%@ OR %@ OR %@ OR %@)",firstCondition, secondCondition, thirdCondition, fourthCondition];
-                
-            }
-            else{
-                NSString *firstCondition = [NSString stringWithFormat:@"instr(%@%@, ';%@;') = 0",tableName,dbCriteria.lhsValue,theRHSValue];
-                NSString *secondCondition = [NSString stringWithFormat:@"instr(%@%@, '%@;') = 0",tableName,dbCriteria.lhsValue,theRHSValue];
-                NSString *thirdCondition = [NSString stringWithFormat:@"instr(%@%@, ';%@') = 0",tableName,dbCriteria.lhsValue,theRHSValue];
-                NSString *fourthCondition = [NSString stringWithFormat:@"%@%@!='%@'",tableName,dbCriteria.lhsValue,theRHSValue];
-                
-                criteria = [[NSString alloc] initWithFormat:@" (%@ AND %@ AND %@ AND %@)",firstCondition, secondCondition, thirdCondition, fourthCondition];
-            }
-        }
-        else
-        {
-            criteria = [[NSString alloc] initWithFormat:@"(%@%@ IS NULL OR trim(%@%@) = '')",tableName,dbCriteria.lhsValue,tableName,dbCriteria.lhsValue];
-            
-          //  criteria = [[NSString alloc] initWithFormat:@"(trim(%@%@) = '')",tableName,dbCriteria.lhsValue];
-        }
-        return criteria;
+         tableName = [[NSString alloc] initWithFormat:@"'%@'.",self.primaryTable];
     }
     
     NSString *combinedQuery = [self getCombinedDbCriteria:dbCriteria];
@@ -196,88 +149,83 @@
             if (combinedQuery != nil) {
                 criteria = [[NSString alloc] initWithFormat:@"( %@ %@ )",criteria,combinedQuery];
             }
-            return criteria;
+             return criteria;
         }
     }
     
     
     
-    switch (dbCriteria.operatorType) {
-            
-        case SQLOperatorIsNull:
-        {
-            criteria = [[NSString alloc] initWithFormat:@" (%@%@ IS NULL OR trim(%@%@) = '')",tableName,dbCriteria.lhsValue,tableName,dbCriteria.lhsValue];
-        }
-            break;
-        case SQLOperatorIsNotNull:
-        {
-            criteria = [[NSString alloc] initWithFormat:@" (%@%@ IS NOT NULL AND trim(%@%@) != '')",tableName,dbCriteria.lhsValue,tableName,dbCriteria.lhsValue];
-        }
-            break;
-            
-        case SQLOperatorNotLikeWithIsNull:
-            criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@%%'  OR %@%@ IS NULL OR trim(%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,tableName,dbCriteria.lhsValue,dbCriteria.lhsValue];
-            break;
-        case SQLOperatorNotEqualWithIsNull:
-            criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@' %@  OR %@%@ IS NULL OR trim(%@%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,collateNocase,tableName,dbCriteria.lhsValue,tableName, dbCriteria.lhsValue];
-            break;
-        case SQLOperatorLike:
-        case SQLOperatorNotLike:
-        {
-            criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@%%' )",tableName,dbCriteria.lhsValue,operatorString,rhsValue];
-        }
-            break;
-        case SQLOperatorStartsWith:
-        {
-            criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@%%' )",tableName,dbCriteria.lhsValue,operatorString,rhsValue];
-        }
-            break;
-        case SQLOperatorEndsWith:
-        {
-            criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@' )",tableName,dbCriteria.lhsValue,operatorString,rhsValue];
-        }
-            break;
-        case SQLOperatorBetween:
-        {
-            NSString *value1 = nil,*value2 = nil;
-            if ([dbCriteria.rhsValues count] > 0) {
-                value1 = [dbCriteria.rhsValues objectAtIndex:0];
-                value1 = [value1 stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-            }
-            if ([dbCriteria.rhsValues count] > 1) {
-                value2 = [dbCriteria.rhsValues objectAtIndex:1];
-                value2 = [value2 stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
-            }
-            
-            criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@' AND '%@' )",tableName,dbCriteria.lhsValue,operatorString,value1,value2];
-        }
-            break;
-        case SQLOperatorIn:
-        case SQLOperatorNotIn:
-        {
-            
-            NSString *valuesString =  nil;
-            if ([dbCriteria.rhsValues count] > 0) {
-                valuesString =  [StringUtil getConcatenatedStringFromArray:dbCriteria.rhsValues withSingleQuotesAndBraces:YES];
-            }
-            else{
-                valuesString = @"()";
-            }
-            
-            criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ %@ %@ )",tableName,dbCriteria.lhsValue,collateNocase,operatorString,valuesString];
-            break;
-        }
-        default:
-        {
-            if (rhsValue.length) {
-                
-                criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@' %@)",tableName,dbCriteria.lhsValue,operatorString,rhsValue,collateNocase];
-            }
-            else{
-                criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@%%'  OR %@%@ IS NULL OR trim(%@%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,tableName,dbCriteria.lhsValue,tableName,dbCriteria.lhsValue];
-            }
-        }
-    }
+     switch (dbCriteria.operatorType) {
+             
+         case SQLOperatorIsNull:
+         {
+             criteria = [[NSString alloc] initWithFormat:@" (%@%@ IS NULL OR trim(%@) = '')",tableName,dbCriteria.lhsValue,dbCriteria.lhsValue];
+         }
+             break;
+         case SQLOperatorIsNotNull:
+         {
+             criteria = [[NSString alloc] initWithFormat:@" (%@%@ IS NOT NULL AND trim(%@) != '')",tableName,dbCriteria.lhsValue,dbCriteria.lhsValue];
+         }
+         break;
+           
+         case SQLOperatorNotLikeWithIsNull:
+        criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@%%'  OR %@%@ IS NULL OR trim(%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,tableName,dbCriteria.lhsValue,dbCriteria.lhsValue];
+        break;
+         case SQLOperatorNotEqualWithIsNull:
+             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@' %@  OR %@%@ IS NULL OR trim(%@) = '')",tableName,dbCriteria.lhsValue,operatorString,rhsValue,collateNocase,tableName,dbCriteria.lhsValue,dbCriteria.lhsValue];
+        break;
+         case SQLOperatorLike:
+         case SQLOperatorNotLike:
+         {
+             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@%%' )",tableName,dbCriteria.lhsValue,operatorString,rhsValue];
+         }
+             break;
+         case SQLOperatorStartsWith:
+         {
+             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@%%' )",tableName,dbCriteria.lhsValue,operatorString,rhsValue];
+         }
+             break;
+         case SQLOperatorEndsWith:
+         {
+             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%%%@' )",tableName,dbCriteria.lhsValue,operatorString,rhsValue];
+         }
+         break;
+         case SQLOperatorBetween:
+         {
+             NSString *value1 = nil,*value2 = nil;
+             if ([dbCriteria.rhsValues count] > 0) {
+                 value1 = [dbCriteria.rhsValues objectAtIndex:0];
+                 value1 = [value1 stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+             }
+             if ([dbCriteria.rhsValues count] > 1) {
+                 value2 = [dbCriteria.rhsValues objectAtIndex:1];
+                 value2 = [value2 stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+             }
+             
+             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@' AND '%@' )",tableName,dbCriteria.lhsValue,operatorString,value1,value2];
+         }
+             break;
+         case SQLOperatorIn:
+         case SQLOperatorNotIn:
+         {
+             
+             NSString *valuesString =  nil;
+             if ([dbCriteria.rhsValues count] > 0) {
+                 valuesString =  [StringUtil getConcatenatedStringFromArray:dbCriteria.rhsValues withSingleQuotesAndBraces:YES];
+             }
+             else{
+                 valuesString = @"()";
+             }
+           
+             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ %@ %@ )",tableName,dbCriteria.lhsValue,collateNocase,operatorString,valuesString];
+             break;
+         }
+         default:
+         {
+             
+             criteria = [[NSString alloc] initWithFormat:@" ( %@%@ %@ '%@' %@)",tableName,dbCriteria.lhsValue,operatorString,rhsValue,collateNocase];
+         }
+     }
     
     if (combinedQuery != nil) {
         criteria = [[NSString alloc] initWithFormat:@"( %@ %@ )",criteria,combinedQuery];

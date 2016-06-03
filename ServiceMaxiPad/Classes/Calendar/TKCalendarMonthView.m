@@ -1174,14 +1174,15 @@ static UIImage *imageCircleOrange;
 
 -(NSDate *)returnMiddleDay:(NSDate *)date
 {
-    NSCalendar * calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    unsigned unitFlags = NSCalendarUnitYear | NSCalendarUnitMonth;
+    NSCalendar * calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    unsigned unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit;
     NSDateComponents *comps = [calendar components:unitFlags fromDate:date];
     
     [comps setDay:15];
 
     
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSCalendar *gregorian = [[NSCalendar alloc]
+                             initWithCalendarIdentifier:NSGregorianCalendar];
     return [gregorian dateFromComponents:comps];
     
 }

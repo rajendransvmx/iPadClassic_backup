@@ -10,7 +10,7 @@
 #import "UnzipUtility.h"
 
 static NSString *const kRootDirectoryName = ORG_NAME_SPACE;
-static NSString *const kCoreLibraryDirectoryName = @"modules";
+static NSString *const kCoreLibraryDirectoryName = @"CoreLib";
 
 //PA
 static NSString *const kPerforamanceLogDirectoryName = @"PerformanceLog";
@@ -260,7 +260,7 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
     if(array.count)
     {
         pathToCheck = [pathToCheck stringByAppendingPathComponent:array[0]];
-        if (![UnzipUtility isAppWithSameVersion:@"SVMXappVersion"])
+        if(![[NSFileManager defaultManager] fileExistsAtPath:pathToCheck]) // If core library already exists then DONOT unzip
         {
             [UnzipUtility unzipBundledStaticResourceAtPath:[FileManager getCoreLibSubDirectoryPath]];
         }

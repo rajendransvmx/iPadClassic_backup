@@ -171,13 +171,6 @@
              @"UserImages",
              @"ChatterPostDetail",
              @"ProductImageData",
-             @"RecordName",
-             @"Translations",
-             @"FieldDescribe",
-             @"ObjectDescribe",
-             @"Configuration",
-             @"InstallBaseObject",
-             @"ClientSyncLogTransient",
              ];
 }
 

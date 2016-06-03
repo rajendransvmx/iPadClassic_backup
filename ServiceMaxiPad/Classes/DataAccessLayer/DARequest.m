@@ -27,7 +27,7 @@
         
         /* Parse the dictionary */
         self.objectName = [dataDictionary objectForKey:kDAObjectName];
-        
+      
         NSArray *fields = [dataDictionary objectForKey:kDAFieldNameArray];
         if ([fields isKindOfClass:[NSArray class]] && [fields count ] > 0) {
             self.fieldsArray = fields;
@@ -58,7 +58,7 @@
         if (![Utility isStringEmpty:innerJoin]) {
             self.innerJoin = innerJoin;
         }
-        
+
     }
     return self;
 }
@@ -89,7 +89,7 @@
     NSDictionary *response = [self.responseObject dictionaryRepresenation];
     if (response != nil) {
         [finalDictionary setObject:response forKey:kDAResponse];
-        
+
     }
     return finalDictionary;
 }

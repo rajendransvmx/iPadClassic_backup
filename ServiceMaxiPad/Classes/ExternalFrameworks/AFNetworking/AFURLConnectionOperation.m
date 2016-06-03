@@ -188,7 +188,7 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
 
     self.state = AFOperationReadyState;
 
-    self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    self.securityPolicy = [AFSecurityPolicy defaultPolicy];
 
     return self;
 }

@@ -444,10 +444,10 @@
     if (event.isWorkOrder) {
         WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:event.whatId];
         
-        eventSubject = (model.companyName.length ? model.companyName : (event.subject?event.subject:@""));
+        eventSubject = (model.companyName.length ? model.companyName : event.stringCustomerName);
     }
     else{
-        eventSubject = (event.subject?event.subject:@"");
+        eventSubject = event.stringCustomerName;
         
     }
 
@@ -1091,7 +1091,7 @@
     [lNon_WOBGView addSubview:lEventNameTitleLabel];
     
     EditMenuLabel *lEventNameValueLabel= [[EditMenuLabel alloc] initWithFrame:CGRectMake(lEventLabel.frame.origin.x, lEventNameTitleLabel.frame.origin.y + lEventNameTitleLabel.frame.size.height, lNon_WOBGView.frame.size.width - 65, 20)];
-    lEventNameValueLabel.text = (event.subject?event.subject:@"");
+    lEventNameValueLabel.text = event.stringCustomerName;
 
     lEventNameValueLabel.font = [UIFont fontWithName:FONT_HELVETICANUE size:16.0];
     lEventNameValueLabel.textColor = LABEL_VALUE_COLOR;
