@@ -38,7 +38,7 @@
  
  * @return instance of DBRequestSelect
  *
- */
+*/
 - (id)initWithTableName:(NSString *)tableName;
 
 
@@ -61,7 +61,7 @@
  *
  */
 - (id)initWithTableName:(NSString *)tableName
-         whereCriterias:(NSArray *)criteriaArray
+          whereCriterias:(NSArray *)criteriaArray
    andAdvanceExpression:(NSString *)advanceExpression;
 
 
@@ -76,7 +76,7 @@
  */
 - (id)initWithTableName:(NSString *)tableName
           andFieldNames:(NSArray *)fieldNames
-         whereCriterias:(NSArray *)criteriaArray
+          whereCriterias:(NSArray *)criteriaArray
    andAdvanceExpression:(NSString *)advanceExpression;
 
 /**
@@ -90,7 +90,7 @@
  */
 - (id)initWithTableName:(NSString *)tableName
         andFieldObjects:(NSArray *)fieldObjects
-         whereCriterias:(NSArray *)criteriaArray
+          whereCriterias:(NSArray *)criteriaArray
    andAdvanceExpression:(NSString *)advanceExpression;
 
 
@@ -105,9 +105,9 @@
  *
  */
 - (id)initWithTableName:(NSString *)tableName
-      aggregateFunction:(SQLAggregateFunction)newAggregateFunction
-         whereCriterias:(NSArray *)criteriaArray
-   andAdvanceExpression:(NSString *)advanceExpression;
+              aggregateFunction:(SQLAggregateFunction)newAggregateFunction
+                 whereCriterias:(NSArray *)criteriaArray
+           andAdvanceExpression:(NSString *)advanceExpression;
 
 
 /**
@@ -135,7 +135,7 @@ andAdvanceExpression:(NSString *)advanceExpression;
  */
 - (id)initWithTableName:(NSString *)tableName
           andFieldNames:(NSArray *)fieldNames
-          whereCriteria:(DBCriteria *)criteria;
+         whereCriteria:(DBCriteria *)criteria;
 
 
 /**
@@ -147,7 +147,7 @@ andAdvanceExpression:(NSString *)advanceExpression;
 
 /**
  * @brief If this function is called ,DISTINCT clause get applied on the specified field for select quieries
- * @param distinctField    field on which DISTINCT clause is used like SELECT DISTINCT Id
+  * @param distinctField    field on which DISTINCT clause is used like SELECT DISTINCT Id
  * @return None.
  *
  */

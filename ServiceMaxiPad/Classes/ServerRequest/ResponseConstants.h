@@ -227,7 +227,6 @@ extern NSString *const kNSComponentSearchFieldType;
 extern NSString *const kNSComponentFieldDataType;
 extern NSString *const kNSComponentFieldRelation;
 extern NSString *const kNSComponentSequence;
-extern NSString *const kNSCompoentKeyNameField;
 
 /* SFM_SEARCH_DETAILS */
 extern NSString *const kSearchDetailSFID;
@@ -411,4 +410,3 @@ extern NSInteger const kOBJdefnLimit;
 extern NSString *const kOBJdefList;
 
 extern NSString *const kMobileSettingsGetPrice;
-

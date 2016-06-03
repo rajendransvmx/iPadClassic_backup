@@ -65,22 +65,8 @@
 - (void)eventOccured:(NSString *)eventName andParameter:(NSString *)jsonParameterString {
     
     if ([eventName isEqualToString:kfieldUpdateRuleResult]) {
-        //HS Fix:021298
-        NSDictionary *tempDict = (NSDictionary *)[Utility objectFromJsonString:jsonParameterString];
-        NSArray *warningArray = [tempDict objectForKey:@"warnings"];
-        //HS Fix:021298 ends here
         if ([self.delegate respondsToSelector:@selector(refreshSFMPageWithFieldUpdateRuleResults:forEvent:)]) {
             [self.delegate refreshSFMPageWithFieldUpdateRuleResults:jsonParameterString forEvent:self.eventType];
-            //HS Fix:021298
-            if ([warningArray count]!=0)
-            {
-                NSDictionary *warningDict = [warningArray objectAtIndex:0];
-                NSString *warningMsg = [warningDict objectForKey:@"message"];
-                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"ServiceMax" message:warningMsg delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-                [alert show];
-            }
-            //HS ends here
-            
         }
     }
 }

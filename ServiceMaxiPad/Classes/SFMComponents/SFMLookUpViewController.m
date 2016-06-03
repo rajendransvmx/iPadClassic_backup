@@ -16,14 +16,6 @@
 #import "SFMLookUpFilterViewController.h"
 #import "StringUtil.h"
 #import "PushNotificationHeaders.h"
-#import "SFMOnlineLookUpManager.h"
-#import "AlertMessageHandler.h"
-#import "CacheManager.h"
-#import "TransactionObjectModel.h"
-#import "CacheConstants.h"
-#import "StringUtil.h"
-
-#import "PageEditChildListViewController.h"
 
 @interface SFMLookUpViewController () <LookUpFilterDelegate>
 @property (nonatomic, strong) SFMPageLookUpHelper * lookUpHelper;
@@ -32,8 +24,7 @@
 @property (nonatomic, strong) NSMutableArray *selectedRecords;
 @property (nonatomic, strong) UIPopoverController * popOverController;
 @property (nonatomic, strong)  BarCodeScannerUtility *barcodeScannerUtil;
-@property (nonatomic, strong) SFMOnlineLookUpManager *manager;
-@property (nonatomic, assign) BOOL isOnlineLookUpSelected;
+
 @end
 
 @implementation SFMLookUpViewController
@@ -51,12 +42,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-//    [self.filterButton setTitle:[[TagManager sharedInstance]tagByName:kTag_Filters] forState:UIControlStateNormal];
-
-    [self setUpIncludeOnlineButton];
-    [self setUpSearchButton];
-    [self setUpFilterButton];
-    
+    [self.filterButton setTitle:[[TagManager sharedInstance]tagByName:kTag_Filters] forState:UIControlStateNormal];
     self.lookUpHelper   = [[SFMPageLookUpHelper alloc] init];
     self.lookUpHelper.viewControllerdelegate = self;
     self.lookUpObject   = [[SFMLookUp alloc] init];
@@ -81,52 +67,10 @@
     [self noRecordsToDisplay];
     [self setGestureForBarcode];
     
-    [self configureFilterButton];
+    [self configureFilterBuuton];
     [self setSearchBarBackGround];
     [self registerForPopOverDismissNotification];
 }
-
--(void)setUpIncludeOnlineButton
-{
-    
-    self.isOnlineLookUpSelected = NO; // Default: Online not included in search
-    
-    UIImage *checkboxImage = [UIImage imageNamed:@"checkbox-unselected.png"];
-    [self.includeOnlineButton setImage:checkboxImage  forState:UIControlStateNormal];
-    [self.includeOnlineButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
-    
-    NSString *includeOnlineTitle = [[TagManager sharedInstance]tagByName:kTag_IncludeOnline];
-    if (!includeOnlineTitle) {
-        includeOnlineTitle = @"include online";
-    }
-    [self.includeOnlineButton setTitle:includeOnlineTitle forState:UIControlStateNormal];
-    
-    CGFloat spacing = 5; // the amount of spacing to appear between image and title
-    self.includeOnlineButton.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, spacing);
-    self.includeOnlineButton.titleEdgeInsets = UIEdgeInsetsMake(0, spacing, 0, 0);
-    
-}
-
--(void)setUpFilterButton
-{
-//    [self.filterButton setTitle:@"Add/Edit Filters" forState:UIControlStateNormal];
-
-    NSString *addEditFilters = [[TagManager sharedInstance]tagByName:kTag_AddEditFilters];
-    if (!addEditFilters) {
-        addEditFilters = @"Add/Edit Filters";
-    }
-    [self.filterButton setTitle:addEditFilters forState:UIControlStateNormal];
-    [self.filterButton setTitleEdgeInsets:UIEdgeInsetsMake(-5.0, 0.0, 0.0, 0.0)];
-}
-
--(void)setUpSearchButton
-{
-    [self.searchButton.layer setBorderColor:[[UIColor colorWithHexString:@"#FF6633"] CGColor]];
-    [self.searchButton.layer setBorderWidth:1.0];
-    [self.searchButton setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
-    [self.searchButton setTitle:[[TagManager sharedInstance]tagByName:kTagSfmLookUpSearch] forState:UIControlStateNormal];
-}
-
 -(BOOL)isValidContextString:(NSString *)contextString {
     
     contextString = [contextString lowercaseString];
@@ -164,6 +108,7 @@
 
 - (void)setUpSearchBar
 {
+    [self.searchView becomeFirstResponder];
     self.searchView.delegate = self;
     self.SerachObjectName.text = self.lookUpObject.serachName;
 }
@@ -182,7 +127,7 @@
         self.barcodeScannerUtil = [[BarCodeScannerUtility alloc] init];
         self.barcodeScannerUtil.scannerDelegate = self;
     }
-    [ self.barcodeScannerUtil loadScannerOnViewController:self forModalPresentationStyle:UIModalPresentationOverCurrentContext];
+    [ self.barcodeScannerUtil loadScannerOnViewController:self];
 }
 
 -(void)noRecordsToDisplay
@@ -191,20 +136,13 @@
       if([self.lookUpObject.dataArray count] == 0 )
       {
           self.tableView.hidden = YES;
-          
-          NSString *clickToaddSingleLine = [[TagManager sharedInstance]tagByName:kTag_AddSingleLine];
-          if (!clickToaddSingleLine) {
-              clickToaddSingleLine = @"Click here to add a single line";
-          }
-          [self.singleAddButton setTitle:clickToaddSingleLine forState:UIControlStateNormal];
+          [self.singleAddButton setTitle:@"Click here to add a single line" forState:UIControlStateNormal];
           self.singleAddButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
       }
       else
       {
           self.singleAddButton.hidden= YES;//
-          self.tableView.hidden = NO;
-
       }
     }
 }
@@ -217,9 +155,9 @@
                                                object:nil];
 }
 
-- (void)configureFilterButton
+- (void)configureFilterBuuton
 {
-    if (self.selectionMode == singleSelectionMode || self.selectionMode == multiSelectionMode) {
+    if (self.selectionMode == singleSelectionMode) {
         if ([self.lookUpObject.advanceFilters count] > 0  || (self.lookUpObject.contextLookupFilter.lookupContext != nil && ![self.lookUpObject.contextLookupFilter.lookupContext isEqualToString:@""] && self.lookUpObject.contextLookupFilter.allowOverride)) {
             self.filterButton.userInteractionEnabled = YES;
         }
@@ -258,13 +196,7 @@
 
 -(NSString *)getLookUpTitleLabel
 {  NSString * objectLabel = [ self.lookUpHelper getObjectLabel:self.objectName];
-    
-    NSString *lookUpTag = [[TagManager sharedInstance] tagByName:kTag_LookUpTitle];
-    
-    if(!lookUpTag) {
-        lookUpTag = @"Lookup";
-    }
-    
+    NSString *lookUpTag = @"Lookup";
     NSString * titleStr = nil;
     if([objectLabel length] > 0 ){
        titleStr = [[NSString alloc] initWithFormat:@"%@ %@",objectLabel,lookUpTag];
@@ -303,8 +235,6 @@
 - (void)dealloc {
     _barcodeScannerUtil.scannerDelegate = nil;
     _barcodeScannerUtil = nil;
-    self.isOnlineLookUpSelected = NO;
-
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillHideNotification
                                                   object:nil];
@@ -335,14 +265,6 @@
     subView.backgroundColor = [UIColor whiteColor];
     headerView.contentView.backgroundColor  = [UIColor whiteColor];
     return headerView;
-}
-
-//TODO:Testing Online LookUP.
--(void)launchOnlineAPI
-{
-    self.manager = [[SFMOnlineLookUpManager alloc] init];
-    self.manager.delegate = self;
-    [self.manager performOnlineLookUpWithLookUpObject:self.lookUpObject andSearchText:self.searchView.text];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -513,19 +435,10 @@
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
-    /*
     self.lookUpObject.searchString = searchBar.text;
     [self loadLookUpData];
     [self.tableView reloadData];
 
-    [searchBar resignFirstResponder];
-    */
-    
-//    self.lookUpObject.searchString = searchBar.text;
-    [self searchButtonActionMethod:nil];
-    //    [self loadLookUpData];
-    //    [self.tableView reloadData];
-    
     [searchBar resignFirstResponder];
 }
 
@@ -533,21 +446,14 @@
 {
     self.lookUpObject.searchString = nil;
     [self loadLookUpData];
-    [self removePreviouslySelectedData];
     [self.tableView reloadData];
     [searchBar resignFirstResponder];
     
 }
 
--(void)removePreviouslySelectedData
-{
-    [self.selectedRecords removeAllObjects];
-}
-
 -(NSString *)getTitleForIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
     NSString * defaultColumnName = self.lookUpObject.defaultColoumnName;
-    
     SFMRecordFieldData *recordField  = [dictionary objectForKey:defaultColumnName];
     return     recordField.displayValue;
 }
@@ -585,8 +491,6 @@
             recordField.name = self.callerFieldName;
         }
         
-        [self addOnlineRecordToObjectNameFieldValueForSingleSelectionMode];
-        
         [self.delegate valuesForField:self.selectedRecords forIndexPath:self.indexPath selectionMode:self.selectionMode];
     }
     [self dismissLookUpForm];
@@ -605,47 +509,10 @@
     }];
 }
 
-- (void)addOnlineRecordToObjectNameFieldValueForSingleSelectionMode {
-    
-    @autoreleasepool {
-        NSMutableDictionary *onlineRecords = [[CacheManager sharedInstance] getCachedObjectByKey:kObjectNameFieldValueCacheData];
-        
-        if (onlineRecords == nil) {
-            onlineRecords = [[NSMutableDictionary alloc] initWithCapacity:0];
-        }
-        
-        NSArray *allKeys = [onlineRecords allKeys];
-        
-        for(SFMRecordFieldData *recordField in self.selectedRecords) {
-            
-            if (![allKeys containsObject:recordField.internalValue] && [SFMLookUpViewController isOnlineRecord:recordField]) {
-                NSMutableDictionary *currentDictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
-                [currentDictionary setValue:recordField.internalValue forKey:@"Id"];
-                [currentDictionary setValue:recordField.displayValue forKey:@"Value"];
-                TransactionObjectModel *model = [[TransactionObjectModel alloc] init];
-                [model mergeFieldValueDictionaryForFields:currentDictionary];
-                
-                [onlineRecords setObject:model forKey:recordField.internalValue];
-            }
-        }
-        
-        [[CacheManager sharedInstance] pushToCache:onlineRecords byKey:kObjectNameFieldValueCacheData];
-    }
-}
-
 -(BOOL)isSelectedAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
- //   SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"Id"];
-//    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"localId"];
-//    
-//    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:selectedIndexPath];
-//    if (isOnlineRecord == YES) {
-//        selectedIndexPath = [dictionary objectForKey:@"Id"];
-//    }
-    
-    /*  this change for record-Id or record-localId */
-    SFMRecordFieldData * selectedIndexPath = [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
+    SFMRecordFieldData * selectedIndexPath = [dictionary objectForKey:@"Id"];
 
     for (int counter = 0; counter < [self.selectedRecords count]; counter ++)
     {
@@ -662,16 +529,7 @@
 -(void)addRecordfieldForIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
-//    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
-//    SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
-//    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
-//    
-//    if (isOnlineRecord == YES) {
-//        recordField = [dictionary objectForKey:@"Id"];
-//    }
-    
-    /*  this change for record-Id or record-localId */
-    SFMRecordFieldData * recordField = [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
+    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
     [self.selectedRecords addObject:recordField];
 }
 
@@ -682,17 +540,7 @@
     for (int counter = 0; counter < [self.lookUpObject.dataArray count]; counter ++)
     {
         NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:counter];
-////        SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
-//        SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
-//        BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
-//        
-//        if (isOnlineRecord == YES) {
-//            recordField = [dictionary objectForKey:@"Id"];
-//        }
-        
-        
-        /*  this change for record-Id or record-localId */
-        SFMRecordFieldData * recordField = [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
+        SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
          if([recordField.internalValue isEqualToString:fieldData.internalValue])
          {
              indexPath =[NSIndexPath indexPathForRow:counter inSection:0];
@@ -704,19 +552,8 @@
 -( SFMRecordFieldData *)getRecordFieldForIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary * dictionary = [self.lookUpObject.dataArray  objectAtIndex:indexPath.row];
-    
-//    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
-    /*
-    SFMRecordFieldData * recordField = [dictionary objectForKey:@"localId"];
-    BOOL isOnlineRecord = [SFMLookUpViewController isOnlineRecord:recordField];
-    
-    if (isOnlineRecord == YES) {
-        recordField = [dictionary objectForKey:@"Id"];
-    }
-     */
-    
-    /*  this change for record-Id or record-localId */
-    return [SFMLookUpViewController getSfIdOrLocalIdOfTheRecord:dictionary];
+    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
+    return recordField;
 }
 -( SFMRecordFieldData *)getNameFieldForIndexPath:(NSIndexPath *)indexPath
 {
@@ -725,6 +562,9 @@
     if(self.lookUpObject.defaultColoumnName != nil){
         recordField = [dictionary objectForKey:self.lookUpObject.defaultColoumnName];
     }
+    
+    // defect- 23783
+
     if ([StringUtil isStringEmpty:recordField.displayValue] && self.lookUpObject.defaultObjectColumnName != nil ) {
         recordField = [dictionary objectForKey:self.lookUpObject.defaultObjectColumnName];
     }
@@ -780,25 +620,10 @@
     
 }
 
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText;   // called when text changes (including clear)
-{
-    if (!self.isOnlineLookUpSelected) {
-        [self searchButtonActionMethod:nil];
-    }
-}
-
 - (BOOL)disablesAutomaticKeyboardDismissal {
     return NO;
 }
 
-+ (BOOL)isOnlineRecord:(SFMRecordFieldData*)recordFieldData
-{
-    if (recordFieldData.internalValue.length > 30) {
-        return NO;
-    } else {
-        return YES;
-    }
-}
 #pragma mark - Keyboard notification method
 - (void)keyboardWillHideNotificationReceived:(NSNotification *)sender
 {
@@ -833,7 +658,6 @@
     self.searchView.text = decodedData;
     self.lookUpObject.searchString = decodedData;
     [self loadLookUpData];
-//    [self removePreviouslySelectedData];
     [self.tableView reloadData];
 }
 - (void) barcodeCaptureCancelled
@@ -854,7 +678,7 @@
         self.lookUpObject.preFilters = preFilters;
     }
     
-    if (self.selectionMode == singleSelectionMode || self.selectionMode == multiSelectionMode) {
+    if (self.selectionMode == singleSelectionMode) {
         NSArray *advnaceFilter = [self getAdvanceFilterInfo];
         if (advnaceFilter != nil) {
             self.lookUpObject.advanceFilters = advnaceFilter;
@@ -893,19 +717,6 @@
     
     return [self.delegate filterCriteriaForContextFilter:fieldName forHeaderObject:headerValue];
 }
--(id)getValueForContextFilterThroughDelegateForfieldName:(NSString *)fieldName forHeaderObject:(NSString *)headerValue{
-    return [self.delegate filterCriteriaForContextFilter:fieldName forHeaderObject:headerValue];
-}
-
--(id)getLiteralValueThroughDelegateForLiteral:(NSString *)literal;
-{
-//   Commenting due to re-opening of 026110
-// if ([self.delegate isKindOfClass:[PageEditChildListViewController class]])
-//        return [self.delegate getInternalValueForLiteralForLookUp:literal];
-//    else
-        return [self.delegate getInternalValueForLiteral:literal];
-}
-
 - (void)applyFilterChanges:(NSArray *)advanceFilter
 {
     [self dismissPoPover];
@@ -920,13 +731,8 @@
     self.lookUpObject.contextLookupFilter = [advanceFilter firstObject];
     self.lookUpObject.advanceFilters = advanceFilter;
     
-    if (!self.isOnlineLookUpSelected) {
-        
-        [self loadLookUpData];
-        [self removePreviouslySelectedData];
-        [self.tableView reloadData];
-        [self noRecordsToDisplay];
-    }
+    [self loadLookUpData];
+    [self.tableView reloadData];
 
 }
 #pragma mark - End
@@ -939,8 +745,6 @@
     self.searchView.layer.borderWidth = 1;
     [[NSClassFromString(@"UISearchBarTextField") appearanceWhenContainedIn:[UISearchBar class], nil] setBorderStyle:UITextBorderStyleNone];
     self.searchView.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
-    
-
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
@@ -977,97 +781,7 @@
     }
 }
 
-- (IBAction)includeOnlineActionMethod:(id)sender {
-    
-    if (self.isOnlineLookUpSelected) {
-        self.isOnlineLookUpSelected = NO;
-        [self.includeOnlineButton setImage:[UIImage imageNamed:@"checkbox-unselected.png"]  forState:UIControlStateNormal];
 
-
-    }
-    else
-    {
-        self.isOnlineLookUpSelected = YES;
-        [self.includeOnlineButton setImage: [UIImage imageNamed:@"checkbox-selected.png"] forState:UIControlStateNormal];
-
-    }
-    
-}
-
-- (IBAction)searchButtonActionMethod:(id)sender {
-    
-    self.searchButton.enabled = NO;
-    self.lookUpObject.searchString = self.searchView.text;
-    if (self.isOnlineLookUpSelected) {
-        [self launchOnlineAPI];
-    }
-    else
-    {
-        
-        [self loadLookUpData];
-        [self removePreviouslySelectedData];
-        [self.tableView reloadData];
-        [self noRecordsToDisplay];
-        [self enableSearchButton];
-    }
-}
-
-#pragma mark - SFMOnlineLookUpManagerDelegate methods
-
-- (void)onlineLookupSearchSuccessfullwithResponse:(NSMutableArray *)dataArray {
-    
-    [self.lookUpHelper fillOnlineLookupData:dataArray forLookupObject:self.lookUpObject];
-    [self removePreviouslySelectedData];
-    [self.tableView reloadData];
-    [self noRecordsToDisplay];
-    [self enableSearchButton];
-
-}
-
-- (void)onlineLookupSearchFailedwithError:(NSError *)error {
-    
-    [self enableSearchButton];
-    
-    @synchronized([self class]) {
-        
-        [[AlertMessageHandler sharedInstance] showCustomMessage:[error errorEndUserMessage]
-                                                   withDelegate:nil
-                                                          title:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage]
-                                              cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-                                           andOtherButtonTitles:nil];
-    }
-
-}
-
--(void)enableSearchButton
-{
-    self.searchButton.enabled = YES;
-
-}
-
-
-/* In this function i am checking for sfid and localId */
-+(SFMRecordFieldData *)getSfIdOrLocalIdOfTheRecord:(NSDictionary *)dictionary
-{
-    /* here we are checking for sfId, If id is there then we are sending sfId otherwise sending localId of the record */
-    SFMRecordFieldData * recordField = [dictionary objectForKey:@"Id"];
-    if (recordField)
-    {
-        if (![StringUtil checkIfStringEmpty:recordField.internalValue])
-        {
-            return recordField;
-        }
-    }
-    
-    /* if sfid is not there then sending local id of the record */
-    recordField = [dictionary objectForKey:@"localId"];
-    if (recordField) {
-        return recordField;
-    }
-    
-    /* else sending blanck string */
-    return nil;
-}
 
 
 @end

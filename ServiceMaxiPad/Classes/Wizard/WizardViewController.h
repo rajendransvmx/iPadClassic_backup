@@ -38,10 +38,6 @@
 
 - (void)loadTroublShootingViewForProduct;
 
-
-//19-Aug-2015
--(void)displayProductIQViewController;
-
 @end
 
 @interface WizardViewController : UIViewController <UITableViewDelegate,UITableViewDataSource>

@@ -158,10 +158,10 @@ static NSMutableDictionary *eventPlace;
                 NSString *eventSubject = nil;
                 if (event.isWorkOrder) {
                     WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:event.whatId];
-                    eventSubject = (model.companyName.length ? model.companyName : (event.subject?event.subject:@""));
+                    eventSubject = (model.companyName.length ? model.companyName : event.stringCustomerName);
                 }
                 else{
-                    eventSubject = (event.subject?event.subject:@"");
+                    eventSubject = event.stringCustomerName;
                 }
                 /*Here we are checking if EventSubject is giving null then we have to show @"no subject"*/
                 eventSubject = [eventSubject stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];

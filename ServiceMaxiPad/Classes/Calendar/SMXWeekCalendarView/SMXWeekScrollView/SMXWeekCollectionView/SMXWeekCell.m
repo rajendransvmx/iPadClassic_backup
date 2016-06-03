@@ -83,7 +83,6 @@
 @synthesize CollectionViewDelegate;
 @synthesize cellIndex;
 @synthesize weekCalendarDelegate;
-@synthesize paintedHeight;
 //@synthesize xMargine;
 static UIImage *lineImage;
 - (id)initWithFrame:(CGRect)frame
@@ -511,166 +510,78 @@ static UIImage *lineImage;
 }
 
 -(void)compareAndRepositionEvents: (SMXBlueButton *)_button withButtonPosition:(long)buttonIndex{
-    
     if (arrayButtonsEvents.count <= buttonIndex || buttonIndex < 0) {
-        if (paintedHeight<(_button.frame.origin.y +_button.frame.size.height)) {
-            paintedHeight = (_button.frame.origin.y +_button.frame.size.height);
-        }
         return;
     }
+    
     SMXBlueButton *lOldButton = [arrayButtonsEvents objectAtIndex:buttonIndex];
-    if (paintedHeight<(_button.frame.origin.y))
+//    CGRect lOldButtonFrame = lOldButton.frame;
+//    CGRect lButtonFrame = _button.frame;
+    
+    //changing from float/double to long as the comparision was giving issues with the 3rd & 4th position decimal numbers.
+
+    long oldbuttonHeight = (lOldButton.frame.origin.y + lOldButton.frame.size.height);
+    long newButtonHeight = (_button.frame.origin.y + _button.frame.size.height);
+    
+    if (oldbuttonHeight >= newButtonHeight)
     {
-        paintedHeight = (_button.frame.origin.y +_button.frame.size.height);
-    }
-    else if ([self isEventOverlapping:lOldButton newEvent:_button])
-    {
-        _button.intOverLapWith = buttonIndex;
-        _button.wDivision = lOldButton.wDivision+1;
-        _button.xPosition = lOldButton.xPosition + 1;
-        _button.frame = [self updateFrame:_button];
-        [_button setSubViewFramw];
-        [self rearrangeEvent:_button arrayOfTheEvents:arrayButtonsEvents];
-    }
-    else
-    {
-        if (lOldButton.wDivision >= 1)
+        if (lOldButton.frame.origin.y == _button.frame.origin.y)
         {
-            _button.frame = CGRectMake(lOldButton.frame.origin.x, _button.frame.origin.y, lOldButton.frame.size.width,_button.frame.size.height);
-            [_button setSubViewFramw];
+            if (lOldButton.frame.size.height == _button.frame.size.height)
+            {
+                if(![cEventInsideALargerEvent containsObject:_button])
+                {
+                    if (![cSamePositionAndDurationEvents containsObject:_button])
+                    {
+                        [cSamePositionAndDurationEvents addObject:_button];
+                    }
+                    [cSamePositionAndDurationEvents addObject:lOldButton];
+                }
+                else
+                {
+                    [cEventInsideALargerEvent addObject:lOldButton];
+                }
+                
+                [self compareAndRepositionEvents:lOldButton withButtonPosition:buttonIndex-1];
+            }
+            else
+            {
+                // Both events same starting time.
+
+                if(![cEventInsideALargerEvent containsObject:_button])
+                {
+                    [cEventInsideALargerEvent addObject:_button];
+                    [cEventsWhichAccomodateSmallerEvents setObject:lOldButton forKey:_button.event.localID];
+                }
+            }
         }
         else
         {
-            
+            if(![cEventInsideALargerEvent containsObject:_button])
+            {
+                [cEventInsideALargerEvent addObject:_button];
+                [cEventsWhichAccomodateSmallerEvents setObject:lOldButton forKey:_button.event.localID];
+            }
         }
     }
-    if (paintedHeight<(_button.frame.origin.y +_button.frame.size.height)) {
-        paintedHeight = (_button.frame.origin.y +_button.frame.size.height);
+    else
+    {
+        NSArray *lAllValues = [cEventsWhichAccomodateSmallerEvents allValues];
+        for (SMXBlueButton *lTempButton in lAllValues) {
+            if ((lTempButton.frame.origin.y + lTempButton.frame.size.height) >= (_button.frame.origin.y + _button.frame.size.height))
+            {
+                [cEventInsideALargerEvent addObject:_button];
+                break;
+            }
+        }
+
     }
-//    if (arrayButtonsEvents.count <= buttonIndex || buttonIndex < 0) {
-//        return;
-//    }
-//    
-//    SMXBlueButton *lOldButton = [arrayButtonsEvents objectAtIndex:buttonIndex];
-////    CGRect lOldButtonFrame = lOldButton.frame;
-////    CGRect lButtonFrame = _button.frame;
-//    
-//    //changing from float/double to long as the comparision was giving issues with the 3rd & 4th position decimal numbers.
-//
-//    long oldbuttonHeight = (lOldButton.frame.origin.y + lOldButton.frame.size.height);
-//    long newButtonHeight = (_button.frame.origin.y + _button.frame.size.height);
-//    
-//    if (oldbuttonHeight >= newButtonHeight)
-//    {
-//        if (lOldButton.frame.origin.y == _button.frame.origin.y)
-//        {
-//            if (lOldButton.frame.size.height == _button.frame.size.height)
-//            {
-//                if(![cEventInsideALargerEvent containsObject:_button])
-//                {
-//                    if (![cSamePositionAndDurationEvents containsObject:_button])
-//                    {
-//                        [cSamePositionAndDurationEvents addObject:_button];
-//                    }
-//                    [cSamePositionAndDurationEvents addObject:lOldButton];
-//                }
-//                else
-//                {
-//                    [cEventInsideALargerEvent addObject:lOldButton];
-//                }
-//                
-//                [self compareAndRepositionEvents:lOldButton withButtonPosition:buttonIndex-1];
-//            }
-//            else
-//            {
-//                // Both events same starting time.
-//
-//                if(![cEventInsideALargerEvent containsObject:_button])
-//                {
-//                    [cEventInsideALargerEvent addObject:_button];
-//                    [cEventsWhichAccomodateSmallerEvents setObject:lOldButton forKey:_button.event.localID];
-//                }
-//            }
-//        }
-//        else
-//        {
-//            if(![cEventInsideALargerEvent containsObject:_button])
-//            {
-//                [cEventInsideALargerEvent addObject:_button];
-//                [cEventsWhichAccomodateSmallerEvents setObject:lOldButton forKey:_button.event.localID];
-//            }
-//        }
-//    }
-//    else
-//    {
-//        NSArray *lAllValues = [cEventsWhichAccomodateSmallerEvents allValues];
-//        for (SMXBlueButton *lTempButton in lAllValues) {
-//            if ((lTempButton.frame.origin.y + lTempButton.frame.size.height) >= (_button.frame.origin.y + _button.frame.size.height))
-//            {
-//                [cEventInsideALargerEvent addObject:_button];
-//                break;
-//            }
-//        }
-//
-//    }
     
     for (SMXBlueButton *lTempButton in cSamePositionAndDurationEvents) {
         [cEventInsideALargerEvent removeObject:lTempButton];
         
     }
 
-}
-
--(BOOL)isEventOverlapping:(SMXBlueButton *)oldEvent newEvent:(SMXBlueButton *)event
-{
-    //changing from float/double to long as the comparision was giving issues with the 3rd & 4th position decimal numbers.
-    long oldbuttonHeight = (oldEvent.frame.origin.y + oldEvent.frame.size.height);
-    //long newButtonHeight = (event.frame.origin.y + event.frame.size.height);
-    /*if ((oldbuttonHeight >= event.frame.origin.y) && (oldEvent.frame.origin.y <=  event.frame.origin.y))
-    {
-        return YES;
-    }
-     */
-    //Defect Fix:031209
-    if ((oldEvent.frame.origin.y<=event.frame.origin.y) && ((oldEvent.frame.origin.y+oldEvent.frame.size.height)>event.frame.origin.y))
-    {
-        return YES;
-    }
-    
-    
-    return NO;
-}
--(CGRect )updateFrame:(SMXBlueButton *)event
-{
-    long cellwidth = self.frame.size.width-EVENT_X_POSITION;
-    return CGRectMake(EVENT_X_POSITION+((cellwidth/event.wDivision)*(event.xPosition-1)), event.frame.origin.y,cellwidth/event.wDivision,event.frame.size.height);
-}
--(void)rearrangeEvent:(SMXBlueButton *)event arrayOfTheEvents:(NSArray *)array
-{
-    if (event.intOverLapWith !=-1)
-    {
-        if (array.count > event.intOverLapWith)
-        {
-            SMXBlueButton *oldEvent = [array objectAtIndex:event.intOverLapWith];
-            long cellwidth = self.frame.size.width-EVENT_X_POSITION;
-            if (oldEvent.xPosition-1 == 0)
-            {
-                oldEvent.wDivision = oldEvent.wDivision+1;
-                oldEvent.frame = CGRectMake(EVENT_X_POSITION, oldEvent.frame.origin.y,cellwidth/oldEvent.wDivision,oldEvent.frame.size.height);
-            }
-            else
-            {
-                oldEvent.wDivision = oldEvent.wDivision+1;
-                oldEvent.frame = CGRectMake(EVENT_X_POSITION+((cellwidth/oldEvent.wDivision)*(oldEvent.xPosition-1)), oldEvent.frame.origin.y,cellwidth/oldEvent.wDivision,oldEvent.frame.size.height);
-            }
-            [oldEvent setSubViewFramw];
-            [self rearrangeEvent:oldEvent arrayOfTheEvents:array];
-        }
-    }
-    else
-    {
-        
-    }
 }
 
 //old logic for concurrent event rendring

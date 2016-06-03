@@ -80,7 +80,7 @@
     return nil;
 }
 
-//Fix:020834
+
 - (BOOL)isConflictFoundOnHoldForLocalRecordWithObject:(NSString*)objectName withLocalId:(NSString*)aLocalId {
     DBCriteria *criteria1 = [[DBCriteria alloc]initWithFieldName:@"operationType" operatorType:SQLOperatorEqual andFieldValue:@"INSERT"];
     DBCriteria *criteria2 = [[DBCriteria alloc]initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:objectName];
@@ -95,6 +95,5 @@
     }
     return hasRecordFound;
 }
-//Fix ends here
 
 @end

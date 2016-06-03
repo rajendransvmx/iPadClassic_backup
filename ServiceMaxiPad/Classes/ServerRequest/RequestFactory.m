@@ -50,7 +50,6 @@
             case RequestGetPriceDataTypeTwo:
             case RequestGetPriceDataTypeThree:
             case RequestTXFetch:
-            case RequestProductIQTxFetch:
             case RequestAdvancedDownLoadCriteria:
             case RequestGetDelete:                     //Initial Data Sync
             case RequestgetDeleteDownloadCriteria:
@@ -97,9 +96,6 @@
             case RequestTypeCustomActionWebServiceAfterBefore:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
-            case RequestMasterSyncTimeLog:
-                requestClass = [self getRestRequestByType:requestType];
-                break;
             case RequestDependentPicklist:
             case RequestChatter:
             case RequestTechnicianDetails:
@@ -115,7 +111,7 @@
             case RequestSignatureBeforeUpdate:
             case RequestSignatureAfterUpdate:
             case RequestGeneratePDF:
-                //case RequestRecordType:
+            //case RequestRecordType:
             case RequestRTDependentPicklist:
                 
                 
@@ -145,25 +141,10 @@
             case RequestDataPurgeGetPriceDataTypeOne:
             case RequestDataPurgeGetPriceDataTypeTwo:
             case RequestDataPurgeGetPriceDataTypeThree:
-            case RequestDataPurgeProductIQData:
                 
                 requestClass = [self getRestRequestByType:requestType];
                 break;
-            case RequestTypeOnlineLookUp:
-                
-                requestClass = [self getRestRequestByType:requestType];
-                break;
-                
-                
-                /** Product IQ **/
-            case RequestProductIQUserConfiguration:
-            case RequestProductIQTranslations:
-            case RequestProductIQObjectDescribe:
-            case RequestProductIQData:
-            case RequestProductIQDeleteData:
-                requestClass = [self getRestRequestByType:requestType];
-                break;
-                
+
             default:
                 break;
         }

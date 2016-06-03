@@ -246,7 +246,6 @@ NSString *const kNSComponentSearchFieldType     = ORG_NAME_SPACE@"__Search_Objec
 NSString *const kNSComponentFieldDataType       = ORG_NAME_SPACE@"__Display_Type__c";
 NSString *const kNSComponentFieldRelation       = ORG_NAME_SPACE@"__Field_Relationship_Name__c";
 NSString *const kNSComponentSequence            = ORG_NAME_SPACE@"__Sequence__c";
-NSString *const kNSCompoentKeyNameField         = ORG_NAME_SPACE@"__FKey_Name_Field__c";
 
 /* SFM_SEARCH_DETAILS */
 NSString *const kSearchDetailSFID            = @"Id";
@@ -432,7 +431,4 @@ NSInteger const kMaximumNoOfParallelPageLayoutCalls = 5;
 NSInteger const kOBJdefnLimit = 20;
 NSString *const kOBJdefList                 = @"ObjectsDefinitionList";
 NSString *const kMobileSettingsGetPrice   = @"IPAD018_SET022";
-
-
-
 

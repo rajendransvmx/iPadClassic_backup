@@ -52,7 +52,5 @@
 //To find out if record exist in table or not
 - (BOOL)doesRecordAlreadyExistWithfieldName:(NSString *)fieldName withFieldValue:(NSString *)fieldValue inTable:(NSString *)tableName;
 
-/** Product IQ **/
--(BOOL)saveRecordsFromArray:(NSArray *)recordArray inTable:(NSString *)tableName;
--(BOOL)saveRecordFromDictionary:(NSDictionary *)recordDict forFields:(NSArray *)fieldNames inTable:(NSString *)tableName;
+
 @end

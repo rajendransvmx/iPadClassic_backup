@@ -38,10 +38,6 @@
 #import "PushNotificationManager.h"
 #import "ModifiedRecordModel.h"
 #import "PageEventProcessManager.h"
-#import "TransactionObjectModel.h"
-#import "CacheManager.h"
-#import "ObjectNameFieldValueService.h"
-#import "CacheConstants.h"
 
 
 typedef NS_ENUM(NSInteger, SaveFlow ) {
@@ -49,7 +45,9 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     SaveFlowFromPushNotification
 };
 
-@interface PageEditViewController ()<PageEventProcessManagerDelegate>
+@interface PageEditViewController ()<PageEventProcessManagerDelegate> {
+
+}
 
 @property(nonatomic,strong)SFMPageEditManager   *sfmEditPageManager;
 @property(nonatomic,strong)SFMPage              *sfmPage;
@@ -82,7 +80,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 - (id)initWithProcessId:(NSString *)processId
          withObjectName:(NSString *)objectName
-            andRecordId:(NSString *)recordId {
+           andRecordId:(NSString *)recordId {
     
     self = [super initWithNibName:@"PageEditViewController"  bundle:nil];
     if (self) {
@@ -114,12 +112,12 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
           andObjectName:(NSString *)objectName {
     self = [super initWithNibName:@"PageEditViewController"  bundle:nil];
     if (self) {
-        
+
         SFMPage *aPage = [[SFMPage  alloc] initWithObjectName:objectName andRecordId:nil];
         self.sfmPage = aPage;
         self.processId = processId;
         self.processType =  kProcessTypeStandAloneCreate;
-        
+
     }
     return self;
 }
@@ -179,7 +177,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 }
 
 
-#pragma mark - Loading child view Controllers
+#pragma mark - Loading child view Controllers 
 - (void)loadChildViewControllers {
     
     PageEditMasterViewController *masterViewController = [[PageEditMasterViewController alloc] initWithNibName:@"PageEditMasterViewController" bundle:nil];
@@ -187,7 +185,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     self.navigationController.navigationBar.barTintColor = [UIColor navBarBG]; //Only for iOS7.0 and more than 7.0
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.navigationController.navigationBar.translucent = NO;
-    
+
     
     PageEditDetailViewController *detailViewController = [[PageEditDetailViewController alloc] initWithNibName:@"PageEditDetailViewController" bundle:nil];
     [detailViewController.navigationController setNavigationBarHidden:YES];
@@ -306,7 +304,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         [self showConfirmationMessage];
         
     }
-    
+
 }
 
 - (void)showConfirmationMessage
@@ -319,7 +317,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     alertview.tag = 10;
     alertview.delegate = self;
     [alertview show];
-    
+
 }
 
 - (NSString *)getTheModifiedString
@@ -354,7 +352,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             self.sfmEditPageManager.dataDictionaryAfterModification = eachDetailDict;
             
             [self.sfmEditPageManager updateRecordIfEventObject:eachDetailDict andObjectName:processComponent.objectName andHeaderObjectName:self.sfmPage.objectName];
-            
+
             SFMRecordFieldData * localIdField = [eachDetailDict objectForKey:kLocalId];
             SFMRecordFieldData * idField = [eachDetailDict objectForKey:kId];
             SFMRecordFieldData * parentField = [eachDetailDict objectForKey:parentColumnName];
@@ -375,7 +373,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     if(([newlyCreatedRecordIds count] >0) || ([deletedRecordIds count] >0 ))
     {
         modifiedFieldAsJsonString = @"changes are there";
-    }
+   }
     newlyCreatedRecordIds = nil;
     deletedRecordIds = nil;
     return  modifiedFieldAsJsonString;
@@ -383,28 +381,28 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 #pragma mark - Refresh views
 
 - (void)refreshAllViews {
-    [self setNavigationPropertiesAndButtons];
-    [self refreshMasterAndDetailViews:NO];
+     [self setNavigationPropertiesAndButtons];
+     [self refreshMasterAndDetailViews:NO];
 }
 - (void)refreshMasterAndDetailViews:(BOOL)isDetailOnly {
     if ([self.childViewControllers count] < 2) {
         return;
     }
     
-    if (!isDetailOnly) {
+   if (!isDetailOnly) {
         PageEditMasterViewController *masterViewController = [self.childViewControllers objectAtIndex:0];
         masterViewController.sfmPage = self.sfmPage;
         if ([masterViewController conformsToProtocol:@protocol(PageEditViewControllerDelegate)]) {
             [masterViewController reloadData];
         }
-        
+       
     }
-    //    PageEditDetailViewController *detailViewController = [self.childViewControllers objectAtIndex:1];
-    //    detailViewController.sfmPage = self.sfmPage;
-    //    if ([detailViewController conformsToProtocol:@protocol(PageEditViewControllerDelegate)]) {
-    //        [detailViewController reloadData];
-    //    }
-    
+//    PageEditDetailViewController *detailViewController = [self.childViewControllers objectAtIndex:1];
+//    detailViewController.sfmPage = self.sfmPage;
+//    if ([detailViewController conformsToProtocol:@protocol(PageEditViewControllerDelegate)]) {
+//        [detailViewController reloadData];
+//    }
+   
 }
 
 #pragma mark End
@@ -416,7 +414,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     SFMHeaderLayout *headeLayout = self.sfmPage.process.pageLayout.headerLayout;
     NSMutableArray *righBarButtonItems = [[NSMutableArray alloc]init];
     if (!headeLayout.hideSave) {
-        
+
         [self addSaveButtonToRightBarButtonItems:righBarButtonItems];
     }
     
@@ -485,7 +483,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 - (void)addOtherButtonsToRightBarButtonItems:(NSMutableArray*)rightBarButtonItems
 {
     SFMHeaderLayout *headeLayout = self.sfmPage.process.pageLayout.headerLayout;
-    
+
     for (int i = 0 ; i < [self getNumberOfButtons]; i++) {
         
         SFPageButton * pageButton = [headeLayout.buttons objectAtIndex:i];
@@ -566,19 +564,19 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         if (![self isValidEvent]) {
             return;
         }else {
-            [self refreshBizRule];
-            [self disableUI];
-            [self updateRespondersIfAny];
-            [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
-            [self executeBusinessRules];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"RefreshView_IOS" object:nil];
+        [self refreshBizRule];
+        [self disableUI];
+        [self updateRespondersIfAny];
+        [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
+        [self executeBusinessRules];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"RefreshView_IOS" object:nil];
         }
     }else {
         UIAlertView *lAlert = [[UIAlertView alloc] initWithTitle:@"" message:[[TagManager sharedInstance] tagByName:kTagNoTechnicianAssociatedError] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles: nil];
         
         [lAlert show];
     }
-    
+
     //[self performSelectorInBackground:@selector(saveRecord) withObject:nil];
 }
 
@@ -606,15 +604,12 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             BOOL canUpdateHeader = [self.sfmEditPageManager saveHeaderRecord:self.sfmPage];
             BOOL canUpdateDetail = [self.sfmEditPageManager saveDetailRecords:self.sfmPage];
             
-            
-            [self saveOnlineLookupDataIntoObjectFieldNameValue];
-            
             if([self isSourceToTargetProcess] || [self isSourceToTargetChildOnlyProcess]){
                 [self.sfmEditPageManager performSourceUpdate:self.sfmPage];
             }
             
             if (canUpdateDetail || canUpdateHeader) {
-                [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
+               [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
             }
             
             if(self.saveflow == SaveFlowOnSaveTapped)
@@ -636,26 +631,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     //    [self checkIfObjectIsEvent:self.sfmPage.objectName];
 }
-/*
- Method Name:saveOnlineLookupDataIntoObjectFieldNameValue
- Description: This method is used to save online lookup data into ObjectFieldNameValue table.
- */
-- (void)saveOnlineLookupDataIntoObjectFieldNameValue {
-    
-    @autoreleasepool {
-        NSMutableDictionary *dataOnlineDataArray = [[CacheManager sharedInstance] getCachedObjectByKey:kObjectNameFieldValueCacheData];
-        NSArray *transactionObjects = [dataOnlineDataArray allValues];
-        
-        if (transactionObjects.count > 0) {
-            ObjectNameFieldValueService *service = [[ObjectNameFieldValueService alloc] init];
-            if([service updateOrInsertTransactionObjects:transactionObjects]) {
-                [[CacheManager sharedInstance] clearCacheByKey:kObjectNameFieldValueCacheData];
-            }
-        }
-    }
-}
-
-
 
 -(void)checkIfObjectIsEvent:(NSString *)objectName
 {
@@ -709,12 +684,12 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         
         [self performSelector:@selector(changViewControl) withObject:nil afterDelay:0.2];
         
-        
-        
+
+     
         //Commnented on 16-dec. Cause Notification is getting called. BSP
-        //        if ([self.editViewControllerDelegate respondsToSelector:@selector(refreshEventInCalendarView)]) {
-        //            [self.editViewControllerDelegate refreshEventInCalendarView];
-        //        }
+//        if ([self.editViewControllerDelegate respondsToSelector:@selector(refreshEventInCalendarView)]) {
+//            [self.editViewControllerDelegate refreshEventInCalendarView];
+//        }
     }
     else if ([self isEditProcess] || [self isSourceToTargetChildOnlyProcess]) {
         [self dismissViewControllerAnimated:NO completion:nil];
@@ -798,7 +773,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
                 if (pageField.isRequired) {
                     NSInteger row = -1;
                     for (NSDictionary *recordDictionary in allRecords) {
-                        
+                       
                         row++;
                         
                         SFMRecordFieldData *recordField = [recordDictionary objectForKey:pageField.fieldName];
@@ -824,8 +799,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     return YES;
 }
 #pragma mark - show alert
--(void)showAlert
-{
+-(void)showAlert {
     // 25274
     if (SYSTEM_VERSION < 8.0) {
         
@@ -1178,8 +1152,8 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 /*This method giving number of day diffrence beteen two date*/
 -(int )numberOfDaysFromDate:(NSDate *)startDate andEndDate:(NSDate *)endDate{
     if ((startDate !=nil) && (endDate!=nil)) {
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
                                                             fromDate:startDate
                                                               toDate:endDate
                                                              options:0];
@@ -1218,18 +1192,18 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     }
     if ([self.sfmPage.objectName isEqualToString:kServicemaxEventObject]) {
         /*
-         SFMRecordFieldData *startDateRecordFieldData = [eventDictionary objectForKey:kSVMXStartDateTime];
-         SFMRecordFieldData *endDateRecordFieldData = [eventDictionary objectForKey:kSVMXEndDateTime];
-         if (startDateRecordFieldData.internalValue != nil && endDateRecordFieldData.internalValue != nil) {
-         if ([startDateRecordFieldData.internalValue compare:endDateRecordFieldData.internalValue] == NSOrderedSame || [startDateRecordFieldData.internalValue compare:endDateRecordFieldData.internalValue] == NSOrderedDescending) {
-         UIAlertView *lAlert = [[UIAlertView alloc] initWithTitle:@"Invalid event" message:[[TagManager sharedInstance] tagByName:kTagEventTimeError] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles: nil];
-         [lAlert show];
-         lAlert = nil;
-         [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
-         [self performSelectorOnMainThread:@selector(enableUI) withObject:self waitUntilDone:NO];
-         isEventValid = NO;
-         }
-         }
+        SFMRecordFieldData *startDateRecordFieldData = [eventDictionary objectForKey:kSVMXStartDateTime];
+        SFMRecordFieldData *endDateRecordFieldData = [eventDictionary objectForKey:kSVMXEndDateTime];
+        if (startDateRecordFieldData.internalValue != nil && endDateRecordFieldData.internalValue != nil) {
+            if ([startDateRecordFieldData.internalValue compare:endDateRecordFieldData.internalValue] == NSOrderedSame || [startDateRecordFieldData.internalValue compare:endDateRecordFieldData.internalValue] == NSOrderedDescending) {
+                UIAlertView *lAlert = [[UIAlertView alloc] initWithTitle:@"Invalid event" message:[[TagManager sharedInstance] tagByName:kTagEventTimeError] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles: nil];
+                [lAlert show];
+                lAlert = nil;
+                [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+                [self performSelectorOnMainThread:@selector(enableUI) withObject:self waitUntilDone:NO];
+                isEventValid = NO;
+            }
+        }
          */
     }
     return isEventValid;
@@ -1259,7 +1233,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             if ([StringUtil isStringEmpty:parentId]) {
                 parentId = self.sfmPage.recordId;
             }
-            [AttachmentHelper updateLastModifiedDateOfAttachmentForParentId:parentId];
+             [AttachmentHelper updateLastModifiedDateOfAttachmentForParentId:parentId];
             NSArray *localIds = [AttachmentHelper getLocalIdsOfDeleteAttachmentsFromModifiedRecordsForParentId:parentId];
             BOOL status = [AttachmentHelper deleteAttachmentsWithLocalIds:localIds];
             if (status)
@@ -1304,7 +1278,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     else{
         [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
         [self notifyNotificationManager:NotificationEditSaveStatusFailure];
-        
+
     }
     [self invalidateLinkedSfm];
     
@@ -1323,7 +1297,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             }
             
             if (canUpdateDetail || canUpdateHeader) {
-                [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
+                    [[SyncManager sharedInstance] performDataSyncIfNetworkReachable];
             }
             
             
@@ -1396,7 +1370,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     }
     [self invalidateLinkedSfm];
     
-    
+
 }
 
 -(void)shouldShowAlertMessageForPageEventProcess:(NSString *)message {
@@ -1411,7 +1385,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     }
     [self invalidateLinkedSfm];
     
-    
+
 }
 
 -(void)refreshSFMPageWithFieldUpdateRuleResults:(NSString *)responseString forEvent:(NSString *)event {
@@ -1434,7 +1408,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 -(void)updateTheSFMPage:(NSString *)responseString
 {
     [self.sfmEditPageManager updateSFMPageWithFieldUpdateResponse:responseString andSFMPage:self.sfmPage];
-    
+
 }
 
 - (void)bizRuleExecute {

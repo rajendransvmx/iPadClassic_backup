@@ -12,8 +12,8 @@
 #import "OuterJoinObject.h"
 #import "SFMPageHelper.h"
 #import "MobileDeviceSettingDAO.h"
-#import "Utility.h"
 #import "FactoryDAO.h"
+#import "Utility.h"
 
 @interface SFMSearchQueryCreator()
 
@@ -32,13 +32,12 @@
     if (self != nil) {
         self.searchObject = newSearchObject;
         self.joinTables = outerJoinTables;
-        //Setting serch limit for number of items.
+        //Setting serch limit for number of list
         self.maxNumberOfResults = [self fetchSearchRange];
         //self.maxNumberOfResults = 100;
     }
     return self;
 }
-
 -(int )fetchSearchRange
 {
     id <MobileDeviceSettingDAO> mobileSettingService = [FactoryDAO serviceByServiceType:ServiceTypeMobileDeviceSettings];
@@ -59,6 +58,7 @@
     }
     return 100;
 }
+
 - (NSString *)generateQuery:(NSString *)expression andSearchText:(NSString *)searchString {
     
     NSMutableString *finalQuery = [[NSMutableString alloc] initWithString:@" SELECT "];

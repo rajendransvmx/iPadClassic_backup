@@ -53,51 +53,6 @@
    // *** ---  STORED VALUES HERE.... TEXT EDIT ---*////
 }
 
-/*
- method Name: showlaunchScreenWithCalendarAlert
- Description: If the Calendar of the Device is not gregorian. The app should be taken to the Login screen and a Alert view should be displayed to ask user to change the Calendar Type to GREGORIAN.
- Defect#: 025869
- author: BSP
- Date: 11-Mar-2016
- */
-
--(void)showlaunchScreenWithCalendarAlert{
-  
-    AppManager *appManager = [AppManager sharedInstance];
-    ApplicationStatus previousStatus  = [PlistManager getStoredApplicationPreviousSyncStatus]; //get the previous status of the app. This will have to be again set to the app when the login screen with Calendar error is displayed so that once the calendar is corrected, the app is launched in the previous status.
-    [appManager setApplicationStatus:ApplicationStatusInLaunchScreen];
-
-    [appManager loadScreen];
-    [appManager setApplicationStatus:previousStatus]; // Assigning the previous app status to the app.
-
-    return;
-}
-
-/**
- * @name   loadCookies
- *
- * @author Madhusudhan HK
- *
- * @brief update all saved cookies to NSHTTPCookieStorage instance.
- *
- * \par
- *  <Longer description starts here>
- *
- *
- * @return void
- *
- */
-- (void)loadCookies
-{
-    NSArray             *cookies       = [NSKeyedUnarchiver unarchiveObjectWithData: [[NSUserDefaults standardUserDefaults] objectForKey: @"cookies"]];
-    NSHTTPCookieStorage *cookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
-    
-    for (NSHTTPCookie *cookie in cookies)
-    {
-        [cookieStorage setCookie: cookie];
-    }
-}
-
 #pragma mark - Application Life Cycle Methods
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -111,16 +66,6 @@
          [UINavigationBar appearance].tintColor = [UIColor whiteColor];
      }
 */
-     
-     /** Setup Logger  */
-     //HS 29Fev added one key
-     NSMutableArray *arr = [[NSMutableArray alloc]init];
-     self.syncErrorDataArray = arr;
-     
-     NSMutableArray *arr2 = [[NSMutableArray alloc]init];
-     self.syncDataArray = arr2;
-     //self.syncReportingType = @"error";
-     
      /** Setup Logger  */
      SMLogPerformInitialSetup();
      ConfigureLoggerAccordingToSettings();
@@ -150,92 +95,21 @@
      // Override point for customization after application launch.
      self.window.backgroundColor = [UIColor whiteColor];
      [self.window makeKeyAndVisible];
-
-     NSString *calendarIdentifier = [NSCalendar autoupdatingCurrentCalendar].calendarIdentifier;
-
-     if (![calendarIdentifier caseInsensitiveCompare:@"gregorian"]==NSOrderedSame) {
-         [self showlaunchScreenWithCalendarAlert];
-         [self showAlert];
-     }
-     else{
-         [self testLogin];
-         [self loadCookies];
-         
-         [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
-                                                           object:nil
-                                                            queue:[NSOperationQueue mainQueue]
-                                                       usingBlock:^(NSNotification *note) {
-                                                           [PlistManager updateServerURLFromManagedConfig];
-                                                       }];
-     }
-
+     
+     [self testLogin];
+     [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
+                                                       object:nil
+                                                        queue:[NSOperationQueue mainQueue]
+                                                   usingBlock:^(NSNotification *note) {
+                                                       [PlistManager updateServerURLFromManagedConfig];
+                                                   }];
      //[[SyncManager sharedInstance] scheduleSync];
     NSLog(@"------ AapplicationLaunching -------");
      
      return YES;
 }
 
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex NS_DEPRECATED_IOS(2_0, 9_0);
-{
-    if(alertView.tag == 1001 && buttonIndex == 0)
-        [self showAlert];
-}
 
-/*
- method Name: showAlert
- Description: If the Calendar of the Device is not gregorian. Display the AlertView asking the user to change the Calendar.
- Defect#: 025869
- author: BSP
- Date: 11-Mar-2016
- */
-
-
--(void)showAlert{
-    
-    if (SYSTEM_VERSION < 8.0) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"" message:[[TagManager sharedInstance]tagByName:kTag_GregorianCalendarOnlyAlert] delegate:self cancelButtonTitle:@"Reload" otherButtonTitles: nil];
-        alertView.tag = 1001;
-        [alertView show];
-    }
-    else {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"" message:[[TagManager sharedInstance]tagByName:kTag_GregorianCalendarOnlyAlert] preferredStyle:(UIAlertControllerStyleAlert)];
-        
-        UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"Reload" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
-            [self checkForCalendarType];
-        }];
-        
-        
-        [alertController addAction:okAction];
-
-        if (self.window.rootViewController.presentedViewController) {
-            self.window.rootViewController = self.window.rootViewController.presentedViewController;
-        }
-        
-        [self.window.rootViewController presentViewController:alertController animated:YES completion:^{}];
-    }
-
-}
-
--(void)checkForCalendarType{
-    NSString *calendarIdentifier = [NSCalendar autoupdatingCurrentCalendar].calendarIdentifier;
-//    NSString *TheCalendarIdentifier = [NSCalendar autoupdatingCurrentCalendar].calendarIdentifier;
-
-    if (![calendarIdentifier caseInsensitiveCompare:@"gregorian"]==NSOrderedSame) {
-        
-        [self showAlert];
-    }
-    else{
-        [self testLogin];
-        [self loadCookies];
-        
-        [[NSNotificationCenter defaultCenter] addObserverForName:NSUserDefaultsDidChangeNotification
-                                                          object:nil
-                                                           queue:[NSOperationQueue mainQueue]
-                                                      usingBlock:^(NSNotification *note) {
-                                                          [PlistManager updateServerURLFromManagedConfig];
-                                                      }];
-    }
-}
 - (void)disableIdleTimerForApplication
 {
 //    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
@@ -258,11 +132,6 @@
 
 - (void)loadWithController:(UIViewController *)rootController
 {
- /* This was introduced to help Automation team for Identifying the title of the App. Should not go in App store Build. Hence reverting.
-  
-    NSString *projectTitle = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
-    rootController.title = projectTitle;
- */
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window setRootViewController:rootController];
     [self.window makeKeyAndVisible];
@@ -341,18 +210,17 @@ forLocalNotification:(UILocalNotification *)notification
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
 {
-    //Defect Fix:026723
-    if ([[url scheme] containsString:@"svmxmobilepulse"])
+    if ([[url scheme] isEqualToString:@"svmxmobilepulsesum15"])
     {
         NSDictionary *queryStringDictionary = [PushNotificationUtility getDictionaryFromSharedURL:url];
-        
+     
         BOOL isValidUser = [PushNotificationUtility validateOrg:queryStringDictionary];
         if (isValidUser)
         {
             [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
         }
     }
-    return YES;
+    return YES; 
 }
 
 

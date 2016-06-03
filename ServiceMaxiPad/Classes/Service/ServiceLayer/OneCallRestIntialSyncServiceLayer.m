@@ -32,8 +32,6 @@
 #import "CalenderHelper.h"
 #import "ServerRequestManager.h"
 #import "TimeLogCacheManager.h"
-#import "ProductIQManager.h"
-#import "OneCallDataSyncHelper.h"
 
 @implementation OneCallRestIntialSyncServiceLayer
 
@@ -105,7 +103,7 @@
 }
 
 - (NSArray*)getRequestParametersWithRequestCount:(NSInteger)requestCount {
-//Chinna : Time logs.
+    //Chinna : Time logs.
     NSArray * finalArray  = [super getRequestParametersWithRequestCount:requestCount];
     if(finalArray != nil)
     {
@@ -183,30 +181,14 @@
             return @[model];
         }
             break;
-        case RequestProductIQObjectDescribe:
-        {
-            return [self createParallelRequestsForProdIQObjectDescribe];
-        }
-            break;
-        case RequestProductIQTxFetch:
-        {
-            return [self getProdIQTxFetcRequestParamsForRequestCount:requestCount];
-        }
-            break;
-        case RequestProductIQData:
-        {
-            return [self getProdIQDataRequestParam];
-        }
-            break;
         default:
             break;
     }
     
-   // NSLog(@"Invalid request type");
+    // NSLog(@"Invalid request type");
     return nil;
     
 }
-
 
 -(NSArray*)getRequestParamModelForGetPriceData:(RequestType)getPriceDataType {
     
@@ -293,7 +275,7 @@
     }
     for(TransactionObjectModel *transObjectModel in objectsList)
     {
-        //getting currency from WO table
+        //getting price Book currency for WO table
         if ([transObjectModel valueForField:@"CurrencyIsoCode"]) {
             [values addObject:[transObjectModel valueForField:@"CurrencyIsoCode"]];
         }
@@ -303,44 +285,46 @@
 
 -(NSArray *)getRequestParamModelForRecordType
 {
-    NSMutableArray * recordTypeArray = nil;
-    
-    id <SFRecordTypeDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
-    
-    
-    recordTypeArray = [picklistService fetchSFRecordTypeByIdS];
-    NSMutableArray *requests = [[NSMutableArray alloc] initWithCapacity:0];
-
-    
-    if(recordTypeArray > 0)
-    {
-        RequestParamModel * param = [[RequestParamModel alloc] init];
-        param.values = recordTypeArray;
-        [requests addObject:param];
-    }
-    return requests;
-
-    
-    
-    return recordTypeArray;
-  //ZKS : Query is added as part of value in RequestParamModel
-    
+//    NSMutableArray * recordTypeArray = nil;
 //    
-//    id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
-//    NSArray * objectsList = nil;
-//    if ([daoService conformsToProtocol:@protocol(SFRecordTypeDAO)]) {
-//        objectsList = [daoService fetchObjectAPINames];
-//    }
-//    if(objectsList > 0)
+//    id <SFRecordTypeDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
+//    
+//    
+//    recordTypeArray = [picklistService fetchSFRecordTypeByIdS];
+//    NSMutableArray *requests = [[NSMutableArray alloc] initWithCapacity:0];
+//    
+//    
+//    if(recordTypeArray > 0)
 //    {
 //        RequestParamModel * param = [[RequestParamModel alloc] init];
-//        NSString *stringArray = [StringUtil getConcatenatedStringFromArray:objectsList withSingleQuotesAndBraces:YES];
-//        NSString * query = [NSString stringWithFormat:@"SELECT Id, Name ,SobjectType FROM RecordType WHERE SobjectType in %@",stringArray];
-//        param.value = query;
-//        param.values = 
+//        param.values = recordTypeArray;
 //        [requests addObject:param];
 //    }
 //    return requests;
+//    
+//    
+//    
+//    return recordTypeArray;
+   // ZKS : Query is added as part of value in RequestParamModel
+    
+    
+        NSMutableArray *requests = [[NSMutableArray alloc] initWithCapacity:0];
+
+    
+        id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
+        NSArray * objectsList = nil;
+        if ([daoService conformsToProtocol:@protocol(SFRecordTypeDAO)]) {
+            objectsList = [daoService fetchObjectAPINames];
+        }
+        if(objectsList > 0)
+        {
+            RequestParamModel * param = [[RequestParamModel alloc] init];
+            NSString *stringArray = [StringUtil getConcatenatedStringFromArray:objectsList withSingleQuotesAndBraces:YES];
+            NSString * query = [NSString stringWithFormat:@"SELECT Id, Name ,SobjectType FROM RecordType WHERE SobjectType in %@",stringArray];
+            param.value = query;
+            [requests addObject:param];
+        }
+        return requests;
 }
 
 
@@ -642,81 +626,5 @@
 {
     [CalenderHelper updateOriginalSfIdForSVMXEvent];
 }
-
-
-#pragma mark - Product IQ
-
--(NSArray *)createParallelRequestsForProdIQObjectDescribe {
-    NSArray *objDescArray = [[ProductIQManager sharedInstance] getProdIQRelatedObjects];
-    NSMutableArray *requestParams = [NSMutableArray array];
-    for (int count = 0; count < [objDescArray count]; count++) {
-        RequestParamModel *model = [[RequestParamModel alloc] init];
-        model.value = [objDescArray objectAtIndex:count];
-        [requestParams addObject:model];
-    }
-    return requestParams;
-}
-
-
-- (NSArray *)getProdIQTxFetcRequestParamsForRequestCount:(NSInteger )requestCount {
-    @autoreleasepool {
-        
-        TXFetchHelper *helper = [[TXFetchHelper alloc] init];
-        NSMutableArray *requestParams = [[NSMutableArray alloc] init];
-        
-        NSString *locationObjName = kWorkOrderSite;
-        
-        id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-        DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:locationObjName operatorType:(SQLOperatorIsNotNull) andFieldValue:nil];
-        NSArray * transactionRecords =  [transObj fetchDataWithhAllFieldsAsStringObjects:kWorkOrderTableName fields:@[locationObjName] expression:nil criteria:@[criteria]];
-        
-        NSMutableDictionary *objectIdsDictionary = [[NSMutableDictionary alloc] init];
-        NSMutableDictionary *idsDict = [[NSMutableDictionary alloc] init];
-        
-        for (TransactionObjectModel *model in transactionRecords) {
-            NSString *sfID = [[model getFieldValueDictionary] objectForKey:locationObjName];
-            BOOL recordExist = [transObj doesRecordExistsForObject:locationObjName forRecordId:sfID];
-            if (!recordExist) {
-                [idsDict  setObject:sfID forKey:sfID];
-            }
-        }
-        
-        if ([idsDict count] > 0) {
-            
-            [objectIdsDictionary setObject:idsDict forKey:locationObjName];
-            
-            OneCallDataSyncHelper *syncHelper = [[OneCallDataSyncHelper alloc] init];
-            [syncHelper insertIdsIntoSyncHeapTable:objectIdsDictionary];
-            
-            for (int counter = 0; counter < requestCount; counter++) {
-                
-                NSDictionary *recordIdDict =  [helper getIdListFromSyncHeapTableWithLimit:kOverallIdLimit forParallelSyncType:nil];
-                if ([recordIdDict count] <= 0) {
-                    break;
-                }
-                
-                RequestParamModel *paramObj = [[RequestParamModel alloc]init];
-                paramObj.requestInformation = recordIdDict;
-                NSMutableArray *valueMap = [NSMutableArray arrayWithArray:[helper getValueMapDictionary:recordIdDict]];
-                paramObj.valueMap = valueMap;
-                [requestParams addObject:paramObj];
-            }
-        }
-        
-        return requestParams;
-    }
-}
-
-
--(NSArray *)getProdIQDataRequestParam {
-    RequestParamModel *model = [[RequestParamModel alloc]init];
-    NSDictionary *lastIndexDict = [NSDictionary dictionaryWithObjects:@[[NSNull null], @"LAST_INDEX", [NSNull null], [NSNull null], [NSNull null], [NSNumber numberWithInt:0], @[], @[]] forKeys:@[@"data", @"key", @"lstInternal_Request", @"lstInternal_Response", @"record", @"value", @"valueMap", @"values"]];
-    model.valueMap = @[lastIndexDict];
-    model.values = @[];
-    return @[model];
-}
-
-#pragma mark - end
-
 
 @end

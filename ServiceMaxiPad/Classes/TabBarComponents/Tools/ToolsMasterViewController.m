@@ -78,20 +78,16 @@
     //            (progressObject.syncStatus == SyncStatusFailed) ||
     //            (progressObject.syncStatus == SyncStatusConflict))
     //        {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self reloadTableView];
-        [self updateTheTabBarBadges];
- 
+    [self reloadTableView];
+    [self updateTheTabBarBadges];
+
     //        }
     //    }
-    });
 }
-- (void)receivedSyncConflictChangeNotification:(NSNotification *)notification
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //[self reloadTableView];
-        [self updateTheTabBarBadges];
-    });
+- (void)receivedSyncConflictChangeNotification:(NSNotification *)notification {
+   // [self reloadTableView];
+    [self updateTheTabBarBadges];
+
 }
 
 - (void)dealloc {

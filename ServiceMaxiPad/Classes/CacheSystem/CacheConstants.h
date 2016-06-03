@@ -19,5 +19,3 @@
 #define TECHNICIANID @"TechnicianId"
 #define kSFMSearchCacheId @"SFMSearchCacheId"
 #define kCustomWebServiceAction @"CustomWebServiceAction"
-#define kSFMOnlineLookUpCacheData @"SFMOnlineLookUpCacheData"
-#define kObjectNameFieldValueCacheData @"ObjectNameFieldValueCacheData"

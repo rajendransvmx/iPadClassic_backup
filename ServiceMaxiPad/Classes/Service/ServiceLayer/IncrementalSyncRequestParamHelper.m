@@ -18,6 +18,8 @@
 #import "ModifiedRecordModel.h"
 #import "CacheManager.h"
 #import "StringUtil.h"
+#import "SyncConstants.h"
+#import "SyncHeapService.h"
 #import "SVMXGetPriceHelper.h"
 
 @interface IncrementalSyncRequestParamHelper ()
@@ -94,7 +96,6 @@
                 [parameterArray addObject:subParamDictionary];
             }
             
-            
             /* Get price change */
             NSArray *pricebookIds = [self getPricebookIds];
             if (pricebookIds == nil) {
@@ -114,6 +115,7 @@
                 subParamDictionary = [[NSDictionary alloc] initWithObjectsAndKeys:@"SERVICE_PRICEBOOK_IDs",kSVMXRequestKey,servicepricebookIds,kSVMXRequestValues,nil];
                 [parameterArray addObject:subParamDictionary];
             }
+            
             /* We need to send last time stamp for individual request */
             NSDictionary *lastSyncTimeDict = [[NSDictionary alloc] initWithObjectsAndKeys:kOldLastSyncTime,kSVMXRequestKey,lastModifiedTime,kSVMXRequestValue,nil];
             

@@ -3,43 +3,37 @@
     {
       "size" : "29x29",
       "idiom" : "ipad",
-      "filename" : "29*29.png",
+      "filename" : "SVMX-logo-29x29.png",
       "scale" : "1x"
     },
     {
       "size" : "29x29",
       "idiom" : "ipad",
-      "filename" : "58*58@2x.png",
+      "filename" : "SVMX-logo-58x58.png",
       "scale" : "2x"
     },
     {
       "size" : "40x40",
       "idiom" : "ipad",
-      "filename" : "40*40.png",
+      "filename" : "SVMX-logo-40x40.png",
       "scale" : "1x"
     },
     {
       "size" : "40x40",
       "idiom" : "ipad",
-      "filename" : "80*80.png",
+      "filename" : "SVMX-logo-80x80.png",
       "scale" : "2x"
     },
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "76*76.png",
+      "filename" : "SVMX-logo-76x76.png",
       "scale" : "1x"
     },
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "152*152.png",
-      "scale" : "2x"
-    },
-    {
-      "size" : "83.5x83.5",
-      "idiom" : "ipad",
-      "filename" : "167*167.png",
+      "filename" : "SVMX-logo-152x152.png",
       "scale" : "2x"
     }
   ],

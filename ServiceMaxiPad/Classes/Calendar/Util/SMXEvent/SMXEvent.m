@@ -23,7 +23,7 @@
 
 @implementation SMXEvent
 
-@synthesize title;
+@synthesize stringCustomerName;
 @synthesize numCustomerID;
 @synthesize ActivityDateDay;
 @synthesize dateTimeBegin;
@@ -106,9 +106,9 @@
         NSDate *endDate;
         if (isAllday) {
             
-            NSDictionary *dateArray = [self getDateForAllDayEventOnDate:[dict objectForKey:key_StartDateTime] endDate:[dict objectForKey:key_EndDateTime]];
-            startDate = [dateArray objectForKey:@"startDate"];
-            endDate = [dateArray objectForKey:@"endDate"];
+            NSArray *dateArray = [self getDateForAllDayEventOnDate:[dict objectForKey:key_StartDateTime] endDate:[dict objectForKey:key_EndDateTime]];
+            startDate = [dateArray objectAtIndex:0];
+            endDate = [dateArray objectAtIndex:1];
         }
         else
         {
@@ -121,10 +121,7 @@
         self.IDString = [dict objectForKey:key_ID];
         self.whatId = [dict objectForKey:key_WhatID];
         
-        self.subject = [dict objectForKey:key_Title];
-        self.title = [dict objectForKey:@"eventTitle"];
-        self.isEventTitleSettingDriven = [[dict objectForKey:@"isSetting"] boolValue];
-
+        self.stringCustomerName = [dict objectForKey:key_Title];
         self.description = [dict objectForKey:key_Description];
         self.sla = NO;
         self.priority = NO;
@@ -202,9 +199,9 @@
         NSDate *endDate;
         if (isAllday) {
             
-            NSDictionary *dateArray = [self getDateForAllDayEventOnDate:[dict objectForKey:key_StartDateTime] endDate:[dict objectForKey:key_EndDateTime]];
-            startDate = [dateArray objectForKey:@"startDate"];
-            endDate = [dateArray objectForKey:@"endDate"];
+            NSArray *dateArray = [self getDateForAllDayEventOnDate:[dict objectForKey:key_StartDateTime] endDate:[dict objectForKey:key_EndDateTime]];
+            startDate = [dateArray objectAtIndex:0];
+            endDate = [dateArray objectAtIndex:1];
         }else
         {
             startDate = [CalenderHelper getStartEndDateTime:[dict objectForKey:key_StartDateTime]];
@@ -215,9 +212,7 @@
         self.IDString = [dict objectForKey:key_ID];
         self.whatId = [dict objectForKey:key_WhatID];
         
-        self.subject = [dict objectForKey:key_Title];
-        self.title = [dict objectForKey:@"eventTitle"];
-        self.isEventTitleSettingDriven = [[dict objectForKey:@"isSetting"] boolValue];
+        self.stringCustomerName = [dict objectForKey:key_Title];
         self.description = [dict objectForKey:key_Description];
         self.sla = NO;
         self.priority = NO;
@@ -245,10 +240,7 @@
 {
     self.localID = model.localID;
     self.IDString = model.IDString;
-    self.subject = model.subject;
-    self.title = model.title;
-    self.isEventTitleSettingDriven = model.isEventTitleSettingDriven;
-
+    self.stringCustomerName = model.stringCustomerName;
     self.description = model.description;
     self.whatId = model.whatId;
     self.sla = model.sla;
@@ -279,32 +271,21 @@
     return newDate;
 }
 
--(NSDictionary *)getDateForAllDayEventOnDate:(NSString *)startDate endDate:(NSString *)endDate{
+-(NSArray *)getDateForAllDayEventOnDate:(NSString *)startDate endDate:(NSString *)endDate{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] initWithCapacity:0];
-    NSDateComponents *comp;
-    if (startDate) {
-        NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[self dateFromString:startDate]];
+    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:startDate]];
     
-        comp.second = 00;
-        comp.hour = 00;
-        comp.minute = 00;
+    comp.second = 00;
+    comp.hour = 00;
+    comp.minute = 00;
     
-        NSDate *theStartDate = [cal dateFromComponents:comp];
-        if (theStartDate)
-            [dict setObject:theStartDate forKey:@"startDate"];
-    }
+    NSDate *theStartDate = [cal dateFromComponents:comp];
+    comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[self dateFromString:endDate]];
+    comp.hour = 23;
+    comp.minute = 59;
     
-    if (endDate) {
-        comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[self dateFromString:endDate]];
-        comp.hour = 23;
-        comp.minute = 59;
-        
-        NSDate *theEndDate = [cal dateFromComponents:comp];
-        if (theEndDate)
-            [dict setObject:theEndDate forKey:@"endDate"];
-    }
-    return dict;
+    NSDate *theEndDate = [cal dateFromComponents:comp];
+    return @[theStartDate, theEndDate];
 }
 
 -(NSDate *)dateFromString:(NSString *)dateString
@@ -337,7 +318,7 @@
 
 -(void)convertDateForAllDay{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:self.dateTimeBegin_multi];
+    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:self.dateTimeBegin_multi];
     
     comp.second = 00;
     comp.hour = 00;
@@ -345,7 +326,7 @@
     
     self.dateTimeBegin_multi = [cal dateFromComponents:comp];
     self.dateTimeBegin= [cal dateFromComponents:comp];
-    comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:self.dateTimeEnd_multi];
+    comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:self.dateTimeEnd_multi];
     comp.hour = 23;
     comp.minute = 59;
     

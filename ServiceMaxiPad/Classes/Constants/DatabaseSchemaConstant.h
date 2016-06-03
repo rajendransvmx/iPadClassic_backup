@@ -118,16 +118,6 @@ extern NSString *const kTableAttachmentLocalSchema;
 //Custom url Table
 extern NSString *const kTableSFMCustomActionParams;
 
-//ProductIQ tables.
-extern NSString *const KTableRecordName;
-extern NSString *const KTableTranslations;
-extern NSString *const KTableFieldDescribe;
-extern NSString *const KTableObjectDescribe;
-extern NSString *const KTableConfiguration;
-extern NSString *const KTableInstallBaseObject;
-extern NSString *const KTableClientSyncLogTransient;
-extern NSString *const kTableDescribeLayout;
-
 @interface DatabaseSchemaConstant : NSObject
 
 

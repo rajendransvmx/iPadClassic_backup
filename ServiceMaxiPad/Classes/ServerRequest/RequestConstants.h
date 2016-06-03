@@ -63,7 +63,6 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestStaticResourceLibrary,
     RequestSubmitDocument,
     RequestGeneratePDF,
-    RequestMasterSyncTimeLog,
     
     RequestDataOnDemandGetPriceInfo,
     RequestDataOnDemandGetData,
@@ -106,7 +105,6 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestDataPurgeGetPriceDataTypeOne,
     RequestDataPurgeGetPriceDataTypeTwo,
     RequestDataPurgeGetPriceDataTypeThree,
-    RequestDataPurgeProductIQData,
     /* ********************************* */
     
    
@@ -127,18 +125,6 @@ typedef NS_ENUM(NSUInteger, RequestType)
     /******* custom action type ********/
     RequestTypeCustomActionWebService,
     RequestTypeCustomActionWebServiceAfterBefore,
-    
-    
-    /**LookUP**/
-    RequestTypeOnlineLookUp,
-    
-    /** Product IQ **/
-    RequestProductIQUserConfiguration,
-    RequestProductIQTranslations,
-    RequestProductIQObjectDescribe,
-    RequestProductIQTxFetch,
-    RequestProductIQData,
-    RequestProductIQDeleteData
 };
 
 extern NSString *const kContentType;
@@ -148,7 +134,6 @@ extern NSString *const kHttpMethodGet;
 extern NSString *const groupProfile;
 
 extern NSString *const validateProfile;
-extern NSString *const  recordType;
 
 extern NSString *const kMetaSync;
 extern NSString *const initialSync;
@@ -321,14 +306,3 @@ extern NSString *const kSFMSearchObjectId;
 extern NSString *const kSFMSearchRecordLimit;
 extern NSString *const kAfterSaveInsertCustomCallValueMap;
 extern NSString *const  kSoapUrlForWebservice;
-extern NSString *const kOnlineLookUpURL;
-
-/** Product IQ **/
-
-extern NSString *const kRestUrlProductIQ;
-extern NSString *const kProductIQUserConfigUrl;
-extern NSString *const kProductIQTranslationsUrl;
-extern NSString *const kProductIQObjectDescribeUrl;
-extern NSString *const kProductIQSyncData;
-extern NSString *const kProdIQLastSyncTime;
-extern NSString *const kProdIQGetDeleteData;

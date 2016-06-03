@@ -64,7 +64,7 @@ NSMutableString *currentElementValue;
 {
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     [xml appendString:[NSString stringWithFormat:@"<%@>   </%@>",KHeaderRecord,KHeaderRecord]];
-    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KHeaderRecord,[self getRecodeNode:sfmPage.headerRecord objectName:sfmPage.objectName recordType:KHeaderRecord pageLayout:sfmPage.process.pageLayout.headerLayout.hdrLayoutId],KHeaderRecord]];
+    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KHeaderRecord,[self getRecodeNode:sfmPage.headerRecord objectName:sfmPage.objectName recordType:KHeaderRecord],KHeaderRecord]];
     return xml;
 }
 
@@ -73,7 +73,6 @@ NSMutableString *currentElementValue;
     NSDictionary *dict = sfmPage.detailsRecord;
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     NSDictionary *objectDict = [self getProcessComponentIdFromSfPage:sfmPage];
-    NSDictionary *pageLayoutId = [self getPageLayoutIds:sfmPage.process.pageLayout.detailLayouts];
     if (dict)
     {
         for (NSString *key_Id in [dict allKeys])
@@ -82,25 +81,14 @@ NSMutableString *currentElementValue;
             NSArray *itemArray = [dict objectForKey:key_Id];
             for (NSDictionary *childDict in itemArray)
             {
-                [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kDetailRecords,[self getRecodeNode:childDict objectName:objectName recordType:kDetailRecords pageLayout:[pageLayoutId objectForKey:key_Id]],kDetailRecords]];
+                [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kDetailRecords,[self getRecodeNode:childDict objectName:objectName recordType:kDetailRecords],kDetailRecords]];
             }
         }
     }
     return xml;
 }
--(NSDictionary *)getPageLayoutIds:(NSArray *)layoutInfo
-{
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    if (layoutInfo) {
-        for (SFMDetailLayout *sfmDetailLayout in layoutInfo) {
-            [dict setValue:sfmDetailLayout.pageLayoutId forKey:sfmDetailLayout.processComponentId];
-        }
-        return dict;
-    }
-    return dict;
-}
 
--(NSString *)getRecodeNode:(NSDictionary *)dict objectName:(NSString *)objectName recordType:(NSString *)recordType pageLayout:(NSString *)pageLayoutId
+-(NSString *)getRecodeNode:(NSDictionary *)dict objectName:(NSString *)objectName recordType:(NSString *)recordType
 {
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KObjName,objectName,KObjName]];
@@ -108,7 +96,7 @@ NSMutableString *currentElementValue;
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kParentColumnName,kParentColumnName]];
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kDeleteRecID,kDeleteRecID]];
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kFieldsToNull,kFieldsToNull]];
-    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kPageLayoutId,pageLayoutId,kPageLayoutId]];
+    [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kPageLayoutId,kPageLayoutId]];
     [xml appendString:[NSString stringWithFormat:@"%@",[self getValuesNode:dict]]];
     return xml;
 }
@@ -130,6 +118,7 @@ NSMutableString *currentElementValue;
     {
         for(NSString *string in [dict allKeys])
         {
+            /* We are not sending local id from client side, So removing this value from request body */
             if (![string isEqualToString:@"localId"]) {
                 [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kTargetRecordAsKeyValue,[self getValueNode:[dict objectForKey:string]],kTargetRecordAsKeyValue]];
             }
@@ -146,9 +135,12 @@ NSMutableString *currentElementValue;
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kFieldsToNull,kFieldsToNull]];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kKey,recordFieldData.name,kKey]];
     
-    /* Testing on 22 sep  */
-    //[xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSortValue,kSortValue]];
-    //[xml appendString:[NSString stringWithFormat:@"<%@></%@>",kType,kType]];
+    //common request structure for custom and standard WS
+    //this key we are not using for standard WS
+    /**********  start  **********/
+   // [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSortValue,kSortValue]];
+   // [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kType,kType]];
+    /**********  end  **********/
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kValue1,kValue1]];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kValue,recordFieldData.internalValue,kValue]];
     return xml;

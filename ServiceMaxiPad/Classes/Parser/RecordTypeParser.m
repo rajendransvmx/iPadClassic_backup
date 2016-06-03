@@ -53,51 +53,89 @@
 //
 //}
 
+//-(ResponseCallback*)parseResponseWithRequestParam:(RequestParamModel*)requestParamModel
+//                                     responseData:(id)responseData {
+//    
+//    if (![responseData isKindOfClass:[NSDictionary class]]) {
+//        return nil;
+//    }
+//    
+//    
+//    @autoreleasepool {
+//        NSDictionary *result = (NSDictionary *)responseData;
+//        NSArray * tempResultArray = [result objectForKey:@"valueMap"];
+//        NSMutableArray *recordTypeModelArray = [[NSMutableArray alloc] init];
+//        NSArray *resultArray;
+//        
+//        if([tempResultArray count]>0)
+//        {
+//            NSDictionary *dict = [tempResultArray objectAtIndex:0];
+//            NSString *jsonString = [dict objectForKey:@"value"];
+//            
+//            NSError *jsonError;
+//            NSData *objectData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+//            resultArray = [NSJSONSerialization JSONObjectWithData:objectData
+//                                                          options:NSJSONReadingMutableContainers
+//                                                            error:&jsonError];
+//            
+//        }
+//        
+//        for (NSDictionary *dict in resultArray)
+//        {
+//            NSString * recordTypeId = [dict objectForKey:kId];
+//            NSString * recordTypeName = [dict objectForKey:kName];
+//            
+//            
+//            if (recordTypeId != nil && recordTypeName != nil && [StringUtil isStringNotNULL:recordTypeName]) {
+//                
+//                SFRecordTypeModel *recordType = [[SFRecordTypeModel alloc] init];
+//                recordType.recordTypeId = recordTypeId;
+//                recordType.recordType = recordTypeName;
+//                [recordTypeModelArray addObject:recordType];
+//                
+//            }
+//            
+//        }
+//        
+//        id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
+//        
+//        if ([daoService conformsToProtocol:@protocol(SFRecordTypeDAO)]) {
+//            [daoService updateRecordTypeLabels:recordTypeModelArray];
+//        }
+//        
+//    }
+//    return nil;
+//    
+//}
+
 -(ResponseCallback*)parseResponseWithRequestParam:(RequestParamModel*)requestParamModel
                                      responseData:(id)responseData {
     
     if (![responseData isKindOfClass:[NSDictionary class]]) {
         return nil;
     }
-    
-    
     @autoreleasepool {
         NSDictionary *result = (NSDictionary *)responseData;
-        NSArray * tempResultArray = [result objectForKey:@"valueMap"];
+        NSArray * resultArray = [result objectForKey:@"records"];
         NSMutableArray *recordTypeModelArray = [[NSMutableArray alloc] init];
-        NSArray *resultArray;
-        
-        if([tempResultArray count]>0)
+        if ([resultArray count] > 0)
         {
-            NSDictionary *dict = [tempResultArray objectAtIndex:0];
-            NSString *jsonString = [dict objectForKey:@"value"];
-            
-            NSError *jsonError;
-            NSData *objectData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-            resultArray = [NSJSONSerialization JSONObjectWithData:objectData
-                                                          options:NSJSONReadingMutableContainers
-                                                            error:&jsonError];
-            
-        }
-        
-        for (NSDictionary *dict in resultArray)
-        {
-            NSString * recordTypeId = [dict objectForKey:kId];
-            NSString * recordTypeName = [dict objectForKey:kName];
-            
-            
-            if (![StringUtil isStringEmpty:recordTypeId] && ![StringUtil isStringEmpty:recordTypeName]) {
+            for(int i = 0 ; i< [resultArray count]; i++)
+            {
+                NSDictionary * sobj = [resultArray objectAtIndex:i];
+                NSString * recordTypeId = [sobj objectForKey:kId];
+                NSString * recordTypeName = [sobj objectForKey:kName];
                 
-                SFRecordTypeModel *recordType = [[SFRecordTypeModel alloc] init];
-                recordType.recordTypeId = recordTypeId;
-                recordType.recordType = recordTypeName;
-                [recordTypeModelArray addObject:recordType];
                 
+                if (recordTypeId != nil && recordTypeName != nil && [StringUtil isStringNotNULL:recordTypeName]) {
+                    
+                    SFRecordTypeModel *recordType = [[SFRecordTypeModel alloc] init];
+                    recordType.recordTypeId = recordTypeId;
+                    recordType.recordType = recordTypeName;
+                    [recordTypeModelArray addObject:recordType];
+                    
+                }
             }
-            
-        }
-        if([recordTypeModelArray count ]> 0)
-        {
             id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
             
             if ([daoService conformsToProtocol:@protocol(SFRecordTypeDAO)]) {
@@ -105,10 +143,10 @@
             }
             
         }
-        
     }
     return nil;
     
 }
+
 
 @end

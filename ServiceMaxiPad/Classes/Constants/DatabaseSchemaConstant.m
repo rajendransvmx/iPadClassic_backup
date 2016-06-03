@@ -62,7 +62,7 @@ NSString *const kTableMobileDeviceSettingsSchema = @"CREATE TABLE IF NOT EXISTS 
 
 NSString *const kTableMobileDeviceTagsSchema = @"CREATE TABLE IF NOT EXISTS MobileDeviceTags ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'tagId' VARCHAR, 'value' VARCHAR)";
 
-NSString *const kTableModifiedRecordsSchema = @"CREATE TABLE IF NOT EXISTS ModifiedRecords ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'recordLocalId' VARCHAR, 'sfId' VARCHAR, 'recordType' VARCHAR, 'operation' VARCHAR, 'objectName' VARCHAR, 'syncFlag' BOOL, 'parentObjectName' VARCHAR, 'parentLocalId' VARCHAR, 'recordSent' VARCHAR, 'webserviceName' VARCHAR, 'className' VARCHAR, 'syncType' VARCHAR, 'headerLocalId' VARCHAR, 'requestData' VARCHAR, 'requestId' VARCHAR,'Pending' VARCHAR, 'timeStamp' DATETIME,'fieldsModified' VARCHAR )";
+NSString *const kTableModifiedRecordsSchema = @"CREATE TABLE IF NOT EXISTS ModifiedRecords ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'recordLocalId' VARCHAR, 'sfId' VARCHAR, 'recordType' VARCHAR, 'operation' VARCHAR, 'objectName' VARCHAR, 'syncFlag' BOOL, 'parentObjectName' VARCHAR, 'parentLocalId' VARCHAR, 'recordSent' VARCHAR, 'webserviceName' VARCHAR, 'className' VARCHAR, 'syncType' VARCHAR, 'headerLocalId' VARCHAR, 'requestData' VARCHAR, 'requestId' VARCHAR,'timeStamp' DATETIME,'fieldsModified' VARCHAR)";
 
 /*NSString *const kTableObjectNameFieldValueSchema = @"CREATE TABLE IF NOT EXISTS ObjectNameFieldValue ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'object_name' VARCHAR, 'Id' VARCHAR, 'value' VARCHAR)";*/
 
@@ -105,7 +105,7 @@ NSString *const kTableSFMSearchFilterCriteriaSchema = @"CREATE TABLE IF NOT EXIS
 
 NSString *const kTableSFMSearchProcessSchema = @"CREATE TABLE IF NOT EXISTS SFM_Search_Process ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'identifier' VARCHAR,'name' VARCHAR, 'processDescription' VARCHAR,'processName' VARCHAR)";
 
-NSString *const kTableSFNamedSearchComponentSchema = @"CREATE TABLE IF NOT EXISTS SFNamedSearchComponent ('local_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'expressionType' VARCHAR, 'fieldName' VARCHAR, 'namedSearchId' VARCHAR, 'searchObjectFieldType' VARCHAR, 'fieldDataType' VARCHAR, 'fieldRelationshipName' VARCHAR, 'keyNameField' VARCHAR, 'sequence' DOUBLE)";
+NSString *const kTableSFNamedSearchComponentSchema = @"CREATE TABLE IF NOT EXISTS SFNamedSearchComponent ('local_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, 'expressionType' VARCHAR, 'fieldName' VARCHAR, 'namedSearchId' VARCHAR, 'searchObjectFieldType' VARCHAR, 'fieldDataType' VARCHAR, 'fieldRelationshipName' VARCHAR, 'sequence' DOUBLE)";
 
 NSString *const kTableSFNamedSearchFiltersSchema = @"CREATE TABLE IF NOT EXISTS SFNamedSearchFilters ('Id' VARCHAR PRIMARY KEY NOT NULL UNIQUE, 'name' TEXT, 'namedSearchId' VARCHAR, 'ruleType' VARCHAR, 'parentObjectCriteria' VARCHAR, 'sourceObjectName' VARCHAR, 'fieldName' VARCHAR, 'sequence' VARCHAR, 'advancedExpression' VARCHAR, 'allowOverride' BOOLEAN, 'defaultOn' BOOLEAN, 'description' TEXT)";
 
@@ -197,27 +197,6 @@ NSString *const kProductManualSchema =  @"CREATE TABLE IF NOT EXISTS ProductManu
 NSString *const kTableAttachmentLocalSchema = @"CREATE TABLE IF NOT EXISTS AttachmentLocal ('parentLocalId' VARCHAR PRIMARY KEY NOT NULL UNIQUE DEFAULT (0), 'parentObjectName' VARCHAR)";
 
 NSString *const kTableSFMCustomActionParams = @"CREATE TABLE IF NOT EXISTS CustomActionParams ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'Id' VARCHAR, 'Name' VARCHAR, 'DispatchProcessId' VARCHAR , 'ParameterName' VARCHAR, 'ParameterValue' VARCHAR , 'ParameterType' VARCHAR)";
-
-//ProductIQ tables.
-
-NSString *const KTableRecordName = @"CREATE TABLE IF NOT EXISTS 'RecordName' ('RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id' VARCHAR UNIQUE,  'Name'	VARCHAR);";
-
-NSString *const KTableTranslations = @"CREATE TABLE IF NOT EXISTS 'Translations' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Key' VARCHAR,'Text' VARCHAR )";
-
-NSString *const KTableFieldDescribe = @"CREATE TABLE IF NOT EXISTS 'FieldDescribe' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'FieldName' VARCHAR,'DescribeResult' VARCHAR )";
-
-NSString *const KTableObjectDescribe = @"CREATE TABLE IF NOT EXISTS 'ObjectDescribe' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'ObjectName' VARCHAR UNIQUE ,'DescribeResult' VARCHAR )";
-
-NSString *const KTableConfiguration = @"CREATE TABLE IF NOT EXISTS 'Configuration' ('RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Type' VARCHAR,'Key' VARCHAR,'Value' VARCHAR )";
-
-NSString *const KTableInstallBaseObject = @"CREATE TABLE IF NOT EXISTS 'InstallBaseObject' ( 'objectName' VARCHAR PRIMARY KEY  NOT NULL  UNIQUE  COLLATE NOCASE  )";
-
-NSString *const KTableClientSyncLogTransient =@"CREATE TABLE IF NOT EXISTS 'ClientSyncLogTransient' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'Id' VARCHAR UNIQUE ,'ObjectName' VARCHAR,'Operation' VARCHAR,'LastModifiedDate' VARCHAR,'Pending' VARCHAR )";
-
-NSString *const kTableDescribeLayout = @"CREATE TABLE IF NOT EXISTS 'DescribeLayout' ( 'RecordId' INTEGER PRIMARY KEY  AUTOINCREMENT ,'ObjectName' VARCHAR,'DescribeLayoutResult' VARCHAR )";
-
-
-
 
 @implementation DatabaseSchemaConstant
 

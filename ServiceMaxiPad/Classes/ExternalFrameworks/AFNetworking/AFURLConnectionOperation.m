@@ -22,6 +22,10 @@
 
 #import "AFURLConnectionOperation.h"
 
+ //025428
+#import "MobileDeviceSettingService.h"
+#import "StringUtil.h"
+
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 #import <UIKit/UIKit.h>
 #endif
@@ -50,7 +54,7 @@ static dispatch_group_t url_request_operation_completion_group() {
     dispatch_once(&onceToken, ^{
         af_url_request_operation_completion_group = dispatch_group_create();
     });
-
+    
     return af_url_request_operation_completion_group;
 }
 
@@ -60,7 +64,7 @@ static dispatch_queue_t url_request_operation_completion_queue() {
     dispatch_once(&onceToken, ^{
         af_url_request_operation_completion_queue = dispatch_queue_create("com.alamofire.networking.operation.queue", DISPATCH_QUEUE_CONCURRENT );
     });
-
+    
     return af_url_request_operation_completion_queue;
 }
 
@@ -151,7 +155,7 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
 + (void)networkRequestThreadEntryPoint:(id)__unused object {
     @autoreleasepool {
         [[NSThread currentThread] setName:@"AFNetworking"];
-
+        
         NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
         [runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode];
         [runLoop run];
@@ -171,10 +175,10 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
 
 - (instancetype)initWithRequest:(NSURLRequest *)urlRequest {
     NSParameterAssert(urlRequest);
-
+    
     self = [super init];
     if (!self) {
-		return nil;
+        return nil;
     }
     
     self.lock = [[NSRecursiveLock alloc] init];
@@ -185,11 +189,21 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
     self.request = urlRequest;
     
     self.shouldUseCredentialStorage = YES;
-
+    
     self.state = AFOperationReadyState;
-
-    self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
-
+    
+     //025428
+    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET023"];
+    BOOL isPinningEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+    
+    if (isPinningEnabled) {
+        self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    }
+    else {
+        self.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    }
+    
     return self;
 }
 
@@ -219,17 +233,17 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
         __weak __typeof(self)weakSelf = self;
         [super setCompletionBlock:^ {
             __strong __typeof(weakSelf)strongSelf = weakSelf;
-
+            
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu"
             dispatch_group_t group = strongSelf.completionGroup ?: url_request_operation_completion_group();
             dispatch_queue_t queue = strongSelf.completionQueue ?: dispatch_get_main_queue();
 #pragma clang diagnostic pop
-
+            
             dispatch_group_async(group, queue, ^{
                 block();
             });
-
+            
             dispatch_group_notify(group, url_request_operation_completion_queue(), ^{
                 [strongSelf setCompletionBlock:nil];
             });
@@ -252,7 +266,7 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
     if (!_outputStream) {
         self.outputStream = [NSOutputStream outputStreamToMemory];
     }
-
+    
     return _outputStream;
 }
 
@@ -462,7 +476,7 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
     [self.lock lock];
     if (![self isFinished] && ![self isCancelled]) {
         [super cancel];
-
+        
         if ([self isExecuting]) {
             [self performSelector:@selector(cancelConnection) onThread:[[self class] networkRequestThread] withObject:nil waitUntilDone:NO modes:[self.runLoopModes allObjects]];
         }
@@ -476,7 +490,7 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
         userInfo = [NSDictionary dictionaryWithObject:[self.request URL] forKey:NSURLErrorFailingURLErrorKey];
     }
     NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorCancelled userInfo:userInfo];
-
+    
     if (![self isFinished]) {
         if (self.connection) {
             [self.connection cancel];
@@ -504,7 +518,7 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
             });
         }]];
     }
-
+    
     __block dispatch_group_t group = dispatch_group_create();
     NSBlockOperation *batchedOperation = [NSBlockOperation blockOperationWithBlock:^{
         dispatch_group_notify(group, dispatch_get_main_queue(), ^{
@@ -513,7 +527,7 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
             }
         });
     }];
-
+    
     for (AFURLConnectionOperation *operation in operations) {
         operation.completionGroup = group;
         void (^originalCompletionBlock)(void) = [operation.completionBlock copy];
@@ -528,23 +542,23 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
                 if (originalCompletionBlock) {
                     originalCompletionBlock();
                 }
-
+                
                 NSUInteger numberOfFinishedOperations = [[operations indexesOfObjectsPassingTest:^BOOL(id op, NSUInteger __unused idx,  BOOL __unused *stop) {
                     return [op isFinished];
                 }] count];
-
+                
                 if (progressBlock) {
                     progressBlock(numberOfFinishedOperations, [operations count]);
                 }
-
+                
                 dispatch_group_leave(group);
             });
         };
-
+        
         dispatch_group_enter(group);
         [batchedOperation addDependency:operation];
     }
-
+    
     return [operations arrayByAddingObject:batchedOperation];
 }
 
@@ -557,7 +571,7 @@ willSendRequestForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challe
         self.authenticationChallenge(connection, challenge);
         return;
     }
-
+    
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
         if ([self.securityPolicy evaluateServerTrust:challenge.protectionSpace.serverTrust forDomain:challenge.protectionSpace.host]) {
             NSURLCredential *credential = [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust];
@@ -621,7 +635,7 @@ didReceiveResponse:(NSURLResponse *)response
         NSInteger totalNumberOfBytesWritten = 0;
         if ([self.outputStream hasSpaceAvailable]) {
             const uint8_t *dataBuffer = (uint8_t *)[data bytes];
-
+            
             NSInteger numberOfBytesWritten = 0;
             while (totalNumberOfBytesWritten < (NSInteger)length) {
                 numberOfBytesWritten = [self.outputStream write:&dataBuffer[(NSUInteger)totalNumberOfBytesWritten] maxLength:(length - (NSUInteger)totalNumberOfBytesWritten)];
@@ -631,7 +645,7 @@ didReceiveResponse:(NSURLResponse *)response
                 
                 totalNumberOfBytesWritten += numberOfBytesWritten;
             }
-
+            
             break;
         }
         
@@ -641,10 +655,10 @@ didReceiveResponse:(NSURLResponse *)response
             return;
         }
     }
-
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         self.totalBytesRead += length;
-
+        
         if (self.downloadProgress) {
             self.downloadProgress(length, self.totalBytesRead, self.response.expectedContentLength);
         }
@@ -702,7 +716,7 @@ didReceiveResponse:(NSURLResponse *)response
     self.error = [decoder decodeObjectForKey:NSStringFromSelector(@selector(error))];
     self.responseData = [decoder decodeObjectForKey:NSStringFromSelector(@selector(responseData))];
     self.totalBytesRead = [decoder decodeInt64ForKey:NSStringFromSelector(@selector(totalBytesRead))];
-
+    
     return self;
 }
 

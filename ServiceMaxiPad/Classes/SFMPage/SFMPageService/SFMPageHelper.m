@@ -325,19 +325,6 @@
     return nil;
 }
 
-//Madhusudhan, #024488 Record type value should be displayed in user language.
-+ (NSString *)getRecordTypeDisplayValueForsfId:(NSString *)sfId
-{
-    
-    NSString * displayName = nil;
-    id <SFRecordTypeDAO> recordTypeService = [FactoryDAO serviceByServiceType:ServiceTypeSFRecordType];
-    DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kRecordTypeId operatorType:SQLOperatorEqual andFieldValue:sfId];
-    displayName = (NSString *)[recordTypeService fetchSFRecordTypeDisplayName:[NSArray arrayWithObjects:kRecordtypeLabel,nil] andCriteria:criteria];
-    return displayName;
-    
-    
-}
-
 + (NSString *)getNameFieldForObject:(NSString *)objectName
 {
     NSString * nameField = nil;
@@ -745,22 +732,17 @@
 //        else
 //            literalValue = @"0";
         
-        if ([literal containsString:kLiteralCurrentRecord]) { // Defect#029314
-            
+        if ([StringUtil isItTrue:literal]) {
+            literalValue = kTrue;
         }
         else{
-            if ([StringUtil isItTrue:literal]) {
-                literalValue = kTrue;
-            }
-            else{
-                literalValue = kFalse;
-            }
+            literalValue = kFalse;
         }
         
     }
     else
     {
-        if(([literal caseInsensitiveCompare:kLiteralCurrentUser]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralOwner]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralCurrentUserId] == NSOrderedSame))
+        if(([literal caseInsensitiveCompare:kLiteralCurrentUser]== NSOrderedSame) || ([literal caseInsensitiveCompare:kLiteralOwner]== NSOrderedSame))
         {
             literalValue = [PlistManager getLoggedInUserName];
         }

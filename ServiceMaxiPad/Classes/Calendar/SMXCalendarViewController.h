@@ -22,7 +22,6 @@
 #import "FlowNode.h"
 #import "SMXEvent.h"
 #import "SMXBlueButton.h"
-#import "SFMPageViewManager.h"
 
 @protocol SMXCalendarViewControllerProtocol <NSObject>
 @required
@@ -37,7 +36,6 @@
 @property (nonatomic, strong) NSArray *cEventListArray;
 @property (nonatomic, strong) NSMutableDictionary *cWODetailsDict;
 @property (nonatomic, strong) NSMutableDictionary *cCaseDetailsDict;
-@property (nonatomic, strong) SFMPageViewManager *viewPageManager;
 
 + (instancetype) sharedInstance;
 

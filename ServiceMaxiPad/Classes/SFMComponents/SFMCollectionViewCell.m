@@ -28,7 +28,7 @@ static NSString *asterik = @"*";
         self.type = CellTypeNonEditableTextField;
         
         CGSize sz = frame.size;
-        self.nameField = [[EditMenuLabel alloc] initWithFrame:CGRectMake(8, 8, (sz.width - 16.0f), 21)];
+        self.nameField = [[UILabel alloc] initWithFrame:CGRectMake(8, 8, (sz.width - 16.0f), 21)];
         self.nameField.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize14];
         self.nameField.tag = 100;
         self.nameField.text = @"";
@@ -71,7 +71,7 @@ static NSString *asterik = @"*";
     if(!self.nameField)
     {
         CGSize sz = self.bounds.size;
-        self.nameField = [[EditMenuLabel alloc] initWithFrame:CGRectMake(8, 8, (sz.width - 16.0f), 21)];
+        self.nameField = [[UILabel alloc] initWithFrame:CGRectMake(8, 8, (sz.width - 16.0f), 21)];
         self.nameField.font = [UIFont systemFontOfSize:14.0f];
         self.nameField.tag = 100;
         self.nameField.text = @"";
@@ -153,11 +153,6 @@ static NSString *asterik = @"*";
     
 }
 -(void)setPrecision:(double)precision scale:(double)scale;
-{
-    
-}
-
-- (void)setLengthVariable:(NSInteger)lenght
 {
     
 }

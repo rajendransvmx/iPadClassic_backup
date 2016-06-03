@@ -12,8 +12,4 @@
 @protocol ObjectNameFieldValueDAO <NSObject>
 
 - (NSArray * )fetchObjectNameFieldValueByFields:(NSArray *)fieldNames andCriteria:(id)criteria;
-
-- (BOOL)updateOrInsertTransactionObjects:(NSArray *)transactionObjects;
-
-
 @end

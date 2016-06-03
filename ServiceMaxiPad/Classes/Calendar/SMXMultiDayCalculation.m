@@ -24,14 +24,12 @@
     newEvent.dateTimeEnd = endTim;
     newEvent.dateTimeBegin_multi = startTime;
     newEvent.dateTimeEnd_multi = endTim;
-    [[CalenderHelper new] setRescheduledEventTitle:newEvent];
     [self processEvent:newEvent];
 }
 
-
 //Changes for multiday event for date range. Here we are removing events.
 //Currently we are not using this method, It was impleted for multiday event with given Date range.
--(void)removeEventFromArray_EventWindow:(SMXEvent *)event numberOfDays:(int)numberOfDays{
+-(void)removeEventFromArray:(SMXEvent *)event numberOfDays:(int)numberOfDays{
     NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
     int length=(int)(dateRange.length);
     if (length>=0) {
@@ -56,7 +54,7 @@
     
 }
 
--(void)removeEventFromArray:(SMXEvent *)event numberOfDays:(int)numberOfDays{
+-(void)removeEventFromArray_EventWindow:(SMXEvent *)event numberOfDays:(int)numberOfDays{
     //NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
     //int length=(int)(dateRange.length);
     for (int i=0; i<numberOfDays; i++) {
@@ -68,7 +66,6 @@
     }
     [self removeEventFromArray:event eventdate:[self changeTime:event.dateTimeBegin_multi newHour:0 newMin:0 numberOfday:numberOfDays]];
 }
-
 -(void)removeEventFromArray:(SMXEvent *)multiDayEvent eventdate:(NSDate *)date{
     NSDateComponents *comp = [NSDate componentsOfDate:date];
     NSDate *newDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
@@ -105,8 +102,8 @@
     if ([event.dateTimeBegin_multi isSameDay:event.dateTimeEnd_multi]) {
         return 0;
     }
-    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
+    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
                                                         fromDate:startDate
                                                           toDate:endDate
                                                          options:0];
@@ -124,8 +121,8 @@
     if ([startDate isSameDay:endDate]) {
         return 0;
     }
-    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
+    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
                                                         fromDate:startDate
                                                           toDate:endDate
                                                          options:0];
@@ -164,8 +161,8 @@
         if ([startDate isSameDay:endDate]) {
             return 0;
         }
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay|NSCalendarUnitYear|NSCalendarUnitMonth
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit|NSYearCalendarUnit|NSMonthCalendarUnit
                                                             fromDate:startDate
                                                               toDate:endDate
                                                              options:0];
@@ -185,13 +182,14 @@
     
     //Time zone change for weekview change, here we are considering system reagion.
     NSCalendar *calender = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp0 = [calender components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitWeekOfMonth| NSCalendarUnitHour | NSCalendarUnitMinute fromDate:date];
+    NSDateComponents *comp0 = [calender components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitWeekday | NSCalendarUnitWeekOfMonth| NSHourCalendarUnit |
+                               NSMinuteCalendarUnit fromDate:date];
     return comp0;
 }
 
 /*Here we are spliting multiDay event and making each day event, adding into locat Model and DB */
 //Currently we are not using this method, It was impleted for multiday event with given Date range.
--(void)makingEvent_EventWindow:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
+-(void)makingEvent:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
     NSRange dateRange= [self eventWindow:multiDayEvent.dateTimeBegin endDate:multiDayEvent.dateTimeEnd];
     int length=(int)(dateRange.length);
     int location=(int)(dateRange.location);
@@ -270,7 +268,7 @@
     }
 }
 
--(void)makingEvent:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
+-(void)makingEvent_EventWindow:(SMXEvent *)multiDayEvent numberOfDays:(int)numberOfDays{
     for (int i=0; i<numberOfDays; i++) {
         SMXEvent *newEvent =[[SMXEvent alloc] initWithCalendarModel_self:multiDayEvent];
         newEvent.dateTimeBegin_multi=multiDayEvent.dateTimeBegin;
@@ -340,7 +338,7 @@
 /*Here changing date , adding number of day*/
 -(NSDate *)changeTime:(NSDate *)date newHour:(int )hour newMin:(int)min numberOfday:(int)numberOfDay{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:date];
+    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
     comp.hour = hour;
     comp.minute = min;
     comp.second = 00;

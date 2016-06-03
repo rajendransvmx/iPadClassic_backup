@@ -50,10 +50,6 @@
 #import "SFMCustomActionHelper.h"
 #import "SFMCustomActionWebServiceHelper.h"
 #import "SNetworkReachabilityManager.h"
-#import "ProductIQHomeViewController.h"
-#import "ProductIQManager.h"
-#import "MessageHandler.h"
-
 
 @interface SFMPageViewController ()<SMActionSideBarViewControllerDelegate>
 @property (nonatomic, strong) SMActionSideBarViewController *mySideBar;
@@ -143,20 +139,6 @@
     [self addUpdateDODBtninWizard:allWizards];
     [self addEventAndServicemaxEventProcessWizard:allWizards];
     /*If wizard step is not there for a wizard then it should not be shown in the tableView*/
-    
-    //show or hide ProductIQ
-    
-    if ([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
-        
-        //Disable create or edit process of IB or location objects.
-        allWizards = [[ProductIQManager sharedInstance] disableCreateOrEditProcessOfLocationOrIBForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
-        
-        if ([[ProductIQManager sharedInstance] isProductIQEnabledForSFMPage:self.sfmPageView]) {
-            allWizards = [[ProductIQManager sharedInstance] addProductIQWizardForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
-        }
-    }
-    
-    
     SFProcessService *processService = [[SFProcessService alloc]init];
     
     if (self.tempViewController == nil) {
@@ -314,11 +296,6 @@
     {
         [self.tempViewController reloadTableView];
     }
-    if ([ProductIQManager sharedInstance].isRecordDeleted == YES) { //deleted record from productIQ.Hence navigate to root view (024507).
-        //reset it again to NO.
-        [ProductIQManager sharedInstance].isRecordDeleted = NO;
-        [self.navigationController popToRootViewControllerAnimated:YES];
-    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -462,10 +439,7 @@
         tempMasterViewController.sfmPageView = self.sfmPageView;
         [tempMasterViewController resetData];
         self.tempViewController.shouldShowTroubleShooting = self.sfmPageView.sfmPage.process.pageLayout.headerLayout.enableTroubleShooting;
-//        [self.tempViewController.tableView reloadData];
-        [self refreshPageData];
         [self.tempViewController.tableView reloadData];
-
         [PlistManager storeLastUsedViewProcess:sfProcess.sfID objectName:sfProcess.objectApiName];
     }
     else
@@ -541,9 +515,6 @@
             }
         }
     }
-    //refresh the action menu item.
-//    [self refreshPageData];
-//    [self.tempViewController.tableView reloadData];
 }
 
 -(void)updateDODRecordFromSalesforce
@@ -563,44 +534,6 @@
     [[TaskManager sharedInstance] addTask:taskModel];
     
 }
-
-#pragma mark -
-#pragma mark ProductIQ
-
--(void)displayProductIQViewController;
-{
-    /*
-     ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
-     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
-     navController.delegate = lProductIQcontroller;
-     navController.modalPresentationStyle = UIModalPresentationFullScreen;
-     navController.navigationBar.hidden = NO;
-     navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
-     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-     [self.navigationController presentViewController:navController animated:YES completion:nil];
-     */
-    
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    
-    if (orientation == UIInterfaceOrientationPortrait || orientation == UIInterfaceOrientationPortraitUpsideDown) {
-        NSNumber *value = [NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight];
-        [[UIDevice currentDevice] setValue:value forKey:@"orientation"];
-    }
-    
-    
-
-    ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
-    lProductIQcontroller.responseDictionary = [MessageHandler getMessageHandlerResponeDictionaryForSFMPage:self.sfmPageView];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
-    navController.delegate = lProductIQcontroller;
-    navController.modalPresentationStyle = UIModalPresentationFullScreen;
-    navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
-    navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    [self.navigationController presentViewController:navController animated:YES completion:nil];
-    
-}
-
 
 #pragma mark - Flow Delegate methods
 - (void)flowStatus:(id)status {
@@ -1006,7 +939,6 @@
 }
 
 -(void)reloadWizardComponentActionAccordingToNetworkChangeNotification:(NSNotification *)notification{
-    [self removeActivityAndLoadingLabel];
     if (self.tempViewController != nil) {
         [self.tempViewController reloadTableView];
     }

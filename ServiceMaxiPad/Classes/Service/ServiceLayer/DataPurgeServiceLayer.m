@@ -97,15 +97,6 @@
 
         }
             break;
-            
-        case RequestDataPurgeProductIQData:
-        {
-            if (!callback.callBack) {
-                [[SMDataPurgeManager sharedInstance] manageDataPurge];
-            }
-        }
-            break;
-            
         default:
             break;
     }
@@ -128,9 +119,6 @@
         case RequestDataPurgeGetPriceDataTypeThree:
             return [self getRequestParamModelForGetPriceData:RequestDataPurgeGetPriceDataTypeThree];
             break;
-        case RequestDataPurgeProductIQData:
-            return [self getProdIQDataRequestParam];
-            break;
         default:
             break;
     }
@@ -140,13 +128,6 @@
     
 }
 
--(NSArray *)getProdIQDataRequestParam {
-    RequestParamModel *model = [[RequestParamModel alloc]init];
-    NSDictionary *lastIndexDict = [NSDictionary dictionaryWithObjects:@[[NSNull null], @"LAST_INDEX", [NSNull null], [NSNull null], [NSNull null], [NSNumber numberWithInt:0], @[], @[]] forKeys:@[@"data", @"key", @"lstInternal_Request", @"lstInternal_Response", @"record", @"value", @"valueMap", @"values"]];
-    model.valueMap = @[lastIndexDict];
-    model.values = @[];
-    return @[model];
-}
 
 
 -(NSArray*)getRequestParamModelForGetPriceData:(RequestType)getPriceDataType {
@@ -234,7 +215,7 @@
     }
     for(TransactionObjectModel *transObjectModel in objectsList)
     {
-        //getting currency from WO table
+        //getting price Book currency for WO table
         if ([transObjectModel valueForField:@"CurrencyIsoCode"]) {
             [values addObject:[transObjectModel valueForField:@"CurrencyIsoCode"]];
         }

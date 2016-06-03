@@ -168,7 +168,8 @@
                             cell.userInteractionEnabled = NO;
                             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
                             cell.accessoryView = [self setIcon:[UIColor colorWithHexString:kTextFieldFontColor]];
-                        }else{
+                        }
+                        else{
                             textLabel.enabled = YES;
                             cell.userInteractionEnabled = YES;
                             [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
@@ -321,12 +322,7 @@
                 {
                     //Reschedule event
                     [self.delegate rescheduleEvent];
-                }else if ([wizardComponent.actionType isEqualToString:@"ProductIQ"])
-                {
-                    //Reschedule event
-                    [self.delegate displayProductIQViewController];
-                }
-                else if([[wizardComponent.actionType uppercaseString] isEqualToString:@"OTHERS"])//Here we are checking for custome URL
+                }else if([[wizardComponent.actionType uppercaseString] isEqualToString:@"OTHERS"])//Here we are checking for custome URL
                 {
                     /* Before making request checking for internet connectivity */
                     if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"URL"]) {

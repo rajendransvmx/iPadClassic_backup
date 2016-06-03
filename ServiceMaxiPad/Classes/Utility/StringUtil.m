@@ -84,7 +84,7 @@ const NSString *utility_org_namespace = ORG_NAME_SPACE;
     }
     else
     {
-        NSRange range = [metaString rangeOfString:subString options:NSCaseInsensitiveSearch];
+        NSRange range = [metaString rangeOfString:subString];
         if (NSEqualRanges(range, NSMakeRange(NSNotFound, 0)) )
         {
             containString = NO;
@@ -215,17 +215,5 @@ const NSString *utility_org_namespace = ORG_NAME_SPACE;
     
     return containString;
 }
-+ (BOOL)isBackSpace:(NSString*)string
-{
-    
-    const char * _char = [string cStringUsingEncoding:NSUTF8StringEncoding];
-    int isBackSpace = strcmp(_char, "\b");
-    
-    if (isBackSpace == -8)
-    {
-        return YES;
-    }
-    return NO;
 
-}
 @end

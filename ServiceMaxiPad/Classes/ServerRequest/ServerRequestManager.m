@@ -25,7 +25,6 @@
 #import "ServerRequestManager.h"
 #import "RequestFactory.h"
 #import "RequestConstants.h"
-#import "ProductIQManager.h"
 
 @interface ServerRequestManager()
 
@@ -72,7 +71,6 @@
         case CategoryTypeConfigSync:
         case CategoryTypeOneCallConfigSync:
         case CategoryTypeSFMSearch:
-        case CategoryTypeLookupSearch:
         case CategoryTypeResetApp:
         case CategoryTypeGetPriceData:
         case CategoryTypeJobLog:                    // By default Yes :)
@@ -100,7 +98,7 @@
         case CategoryTypeCustomWebServiceAfterBeforeCall:
             isapplicable = NO;
             break;
-
+        
         default:
             isapplicable = NO;
             break;
@@ -167,8 +165,6 @@
             return kMaximumNoOfParallelPageLayoutCalls;//New page layout call.
             // Vipindas changed Bugbash - Nov 04 2014
             break;
-        case RequestProductIQObjectDescribe:
-            return [[[ProductIQManager sharedInstance]getProdIQRelatedObjects] count];
             
         default:
             break;
@@ -330,10 +326,6 @@
         case CategoryTypeSFMSearch:
             requestType = [self getNextRequestForSFMSearchResult:currentRequest andPreviousRequest:previousRequest];
             break;
-        case CategoryTypeLookupSearch:
-            requestType = [self getNextRequestForOnlineLookUp:currentRequest andPreviousRequest:previousRequest];
-            break;
-
         case CategoryTypeAccountHistory:
             requestType = [self getNextRequestForAccountHistoryResult:currentRequest andPreviousRequest:previousRequest];
             break;
@@ -363,9 +355,8 @@
         case CategoryTypeCustomWebServiceAfterBeforeCall:
             requestType = [self getNextRequestForCustomWebServiceAfterBefore:currentRequest andPreviousRequst:previousRequest];
             break;
-        case CategoryTypeProductIQData:
-            requestType = [self getNextRequestForProductIQData:currentRequest andPreviousRequest:previousRequest];
-            break;
+            
+            
         default:
             break;
     }
@@ -387,45 +378,24 @@
     return nextRequestType;
 }
 
-- (RequestType)getNextRequestForOnlineLookUp:(SVMXServerRequest *)currentRequest
-                             andPreviousRequest:(SVMXServerRequest *)previousRequest {
-    
-    RequestType nextRequestType = 0;
-    
-    if (currentRequest == nil) {
-        nextRequestType = RequestTypeOnlineLookUp;
-    }
-    if (currentRequest.requestType == RequestTypeOnlineLookUp) {
-        nextRequestType = RequestTypeNone;
-    }
-    return nextRequestType;
-}
-
-
 - (RequestType)getNextRequestForOneCallMetaInitialSync:(SVMXServerRequest *)currentRequest
-                                    andPreviousRequest:(SVMXServerRequest *)previousRequest {
+                           andPreviousRequest:(SVMXServerRequest *)previousRequest {
     
     RequestType nextRequestType = 0;
-    
-    
+
     if (currentRequest == nil)
     {
         nextRequestType = RequestValidateProfile;
         return nextRequestType;
     }
-    
+   
     switch (currentRequest.requestType) {
             
         case RequestValidateProfile:
-            nextRequestType = RequestMasterSyncTimeLog;
-            break;
-            
-        case RequestMasterSyncTimeLog:
             nextRequestType = RequestMobileDeviceTags;
             break;
-
         case RequestMobileDeviceTags:
-            nextRequestType = RequestOneCallMetaSync;
+             nextRequestType = RequestOneCallMetaSync;
             break;
         case RequestOneCallMetaSync:
             nextRequestType = RequestSFMPageData ;
@@ -434,7 +404,7 @@
             nextRequestType = RequestObjectDefinition;
             break;
         case RequestObjectDefinition:
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQObjectDescribe:RequestGetPriceObjects;
+            nextRequestType = RequestGetPriceObjects;
             break;
         case RequestGetPriceObjects:
             nextRequestType = RequestGetPriceCodeSnippet;
@@ -443,7 +413,7 @@
             nextRequestType =  RequestRecordType;
             break;
         case RequestRecordType:
-            nextRequestType =  RequestDependantPickListRest;
+             nextRequestType =  RequestDependantPickListRest;
             break;
         case RequestDependantPickListRest:
             nextRequestType =  RequestRTDependentPicklist;//RequestDocumentDownload;
@@ -452,10 +422,10 @@
             nextRequestType =  RequestStaticResourceLibrary;
             break;
         case RequestStaticResourceLibrary:
-            nextRequestType =  RequestStaticResourceDownload;
+             nextRequestType =  RequestStaticResourceDownload;
             break;
         case RequestStaticResourceDownload:
-            nextRequestType =  ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestAttachmentDownload;
+            nextRequestType =  RequestAttachmentDownload;
             break;
         case RequestAttachmentDownload:
             nextRequestType =  RequestDocumentInfoFetch;
@@ -467,7 +437,7 @@
             nextRequestType =  RequestEvents;
             break;
         case RequestEvents:
-            nextRequestType =  RequestTypeUserTrunk;
+             nextRequestType =  RequestTypeUserTrunk;
             // TODO : krishna change to RequestDownloadCriteria
             // Download criteria will only work after upgarading to latest server updates.
             break;
@@ -476,7 +446,7 @@
             nextRequestType = RequestDownloadCriteria;
             break;
         case RequestDownloadCriteria:
-            nextRequestType = RequestAdvancedDownLoadCriteria;
+              nextRequestType = RequestAdvancedDownLoadCriteria;
             break;
         case RequestAdvancedDownLoadCriteria:
             nextRequestType = RequestGetPriceDataTypeZero ;
@@ -491,33 +461,16 @@
             nextRequestType = RequestGetPriceDataTypeThree;
             break;
         case RequestGetPriceDataTypeThree:
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQData:RequestTXFetch;
+            nextRequestType = RequestTXFetch;
             break;
-        case RequestTXFetch: {
-            BOOL permissionFailed = [[NSUserDefaults standardUserDefaults] boolForKey:@"kProdIQDataPermissionFailed"];
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable] && !permissionFailed)?RequestProductIQTxFetch:RequestCleanUp;
-        }
-            break;
-        case RequestCleanUp:
-            nextRequestType = RequestSyncTimeLogs;
-            break;
-        case RequestProductIQUserConfiguration:  /** Product IQ **/
-            nextRequestType = RequestProductIQTranslations;
-            break;
-        case RequestProductIQTranslations:
-            nextRequestType = RequestAttachmentDownload;
-            break;
-        case RequestProductIQObjectDescribe:
-            nextRequestType = RequestGetPriceObjects;
-            break;
-        case RequestProductIQTxFetch:
+        case RequestTXFetch:
             nextRequestType = RequestCleanUp;
             break;
+        case RequestCleanUp:
+             nextRequestType = RequestSyncTimeLogs;
+             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
-            break;
-        case RequestProductIQData:
-            nextRequestType = RequestTXFetch;
             break;
         default:
             break;
@@ -620,17 +573,13 @@
     RequestType nextRequestType = 0;
     
     if (currentRequest == nil) {
-        nextRequestType = RequestMasterSyncTimeLog;
+        nextRequestType = RequestMobileDeviceTags;
     }
     
     switch (currentRequest.requestType) {
-        case RequestMasterSyncTimeLog:
-            nextRequestType = RequestMobileDeviceTags;
-            break;
         case RequestMobileDeviceTags:
             nextRequestType = RequestOneCallMetaSync;
             break;
-
         case RequestOneCallMetaSync:
             nextRequestType = RequestSFMPageData ;
             break;
@@ -638,15 +587,14 @@
             nextRequestType = RequestObjectDefinition;
             break;
         case RequestObjectDefinition:
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQObjectDescribe:RequestGetPriceObjects;
+            nextRequestType = RequestGetPriceObjects;
             break;
         case RequestGetPriceObjects:
             nextRequestType = RequestGetPriceCodeSnippet;
             break;
         case RequestGetPriceCodeSnippet:
-            nextRequestType =  RequestRecordType; /* removing RequestRecordType  defect NUmber 023976*/
+            nextRequestType =  RequestRecordType;
             break;
-            
         case RequestRecordType:
             nextRequestType =  RequestDependantPickListRest;
             break;
@@ -660,7 +608,7 @@
             nextRequestType =  RequestStaticResourceDownload;
             break;
         case RequestStaticResourceDownload:
-            nextRequestType =  ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestProductIQUserConfiguration:RequestAttachmentDownload;
+            nextRequestType =  RequestAttachmentDownload;
             break;
         case RequestAttachmentDownload:
             nextRequestType =  RequestDocumentInfoFetch;
@@ -669,16 +617,7 @@
             nextRequestType =  RequestDocumentDownload;
             break;
         case RequestDocumentDownload:
-        nextRequestType = RequestSyncTimeLogs;
-            break;
-        case RequestProductIQUserConfiguration: /** Product IQ **/
-            nextRequestType = RequestProductIQTranslations;
-            break;
-        case RequestProductIQTranslations:
-            nextRequestType = RequestAttachmentDownload;
-            break;
-        case RequestProductIQObjectDescribe:
-            nextRequestType = RequestGetPriceObjects;
+            nextRequestType =  RequestSyncTimeLogs;
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
@@ -699,13 +638,10 @@
     RequestType nextRequestType = 0;
     
     if (currentRequest == nil) {
-        nextRequestType = RequestMasterSyncTimeLog;
+        nextRequestType = RequestOneCallDataSync;
     }
     
     switch (currentRequest.requestType) {
-        case RequestMasterSyncTimeLog:
-            nextRequestType = RequestOneCallDataSync;
-            break;
         case RequestOneCallDataSync:
             nextRequestType = RequestTypeUserTrunk;
             break;
@@ -808,6 +744,8 @@
 - (RequestType)getNextRequestForGetPriceData:(SVMXServerRequest *)currentRequest
                           andPreviousRequest:(SVMXServerRequest *)previousRequest
 {
+    
+    /* get price call for new change */
     RequestType nextRequestType = 0;
     if (currentRequest == nil) {
         nextRequestType = RequestGetPriceDataTypeZero;
@@ -922,8 +860,7 @@
         || (type == RequestTypeChatterrProductData)
         || (type == RequestTypeChatterUserImage)
         || (type == RequestStaticResourceLibrary)
-        || (type == RequestTypeUserTrunk)
-        || (type == RequestProductIQObjectDescribe))
+        || (type == RequestTypeUserTrunk))
         
         //PA Static resource to avoid crash in SVMX_LIbrary TODO : Remove it
     {
@@ -1045,9 +982,6 @@
             nextRequestType = RequestDataPurgeGetPriceDataTypeThree;
             break;
         case RequestDataPurgeGetPriceDataTypeThree:
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable])?RequestDataPurgeProductIQData:RequestTypeNone;
-            break;
-        case RequestDataPurgeProductIQData:
             nextRequestType = RequestTypeNone;
             break;
         default:
@@ -1288,38 +1222,6 @@
         nextReuestType = RequestTypeNone;
     }
     return nextReuestType;
-}
-
-
-#pragma mark - Product IQ
-
-- (RequestType)getNextRequestForProductIQData:(SVMXServerRequest *)currentRequest andPreviousRequest:(SVMXServerRequest *)previousRequest {
-    
-    RequestType nextRequestType = 0;
-    
-    if (currentRequest == nil) {
-        nextRequestType = RequestProductIQDeleteData;
-    }
-    
-    switch (currentRequest.requestType) {
-        case RequestProductIQDeleteData:
-            nextRequestType = RequestProductIQData;
-            break;
-        case RequestProductIQData:
-            nextRequestType = RequestCleanUpSelect;
-            break;
-        case RequestCleanUpSelect:
-            nextRequestType = RequestTXFetch;
-            break;
-        case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
-            break;
-        case RequestCleanUp:
-            nextRequestType = RequestTypeNone;
-        default:
-            break;
-    }
-    return nextRequestType;
 }
 
 @end

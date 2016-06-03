@@ -12,6 +12,7 @@
 @interface DBCriteria()
 @property(nonatomic,strong)DBRequest *innerQueryRequest;
 @property(nonatomic,assign)BOOL bindNeededInQuery;
+@property(nonatomic,strong)NSArray *subCriterias;
 @property(nonatomic,strong)NSString *advancedExpression;
 @end 
 

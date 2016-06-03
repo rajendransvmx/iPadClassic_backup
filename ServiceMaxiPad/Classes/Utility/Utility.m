@@ -10,6 +10,7 @@
 #import "SVMXSystemConstant.h"
 #import "StringUtil.h"
 
+
 void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message);
 @implementation Utility
 
@@ -348,7 +349,6 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     return json;
 }
-
 
 
 +(NSInteger)requestTimeOutValueFromSetting

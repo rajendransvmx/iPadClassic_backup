@@ -79,7 +79,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
                                                object:nil];
-    
+   
     
     self.keyBoardHeight = 360.0;
     //[self initiateBuissRules];
@@ -93,11 +93,10 @@ static NSString *cellIdentifier = @"cellIdentifier";
 }
 
 - (void)reloadData {
+    //[self.tableView reloadData];
     
     [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
-    
-    // [self.tableView reloadData];
-    
+
 }
 
 #pragma mark - Tableview data source and delegates
@@ -106,11 +105,11 @@ static NSString *cellIdentifier = @"cellIdentifier";
     return 1;
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return [self.childPageLayoutViewControllers count];
+     return [self.childPageLayoutViewControllers count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell == nil) {
         
@@ -118,18 +117,18 @@ static NSString *cellIdentifier = @"cellIdentifier";
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     else {
-        UIView *someView = [cell.contentView viewWithTag:cellSubViewTag];
-        [someView removeFromSuperview];
+         UIView *someView = [cell.contentView viewWithTag:cellSubViewTag];
+         [someView removeFromSuperview];
     }
     cell.clipsToBounds = YES;
     ChildEditViewController *pageLayoutViewController = nil;
-    if ([self.childPageLayoutViewControllers count] > indexPath.section)
-        pageLayoutViewController = [self.childPageLayoutViewControllers objectAtIndex:indexPath.section];
+    if([self.childPageLayoutViewControllers count] > indexPath.section)
+       pageLayoutViewController = [self.childPageLayoutViewControllers objectAtIndex:indexPath.section];
     pageLayoutViewController.view.tag = cellSubViewTag;
     pageLayoutViewController.view.frame = CGRectMake(10, 10, tableView.frame.size.width - 20, [self getHeightForIndexPath:indexPath]);
-    [cell.contentView addSubview: pageLayoutViewController.view];
+   [cell.contentView addSubview: pageLayoutViewController.view];
     
-    return cell;
+   return cell;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return [self getHeightForIndexPath:indexPath] + 20.0;
@@ -177,7 +176,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
 
 - (CGFloat)getHeightForIndexPath:(NSIndexPath *)indexPath {
     if ([self.childPageLayoutViewControllers count] > indexPath.section) {
-        
+     
         ChildEditViewController *editViewController = [self.childPageLayoutViewControllers objectAtIndex:indexPath.section];
         if ([editViewController conformsToProtocol:@protocol(PageEditDetailViewControllerDelegate)]) {
             return [editViewController heightOfTheView];
@@ -194,7 +193,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
     
     [self.sectionButton addTarget:barButtonItem.target action:barButtonItem.action forControlEvents:UIControlEventTouchUpInside];
     [self portrait:splitViewController];
-    
+ 
     self.masterPopoverController = popover;
     
 }
@@ -228,7 +227,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    
+
     [self.tableView reloadData];
 }
 
@@ -240,7 +239,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
     NSIndexPath *newSelectedIndexpath = nil;
     NSInteger childIndex = selectedIndexPath.row;
     if ([self.childPageLayoutViewControllers count] > 1) {
-        newSelectedIndexpath = [NSIndexPath indexPathForRow:0 inSection:selectedIndexPath.row];
+         newSelectedIndexpath = [NSIndexPath indexPathForRow:0 inSection:selectedIndexPath.row];
     }
     else {
         /*Only first row */
@@ -263,7 +262,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
     
     
     [self reduceTableViewByHalf];
-    
+   
     [self scrollTableViewToGivenIndexPath:indexPath andInternalOffset:internalOffSet];
     
     
@@ -318,13 +317,13 @@ static NSString *cellIdentifier = @"cellIdentifier";
     }
     
     if (UIInterfaceOrientationIsPortrait( [[UIApplication sharedApplication] statusBarOrientation])) {
-        return  self.view.frame.size.height - self.keyBoardHeight - 20 - bizRuleButtonHeight ;
+       return  self.view.frame.size.height - self.keyBoardHeight - 20 - bizRuleButtonHeight ;
     }
     else if (UIInterfaceOrientationIsLandscape( [[UIApplication sharedApplication] statusBarOrientation])){
-        return  self.view.frame.size.height - self.keyBoardHeight;
-        
+       return  self.view.frame.size.height - self.keyBoardHeight;
+
     }
-    
+
     return self.view.frame.size.height - bizRuleButtonHeight;
 }
 - (void)resetOriginalTableViewFrame {
@@ -357,7 +356,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    
+
     NSValue *rectValue  = [notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
     CGRect keyBoardFrame = [rectValue CGRectValue];
     if (keyBoardFrame.size.height < keyBoardFrame.size.width ) {
@@ -366,7 +365,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
     else{
         self.keyBoardHeight = keyBoardFrame.size.width;
     }
-    //SXLogInfo(@"Key Board will be shown %f",self.keyBoardHeight);
+        //SXLogInfo(@"Key Board will be shown %f",self.keyBoardHeight);
     if (self.keyBoardHeight) {
         
     }
@@ -392,17 +391,17 @@ static NSString *cellIdentifier = @"cellIdentifier";
     }
     else {
         /*if ([self isInShowllMode]) {
-         [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationNone];
-         }
-         else{
-         
-         //        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
-         NSMutableArray *indexPathArray = [[NSMutableArray alloc] init];
-         [indexPathArray addObject:[NSIndexPath indexPathForRow:0 inSection:0]];
-         
-         [self.tableView reloadRowsAtIndexPaths:indexPathArray withRowAnimation:UITableViewRowAnimationNone];
-         
-         }*/
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:indexPath.row] withRowAnimation:UITableViewRowAnimationNone];
+        }
+        else{
+            
+            //        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationFade];
+            NSMutableArray *indexPathArray = [[NSMutableArray alloc] init];
+            [indexPathArray addObject:[NSIndexPath indexPathForRow:0 inSection:0]];
+            
+            [self.tableView reloadRowsAtIndexPaths:indexPathArray withRowAnimation:UITableViewRowAnimationNone];
+            
+        }*/
         [self.tableView reloadData];
     }
 }
@@ -435,7 +434,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
 #pragma mark End
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 #pragma mark -
@@ -447,7 +446,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
         if ([editViewController conformsToProtocol:@protocol(PageEditDetailViewControllerDelegate)]) {
             [editViewController resignAllFirstResponders];
         }
-        
+
     }
 }
 #pragma mark  End
@@ -464,11 +463,11 @@ static NSString *cellIdentifier = @"cellIdentifier";
     CGRect bizRuleRect = self.bizRuleButton.frame;
     
     CGFloat yaxis = summaryButton.size.height  ;
-    
+
     if([self.bizRulesErrors count] > 0){
         self.bizRuleButton.hidden = NO;
         yaxis = yaxis + bizRuleRect.size.height;
-        
+
         bizRuleRect.origin.y = summaryButton.size.height;
         self.bizRuleButton.frame = bizRuleRect;
     }
@@ -483,7 +482,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
     
     self.tableView.frame = viewFrame;
     [self resetBizRuleDropDownFrame:splitViewController];
-    
+
     [self updateOverlayFrame];
 }
 
@@ -493,14 +492,14 @@ static NSString *cellIdentifier = @"cellIdentifier";
     CGFloat yaxis = 0 ;
     CGRect bizRuleRect = self.bizRuleButton.frame;
     CGRect summaryButton = self.sectionButton.frame;
-    
+
     if([self.bizRulesErrors count] > 0){
         self.bizRuleButton.hidden = NO;
         yaxis = yaxis + bizRuleRect.size.height;
-        
+       
         bizRuleRect.origin.y = summaryButton.origin.y;
         self.bizRuleButton.frame = bizRuleRect;
-        
+
     }
     else{
         self.bizRuleButton.hidden = YES;
@@ -509,7 +508,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
     CGRect viewFrame = splitViewController.detailViewController.view.bounds;
     viewFrame.origin.y=yaxis;
     viewFrame.size.height-= yaxis;
-    
+
     self.tableView.frame = viewFrame;
     [self resetBizRuleDropDownFrame:splitViewController];
     [self updateOverlayFrame];
@@ -536,14 +535,14 @@ static NSString *cellIdentifier = @"cellIdentifier";
 -(void)animateBizRuleView
 {
     CGRect vcFrame  =  self.bizRuleVc.view.frame;
-    
+
     vcFrame.origin.x = self.bizRuleButton.frame.origin.x + 10;
     vcFrame.origin.y = self.bizRuleButton.frame.origin.y;
     vcFrame.size.width =  CGRectGetWidth(self.view.bounds) - 20;
     //vcFrame.size.width =  CGRectGetWidth(self.tableView.frame);
-    
+
     [self setUpBizRuleLabel];
-    
+
     if(self.bizRuleVc == nil){
         self.bizRuleVc = [[BizRulesViewController alloc] initWithNibName:@"BizRulesViewController" bundle:nil];
         self.bizRuleVc.view.clipsToBounds = YES;
@@ -552,11 +551,11 @@ static NSString *cellIdentifier = @"cellIdentifier";
         self.bizRuleVc.deleagte = self;
         self.bizRuleVc.bizRulesArray =self.bizRulesErrors;
         
-        
+
     }
     
     if(self.bizRuleBtnTapped){
-        
+
         [self addOverLay];
         
         vcFrame.size.height = 300;
@@ -576,7 +575,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
         [UIView animateWithDuration:0.20 delay:0 options:0 animations:^{
             self.bizRuleVc.view.frame = vcFrame;
             
-            
+
         } completion:^(BOOL finished) {
             [self.bizRuleVc.view removeFromSuperview];
             self.bizRuleVc = nil;
@@ -584,7 +583,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
         }];
         
         [self.containerViewControlerDelegate refreshBizRuleData];
-        
+
         
     }
 }
@@ -617,18 +616,18 @@ static NSString *cellIdentifier = @"cellIdentifier";
     frame = [[UIScreen mainScreen] bounds];
     if (frame.size.width != [UIApplication sharedApplication].statusBarFrame.size.width) {
         [self landScape:(SMSplitViewController *)self.containerViewControlerDelegate];
-        
+
     } else
     {
         [self portrait:(SMSplitViewController *)self.containerViewControlerDelegate];
     }
     
     /*if(UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)){
-     [self landScape:(SMSplitViewController *)self.containerViewControlerDelegate];
-     }
-     else {
-     [self portrait:(SMSplitViewController *)self.containerViewControlerDelegate];
-     }*/
+        [self landScape:(SMSplitViewController *)self.containerViewControlerDelegate];
+    }
+    else {
+        [self portrait:(SMSplitViewController *)self.containerViewControlerDelegate];
+    }*/
 }
 
 -(void)dismissBizRuleUI
@@ -682,7 +681,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
         [self.overlayView removeFromSuperview];
         self.overlayView = nil;
     }
-    
+
 }
 
 -(void)setUpBizRuleLabel{

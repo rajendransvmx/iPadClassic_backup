@@ -56,7 +56,6 @@
 @property (nonatomic, assign) id <BarCodeScannerProtocol> scannerDelegate;
 @property (nonatomic, strong) NSIndexPath *indexPath;
 
-//Madhusudhan, #024468, As we should define presentationStyle model for scanner viewController.
-- (void)loadScannerOnViewController:(UIViewController *)viewController forModalPresentationStyle:(NSInteger)presentationStyle;
+- (void)loadScannerOnViewController:(UIViewController *)viewController;
 
 @end

@@ -24,7 +24,6 @@
 #import "CacheConstants.h"
 #import "CustomActionAfterBeforeXMLRequestHelper.h"
 #import "CustomActionXMLRequestHelper.h"
-#import "ProductIQManager.h"
 
 @implementation RestRequest
 @synthesize dataDictionary;
@@ -183,15 +182,9 @@
                [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
                  
                 [self displayRequest:operation];
-                 if (self.requestType ==  RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
-                 {
-                     //[self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
-                     [self performSelectorInBackground:@selector(didReceiveResponseSuccessfullyForAfterBeforeSave:) withObject:operation];
-                 }
-                 else
-                 {
-                     [self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
-                 }
+                [self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
+                
+      
              }
              failure:^(AFHTTPRequestOperation *operation, NSError *error)
              {
@@ -202,8 +195,10 @@
                  
                  [self displayRequest:operation];
                  
-                 if ((self.requestType ==    RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore) && operation.responseObject !=nil)
+                 
+                 if (self.requestType ==    RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
                  {
+                 
                      CustomXMLParser *parser = [[CustomXMLParser alloc] initwithNSXMLParserObject:(NSXMLParser *)operation.responseObject andError:error andOperation:(id)operation];
                      parser.customDelegate = self;
                      [parser parse];
@@ -354,7 +349,6 @@
         }
     }
     
-    
     // 013386
     if (self.requestType == RequestOneCallDataSync) {
         SXLogDebug(@"==============\n clientRequestIdentifier remembered on error.: %@\n\n==============", self.clientRequestIdentifier);
@@ -362,7 +356,6 @@
         [[NSUserDefaults standardUserDefaults] setObject:self.clientRequestIdentifier forKey:@"requestIdentifier"];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
-    
     
     /** Content type */
     [urlRequest setValue:kContentType forHTTPHeaderField:@"content-type"];
@@ -458,7 +451,6 @@
             eventType = kSync;
             break;
         case RequestTXFetch:
-        case RequestProductIQTxFetch:
         case RequestAdvancedDownLoadCriteria:
         case RequestGetDelete:
         case RequestgetDeleteDownloadCriteria:
@@ -487,7 +479,6 @@
         case RequestTypeUserTrunk:
         case RequestSFMObjectDefinition:
         case RequestDependantPickListRest:
-        case RequestMasterSyncTimeLog:
 
         case RequestStaticResourceLibrary:
             eventType = kSync;
@@ -509,7 +500,8 @@
             break;
         case RequestOneCallMetaSync:
         case RequestObjectDefinition:
-        case RequestRecordType:
+       // case RequestRecordType:
+
             eventType = kMetaSync;
             break;
   /************* dataPurge requests ****************** */  
@@ -520,7 +512,6 @@
         case RequestDataPurgeGetPriceDataTypeOne:
         case RequestDataPurgeGetPriceDataTypeTwo:
         case RequestDataPurgeGetPriceDataTypeThree:
-        case RequestDataPurgeProductIQData:
             eventType = kSync;
             break ;
 
@@ -535,10 +526,6 @@
             
         case RequestTypeCustomActionWebServiceAfterBefore:
             eventType = kCustomWebServiceUrlLink;
-            break;
-        case RequestProductIQData:
-        case RequestProductIQDeleteData:
-            eventType = kSync;
             break;
             
         default:
@@ -593,8 +580,8 @@
         case RequestStaticResourceLibrary:
         case RequestGetPriceCodeSnippet:
         case RequestGroupProfile:
-        case RequestRecordType:
-
+       // case RequestRecordType:
+           
             url = [self getUrlWithStringApppended:kMetaSyncUrlLink];
             break;
             
@@ -605,7 +592,6 @@
         case RequestGetPriceDataTypeTwo:
         case RequestGetPriceDataTypeThree:
         case RequestTXFetch:
-        case RequestProductIQTxFetch:
         case RequestAdvancedDownLoadCriteria:
         case RequestCleanUpSelect:
         case RequestCleanUp:
@@ -635,11 +621,11 @@
         case RequestDataPurge:
         case RequestSFMSearch:
         case RequestTypeUserTrunk:
-        case RequestMasterSyncTimeLog:
             url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
         case RequestDocumentInfoFetch:
         case RequestTroubleshooting:
+        case RequestRecordType:
         case RequestTroubleShootDocInfoFetch:
         case RequestProductManualDownload:
         case RequestProductManual:
@@ -676,7 +662,6 @@
         case RequestDataPurgeGetPriceDataTypeOne:
         case RequestDataPurgeGetPriceDataTypeTwo:
         case RequestDataPurgeGetPriceDataTypeThree:
-        case RequestDataPurgeProductIQData:
             url =  [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
         case RequestDataPurgeFrequency:
@@ -691,28 +676,10 @@
             /* Adding class_name and method_name for webservice call */
             url =   [self getUrlWithStringApppended:kCustomWebServiceUrlLink];
             break;
-            
-        case RequestTypeOnlineLookUp:
-            url =   [self getUrlWithStringApppended:kOnlineLookUpURL];
-            break;
-            
-            /** Product IQ **/
-            
-        case RequestProductIQUserConfiguration:
-            url = [self getURLStringForProductIQRestRequest:kProductIQUserConfigUrl];
-            break;
-        case RequestProductIQTranslations:
-            url = [self getURLStringForProductIQRestRequest:kProductIQTranslationsUrl];
-            break;
-        case RequestProductIQObjectDescribe:
-            url =  [self getURLStringForProductIQObjectDescribeRequest];
-            break;
-        case RequestProductIQData:
-        case RequestProductIQDeleteData:
-            url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
-            break;
+            /****************    ************** */
         default:
             break;
+            
     }
     return url;
     
@@ -737,9 +704,10 @@
 - (void)nameByType:(RequestType)type
 {
     switch (type)
-    {   case RequestRecordType:
-            self.eventName = recordType;
-            break;
+    {
+//        case RequestRecordType:
+//            self.eventName = @"RECORD_TYPE";
+//            break;
         case RequestValidateProfile:
             self.eventName = validateProfile;
             break;
@@ -782,7 +750,7 @@
         case RequestEvents:
             self.eventName = eventSync ;
             break;
-            //TEMP : request event name is SYNC_DOWNLOAD_CRITERIA as of v3
+        //TEMP : request event name is SYNC_DOWNLOAD_CRITERIA as of v3
         case RequestDownloadCriteria:
             self.eventName = downloadCriteriaSyncV3;
             break;
@@ -799,7 +767,6 @@
             self.eventName = getPriceData;
             break;
         case RequestTXFetch:
-        case RequestProductIQTxFetch:
             self.eventName = kTXFetch;
             break;
         case RequestSFMMetaDataInitialSync:
@@ -851,14 +818,11 @@
         case  RequestOneCallDataSync:
             self.eventName = kOneCallSync;
             break;
-        case  RequestMasterSyncTimeLog:
-            self.eventName = @"MASTER_SYNC_LOG";
-            break;
         case RequestServicemaxVersion:
             self.eventName = @"";
             break;
         case RequestGroupProfile:
-            
+
             self.eventName = @"VALIDATE_PROFILE";
             break;
         case RequestGetAttachment:
@@ -910,7 +874,7 @@
         case RequestSyncTimeLogs:
             self.eventName = kSyncTimeLog;
             break;
-            
+
         case RequestTypeOPDocHTMLAndSignatureSubmit:
             self.eventName = kSubmitDocument;
             
@@ -923,7 +887,7 @@
         case RequestDatPurgeDownloadCriteria:
             self.eventName = downloadCriteriaSyncV3;
             break;
-            
+
         case RequestTypeOPDocGeneratePDF:
             self.eventName = kGeneratePDF;
             break;
@@ -936,11 +900,6 @@
         case RequestDataPurgeGetPriceDataTypeThree:
             self.eventName = getPriceData;
             break;
-            
-        case RequestDataPurgeProductIQData:
-            self.eventName = kProductIQSyncData;
-            break;
-            
             /******************************************************/
             
         case RequestTypeCustomActionWebService:
@@ -950,12 +909,7 @@
         case RequestTypeCustomActionWebServiceAfterBefore:
             self.eventName=[self getCustomWebserviceEventName];
             break;
-        case RequestProductIQData:
-            self.eventName = kProductIQSyncData;
-            break;
-        case RequestProductIQDeleteData:
-            self.eventName = kProdIQGetDeleteData;
-            break;
+
         default:
             break;
             
@@ -1077,6 +1031,7 @@
     if (self.requestType == RequestDependantPickListRest
         || self.requestType == RequestDocumentInfoFetch
         || self.requestType == RequestTroubleshooting
+        || self.requestType == RequestRecordType
         || self.requestType == RequestTroubleShootDocInfoFetch
         || self.requestType == RequestTechnicianDetails
         || self.requestType == RequestTechnicianAddress
@@ -1089,11 +1044,8 @@
         || self.requestType ==  RequestTypeChatterPost
         || self.requestType ==  RequestTypeChatterPostDetails
         || self.requestType == RequestTypeChatterrProductData
-        || self.requestType == RequestTypeChatterUserImage
-        || self.requestType == RequestProductIQUserConfiguration
-        || self.requestType == RequestProductIQTranslations
-        || self.requestType == RequestProductIQObjectDescribe
-        ) {
+        || self.requestType == RequestTypeChatterUserImage) {
+        
         return @"GET";
     }
     if (httpMethod != nil) {
@@ -1207,11 +1159,6 @@
                 
                 return self.dataDictionary;
             }
-            else if (self.requestType == RequestTypeOnlineLookUp)
-            {
-                return self.requestParameter.requestInformation;
-            }
-            
             NSDictionary *clientDictionary = [[AppMetaData sharedInstance] getApplicationMetaInfo];
             NSMutableDictionary *postDict = [[NSMutableDictionary alloc] initWithDictionary:clientDictionary] ;
            
@@ -1316,20 +1263,6 @@
     return nil;
 }
 
-
-/** Product IQ **/
--(NSString *)getURLStringForProductIQRestRequest:(NSString *)stringToAppend {
-    CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
-    return  [[NSString alloc] initWithFormat:@"%@%@%@",[customerOrgInfoInstance instanceURL],kRestUrlProductIQ,stringToAppend];
-}
-
--(NSString *)getURLStringForProductIQObjectDescribeRequest {
-    NSString *urlString = [NSString stringWithFormat:kProductIQObjectDescribeUrl, self.requestParameter.value];
-    CustomerOrgInfo *customerOrgInfoInstance = [CustomerOrgInfo sharedInstance];
-    return  [[NSString alloc] initWithFormat:@"%@%@",[customerOrgInfoInstance instanceURL],urlString];
-}
-
-
 #pragma mark - dealloc
 
 - (void)dealloc
@@ -1355,28 +1288,6 @@
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
         [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
-    }
-}
-- (void)didReceiveResponseSuccessfullyForAfterBeforeSave:(AFHTTPRequestOperation *)operation
-{
-    @autoreleasepool {
-        CustomXMLParser *parser = [[CustomXMLParser alloc] initwithNSXMLParserObject:operation.responseObject andOperation:(id)operation];
-        parser.customDelegate = self;
-        if (self.requestType == RequestTypeCustomActionWebService)
-        {
-            [parser parseRequestBody:operation.responseString isAfterBefore:NO];
-        }
-        else if(self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
-        {
-            [parser parseRequestBody:operation.responseString isAfterBefore:YES];
-        }
-        
-        if (self.requestType == RequestOneCallDataSync)
-        {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"requestIdentifier"];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-        }
-        [self.serverRequestdelegate didReceiveResponseSuccessfully:operation.responseObject andRequestObject:self];
     }
 }
 

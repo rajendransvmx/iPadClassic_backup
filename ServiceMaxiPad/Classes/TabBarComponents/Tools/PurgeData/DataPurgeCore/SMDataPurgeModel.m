@@ -49,11 +49,11 @@
     {
         self.status = DPActionStatusNonPurgeableSincePricebook;
     }
-    else if ([self.name hasSuffix:@"__Code_Snippet__c"])
+    else if ([self.name hasSuffix:@"SVMXC__Code_Snippet__c"])
     {
         self.status = DPActionStatusNonPurgeableSinceCodeSnippet;
     }
-    else if ([self.name hasSuffix:@"__Code_Snippet_Manifest__c"])
+    else if ([self.name hasSuffix:@"SVMXC__Code_Snippet_Manifest__c"])
     {
         self.status = DPActionStatusNonPurgeableSinceCodeSnippetManifest;
     }

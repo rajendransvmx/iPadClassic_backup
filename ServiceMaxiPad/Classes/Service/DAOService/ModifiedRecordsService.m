@@ -267,8 +267,6 @@
     [self updateEachRecord:model withFields:fieldsArray withCriteria:[NSArray arrayWithObject:criteria1]];
 }
 
-
-
 -(void)updateFieldsModifed:(ModifiedRecordModel *)model {
     NSArray * fieldsArray = [[NSArray alloc] initWithObjects:@"fieldsModified", nil];
     DBCriteria * criteria1 = [[DBCriteria alloc] initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:model.recordLocalId];
@@ -298,24 +296,6 @@
     }
     return nil;
 }
-- (ModifiedRecordModel *)fetchExistingModifiedFieldsJsonFromModifiedRecordForRecordIdForProductIQ:(NSString*)recordId andSfId:(NSString*)sfId
-{
-   // DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:@"recordLocalId" operatorType:SQLOperatorEqual andFieldValue:recordId];
-    DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"UPDATE"];
-    DBCriteria *criteriaThree = [[DBCriteria alloc]initWithFieldName:@"sfId" operatorType:SQLOperatorEqual andFieldValue:sfId];
-    
-    NSArray *tempArray = [self fetchDataForFields:@[@"fieldsModified"]
-                                        criterias:@[criteriaTwo,criteriaThree]
-                                       objectName:@"ModifiedRecords"
-                               advancedExpression:@"(1 and 2)"
-                                    andModelClass:[ModifiedRecordModel class]];
-    if ([tempArray count] > 0) {
-        ModifiedRecordModel *modifiedRecordModel = [tempArray objectAtIndex:0];
-        return modifiedRecordModel;
-    }
-    return nil;
-}
-
 
 
 - (BOOL)doesRecordExistForId:(NSString *)recordId andOperationType:(NSString *)operationType {
@@ -446,7 +426,7 @@
     return flag;
 }
 
-//Method for Fix:020834
+
 -(BOOL)checkIfNonInsertRecordsExist {
     BOOL recordsExist = NO;
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kSyncRecordOperation operatorType:SQLOperatorNotEqual andFieldValue:@"INSERT"];
@@ -458,6 +438,7 @@
     
     return recordsExist;
 }
+
 -(NSArray *)getInsertRecordsAsArray {
     DBCriteria *criteria = [[DBCriteria alloc]initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"INSERT"];
     DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteria] andAdvanceExpression:nil];
@@ -473,10 +454,7 @@
             
             while ([resultSet next]) {
                 ModifiedRecordModel * model = [[ModifiedRecordModel alloc] init];
-                //NSDictionary *dict = [resultSet resultDictionary];
-                
-                /* converting text into string */
-                NSDictionary *dict = [resultSet resultDictionaryWithFieldsAsString];
+                NSDictionary *dict = [resultSet resultDictionary];
                 [ParserUtility parseJSON:dict toModelObject:model withMappingDict:nil];
                 [records addObject:model];
             }
@@ -485,6 +463,5 @@
     }
     return records;
 }
-//Fix:020834 ends here
 
 @end

@@ -91,7 +91,6 @@
 //@synthesize cCurrentLevel;
 @synthesize CollectionViewDelegate;
 @synthesize cellIndex;
-@synthesize paintedHeight;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -113,10 +112,6 @@
             
             NSDateFormatter *lDateFormatter = [[NSDateFormatter alloc] init];
             [lDateFormatter setDateFormat:@"yyyy-MM-dd"];
-            [lDateFormatter setTimeZone:[NSTimeZone systemTimeZone]];
-            [lDateFormatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
-            lDateFormatter.calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-
             [cAllEventDictionary setObject:[lDateFormatter dateFromString:[lDateFormatter stringFromDate:[NSDate date]]] forKey:kEventStartTimeDate];
             [cAllEventDictionary setObject:[NSNumber numberWithLong:24*60*60] forKey:kEventDurationLong];
             [cAllEventDictionary setObject:@{} forKey:kSmallerEventsDictionary];
@@ -318,7 +313,7 @@
         {
             [cEventsWhichAccomodateSmallerEvents removeAllObjects];
         }
-        paintedHeight = 0;
+        
         for (SMXEvent *event in arrayEvents) {
 
             CGFloat yTimeBegin = 0.;
@@ -363,18 +358,22 @@
             BOOL priorityInfo = NO;
             
             //========= GETTING SLA & PRIORITY & CONFLICT INFO =========
+            
+            
             if(event.whatId && event.newData)
             {
                 if (event.isWorkOrder) {
                     WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:event.whatId];
                     slaInfo = model.sla;
                     priorityInfo = [model.priority boolValue];
+
                 }
                 else if (event.isCaseEvent) {
                     CaseObjectModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:event.whatId];
                     slaInfo = model.sla;
                     priorityInfo = model.priority;
                 }
+
             }
             else
             {
@@ -383,9 +382,10 @@
             }
             
             conflictInfo = event.conflict;
+
+            
             int total = conflictInfo + slaInfo + priorityInfo;
-            switch (total)
-            {
+            switch (total) {
                 case 3:
                 {
                     _button.firstImageView.image = [UIImage imageNamed:@"sync_Error.png"];
@@ -460,27 +460,37 @@
             CGRect lEventNameLabelFrame = _button.eventName.frame;
             lEventNameLabelFrame.size.width = lEventNameLabelFrame.size.width - total * _button.thirdImageView.frame.size.width - total*5; // 5 is the gap between each of the flags
             _button.eventName.frame = lEventNameLabelFrame;
+            
+            
 //           cAllEventDictionary = [self compareAndSaveEvents:cAllEventDictionary andButton:_button];
             [self compareAndRepositionEvents:_button withButtonPosition:arrayButtonsEvents.count-1];
+            
             UILongPressGestureRecognizer *lLongPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(moveEvent:)];
+            
             [_button addGestureRecognizer:lLongPressGesture];
+            
             [arrayButtonsEvents addObject:_button];
             [self addSubview:_button];
+            
+            
             long samePositionEventCount = (cSamePositionAndDurationEvents.count>3?3:cSamePositionAndDurationEvents.count);
+            
             double lWidth = (self.frame.size.width - EVENT_X_POSITION)/samePositionEventCount;
-            if (arrayButtonsEvents.count >1 && cSamePositionAndDurationEvents.count !=0)
-            {
+
+            if (arrayButtonsEvents.count >1 && cSamePositionAndDurationEvents.count !=0) {
                 SMXBlueButton *lbutton = [arrayButtonsEvents objectAtIndex:arrayButtonsEvents.count-2];
+                
 //                if (lbutton.frame.size.width != (self.frame.size.width - EVENT_X_POSITION)) {
-                if ([lbutton doesHaveBorder])
-                {
+                if ([lbutton doesHaveBorder]) {
+
                     lWidth = (self.frame.size.width - EVENT_X_POSITION)/2/samePositionEventCount;
                 }
             }
-            //=========== only 3 simultaneous events should be displayed. ===========
-            for ( int i = 0 ; i < cSamePositionAndDurationEvents.count; i++)
-            {
+            
+            for ( int i = 0 ; i < cSamePositionAndDurationEvents.count; i++) { // only 3 simultaneous events should be displayed.
+                
                 SMXBlueButton *lbutton = [cSamePositionAndDurationEvents objectAtIndex:i];
+
                 if (i>=3) {
                     lbutton.hidden= YES;
                     continue;
@@ -492,6 +502,7 @@
                 
                 CGRect lFirstButtonFrame = lbutton.frame;
                 lFirstButtonFrame.size.width = lWidth;
+
                 float x_position;// = (lWidth==(self.frame.size.width - EVENT_X_POSITION)/cSamePositionAndDurationEvents.count ? EVENT_X_POSITION + i*lWidth : (self.frame.size.width - EVENT_X_POSITION) + i * lWidth);
                 
                 if (lWidth==(self.frame.size.width - EVENT_X_POSITION)/samePositionEventCount) {
@@ -507,11 +518,15 @@
                     lbutton.frame = lFirstButtonFrame;
                     
                     [lbutton setThreeSideLayerForSmallerEvent];
+                    
                 }
+                
             }
+            
             lWidth = (self.frame.size.width - EVENT_X_POSITION)/2/cEventInsideALargerEvent.count;
-            for (int i = 0; i < cEventInsideALargerEvent.count; i++)
-            {
+
+            for (int i = 0; i < cEventInsideALargerEvent.count; i++) {
+                
                 SMXBlueButton *lbutton = [cEventInsideALargerEvent objectAtIndex:i];
                 lbutton.hidden= NO;
 
@@ -531,6 +546,8 @@
                 lbutton.frame = lFirstButtonFrame;
                 
                 [lbutton setThreeSideLayerForSmallerEvent];
+
+
             }
             
             [cSamePositionAndDurationEvents removeAllObjects];
@@ -573,96 +590,81 @@
 
 -(void)compareAndRepositionEvents: (SMXBlueButton *)_button withButtonPosition:(long)buttonIndex
 {
+    
+    
     if (arrayButtonsEvents.count <= buttonIndex || buttonIndex < 0) {
-        if (paintedHeight<(_button.frame.origin.y +_button.frame.size.height)) {
-            paintedHeight = (_button.frame.origin.y +_button.frame.size.height);
-        }
         return;
     }
-     SMXBlueButton *lOldButton = [arrayButtonsEvents objectAtIndex:buttonIndex];
-     if (paintedHeight<(_button.frame.origin.y))
+    
+    SMXBlueButton *lOldButton = [arrayButtonsEvents objectAtIndex:buttonIndex];
+
+    //changing from float/double to long as the comparision was giving issues with the 3rd & 4th position decimal numbers.
+    long oldbuttonHeight = (lOldButton.frame.origin.y + lOldButton.frame.size.height);
+    long newButtonHeight = (_button.frame.origin.y + _button.frame.size.height);
+    
+    if (oldbuttonHeight >= newButtonHeight)
     {
-        paintedHeight = (_button.frame.origin.y +_button.frame.size.height);
-    }
-    else if ([self isEventOverlapping:lOldButton newEvent:_button])
-    {
-        _button.intOverLapWith = buttonIndex;
-        _button.wDivision = lOldButton.wDivision+1;
-        _button.xPosition = lOldButton.xPosition + 1;
-        _button.frame = [self updateFrame:_button];
-        [_button setSubViewFramw];
-        [self rearrangeEvent:_button arrayOfTheEvents:arrayButtonsEvents];
-    }
+
+            if (lOldButton.frame.origin.y == _button.frame.origin.y)
+            {
+                if (lOldButton.frame.size.height == _button.frame.size.height)
+                {
+                    
+                    if(![cEventInsideALargerEvent containsObject:_button])
+                    {
+                        if (![cSamePositionAndDurationEvents containsObject:_button])
+                        {
+                            [cSamePositionAndDurationEvents addObject:_button];
+                        }
+                        [cSamePositionAndDurationEvents addObject:lOldButton];
+                    }
+                    
+                    else
+                    {
+                        [cEventInsideALargerEvent addObject:lOldButton];
+                    }
+                    
+                    [self compareAndRepositionEvents:lOldButton withButtonPosition:buttonIndex-1];
+
+                }
+                else
+                {
+                    // Both events same starting time.
+
+                    if(![cEventInsideALargerEvent containsObject:_button])
+                    {
+                        [cEventInsideALargerEvent addObject:_button];
+                        [cEventsWhichAccomodateSmallerEvents setObject:lOldButton forKey:_button.event.localID];
+                    }
+                }
+            }
+            else
+            {
+                // _button is inside the lAddedButton
+                
+                if(![cEventInsideALargerEvent containsObject:_button])
+                {
+                    [cEventInsideALargerEvent addObject:_button];
+                    [cEventsWhichAccomodateSmallerEvents setObject:lOldButton forKey:_button.event.localID];
+                }
+            }
+        }
     else
     {
-        if (lOldButton.wDivision >= 1)
-        {
-            _button.frame = CGRectMake(lOldButton.frame.origin.x, _button.frame.origin.y, lOldButton.frame.size.width,_button.frame.size.height);
-            [_button setSubViewFramw];
+        // The case wherein the previous button is inside a larger event
+        
+        NSArray *lAllValues = [cEventsWhichAccomodateSmallerEvents allValues];
+        for (SMXBlueButton *lTempButton in lAllValues) {
+            if ((lTempButton.frame.origin.y + lTempButton.frame.size.height) >= (_button.frame.origin.y + _button.frame.size.height))
+            {
+                [cEventInsideALargerEvent addObject:_button];
+                break;
+            }
         }
-        else
-        {
-            
-        }
-    }
-    if (paintedHeight<(_button.frame.origin.y +_button.frame.size.height)) {
-        paintedHeight = (_button.frame.origin.y +_button.frame.size.height);
     }
     
     for (SMXBlueButton *lTempButton in cSamePositionAndDurationEvents) {
         [cEventInsideALargerEvent removeObject:lTempButton];
-        
-    }
-}
-
--(BOOL)isEventOverlapping:(SMXBlueButton *)oldEvent newEvent:(SMXBlueButton *)event
-{
-    //changing from float/double to long as the comparision was giving issues with the 3rd & 4th position decimal numbers.
-    long oldbuttonHeight = (oldEvent.frame.origin.y + oldEvent.frame.size.height);
-    //long newButtonHeight = (event.frame.origin.y + event.frame.size.height);
-    /*
-    if ((oldbuttonHeight >= event.frame.origin.y) && (oldEvent.frame.origin.y <=  event.frame.origin.y))
-    {
-        return YES;
-    }
-     */
-    
-    //Defect Fix:031209
-    if ((oldEvent.frame.origin.y<=event.frame.origin.y) && ((oldEvent.frame.origin.y+oldEvent.frame.size.height)>event.frame.origin.y))
-    {
-        return YES;
-    }
-    return NO;
-}
--(CGRect )updateFrame:(SMXBlueButton *)event
-{
-    long cellwidth = self.frame.size.width-EVENT_X_POSITION;
-    return CGRectMake(EVENT_X_POSITION+((cellwidth/event.wDivision)*(event.xPosition-1)), event.frame.origin.y,cellwidth/event.wDivision,event.frame.size.height);
-}
--(void)rearrangeEvent:(SMXBlueButton *)event arrayOfTheEvents:(NSArray *)array
-{
-    if (event.intOverLapWith !=-1)
-    {
-        if (array.count > event.intOverLapWith)
-        {
-            SMXBlueButton *oldEvent = [array objectAtIndex:event.intOverLapWith];
-            long cellwidth = self.frame.size.width-EVENT_X_POSITION;
-            if (oldEvent.xPosition-1 == 0)
-            {
-                oldEvent.wDivision = oldEvent.wDivision+1;
-                oldEvent.frame = CGRectMake(EVENT_X_POSITION, oldEvent.frame.origin.y,cellwidth/oldEvent.wDivision,oldEvent.frame.size.height);
-            }
-            else
-            {
-                oldEvent.wDivision = oldEvent.wDivision+1;
-                oldEvent.frame = CGRectMake(EVENT_X_POSITION+((cellwidth/oldEvent.wDivision)*(oldEvent.xPosition-1)), oldEvent.frame.origin.y,cellwidth/oldEvent.wDivision,oldEvent.frame.size.height);
-            }
-            [oldEvent setSubViewFramw];
-            [self rearrangeEvent:oldEvent arrayOfTheEvents:array];
-        }
-    }
-    else
-    {
         
     }
 }
@@ -953,4 +955,87 @@
         }
     }
 }
+
+/*
+-(void)setTheEventTitle:(SMXBlueButton *)button
+{
+    NSString *dayIndexString = (button.event.isMultidayEvent? [@(button.event.eventIndex) stringValue] : @"");
+    NSString *lEventTitle;
+    NSString *lLocation = (button.event.isWorkOrder ? [CalenderHelper getServiceLocation:button.event.whatId]:@"");
+    
+    if (button.event.isWorkOrder) {
+        WorkOrderSummaryModel *model = [[SMXCalendarViewController sharedInstance].cWODetailsDict objectForKey:button.event.whatId];
+        lEventTitle = (model.companyName.length ? model.companyName : button.event.stringCustomerName);
+    }
+    else{
+        lEventTitle = button.event.stringCustomerName;
+    }
+    
+    lEventTitle = [lEventTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+
+    CGRect frame = button.eventName.frame;
+    frame.size.height = [self dynamicHeightOfLabel:button.eventName withWidth:button.eventName.frame.size.width].height;
+    if (frame.size.height>39) {
+        frame.size.height = 39; // not more than 2 lines.
+    }
+
+    
+    NSString *text;
+    
+    if (button.event.isMultidayEvent) {
+        dayIndexString = [NSString stringWithFormat:@"(day %@)",dayIndexString];
+        text = [NSString stringWithFormat:@"%@\n%@\n%@", dayIndexString, lEventTitle, lLocation];
+
+    }
+    else
+    {
+        text = [NSString stringWithFormat:@"%@\n%@", lEventTitle, lLocation];
+
+    }
+
+    // If attributed text is supported (iOS6+)
+    if ([button.eventName respondsToSelector:@selector(setAttributedText:)]) {
+        
+        // Define general attributes for the entire text
+        NSDictionary *attribs = @{
+                                  NSForegroundColorAttributeName: button.eventName.textColor,
+                                  NSFontAttributeName: button.eventName.font
+                                  };
+        NSMutableAttributedString *attributedText =
+        [[NSMutableAttributedString alloc] initWithString:text
+                                               attributes:attribs];
+        
+        if (button.event.isMultidayEvent) {
+            
+        
+        // Red text attributes
+        UIColor *lDayIndexColor = [UIColor whiteColor];
+        UIColor *lDayIndexBackgroundColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
+
+        NSRange lDayIndexTextRange = [text rangeOfString:dayIndexString];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
+            [attributedText setAttributes:@{NSForegroundColorAttributeName:lDayIndexColor, NSBackgroundColorAttributeName:lDayIndexBackgroundColor,NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-Medium" size: 16.0]}
+                                range:lDayIndexTextRange];
+        }
+        // Green text attributes
+        UIColor *lEventTitleColor = [UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
+        NSRange lEventTitleTextRange = [text rangeOfString:lEventTitle];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
+        [attributedText setAttributes:@{NSForegroundColorAttributeName:lEventTitleColor}
+                                range:lEventTitleTextRange];
+        
+        // Purple and bold text attributes
+        UIColor *lLocationColor = [UIColor colorWithRed:121.0/255.0 green:121.0/255.0 blue:121.0/255.0 alpha:1.0];
+        UIFont *lLocationFont = [UIFont fontWithName:@"HelveticaNeue-Light" size: 16.0];;
+        NSRange lLocationTextRange = [text rangeOfString:lLocation];// * Notice that usage of rangeOfString in this case may cause some bugs - I use it here only for demonstration
+        [attributedText setAttributes:@{NSForegroundColorAttributeName:lLocationColor,
+                                        NSFontAttributeName:lLocationFont}
+                                range:lLocationTextRange];
+        
+        button.eventName.attributedText = attributedText;
+    }
+    // If attributed text is NOT supported (iOS5-)
+    else {
+        button.eventName.text = text;
+    }
+}
+*/
 @end

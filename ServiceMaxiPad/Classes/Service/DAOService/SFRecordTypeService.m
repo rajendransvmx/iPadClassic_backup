@@ -49,7 +49,6 @@
     }
     return records;
 }
-
 - (NSMutableArray * )fetchSFRecordTypeByIdS
 {
     DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kSFRecordType andFieldNames:@[kRecordTypeId] ];
@@ -73,7 +72,6 @@
     }
     return records;
 }
-
 
 - (NSArray * )fetchSFRecordTypeInfoByFields:(NSArray *)fieldNames
                              andCriteria:(NSArray *)criteria
@@ -114,32 +112,7 @@
     
     return recordTypeList;
 }
-//Madhusudhan, #024488 Record type value should be displayed in user language.
-- (NSString * )fetchSFRecordTypeDisplayName:(NSArray *)fieldNames andCriteria:(DBCriteria *)criteria
-{
-    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:kSFRecordType andFieldNames:fieldNames whereCriteria:criteria];
-    [requestSelect setDistinctRowsOnly];
-    
-    __block NSString *displayName = nil;
-    
-    @autoreleasepool {
-        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-        
-        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-            NSString * query = [requestSelect query];
-            
-            SQLResultSet * resultSet = [db executeQuery:query];
-            
-            while ([resultSet next]) {
-                SFRecordTypeModel * model = [[SFRecordTypeModel alloc] init];
-                [resultSet kvcMagic:model];
-                displayName = model.recordtypeLabel;
-            }
-            [resultSet close];
-        }];
-    }
-    return displayName;
-}
+
 -(void)updateRecordTypeLabels:(NSArray *)recordTypeModels
 {
     //    Query : @"UPDATE 'SFRecordType'  SET  recordType = :recordType WHERE (( recordTypeId = :recordTypeId))";

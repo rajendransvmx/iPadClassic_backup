@@ -485,8 +485,8 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         [formatter setDateFormat:@"EEE"];
         NSString *dateString = [formatter stringFromDate:date];
         
-        NSCalendar*       calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-        NSDateComponents* components = [calendar components:NSCalendarUnitDay|NSCalendarUnitMonth|NSCalendarUnitYear fromDate:date];
+        NSCalendar*       calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDateComponents* components = [calendar components:NSDayCalendarUnit|NSMonthCalendarUnit|NSYearCalendarUnit fromDate:date];
         NSInteger         day = [components day];
         NSInteger         month = [components month];
         NSInteger         year = [components year];
@@ -629,7 +629,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     if( datDate == nil ) {
         datDate = [NSDate date];
     }
-    NSDateComponents* comps = [[NSCalendar currentCalendar] components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitSecond fromDate:datDate];
+    NSDateComponents* comps = [[NSCalendar currentCalendar] components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit fromDate:datDate];
     [comps setHour:00];
     [comps setMinute:00];
     [comps setSecond:00];
@@ -661,22 +661,21 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     else if ([literal caseInsensitiveCompare:kLiteralTomorrow] == NSOrderedSame)
     {
         date = [DateUtil dateWithOutTime:[NSDate tomorrow]];
-        
+
     }
     else if ([literal caseInsensitiveCompare:kLiteralYesterday] == NSOrderedSame)
     {
         date = [DateUtil dateWithOutTime:[NSDate yesterday]];
-        
+
     }
     else
     {
         date = nil; //021790
-        
+
     }
     
     return date;
 }
-
 +(NSString *)getDateFormateForDataType:(NSString *)dataType
 {
     NSString *format = nil;
@@ -768,7 +767,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     if (date != nil) {
         
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]];
+        [dateFormatter setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
         if([self iSDeviceTime24HourFormat])
         {
             [dateFormatter setDateFormat:@"EEE MMM dd, yyyy HH:mm"];
@@ -780,7 +779,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         dateTime = [dateFormatter dateFromString:date];
         
         NSDateFormatter *dateFormatterTwo = [[NSDateFormatter alloc] init];
-        [dateFormatterTwo setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]];
+        [dateFormatterTwo setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]];
         [dateFormatterTwo setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
         [dateFormatterTwo setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         localDateInString = [dateFormatterTwo stringFromDate:dateTime];
@@ -803,7 +802,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         //Defect Fix :027062 HS 11Feb2015
         [dateformatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale currentLocale]localeIdentifier]]];
         //ends here
-         
+        
         
         [dateformatter setTimeZone:[dateComponents timeZone]];
         
@@ -834,7 +833,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         
         //Defect Fix :027062 HS 12Feb2015
         [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:[[NSLocale currentLocale]localeIdentifier]]];
-         NSDateComponents * dateComponents = [DateUtil getDateComponents];
+        NSDateComponents * dateComponents = [DateUtil getDateComponents];
         [dateFormatter setTimeZone:[dateComponents timeZone]];
         //ends here
         
@@ -862,8 +861,8 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 
 
 + (NSDateComponents *)getDateComponents {
-    NSUInteger unitFlags = NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond | NSCalendarUnitWeekday | NSCalendarUnitTimeZone;
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSUInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit | NSTimeZoneCalendarUnit;
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents * dateComponents = [gregorian components:unitFlags fromDate:[NSDate date]];
     return dateComponents;
 }

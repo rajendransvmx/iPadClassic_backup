@@ -14,6 +14,8 @@
 #import "SyncHeapDAO.h"
 #import "ResponseConstants.h"
 #import "RequestConstants.h"
+#import "GetPriceManager.h"
+#import "SyncConstants.h"
 
 @implementation DCResponseParserV3
 
@@ -154,8 +156,6 @@
                     modelObj.objectName = objectName;
                     modelObj.syncType = @"DC"; //TODO : Remove hard coding
                     modelObj.syncFlag = NO;
-                    
-                    
                     [heapDictionary setObject:modelObj forKey:sfId];
                 }
             }

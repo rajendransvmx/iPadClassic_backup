@@ -13,7 +13,6 @@
 #import "OpDocHelper.h"
 #import "SFMCustomActionWebServiceHelper.h"
 #import "TagConstant.h"
-#import "WebserviceResponseStatus.h"
 
 extern NSString *kInitialSyncStatusNotification;
 extern NSString *kConfigSyncStatusNotification;
@@ -32,11 +31,6 @@ extern NSString *kUpadteWebserviceData;
 
 @property(nonatomic, assign) BOOL isConfigSyncDueAlertShown;
 @property(nonatomic, assign) BOOL isGetPriceCallEnabled;
-@property (nonatomic,assign) SyncStatus dataPurgeStatus;
-@property (nonatomic,assign) SyncType syncType;
-@property (nonatomic,strong) WebserviceResponseStatus *syncResponseStatus;
-@property (nonatomic,strong) NSError *syncError;
-
 
 // ...
 
@@ -77,8 +71,6 @@ extern NSString *kUpadteWebserviceData;
 - (BOOL)isInitalSyncOrResetApplicationInProgress;
 - (BOOL)isConfigSyncInQueue;
 - (BOOL)isInitialSyncInQueue;
-- (BOOL)isDataPurgeInProgress;
-
 
 - (void)updateUserTableIfRecordDoesnotExist;
 
@@ -97,10 +89,5 @@ extern NSString *kUpadteWebserviceData;
 
 - (void)enqueueSyncQueue:(SyncType)syncType;
 - (SyncType)dequeueSyncQueue;
-
-- (void)manageSyncQueueProcess;
-- (void)updateDataPurgeStatus:(SyncStatus )status;
-- (void)handleSyncCompletion;
-- (dispatch_queue_t)getSyncErrorReportQueue;
 
 @end

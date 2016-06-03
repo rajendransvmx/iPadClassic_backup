@@ -61,10 +61,6 @@
 -(BOOL)areChildRecordsSynced{
     if ([StringUtil isStringNotNULL:[self getHeaderSalesForceId]] && [[self getHeaderSalesForceId] length]>0) {
         NSDictionary *dict = self.detailsRecord;
-        if (!dict) //if there is no chaild then no need to check for sfId.
-        {
-            return YES;
-        }
         for (NSString *pocessId in [dict allKeys]) {
             NSArray *childList = [dict objectForKey:pocessId];
             for (NSDictionary *records in childList) {
@@ -76,14 +72,10 @@
                     {
                         
                     }
-                    else //field is there, but no value
+                    else
                     {
                         return NO;
                     }
-                }
-                else //If id is not there
-                {
-                    return NO;
                 }
             }
         }

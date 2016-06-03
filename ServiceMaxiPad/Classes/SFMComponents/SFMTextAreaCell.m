@@ -133,36 +133,6 @@
         [self.delegate cellValue:self.value didChangeForIndexpath:self.indexPath];
     }
 }
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    
-    BOOL isBackSpace =  [StringUtil isBackSpace:text];
-    
-    if(isBackSpace)
-    {
-        return YES;
-    }
-
-    if(textView.text.length + text.length > self.lenght)
-    {
-        return NO;
-    }
-    else
-    {
-        return YES;
-    }
-//    if(range.length +range.location +text.length <= self.lenght)
-//     {
-//         return YES;
-//
-//     }
-//     else{
-//         return NO;
-//     }
-    
-    
-}
-
 
 - (void)layoutSubviews {
     
@@ -260,6 +230,7 @@
         [self.delegate launchBarcodeScannerForIndexPath:self.indexPath];
     }
 }
+
 - (void)textViewDidChange:(UITextView *)textView {
     CGRect line = [textView caretRectForPosition:
                    textView.selectedTextRange.start];
@@ -276,16 +247,6 @@
             [textView setContentOffset:offset];
         }];
     }
-}
-
-- (void)setTextFieldDataType:(NSString*)dataType
-{
-    //self.valueField.keyboardType = [SMXiPad_Utility getKeyBoardTypeForDataType:dataType];
-    self.dataType = dataType;
-}
-- (void)setLengthVariable:(NSInteger)lenght
-{
-    self.lenght = lenght;
 }
 
 

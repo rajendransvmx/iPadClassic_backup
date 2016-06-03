@@ -75,4 +75,6 @@
  */
 + (void)installCoreLibrary;
 
++(void)recopyStaticResourcesFromBundle;
+
 @end

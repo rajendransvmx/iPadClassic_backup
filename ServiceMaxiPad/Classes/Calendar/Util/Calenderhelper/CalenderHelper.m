@@ -50,15 +50,7 @@
 #import "PlistManager.h"   //For getting Technician ID to be used in query to get events from SVMX_EVENT Table
 #import "UniversalDAO.h"
 #import "SMXProductListModel.h"
-#import "SFObjectFieldDAO.h"
-#import "SFObjectFieldService.h"
-#import "NSDate+SMXDaysCount.h"
-
 #define stringLimitInProduct 80
-
-#define EventTableSetting @"IPAD006_SET005" // For getting calendar title display fields for Salesforce Events.
-#define SVMXEventTableSetting @"IPAD006_SET006"  // For getting calendar title display fields for SVMX Events.
-
 @interface CalenderHelper ()
 
 + (NSArray *)fetchDataForObject:(NSString *)objectName
@@ -67,11 +59,6 @@
                        criteria:(NSArray *)criteria;
 
 @property (nonatomic, strong) NSString *cRangeOfDaysString;
-@property (nonatomic, strong) NSDictionary *salesforceEventFieldList;
-@property (nonatomic, strong) NSDictionary *svmxEventEventFieldList;
-@property (nonatomic, strong) NSString *salesforceEventTitleSettingString;
-@property (nonatomic, strong) NSString *svmxEventTitleSettingString;
-
 @end
 
 @implementation CalenderHelper
@@ -189,6 +176,7 @@
         }
         woSummaryModel.companyName = companyName;
         
+        
         if (![StringUtil isStringEmpty:[transObjModel valueForField:kWorkOrderSite]]) {
             woSummaryModel.IPAtLocation = [self getInstalledListFromSite: [transObjModel valueForField:kWorkOrderSite]];
             
@@ -202,6 +190,7 @@
         
     }
     
+    
     return workOrderSummaryDict;
 }
 
@@ -210,9 +199,6 @@
 {
     
     NSMutableArray *lCaseSFIDArray = [[NSMutableArray alloc] init];
-    NSDictionary *lTitleFieldDict =  [self getCalendarEventTitleData];
-    self.salesforceEventFieldList = [lTitleFieldDict objectForKey:kEventObject];
-    self.svmxEventEventFieldList = [lTitleFieldDict objectForKey:kSVMXTableName];
     
     //    NSLog(@"<<<<<<<<<<<<<<<<< START eventsOfRangeOfDays >>>>>>>>>>>>>>>>>>");
     NSMutableArray *lEventListArray = (NSMutableArray *) [self eventsOfRangeOfDaysForSalesForceEventTable];
@@ -250,8 +236,6 @@
             CaseObjectModel *object = [CaseObjectModel new];
             [[SMXCalendarViewController sharedInstance].cCaseDetailsDict setObject:object forKey:[theDict objectForKey:kWhatId]];
         }
-        [self settingTheTitleOfEvent:theDict forSalesforceEvent:YES];
-
     }
     
     for (EventTransactionObjectModel *lModel in lSVMXEventListArray) {
@@ -259,6 +243,7 @@
         [lModel hasTimeZoneChanged];         //Checking if the split events are adhering to the current local timezone. Everything is done at the Model level.
         
         NSMutableDictionary *theDict = (NSMutableDictionary *) [lModel getFieldValueDictionary];
+        
         NSString *objectName =  [serviceRequest getObjectName:[theDict objectForKey:kObjectSfId]];
         
         if ([objectName isEqualToString:kWorkOrderTableName]) {
@@ -275,8 +260,7 @@
             CaseObjectModel *object = [CaseObjectModel new];
             [[SMXCalendarViewController sharedInstance].cCaseDetailsDict setObject:object forKey:[theDict objectForKey:kObjectSfId]];
         }
-        [self settingTheTitleOfEvent:theDict forSalesforceEvent:NO];
-
+        
     }
     
     if (whatEventStartDateValueMap.count>0) {
@@ -286,6 +270,15 @@
         
     }
     
+    /*
+     NSSortDescriptor *eventStartDateSortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"startDateTime"
+     ascending:YES];
+     
+     NSArray *sortedArray = [lEventArray sortedArrayUsingDescriptors:[NSArray arrayWithObjects:eventStartDateSortDescriptor, nil]];
+     return sortedArray;
+     */
+    
+    
     NSMutableSet *set = [NSMutableSet setWithArray:lEventListArray];
     [set addObjectsFromArray:lSVMXEventListArray];
     NSArray *combinedArray = [set allObjects];
@@ -293,6 +286,7 @@
     return combinedArray;
     
 }
+
 
 +(BOOL)isConflicted:(NSString *)lWhatId
 {
@@ -585,6 +579,8 @@
         lRangeDayInt = 1;
     }
     
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kActivityDate,kActivityDateTime,kDurationInMinutes,kEndDateTime, kStartDateTime, kSubject, kWhatId, kId, klocalId, kEventDescription, kIsAlldayEvent, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, nil];
+    
     NSDate *lStartDate = [self dateWithOutTime:[[NSDate date] dateByAddingTimeInterval:-60*60*24*lRangeDayInt]];
     NSDate *lEndDate = [self dateWithOutTime:[[NSDate date] dateByAddingDays:lRangeDayInt+1]];
     [[SMXDateManager sharedManager] setStartDateWindow:lStartDate];
@@ -627,12 +623,12 @@
         
         DBCriteria *criteriaSix = [[DBCriteria alloc] initWithFieldName:kOwnerId operatorType:SQLOperatorEqual andFieldValue:ownerId];
         
-        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:nil expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
+        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
     }
     else {
         //            eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) OR (6 AND 7) AND ())" criteria:[NSArray arrayWithObjects: criteriaTwo, criteriaThree, criteriaFour, criteriaFive, nil]];
         
-        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:nil expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND (7 AND 8))" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
+        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (5 AND 6)) AND (7 AND 8))" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
     }
     
     return eventArray;
@@ -648,6 +644,8 @@
     if (lRangeDayInt<=0) {
         lRangeDayInt = 1;
     }
+    
+    NSArray *fieldsArray = [[NSArray alloc] initWithObjects:kSVMXActivityDate,kSVMXActivityDateTime,kSVMXDurationInMinutes,kSVMXEndDateTime, kSVMXStartDateTime, kSVMXWhatId, kSVMXEventName, kSVMXIsAlldayEvent, klocalId, kSVMXID, kSVMXEventDescription, kIsMultiDayEvent, kSplitDayEvents, kTimeZone, kObjectSfId,nil];
     
     NSDate *lStartDate = [self dateWithOutTime:[[NSDate date] dateByAddingTimeInterval:-60*60*24*lRangeDayInt]];
     NSDate *lEndDate = [self dateWithOutTime:[[NSDate date] dateByAddingDays:lRangeDayInt+1]];
@@ -692,12 +690,12 @@
         
         DBCriteria *criteriaSix = [[DBCriteria alloc] initWithFieldName:kSVMXTechnicianId operatorType:SQLOperatorEqual andFieldValue:technicianID];
         
-        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:nil expression:@"(((1 AND 2) OR (3 AND 4) OR (7 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
+        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4) OR (7 AND 6)) AND 7 AND 8 AND 9)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, criteriaSix, nil]];
     }
     else {
         //              eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:fieldsArray expression:@"(((1 AND 2) OR (3 AND 4)) OR (6 AND 7))" criteria:[NSArray arrayWithObjects: criteriaTwo, criteriaThree, criteriaFour, criteriaFive, nil]];
         
-        eventArray = [transObjectService fetchEventDataForObject:kSVMXTableName fields:nil expression:@"((1 AND 2) OR (3 AND 4) OR (5 AND 6) AND 7 AND 8)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
+        eventArray = [transObjectService fetchEventDataForObject:kEventObject fields:fieldsArray expression:@"((1 AND 2) OR (3 AND 4) OR (5 AND 6) AND 7 AND 8)" criteria:[NSArray arrayWithObjects:criteriaTwo, criteriaThree, criteriaFour, criteriaFive, lMultiDayCriteriaOne, lMultiDayCriteriaTwo, criteriaWhenStartNotPresent, criteriaWhenEndNotPresent, nil]];
     }
     
     return eventArray;
@@ -910,7 +908,7 @@
 + (NSMutableDictionary *)getValuesFromReferenceTable:(NSArray *)ids
 {
     if ([ids count] > 0) {
-        NSMutableDictionary *idValue = [NSMutableDictionary new];
+        NSMutableDictionary *idValue = [[NSMutableDictionary alloc] initWithDictionary:0];
         
         DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:ids];
         
@@ -961,7 +959,6 @@
     
 }
 
-
 /* Here we are getting value from product table*/
 +(NSArray *)getProductFromProductTable:(NSArray *)ids{
     DBCriteria *criteriaOne = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIn andFieldValues:ids];
@@ -973,16 +970,11 @@
             NSDictionary *dict=[model getFieldValueDictionary];
             [dictI setObject:[dict objectForKey:@"Name"] forKey:[dict objectForKey:kId]];
         }
-        
-        if (dictI.count != ids.count) {
-            return nil;
-        }
         return [self getList:dictI productId:ids];
     }else{
         return nil;
     }
 }
-
 
 +(NSArray *)getList:(NSMutableDictionary *)productIdToNameDictionary productId:(NSArray *)productIds{
     
@@ -1113,7 +1105,7 @@
         gmtDate = [NSString stringWithFormat:@"%@Z", gmtDate];
     }
     //for Gregorian Calendar
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
     [dateFormatter setCalendar:cal];
@@ -1130,7 +1122,7 @@
     NSDate * originalDate = [dateFormatter dateFromString:tmpDate];
     [cal setTimeZone:[NSTimeZone systemTimeZone]];
     
-    NSDateComponents *date_comp = [cal components: NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear | NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:originalDate];
+    NSDateComponents *date_comp = [cal components: NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:originalDate];
     
     NSString *someDateString = [self getLocalizedString:date_comp];
     
@@ -1287,7 +1279,7 @@
     if( datDate == nil ) {
         datDate = [NSDate date];
     }
-    NSDateComponents* comps = [cal components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour|NSCalendarUnitMinute|NSCalendarUnitSecond fromDate:datDate];
+    NSDateComponents* comps = [cal components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit|NSHourCalendarUnit|NSMinuteCalendarUnit|NSSecondCalendarUnit fromDate:datDate];
     [comps setHour:00];
     [comps setMinute:00];
     [comps setSecond:00];
@@ -1445,346 +1437,6 @@
     }
     
 }
-
-#pragma mark - Custom Calendar Event Title Population
-
-/*
- This method retreives the Event Title field names and values from and returns the same.
- */
--(NSDictionary *)getCalendarEventTitleData
-{
-    //Get the setting value from Mobile Device Setting Table
-    NSArray *calendarTitleFieldList = [self getCalendarTitleInfoFromMobleDeviceSetting];
-    NSArray *lEventFields;
-    NSArray *lSVMXEventFields;
-    for (MobileDeviceSettingsModel *model in calendarTitleFieldList) {
-        
-        if ([model.settingId isEqualToString:EventTableSetting]) {
-            _salesforceEventTitleSettingString = model.value;
-            lEventFields = [self getFieldsFromString:model.value];
-
-        }
-        else if ([model.settingId isEqualToString:SVMXEventTableSetting]) {
-            _svmxEventTitleSettingString = model.value;
-            lSVMXEventFields = [self getFieldsFromString:model.value];
-        }
-    }
-    NSMutableArray *lEventFieldArray = [NSMutableArray new];
-    
-    for (int i = 0;i<lEventFields.count;i++) {
-        
-        NSString *trimmedString = [[lEventFields objectAtIndex:i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        [lEventFieldArray addObject:trimmedString];
-        
-    }
-    NSMutableArray *lSVMXEventFieldArray = [NSMutableArray new];
-    
-    for (int i = 0;i<lSVMXEventFields.count;i++) {
-        
-        NSString *trimmedString = [[lSVMXEventFields objectAtIndex:i] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        [lSVMXEventFieldArray addObject:trimmedString];
-        
-    }
-    
-    id sfObjectService = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
-    
-    NSDictionary *lEventdict;
-    NSDictionary *lSVMXEventdict;
-    
-    if ([sfObjectService conformsToProtocol:@protocol(SFObjectFieldDAO)]) {
-        
-        if (lEventFieldArray.count) {
-            lEventdict = [sfObjectService getDataTypeForFields:lEventFieldArray objectName:@"Event"];
-        }
-        if (lSVMXEventFieldArray.count) {
-            lSVMXEventdict = [sfObjectService getDataTypeForFields:lSVMXEventFieldArray objectName:kSVMXTableName];
-            
-        }
-    }
-    NSDictionary *eventDict;
-    NSDictionary *svmxEventDict;
-    if(lEventdict && lEventFieldArray){
-        eventDict = @{kEventObject:lEventdict, EventTableSetting:lEventFieldArray};
-    }
-    if(lSVMXEventdict && lSVMXEventFieldArray){
-        svmxEventDict = @{kSVMXTableName:lSVMXEventdict, SVMXEventTableSetting:lSVMXEventFieldArray};
-    }
-    
-    if (eventDict && svmxEventDict) {
-        return @{kEventObject:eventDict, kSVMXTableName:svmxEventDict};
-        
-    }
-    else if(eventDict){
-        return @{kEventObject:eventDict};
-        
-    }
-    else if(svmxEventDict){
-        return @{kSVMXTableName: svmxEventDict};
-        
-    }
-    else
-        return nil;
-    
-}
-
--(NSArray *)getFieldsFromString:(NSString *)sentence
-{
-    NSRange startRange = [sentence rangeOfString:@"{"];
-    NSRange endRange = [sentence rangeOfString:@"}"];
-    NSMutableArray *fields = [NSMutableArray new];
-    while (endRange.location<sentence.length && startRange.location<endRange.location){
-        long startLocation = startRange.location + startRange.length;
-        long length = endRange.location - startLocation;
-        
-        NSString *field = [sentence substringWithRange:NSMakeRange(startLocation, length)];
-        [fields addObject:field];
-        sentence = [sentence substringFromIndex:endRange.location+1];
-        startRange = [sentence rangeOfString:@"{"];
-        endRange = [sentence rangeOfString:@"}"];
-        
-    }
-
-    
-    return fields;
-}
-
-/*
- This methods retrieves the Settings data from DB for Event Title Data.
- 
- */
-
--(NSArray *)getCalendarTitleInfoFromMobleDeviceSetting
-{
-    id <MobileDeviceSettingDAO> mobileSettingService = [FactoryDAO serviceByServiceType:ServiceTypeMobileDeviceSettings];
-    
-    NSArray *calendarSettingData = [mobileSettingService fetchDataForSettingIds:@[EventTableSetting, SVMXEventTableSetting]];
-    
-    return calendarSettingData;
-}
-
-
-/*
- This method sets the title to be displayed for each event and saves it to the dictionary.
- */
-
--(void)settingTheTitleOfEvent:(NSMutableDictionary *)theRecordDict forSalesforceEvent:(BOOL)isSalesforceEvent
-{
-    
-    NSArray *fieldsArray;
-    NSDictionary *fieldTypeDict;
-    NSString *settingString;
-    if (isSalesforceEvent) {
-        fieldsArray = [self.salesforceEventFieldList objectForKey:EventTableSetting];
-        fieldTypeDict = [self.salesforceEventFieldList objectForKey:kEventObject];
-        settingString = self.salesforceEventTitleSettingString;
-    }
-    else
-    {
-        fieldsArray = [self.svmxEventEventFieldList objectForKey:SVMXEventTableSetting];
-        fieldTypeDict = [self.svmxEventEventFieldList objectForKey:kSVMXTableName];
-        settingString = self.svmxEventTitleSettingString;
-    }
-    
-    NSMutableDictionary *referenceKeyValueDict = [NSMutableDictionary new];
-    NSArray *referenceFieldType = [fieldTypeDict allKeysForObject:kSfDTReference];
-    
-    if (referenceFieldType.count) {
-        for (NSString *fieldName in referenceFieldType) {
-            NSString *referenceID = [theRecordDict objectForKey:fieldName];
-            TransactionObjectModel *model = [CalenderHelper getRecordForSalesforceId:referenceID];
-            id sfObjectService = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
-            
-            if ([sfObjectService conformsToProtocol:@protocol(SFObjectFieldDAO)]) {
-                NSString *nameField = [sfObjectService getNameFieldForObjectName:model.objectAPIName];
-                if(nameField){
-                    
-                    NSString *value = [[model getFieldValueDictionaryForFields:@[nameField]] objectForKey:nameField];
-                    [referenceKeyValueDict setObject:value forKey:fieldName];
-                }
-            }
-            
-        }
-    }
-    NSString *theTitle = settingString;
-    for (NSString *thefield in fieldsArray) {
-        
-        if ([referenceFieldType containsObject:thefield] && [[referenceKeyValueDict allKeys] containsObject:thefield]) {
-
-            theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:[referenceKeyValueDict objectForKey:thefield]];
-
-        }
-        else
-        {
-            NSString *trimmedString = [thefield stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            if ([[theRecordDict allKeys] containsObject:trimmedString] || [[fieldTypeDict allKeys] containsObject:trimmedString]) {
-                
-                NSString *dateString=nil;
-                if ([[fieldTypeDict objectForKey:trimmedString] isEqualToString:kSfDTDateTime]) {
-                    NSDate *theDateTime = [CalenderHelper getStartEndDateTime:[theRecordDict objectForKey:trimmedString]];
-                    dateString =  [NSDate localDateTimeStringFromDate:theDateTime];
-
-                }
-                else if ([[fieldTypeDict objectForKey:trimmedString] isEqualToString:kSfDTDate]){
-                    NSDate *theDateTime = [CalenderHelper getStartEndDateTime:[theRecordDict objectForKey:trimmedString]];
-                    dateString =  [NSDate localDateStringFromDate:theDateTime];
-                }
-                if (!dateString) {
-                    dateString = [[theRecordDict objectForKey:trimmedString] description];
-                }
-
-                theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:(dateString?dateString:@"")];
-                
-            }
-            else{
-                // not field.
-            }
-        }
-    }
-    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-//    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
-    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
-
-
-    if (theTitle) {
-        NSString *trimmedString = [theTitle stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-
-        [theRecordDict setObject:(trimmedString?trimmedString:@"") forKey:@"eventTitle"];
-        [theRecordDict setObject:@"YES" forKey:@"isSetting"];
-
-    }
-    else{
-        [theRecordDict setObject:@"NO" forKey:@"isSetting"];
-        [theRecordDict setObject:@"" forKey:@"eventTitle"];
-    }
-}
-
--(void)setRescheduledEventTitle:(SMXEvent *)event{
-    
-    NSDictionary *lTitleFieldDict =  [self getCalendarEventTitleData];
-    
-    NSArray *fieldsArray;
-    NSDictionary *fieldTypeDict;
-    NSString *settingString;
-
-    if ([event.eventTableName isEqualToString:kEventObject]) {
-        fieldsArray = [[lTitleFieldDict objectForKey:kEventObject] objectForKey:EventTableSetting];
-        fieldTypeDict = [[lTitleFieldDict objectForKey:kEventObject] objectForKey:kEventObject];
-        settingString = self.salesforceEventTitleSettingString;
-    }
-    else
-    {
-        fieldsArray = [[lTitleFieldDict objectForKey:kSVMXTableName] objectForKey:SVMXEventTableSetting];
-        fieldTypeDict = [[lTitleFieldDict objectForKey:kSVMXTableName] objectForKey:kSVMXTableName];
-        settingString = self.svmxEventTitleSettingString;
-    }
-    
-    if (!event.isEventTitleSettingDriven) {
-        //not settings driven.
-        return;
-    }
-    
-    id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
-    
-    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:klocalId operatorType:SQLOperatorEqual andFieldValue:event.localID];
-    
-    NSArray *eventArray = [transObjectService fetchEventDataForObject:event.eventTableName fields:nil expression:nil criteria:@[criteria]];
-    EventTransactionObjectModel *lModel = [eventArray objectAtIndex:0];
-    NSDictionary *theRecordDict = [lModel getFieldValueDictionary];
-
-    NSMutableDictionary *referenceKeyValueDict = [NSMutableDictionary new];
-    NSArray *referenceFieldType = [fieldTypeDict allKeysForObject:kSfDTReference];
-    
-    if (referenceFieldType.count ) {
-        for (NSString *fieldName in referenceFieldType) {
-            NSString *referenceID = [theRecordDict objectForKey:fieldName];
-            TransactionObjectModel *model = [CalenderHelper getRecordForSalesforceId:referenceID];
-            id sfObjectService = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
-            
-            if ([sfObjectService conformsToProtocol:@protocol(SFObjectFieldDAO)]) {
-                NSString *nameField = [sfObjectService getNameFieldForObjectName:model.objectAPIName];
-                if(nameField){
-                    
-                    NSString *value = [[model getFieldValueDictionaryForFields:@[nameField]] objectForKey:nameField];
-                    [referenceKeyValueDict setObject:value forKey:fieldName];
-                }
-            }
-            
-        }
-    }
-    NSString *theTitle = settingString;
-    for (NSString *thefield in fieldsArray) {
-        
-        if ([referenceFieldType containsObject:thefield] && [[referenceKeyValueDict allKeys] containsObject:thefield]) {
-            theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:[referenceKeyValueDict objectForKey:thefield]];
-        }
-        else
-        {
-            NSString *trimmedString = [thefield stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-            if ([[theRecordDict allKeys] containsObject:trimmedString] || [[fieldTypeDict allKeys] containsObject:trimmedString]) {
-                
-                
-                NSString *dateString=nil;
-                if ([[fieldTypeDict objectForKey:trimmedString] isEqualToString:kSfDTDateTime]) {
-                    
-                    NSDate *referenceDate = nil;
-                    
-                    if ([trimmedString isEqualToString:kStartDateTime] || [trimmedString isEqualToString:kEndDateTime] || [trimmedString isEqualToString:kActivityDateTime] || [trimmedString isEqualToString:kSVMXStartDateTime] || [trimmedString isEqualToString:kSVMXEndDateTime] || [trimmedString isEqualToString:kSVMXActivityDateTime]) {
-                        if ([trimmedString isEqualToString:kStartDateTime] || [trimmedString isEqualToString:kActivityDateTime] || [trimmedString isEqualToString:kSVMXStartDateTime] || [trimmedString isEqualToString:kSVMXActivityDateTime]) {
-                            referenceDate = event.dateTimeBegin;
-                        }
-                        else{
-                            referenceDate = event.dateTimeEnd;
-                        }
-                    }
-                    else{
-                        referenceDate = [CalenderHelper getStartEndDateTime:[theRecordDict objectForKey:trimmedString]];
-                    }
-                    
-                    //                    NSDate *theDateTime = [CalenderHelper getStartEndDateTime:[theRecordDict objectForKey:trimmedString]];
-                    dateString =  [NSDate localDateTimeStringFromDate:referenceDate];
-                    
-                }
-                else if ([[fieldTypeDict objectForKey:trimmedString] isEqualToString:kSfDTDate]){
-                    if ([trimmedString isEqualToString:kSVMXActivityDate]||[trimmedString isEqualToString:kActivityDate]) {
-                        
-                        NSDateComponents *comp = [NSDate componentsOfDate:event.dateTimeBegin];
-                        NSDate *newDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
-                        
-                        dateString =  [NSDate localDateStringFromDate:newDate];
-                    }
-                    else{
-                        NSDate *theDateTime = [CalenderHelper getStartEndDateTime:[theRecordDict objectForKey:trimmedString]];
-                        NSDateComponents *comp = [NSDate componentsOfDate:theDateTime];
-                        NSDate *newDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
-                        dateString =  [NSDate localDateStringFromDate:newDate];
-
-                    }
-                    
-                    
-                }
-                if (!dateString) {
-                    dateString = [[theRecordDict objectForKey:trimmedString] description];
-                }
-                theTitle = [theTitle stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"{%@}",thefield] withString:(dateString?dateString:@"")];
-
-            }
-            else{
-            // Not fields.
-            }
-        }
-    }
-    
-    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-//    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\r" withString:@"\r"];
-    theTitle = [theTitle stringByReplacingOccurrencesOfString:@"\\t" withString:@"\t"];
-
-    event.title = (theTitle?theTitle:@"");
-    
-}
-#pragma - Custom Calendar Field End
-
-
-
 #pragma mark - end
 
 @end

@@ -29,6 +29,7 @@
 #import "CustomerOrgInfo.h"
 #import "Utility.h"
 
+
 void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message);
 
 static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
@@ -61,7 +62,7 @@ static NSString *SOAP_NS = @"http://schemas.xmlsoap.org/soap/envelope/";
     [request setHTTPBody:data];
     request.timeoutInterval = [Utility requestTimeOutValueFromSetting];
     
-    SXLogDebug(@"OPD: SET timeout: %f", request.timeoutInterval);
+    NSLog(@"request timeout: %f", request.timeoutInterval);
     
     if(self.logXMLInOut) {
         //undochangespushpak

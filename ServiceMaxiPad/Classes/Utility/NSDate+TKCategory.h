@@ -308,7 +308,4 @@ typedef struct TKDateInformation TKDateInformation;
 + (NSDate*) dateFromDateInformation:(TKDateInformation)info;
 + (NSDate*) dateFromDateInformation:(TKDateInformation)info timeZone:(NSTimeZone*)tz;
 + (NSString*) dateInformationDescriptionWithInformation:(TKDateInformation)info;
-
-/* Number of day in two date*/
-+(int )numberOfDaysFromStartDate:(NSDate *)startDate andEndDate:(NSDate *)endDate;
 @end

@@ -67,7 +67,6 @@
         case RequestGetPriceDataTypeThree:
             break;
         case RequestTXFetch:
-        case RequestProductIQTxFetch:
             progressStatus = SyncStatusDownloadingTXFETCH;
             break;
         case RequestDependantPickListRest:

@@ -12,8 +12,6 @@
 #import "NumberUtility.h"
 #import "EditableDataValidator.h"
 #import "SMXiPad_Utility.h"
-#import "SFMEditableCell.h"
-#import "StringUtil.h"
 
 @interface SFMEditableCell (Private)
 @property (nonatomic, strong) TextField *valueField;
@@ -88,57 +86,11 @@
 
 - (BOOL)textField:(TextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    BOOL isBackSpace =  [StringUtil isBackSpace:string];
-    
-    if(isBackSpace)
-    {
-        return YES;
+    BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
+    if(isTextAllowed){
+        return  [EditableDataValidator precisionHandlingNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType precision:self.precision scale:self.scale];
     }
-    
-    NSInteger currentLenght;
-    
-    if(self.lenght == 0)
-    {
-        currentLenght = self.precision;
-    }
-    
-    else{
-        currentLenght = self.lenght;
-    }
-    if(textField.text.length + string.length > currentLenght)
-    {
-        return NO;
-    }
-    else
-    {
-        
-        BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
-        if(isTextAllowed){
-            return  [EditableDataValidator precisionHandlingNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType precision:self.precision scale:self.scale];
-        }
-        return isTextAllowed;
-
-        
-    }
-//    if(range.length +range.location +string.length <= currentLenght)
-//    {    }
-//    else{
-//        return NO;
-//    }
-
-//    if(textField.text.length>= self.lenght)
-//    {
-//        return NO;
-//    }
-//    else{
-//        BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
-//        if(isTextAllowed){
-//            return  [EditableDataValidator precisionHandlingNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType precision:self.precision scale:self.scale];
-//        }
-//        return isTextAllowed;
-//    }
-//    
-   
+  return isTextAllowed;
 }
 
 - (void)didTapBarcodeButton
@@ -171,11 +123,6 @@
 {
    self.precision = precision_;
    self.scale = scale_;
-}
-- (void)setLengthVariable:(NSInteger)lenght
-{
-   
-    self.lenght = lenght;
 }
 /*
 // Only override drawRect: if you perform custom drawing.

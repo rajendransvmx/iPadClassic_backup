@@ -72,13 +72,6 @@
 #import "WebserviceResponseStatus.h"
 #import "SNetworkReachabilityManager.h"
 
-#import "ProductIQHomeViewController.h"
-#import "ProductIQManager.h"
-#import "MessageHandler.h"
-#import "StringUtil.h"
-
-//#import "FileManager.h"
-//#import "UnzipUtility.h"
 
 #define kLongFormat @"yyyy-MM-dd'T'HH:mm:ss.SSSSZ"
 #define kLongFormatZulu @"yyyy-MM-dd'T'HH:mm:ss.SSSS'Z'"
@@ -247,7 +240,7 @@
     //HS 23 Jan ends here
   
     
-    NSDateComponents *components = [[NSCalendar currentCalendar] components: NSCalendarUnitSecond fromDate:[NSDate date]];
+    NSDateComponents *components = [[NSCalendar currentCalendar] components: NSSecondCalendarUnit fromDate:[NSDate date]];
     NSInteger second = [components second];
     NSTimeInterval tillNextMinute = (60 - second) % 60;
     
@@ -273,7 +266,7 @@
 -(void)updateEventFromNotification:(NSNotification *)notification
 {
     [self eventDisplayReset:nil];
-//  [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
+  [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
 
     
 }
@@ -392,7 +385,7 @@
     if ([pNotification.name isEqualToString:kUpadteWebserviceData])
     {
         [self eventDisplayReset:nil];
-//        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
+        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
     }
     else
     {
@@ -407,7 +400,7 @@
             //[self performSelectorInBackground:@selector(eventDisplayReset:) withObject:nil];
         }
         //[self loadWizardData];
-//        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
+        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
         [self changeSegementControlText];
     }
 
@@ -426,7 +419,7 @@
     SyncProgressDetailModel *syncProgressDetailModel = [[notification userInfo]objectForKey:@"syncstatus"];
     SyncStatus status = syncProgressDetailModel.syncStatus;
     if (status == SyncStatusSuccess) {
-//        [self loadWizardData];
+        [self loadWizardData];
         [self eventDisplayReset:nil];
 
     }
@@ -652,10 +645,6 @@
 //    NSLog(@"Selected event is %@",self.selectedEvent);
     if (self.selectedEvent)
     {
-        if (![self checkIfEventStillPresent]) {
-            return;
-        }
-        
         SFObjectModel *objectModel =  [self getObjectNameForSelectedEvent:self.selectedEvent];
         NSString *recordId  = nil;
         //HS issue Fix :013140
@@ -693,24 +682,6 @@
         //HS 1 Jan code ends here
         
         /*If wizard step is not there for a wizard then it should not be shown in the tableView*/
-        
-        
-        //show or hide ProductIQ
-        self.viewPageManager = [[SFMPageViewManager alloc]initWithObjectName:objectModel.objectName recordId:recordId];
-        
-        //Show or Id product IQ wizard.
-        if ([[ProductIQManager sharedInstance] isProductIQSettingEnable]) {
-            
-            //Disable create or edit process of IB or location objects.
-            allWizards = [[ProductIQManager sharedInstance] disableCreateOrEditProcessOfLocationOrIBForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
-            
-            if ([[ProductIQManager sharedInstance] isProductIQEnabledForSFMPage:self.viewPageManager.sfmPageView]) {
-                allWizards = [[ProductIQManager sharedInstance] addProductIQWizardForAllWizardArray:allWizards withWizardComponetService:wizardComponentService];
-            }
-
-        }
-
-        
         SFProcessService *processService = [[SFProcessService alloc]init];
         
         if (self.tempViewController == nil) {
@@ -727,44 +698,6 @@
     }
    
 }
-
-/*
- 
- Method: checkIfEventStillPresent
- Paramaters: nil
- return Type: Bool
- Description: Everytime the Action button is displayed. Check if the Event is present in the Day. If the event is not present in the day. make the selectedEvent as nil and disable the Action button.
- Bug: 023634
- Date: 4-Jan-2016
- Autor: BSP
- 
- */
-
--(BOOL)checkIfEventStillPresent
-{
-    NSDateComponents *comp = [NSDate componentsOfDate:self.selectedEvent.dateTimeBegin];
-    NSDate *newDate = [NSDate dateWithYear:comp.year month:comp.month day:comp.day];
-    
-    NSMutableArray *arrayNew = [dictEvents objectForKey:newDate]; // Array containing all the events of one particular day.
-    BOOL isEventPresent = NO;
-    for (SMXEvent *event in arrayNew) {
-        if ([event.localID isEqualToString:self.selectedEvent.localID]) {
-            isEventPresent = YES;
-            break;
-        }
-    }
-    
-    if (!isEventPresent) {
-        self.selectedEvent = nil;
-        [rightButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-        rightButton.enabled = NO;
-        self.navigationItem.rightBarButtonItem.enabled = NO;
-        [self.mySideBar removeContentViewInSideBar:self.tempViewController.view];
-        
-    }
-    return isEventPresent;
-}
-
 
 //HS 23 Jan15 added for fix issue :013040
 -(void)addRescheduleBtninWizard:(NSMutableArray *)allWizards
@@ -788,28 +721,6 @@
     }
 
     
-    //TODO:Testing The ProductIQ START.
-    
-//    SFWizardModel *wizardModelProductIQ = [[SFWizardModel alloc]init];
-//    wizardModelProductIQ.wizardName = @"PRODUCTIQ";
-//    
-//    WizardComponentModel *wizardCompModelProductIQ = [[WizardComponentModel alloc]init];
-//    wizardCompModelProductIQ.actionType = @"ProductIQ";
-//    wizardCompModelProductIQ.actionName = @"ProductIQActionName";
-//    wizardCompModelProductIQ.isEntryCriteriaMatching = YES;
-//    if (wizardModelProductIQ.wizardComponents == nil)
-//    {
-//        wizardModelProductIQ.wizardComponents = [[NSMutableArray alloc]init];
-//    }
-//    [wizardModelProductIQ.wizardComponents addObject:wizardCompModelProductIQ];
-//    
-//    if ([wizardModelProductIQ.wizardComponents count] >0)
-//    {
-//        [allWizards insertObject:wizardModelProductIQ atIndex:1];
-//    }
-//    
-    //TODO:Testing The ProductIQ END.
-
 }
 
 //HS 23 Jan15 code ends here
@@ -913,7 +824,6 @@
     [self setEvents:self.cEventListArray]; //Has to be done in main Thread. However, it was taking lot of time. hence not put on the main thread.
 //    [self refreshTheUI];
     [self performSelectorOnMainThread:@selector(refreshTheUI) withObject:nil waitUntilDone:YES];
-    [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
     
 }
 
@@ -925,7 +835,8 @@
         NSMutableDictionary *theDict = (NSMutableDictionary *) [lModel getFieldValueDictionary];
         NSString *SplitDayEvents = [theDict objectForKey:@"SplitDayEvents"];
         /* making multiday event after checking its a multiday event or not */
-        if (lModel.isItMultiDay && ![StringUtil checkIfStringEmpty:SplitDayEvents]) {
+        //null check for multi day event. if multiday is not there then split event according to current time zone
+        if (lModel.isItMultiDay  && ![StringUtil checkIfStringEmpty:SplitDayEvents]) {
            lEvent=[[SMXEvent alloc] initWithEventWithKeyValue:theDict EventTransactionObjectModel:lModel];
             [self makeEvent:lEvent withArray:lEventCollectionArray objectList:SplitDayEvents];
         }else{
@@ -944,9 +855,10 @@
     return jsonArray;
 }
 
+
 //making event for multiday and adding into array, This is old function with event window.
 //Currently we are not using this method, It was impleted for multiday event with given Date range.
--(void)makeEvent_EventWindow:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
+-(void)makeEvent:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
     NSArray *lSplitArrayEvent = [self stringToArray:splitEventString];
     NSRange dateRange= [self eventWindow:event.dateTimeBegin_multi endDate:event.dateTimeEnd_multi];
     int length=(int)(dateRange.length);
@@ -1000,7 +912,7 @@
     }
 }
 
--(void)makeEvent:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
+-(void)makeEvent_EventWindow:(SMXEvent *)event withArray:(NSMutableArray *)array objectList:(NSString *)splitEventString {
     NSArray *lSplitArrayEvent = [self stringToArray:splitEventString];
     NSString *dateBegin, *dateEnd, *duration;
     for (int i=0; i<[lSplitArrayEvent count]; i++) {
@@ -1029,6 +941,7 @@
         [array addObject:newEvent];
     }
 }
+
 -(NSDate *)dateForTheString:(NSString *)dateString
 {
     NSDateFormatter * lDF = [[NSDateFormatter alloc] init];
@@ -1164,13 +1077,7 @@
             self.navigationItem.rightBarButtonItem.enabled = NO;
             [self.mySideBar removeContentViewInSideBar:self.tempViewController.view];
         }
-    }
-    else {
 
-        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
-        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-        [leftButton.titleLabel sizeToFit];
-        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
     }
 }
 
@@ -1227,8 +1134,8 @@
     [f setDateFormat:@"yyyy-MM-ddHH:mm:ss ZZZ"];
     NSDate *startDate = event.dateTimeBegin;
     NSDate *endDate = event.dateTimeEnd;
-    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
+    NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
                                                         fromDate:startDate
                                                           toDate:endDate
                                                          options:0];
@@ -1267,8 +1174,8 @@
     startDate=[self changeTime:startDate];
     endDate=[self changeTime:endDate];
     if ((startDate !=nil) && (endDate!=nil)) {
-        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-        NSDateComponents *components = [gregorianCalendar components:NSCalendarUnitDay
+        NSCalendar *gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDateComponents *components = [gregorianCalendar components:NSDayCalendarUnit
                                                             fromDate:startDate
                                                               toDate:endDate
                                                              options:0];
@@ -1286,7 +1193,7 @@
 }
 -(NSDate *)changeTime:(NSDate *)date{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[date dateByAddingTimeInterval:0*24*60*60]];
+    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[date dateByAddingTimeInterval:0*24*60*60]];
     comp.hour = 00;
     comp.minute = 00;
     comp.second = 00;
@@ -1353,7 +1260,7 @@
 /*Here changing date , adding number of day*/
 -(NSDate *)changeTime:(NSDate *)date newHour:(int )hour newMin:(int)min numberOfday:(int)numberOfDay{
     NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *comp = [cal components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[date dateByAddingTimeInterval:numberOfDay*24*60*60]];
+    NSDateComponents *comp = [cal components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit fromDate:[date dateByAddingTimeInterval:numberOfDay*24*60*60]];
     comp.hour = hour;
     comp.minute = min;
     comp.second = 00;
@@ -1465,6 +1372,7 @@
             if(self.cSegmentedControl.selectedSegmentIndex == 0)
                 self.navigationItem.rightBarButtonItem.enabled = NO;
         }
+        
         if (!self.navigationItem.leftBarButtonItem.enabled && segment.selectedSegmentIndex != 0)
         {
             [self leftBarButtonItemAction];
@@ -1473,13 +1381,10 @@
         [self checkOrientationAndSetNavButtons];
         [self updateAddEventBtnUI];
 
-        if (self.navigationItem.leftBarButtonItem.enabled && segment.selectedSegmentIndex != 0) {
-            
-            [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
-            [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-            [leftButton.titleLabel sizeToFit];
-            leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
-        }
+        
+
+     
+        
     }
 }
 
@@ -1724,30 +1629,22 @@
                 leftButton.titleEdgeInsets = UIEdgeInsetsMake(0, -leftButton.imageView.frame.size.width, 0, leftButton.imageView.frame.size.width);
             }
         }
-    }else {
-        [self leftBarButtonItemAction];
+    }else if(cSegmentedControl.selectedSegmentIndex == 1){
         [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
         [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-        [leftButton.titleLabel sizeToFit];
+        [leftButton sizeToFit];
         leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
+    }else if(cSegmentedControl.selectedSegmentIndex == 2){
+        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
+        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
+        [leftButton sizeToFit];
+        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
+    }else if(cSegmentedControl.selectedSegmentIndex == 3){
+        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
+        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
+        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
+        [leftButton sizeToFit];
     }
-//    }else if(cSegmentedControl.selectedSegmentIndex == 1){
-//        [self leftBarButtonItemAction];
-//        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
-//        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-//        [leftButton sizeToFit];
-//        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
-//    }else if(cSegmentedControl.selectedSegmentIndex == 2){
-//        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
-//        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-//        [leftButton sizeToFit];
-//        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
-//    }else if(cSegmentedControl.selectedSegmentIndex == 3){
-//        [self leftButtonTextChangeWith:[[SMXDateManager sharedManager] currentDate]];
-//        [leftButton setImage:[UIImage imageNamed:@"down-arrow-white.png"] forState:UIControlStateNormal];
-//        leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
-//        [leftButton sizeToFit];
-//    }
     
 }
 
@@ -1885,6 +1782,7 @@
             self.navigationItem.rightBarButtonItem.enabled = YES;
         }
         self.navigationItem.rightBarButtonItem =[[UIBarButtonItem alloc] initWithCustomView:rightButton];
+
     }
 }
 
@@ -1910,6 +1808,7 @@
         leftButton.imageEdgeInsets = UIEdgeInsetsMake(7, leftButton.titleLabel.frame.size.width+3, 0, -leftButton.titleLabel.frame.size.width);
     }
 }
+
 -(void)calenderButton{
     grayCalenderBkView = [UIButton buttonWithType:UIButtonTypeCustom];
     grayCalenderBkView.frame = CGRectMake(0,0,1024,1024);
@@ -2309,9 +2208,9 @@
 
 -(void)setMonthAndYearValue:(NSDate *)date
 {
-    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+    NSCalendar *cal = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
-    NSDateComponents *lComponent = [cal components:NSCalendarUnitMonth | NSCalendarUnitYear fromDate:date];
+    NSDateComponents *lComponent = [cal components:NSMonthCalendarUnit | NSYearCalendarUnit fromDate:date];
     NSString *monthName = [CalenderHelper getTagValueForMonth:lComponent.month-1];
     NSString *year = [NSString stringWithFormat:@"%ld", (long)lComponent.year];
 //    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -2595,40 +2494,9 @@
     [alert show];
 }
 -(void)reloadWizardComponentActionAccordingToNetworkChangeNotification:(NSNotification *)notification{
-    [self removeActivityAndLoadingLabel];
     if (self.tempViewController != nil) {
         [self.tempViewController reloadTableView];
     }
-}
-
-#pragma mark -
-#pragma mark PRODUCTIQ
-
--(void)displayProductIQViewController;
-{
-    /*
-    ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
-    navController.delegate = lProductIQcontroller;
-    navController.modalPresentationStyle = UIModalPresentationFullScreen;
-    navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
-    navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    [self.navigationController presentViewController:navController animated:YES completion:nil];
-    */
-    
-    
-    ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
-    lProductIQcontroller.responseDictionary = [MessageHandler getMessageHandlerResponeDictionaryForSFMPage:self.viewPageManager.sfmPageView];
-    
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
-    navController.delegate = lProductIQcontroller;
-    navController.modalPresentationStyle = UIModalPresentationFullScreen;
-    navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
-    navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    [self.navigationController presentViewController:navController animated:YES completion:nil];
-    
 }
 
 

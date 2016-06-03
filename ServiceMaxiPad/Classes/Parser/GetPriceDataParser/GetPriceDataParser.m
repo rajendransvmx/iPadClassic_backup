@@ -499,6 +499,7 @@ static NSString *GetPriceDataTwo = @"2";
         [heapDictionary setObject:modelObj forKey:recordId];
     }
 }
+
 //taking time log from responce, and updating for get price...
 -(void)gettingLastSyncTimeFromGetPrice:(NSDictionary *)inputMapObject
 {

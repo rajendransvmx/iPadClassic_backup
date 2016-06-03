@@ -29,7 +29,6 @@
 @property(nonatomic, strong) NSString *controlerField;
 @property(nonatomic, assign) BOOL isReadOnly;
 @property(nonatomic, assign) BOOL isRequired;
-@property (nonatomic, strong) NSString *internalValue;
 
 /**
  string which represents whether the picklist is dependant on any other field value
@@ -45,9 +44,9 @@
 
 @property(nonatomic, strong) NSNumber *precision;
 @property(nonatomic, strong) NSNumber *scale;
-@property (nonatomic, assign) NSInteger lengthValue;
 
-@property(nonatomic, strong) NSString *defaultColumnName; //required for tracking default column name.
+@property(nonatomic, strong) NSString *defaultColumnName; //required for tracking default column name.// defect- 23783
+
 
 - (id)initWithDictionary:(NSDictionary *)pageFieldDict;
 

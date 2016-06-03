@@ -170,7 +170,6 @@ extern NSString *const kLiteralCurrentRecord;
 extern NSString *const kLiteralCurrentRecordHeader;
 extern NSString *const kLiteralUserTrunk;
 extern NSString *const kLiteralSVMXNow;
-extern NSString *const kLiteralCurrentUserId;
 
 extern NSString *const kidentifier;
 extern NSString *const kobjectApiName;
@@ -253,9 +252,6 @@ extern NSString *const kSLAClockPaused;
 extern NSString *const kSLAResolutionInternal;
 extern NSString *const kSLARestorationInternal;
 
-/*Work Detail Summary*/
-extern NSString *const kSerialNumber;
-
 /*Sorting Order*/
 extern NSString *const kFieldAPIName;
 
@@ -322,9 +318,6 @@ extern NSString *const kTopLevelId;
 extern NSString *const kComponentId;
 extern NSString *const kOrderStatus;
 
-/*Location*/
-extern NSString *const kSiteAccountId;
-
 
 /* search process table */
 extern NSString *const kSearchProcessTableName;
@@ -354,9 +347,6 @@ extern NSString *const kCRFieldNameField;
 
 extern NSString *const kInstalledProductTableName;
 extern NSString *const kIPProductNameField;
-
-//SubLocation Table.
-extern NSString *const KSubLocationTableName;
 
 //ProductList
 extern NSString *const KProductTable;
