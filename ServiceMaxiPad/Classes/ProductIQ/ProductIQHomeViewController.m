@@ -514,6 +514,10 @@ static  ProductIQHomeViewController *instance;
     
     NSString *javaScript = [NSString stringWithFormat:@"document.getElementById('%@').value = \"%@\"",self.focusedElementString, decodedData];
     [webview stringByEvaluatingJavaScriptFromString:javaScript];
+    
+    NSString *javaScriptFoucs = [NSString stringWithFormat:@"document.getElementById('%@').focus()",self.focusedElementString];
+    [webview stringByEvaluatingJavaScriptFromString:javaScriptFoucs];
+    
     self.focusedElementString = nil;
 }
 
