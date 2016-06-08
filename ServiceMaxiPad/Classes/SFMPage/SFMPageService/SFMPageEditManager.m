@@ -918,6 +918,19 @@
                 parentField.displayValue = parentSfId;
             }
             
+            
+            // 030777
+            
+            if (idField == nil) {
+                id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+                NSString *sfId = [transObjectService getSfIdForLocalId:localIdField.internalValue forObjectName:processComponent.objectName];
+                if (sfId != nil) {
+                    idField = [[SFMRecordFieldData alloc] initWithFieldName:kId value:sfId andDisplayValue:sfId];
+                    [self.dataDictionaryAfterModification setObject:idField forKey:kId];
+                }
+            }
+            
+            
             NSString *modifiedFieldAsJsonString = [self getJsonStringAfterComparisionForObject:processComponent.objectName recordId:localIdField.internalValue sfid:idField.internalValue andSettingsFlag:YES];
             ModifiedRecordModel * syncRecord = [[ModifiedRecordModel alloc] init];
             syncRecord.recordLocalId = localIdField.internalValue;
