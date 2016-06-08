@@ -233,6 +233,24 @@
     NSDictionary * referenceDictionary = [self getReferenceFieldsFor:objectName];
     
     
+    // 032516
+    
+    if ([objectName isEqualToString:kServicemaxEventObject]) {
+        if (![[recordDictionary allKeys] containsObject:kSVMXWhatId]) {
+            NSString *sfIdOfWO = [recordDictionary objectForKey:kWorkOrderTableName];
+            if (![StringUtil isStringEmpty:sfIdOfWO]) {
+                [recordDictionary setObject:sfIdOfWO forKey:kSVMXWhatId];
+            }
+        }
+    }
+    
+    // 032516
+    if ([objectName isEqualToString:kServicemaxEventObject] && [[recordDictionary objectForKey:kSVMXWhatId] length]>30) {
+        NSMutableDictionary *tempMutDict = [NSMutableDictionary dictionaryWithDictionary:referenceDictionary];
+        [tempMutDict setObject:kWorkOrderTableName forKey:kSVMXWhatId];
+        referenceDictionary = [NSDictionary dictionaryWithDictionary:tempMutDict];
+    }
+    
     BOOL allReferenceFields = YES;
     for (NSString *key in referenceDictionary) {
         
