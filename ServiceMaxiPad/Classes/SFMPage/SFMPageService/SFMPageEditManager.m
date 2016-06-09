@@ -984,6 +984,19 @@
                 parentField.displayValue = parentSfId;
             }
             
+            
+            // 030777
+            
+            if (idField == nil) {
+                id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+                NSString *sfId = [transObjectService getSfIdForLocalId:localIdField.internalValue forObjectName:processComponent.objectName];
+                if (sfId != nil) {
+                    idField = [[SFMRecordFieldData alloc] initWithFieldName:kId value:sfId andDisplayValue:sfId];
+                    [self.dataDictionaryAfterModification setObject:idField forKey:kId];
+                }
+            }
+            
+            
             NSString *modifiedFieldAsJsonString = [self getJsonStringAfterComparisionForObject:processComponent.objectName recordId:localIdField.internalValue sfid:idField.internalValue andSettingsFlag:YES];
             ModifiedRecordModel * syncRecord = [[ModifiedRecordModel alloc] init];
             syncRecord.recordLocalId = localIdField.internalValue;
@@ -1050,7 +1063,7 @@
                     NSString *sfID =   [transObjectService getSfIdForLocalId:localIdField.internalValue forObjectName:syncRecord.objectName];
                     syncRecord.sfId = sfID;
                 }
-
+                
                 /*Insert record into trailer table */
                 if(![modifiedRecords containsObject:localIdField.internalValue] )
                 {
@@ -1062,7 +1075,7 @@
                     else{
                         
                         if([syncRecord.operation isEqualToString:kModificationTypeUpdate]) {
-                             BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localIdField.internalValue];
+                            BOOL doesExist =   [modifiedRecordService doesRecordExistForId:localIdField.internalValue];
                             if (!doesExist) {
                                 [modifiedRecordService saveRecordModel:syncRecord];
                             }
@@ -1085,19 +1098,19 @@
                 lTempSyncRecordForCustomWebservice = syncRecord;
                 shouldRecordBeSavedForCustomWebService = YES;
                 [[SuccessiveSyncManager sharedSuccessiveSyncManager]registerForSuccessiveSync:syncRecord withData:eachDetailDict];
-
-           }
+                
+            }
             //else {
-//                //delete the existing entry form modified record
-//                    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-//                    [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:syncRecord.recordLocalId];
-//            }
+            //                //delete the existing entry form modified record
+            //                    id <ModifiedRecordsDAO>modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+            //                    [modifiedRecordService deleteUpdatedRecordsForRecordLocalId:syncRecord.recordLocalId];
+            //            }
         }
         
         if (shouldRecordBeSavedForCustomWebService) {
             [self theModifiedRecordsUpdateForCustomWebservice:lTempSyncRecordForCustomWebservice andSFMPage:sfmPage];
         }
-
+        
         //delete record
         if([deletedRecordIds count] > 0 )
         {
