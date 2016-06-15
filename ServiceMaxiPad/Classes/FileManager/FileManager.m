@@ -424,4 +424,17 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
     return isFileExits;
 }
 
+
+// 27690
++(void)recopyStaticResourcesFromBundle {
+    NSArray *array = [UnzipUtility getListOfCoreLibraries];
+    if(array.count) {
+        NSLog(@"recopyStaticResourcesFromBundle");
+        [UnzipUtility unzipAndReplaceBundledStaticResourceAtPath:[FileManager getCoreLibSubDirectoryPath]];
+    }
+    else {
+        NSLog(@"No bundled core library found!");
+    }
+}
+
 @end

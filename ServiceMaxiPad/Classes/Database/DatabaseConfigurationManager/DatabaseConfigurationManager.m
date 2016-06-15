@@ -219,6 +219,10 @@
         [FileManager createFileAtPath:[FileManager getTroubleshootingSubDirectoryPath]];
     }
     
+    
+    // 27690
+    [FileManager recopyStaticResourcesFromBundle];
+    
     [self removeDb];
     [[DatabaseManager sharedInstance] resetDatabasePath];
     

@@ -149,4 +149,31 @@
     [[NSFileManager defaultManager] removeItemAtPath:[destinationFolder stringByAppendingPathComponent:@"__MACOSX"] error:NULL];
 }
 
+
+
+// 27690
++ (void) unzipAndReplaceBundledStaticResourceAtPath:(NSString *)path {
+    @autoreleasepool {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if (path == nil || [path isEqualToString:@""]) {
+            path = [FileManager getCoreLibSubDirectoryPath];
+        }
+        NSArray *listOflibraries = [self getListOfCoreLibraries];
+        
+        for(NSString *fileName in listOflibraries) {
+            NSString *filepath = [[NSBundle mainBundle] pathForResource:fileName ofType:@"zip"];
+            
+            if ([fileName isEqualToString:@"com.servicemax.client.lib"]) {
+                NSString *clientLibPath = [path stringByDeletingLastPathComponent];
+                [self unzipFileAtPath:filepath toFolder:clientLibPath];
+            }
+            else {
+                [self unzipFileAtPath:filepath toFolder:path];
+            }
+        }
+        [fileManager removeItemAtPath:[path stringByAppendingPathComponent:@"__MACOSX"] error:NULL];
+    }
+}
+
+
 @end
