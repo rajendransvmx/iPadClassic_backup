@@ -267,13 +267,30 @@
     id <TransactionObjectDAO>  transObj = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
     
     
-     NSMutableDictionary * recordDictionary = [transactionModel getFieldValueMutableDictionary];
+    NSMutableDictionary * recordDictionary = [transactionModel getFieldValueMutableDictionary];
     
     NSString *objectName = syncRecord.objectName;
     NSString *recordLocalId = [recordDictionary objectForKey:kLocalId];
     
     
     NSDictionary * referenceDictionary = [self getReferenceFieldsFor:objectName];
+    
+    
+    // 032516
+    
+    if ([objectName isEqualToString:kServicemaxEventObject]) {
+        if (![[recordDictionary allKeys] containsObject:kSVMXWhatId]) {
+            NSString *sfIdOfWO = [recordDictionary objectForKey:kWorkOrderTableName];
+            if (![StringUtil isStringEmpty:sfIdOfWO]) {
+                [recordDictionary setObject:sfIdOfWO forKey:kSVMXWhatId];
+            }
+        }
+        else {
+            NSLog(@"came here : %@", [recordDictionary objectForKey:kSVMXWhatId]);
+        }
+    }
+    
+    // 032516
     if ([objectName isEqualToString:kServicemaxEventObject] && [[recordDictionary objectForKey:kSVMXWhatId] length]>30) {
         NSMutableDictionary *tempMutDict = [NSMutableDictionary dictionaryWithDictionary:referenceDictionary];
         [tempMutDict setObject:kWorkOrderTableName forKey:kSVMXWhatId];
@@ -291,7 +308,7 @@
         {
             referenceId = tempReferenceId;
         }
-    
+        
         NSString *referenceTo = [referenceDictionary objectForKey:key];
         
         if ( ([objectName isEqualToString:@"Event"] && [key isEqualToString:@"WhatId"] && referenceId.length > 30) || ([objectName isEqualToString:kServicemaxEventObject] && [key isEqualToString:kSVMXWhatId] && referenceId.length > 30)) {
@@ -300,7 +317,7 @@
             if (referenceTo.length < 3) {
                 [recordDictionary setObject:@"" forKey:key];
                 referenceTo = nil;
-            //    [self setValue:[NSString stringWithFormat:@" %@ = '' ",key] forTable:objectName andWhereClause:[NSString stringWithFormat:@" %@ = '%@' ",kLocalId ,recordLocalId]];
+                //    [self setValue:[NSString stringWithFormat:@" %@ = '' ",key] forTable:objectName andWhereClause:[NSString stringWithFormat:@" %@ = '%@' ",kLocalId ,recordLocalId]];
                 
                 DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:recordLocalId];
                 
@@ -319,12 +336,12 @@
                 [recordDictionary setObject:sfIdValue forKey:key];
                 
                 /* Update given field Name  with id value  */
-           //     [self setValue:[NSString stringWithFormat:@" %@ = '%@' ",key,sfIdValue] forTable:objectName andWhereClause:[NSString stringWithFormat:@" %@ = '%@' ",kLocalId ,recordLocalId]];
+                //     [self setValue:[NSString stringWithFormat:@" %@ = '%@' ",key,sfIdValue] forTable:objectName andWhereClause:[NSString stringWithFormat:@" %@ = '%@' ",kLocalId ,recordLocalId]];
                 
                 DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:recordLocalId];
-
+                
                 [transObj updateEachRecord:[NSDictionary dictionaryWithObject:sfIdValue forKey:key] withFields:[NSArray arrayWithObject:key] withCriteria:[NSArray arrayWithObject:criteria] withTableName:objectName];
-
+                
                 
             }
             else {
@@ -353,7 +370,7 @@
                 else{
                     /* Record is deleted. Set record blank*/
                     [recordDictionary setObject:@"" forKey:key];
-                  //  [self setValue:[NSString stringWithFormat:@" %@ = '' ",key] forTable:objectName andWhereClause:[NSString stringWithFormat:@" %@ = '%@' ",kLocalId ,recordLocalId]];
+                    //  [self setValue:[NSString stringWithFormat:@" %@ = '' ",key] forTable:objectName andWhereClause:[NSString stringWithFormat:@" %@ = '%@' ",kLocalId ,recordLocalId]];
                     
                     
                     DBCriteria * criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:recordLocalId];
