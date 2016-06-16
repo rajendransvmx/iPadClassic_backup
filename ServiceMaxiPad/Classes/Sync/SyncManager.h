@@ -27,6 +27,7 @@ extern NSString *lastConfigSyncTimeKey;
 extern NSString *lastDataSyncTimeKey;
 extern NSString *syncMetaDataFile;
 extern NSString *kUpadteWebserviceData;
+extern NSString *KBlockScreenForProductIQ;
 
 @interface SyncManager : NSObject <FlowDelegate, SchedulerDelegate, OPDocCustomDelegate>
 

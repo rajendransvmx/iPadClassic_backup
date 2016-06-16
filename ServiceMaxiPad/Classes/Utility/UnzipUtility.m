@@ -9,8 +9,9 @@
 #import "UnzipUtility.h"
 #import "SSZipArchive.h"
 #import "FileManager.h"
+#import "SyncManager.h"
 @implementation UnzipUtility
-
+static BOOL isFileIsUnZipping;
 + (NSArray *) getListOfCoreLibraries {
     
     NSArray *listOfLibs = [NSArray arrayWithObjects:@"com.servicemax.client.mvc",
@@ -39,6 +40,14 @@
                            nil];
     return listOfLibs;
 }
+
++(BOOL)isFileIsUnZipping{
+    return isFileIsUnZipping;
+}
+
++(void)setLockforUnzippingfile:(BOOL)isZipping{
+    isFileIsUnZipping = isZipping;
+}
 /**
  * @name  unzipBundledStaticResourceAtPath
  *
@@ -62,6 +71,7 @@
             path = [FileManager getCoreLibSubDirectoryPath];
         }
         NSArray *listOflibraries = [self getListOfCoreLibraries];
+        [UnzipUtility setLockforUnzippingfile:YES];
         BOOL isAppWithSameVersion = [UnzipUtility isAppWithSameVersion:@"SVMXappVersion_Each"];
         for(NSString *fileName in listOflibraries)
         {
@@ -88,6 +98,8 @@
                 }
             }
         }
+        [UnzipUtility setLockforUnzippingfile:NO];
+        [[NSNotificationCenter defaultCenter] postNotificationName:KBlockScreenForProductIQ object:nil];
         [fileManager removeItemAtPath:[path stringByAppendingPathComponent:@"__MACOSX"] error:NULL];
         
     }

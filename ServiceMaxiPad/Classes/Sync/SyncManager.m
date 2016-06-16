@@ -64,7 +64,7 @@ NSString *kEventSyncStatusNotification      = @"EventSyncStatus";
 NSString *kProfileValidationStatusNotification = @"ProfileValidationStatus";
 NSString *kUpdateEventNotification = @"UpdateEventOnNotification";
 NSString *kUpadteWebserviceData             = @"customActionWebServiceNotification";
-
+NSString *KBlockScreenForProductIQ          = @"BlockScreenForProductIQ";
 
 NSString *kSyncTimeUpdateNotification       = @"UpdateSyncTime";
 NSString *kScheduledConfigSyncNotification  = @"ScheduledConfigSyncNotf";

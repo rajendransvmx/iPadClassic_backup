@@ -16,4 +16,5 @@
 
 @property(nonatomic, strong)SFMPageViewModel *sfmPageView;
 @property(nonatomic) BOOL invokedFromSearch;
+
 @end

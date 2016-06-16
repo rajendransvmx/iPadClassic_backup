@@ -12,6 +12,8 @@
 + (NSArray *) getListOfCoreLibraries;
 + (void) unzipBundledStaticResourceAtPath:(NSString *)path;
 + (void) unzipFileAtPath:(NSString *)filepath toFolder:(NSString *)destinationFolder;
-+ (BOOL)isAppWithSameVersion:(NSString *)versionKey;
++ (BOOL) isAppWithSameVersion:(NSString *)versionKey;
++ (BOOL) isFileIsUnZipping;
++ (void) setLockforUnzippingfile:(BOOL)isZipping;
 + (void) unzipAndReplaceBundledStaticResourceAtPath:(NSString *)path; // 27690
 @end

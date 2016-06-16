@@ -53,12 +53,14 @@
 #import "ProductIQHomeViewController.h"
 #import "ProductIQManager.h"
 #import "MessageHandler.h"
+#import "UnzipUtility.h"
 
 
 @interface SFMPageViewController ()<SMActionSideBarViewControllerDelegate>
 @property (nonatomic, strong) SMActionSideBarViewController *mySideBar;
 @property (nonatomic, strong) WizardViewController *tempViewController;
-@property (nonatomic, strong)MBProgressHUD *HUD;
+@property (nonatomic, strong) MBProgressHUD *HUD;
+@property (nonatomic, assign) BOOL isOpenTreeviewButtonTapped; //If its true then we have to open productIQ.
 @end
 
 @implementation SFMPageViewController
@@ -96,6 +98,9 @@
                                              selector:@selector(reloadWizardComponentActionAccordingToNetworkChangeNotification:)
                                                  name:kNetworkConnectionChanged
                                                object:nil];
+    
+    //add observer for event updation notification
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(openProductIQWindowIfLoading) name:KBlockScreenForProductIQ object:nil];
     [self leftBarButtonItemCustomization];
 }
 
@@ -587,8 +592,28 @@
         [[UIDevice currentDevice] setValue:value forKey:@"orientation"];
     }
     
+    /* Here checking for file zipping and unzipping, if its unzipping then show load window */
+    if(![UnzipUtility isFileIsUnZipping]){
+        self.isOpenTreeviewButtonTapped = NO;
+        [self openProductIQWindow];
+    }else{
+        self.isOpenTreeviewButtonTapped = YES;
+        [self addActivityAndLoadingLabel];
+    }
     
+}
 
+/* If productIQ button is tapped, then open PIQ */
+-(void)openProductIQWindowIfLoading{
+    if(self.isOpenTreeviewButtonTapped){
+        [self openProductIQWindow];
+        self.isOpenTreeviewButtonTapped = NO;
+    }
+    [self removeActivityAndLoadingLabel];
+}
+
+/* opening productIQ from here */
+-(void)openProductIQWindow{
     ProductIQHomeViewController *lProductIQcontroller = [[ProductIQHomeViewController alloc] initWithNibName:@"ProductIQHomeViewController" bundle:nil];
     lProductIQcontroller.responseDictionary = [MessageHandler getMessageHandlerResponeDictionaryForSFMPage:self.sfmPageView];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:lProductIQcontroller];
@@ -598,9 +623,7 @@
     navController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#FF6633"];
     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
-    
 }
-
 
 #pragma mark - Flow Delegate methods
 - (void)flowStatus:(id)status {

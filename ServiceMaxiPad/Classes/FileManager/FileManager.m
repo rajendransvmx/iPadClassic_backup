@@ -8,7 +8,7 @@
 
 #import "FileManager.h"
 #import "UnzipUtility.h"
-
+#import "SyncManager.h"
 static NSString *const kRootDirectoryName = ORG_NAME_SPACE;
 static NSString *const kCoreLibraryDirectoryName = @"modules";
 
@@ -266,6 +266,7 @@ static NSString *const kAttachmentsDirectoryName = @"Attachments";
         }
         else
         {
+            [UnzipUtility setLockforUnzippingfile:NO];
             NSLog(@"Core library exists!");
         }
     }
