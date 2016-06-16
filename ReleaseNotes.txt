@@ -3,14 +3,16 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.001
+Version = 16.39.016
 ===========================================
 
-for verifying PS entitlement story
+Defect:
+==================
+032537
 
 …
 ——————
 
 NOTE:
 
-Name Space: SVMXDEV
+Name Space: SVMXC
