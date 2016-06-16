@@ -30,6 +30,7 @@
 
 @property(nonatomic,assign) CGFloat keyBoardHeight;
 
+@property(nonatomic,assign) CGRect keyBoardFrame;
 
 @property(nonatomic, strong) NSMutableArray *bizRulesErrors;
 @property(nonatomic, strong) IBOutlet UIView *bizRuleButton;
