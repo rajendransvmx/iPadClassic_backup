@@ -16,7 +16,9 @@
 
 //static NSInteger kKeyBoardHeight = 360.0;
 
-@interface PageEditDetailViewController ()
+@interface PageEditDetailViewController (){
+    NSIndexPath *selectedIndexpath;
+}
 
 @property (strong, nonatomic) IBOutlet UIButton *sectionButton;
 @property(nonatomic, strong) SMSplitPopover *masterPopoverController;
@@ -311,18 +313,39 @@ static NSString *cellIdentifier = @"cellIdentifier";
     self.tableView.frame = tableViewFrame;
 }
 - (CGFloat)getTableViewFrameOnkeyboard {
-    
+//    NSLog(@"NavBar Height %.0f",self.navigationController.navigationBar.frame.size.height);
+//    NSLog(@"View Height %.0f",self.view.frame.size.height);
+//    NSLog(@"Keyboard Origin.y %.0f",self.keyBoardFrame.origin.y);
+//    NSLog(@"Keyboard Height %.0f",self.keyBoardHeight);
+
     CGFloat bizRuleButtonHeight = 0;
     if (!self.bizRuleButton.hidden) {
         bizRuleButtonHeight = self.bizRuleButton.frame.size.height;
     }
     
     if (UIInterfaceOrientationIsPortrait( [[UIApplication sharedApplication] statusBarOrientation])) {
-        return  self.view.frame.size.height - self.keyBoardHeight - 20 - bizRuleButtonHeight ;
+        
+        if (self.keyBoardFrame.origin.y + self.keyBoardHeight > self.view.frame.size.height + self.navigationController.navigationBar.frame.size.height +  [UIApplication sharedApplication].statusBarFrame.size.height){
+            CGFloat visibleKeyboarHeight = self.view.frame.size.height - self.keyBoardFrame.origin.y;
+            return  self.view.frame.size.height - visibleKeyboarHeight - 40 - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - bizRuleButtonHeight ;
+        }
+        else{
+            return  self.view.frame.size.height - self.keyBoardHeight - self.navigationController.navigationBar.frame.size.height - bizRuleButtonHeight ;
+        }
+        
     }
     else if (UIInterfaceOrientationIsLandscape( [[UIApplication sharedApplication] statusBarOrientation])){
-        return  self.view.frame.size.height - self.keyBoardHeight;
         
+        
+        if (self.keyBoardFrame.origin.y + self.keyBoardHeight > self.view.frame.size.height + self.navigationController.navigationBar.frame.size.height +  [UIApplication sharedApplication].statusBarFrame.size.height){
+            CGFloat visibleKeyboarHeight = self.view.frame.size.height - self.keyBoardFrame.origin.y;
+            return  self.view.frame.size.height - visibleKeyboarHeight - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - bizRuleButtonHeight ;
+        }
+        else{
+            return  self.view.frame.size.height - self.keyBoardHeight - bizRuleButtonHeight ;
+        }
+
+
     }
     
     return self.view.frame.size.height - bizRuleButtonHeight;
@@ -350,22 +373,25 @@ static NSString *cellIdentifier = @"cellIdentifier";
 #pragma mark - Key board handlers
 - (void)keyboardWillHide:(NSNotification *)notification
 {
+    [self resetOriginalTableViewFrame];
+
     SXLogInfo(@"UserInfo :%@",notification.userInfo);
     SXLogInfo(@"Dismission the key board item");
-    [self resetOriginalTableViewFrame];
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
     
     NSValue *rectValue  = [notification.userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-    CGRect keyBoardFrame = [rectValue CGRectValue];
-    if (keyBoardFrame.size.height < keyBoardFrame.size.width ) {
-        self.keyBoardHeight = keyBoardFrame.size.height;
+    self.keyBoardFrame = [rectValue CGRectValue];
+    if (self.keyBoardFrame.size.height < self.keyBoardFrame.size.width ) {
+        self.keyBoardHeight = self.keyBoardFrame.size.height;
     }
     else{
-        self.keyBoardHeight = keyBoardFrame.size.width;
+        self.keyBoardHeight = self.keyBoardFrame.size.width;
     }
+    
+     [self resizeViewForKeyboardOfIndexpath:selectedIndexpath];
     //SXLogInfo(@"Key Board will be shown %f",self.keyBoardHeight);
     if (self.keyBoardHeight) {
         
@@ -375,7 +401,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
 
 #pragma mark - ChildEditViewControllerDelegate Delegates
 - (void)keyboardShownInSelectedIndexPath:(NSIndexPath *)indexPath {
-    [self resizeViewForKeyboardOfIndexpath:indexPath];
+    selectedIndexpath=indexPath;
 }
 
 
