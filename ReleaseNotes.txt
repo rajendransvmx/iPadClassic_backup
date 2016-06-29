@@ -3,7 +3,7 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.40.003
+Version = 16.49.002
 ===========================================
 
 Defect:
@@ -15,4 +15,4 @@ Ipad change
 
 NOTE:
 
-Name Space: SVMXC
+Name Space: SVMXDEV
