@@ -3,10 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.39.021
+Version = 16.40.004
 ===========================================
 
-Added sent 5.0.1 and 5.1.3 framework.
+PRIQ-
+static resource file updated.
+
 ——————
 
 NOTE:
