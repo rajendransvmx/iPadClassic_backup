@@ -10205,7 +10205,7 @@
 					"-objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadsum16;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
 				WRAPPER_EXTENSION = app;
@@ -10247,7 +10247,7 @@
 					"-objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadsum16;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
 				WRAPPER_EXTENSION = app;
@@ -10344,7 +10344,7 @@
 					"-objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadsum16;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "fa90971c-26fb-4a88-99f4-110ad4cbca2d";
 				WRAPPER_EXTENSION = app;
@@ -10386,7 +10386,7 @@
 					"-objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadsum16;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "fa90971c-26fb-4a88-99f4-110ad4cbca2d";
 				WRAPPER_EXTENSION = app;
