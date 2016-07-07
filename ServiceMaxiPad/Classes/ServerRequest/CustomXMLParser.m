@@ -21,6 +21,10 @@
 #import "SyncManager.h"
 #import "SFMPageEditManager.h"
 #import "ModifiedRecordsDAO.h"
+#import "CustomActionWebserviceModel.h"
+#import "CacheManager.h"
+#import "CacheConstants.h"
+
 
 @interface CustomXMLParser ()
 @property(nonatomic, strong) NSMutableDictionary *something;
@@ -190,9 +194,15 @@
         }
         if (temp) {
             if ([temp isKindOfClass:[NSDictionary class]]) {
-                NSDictionary* tempClose = [temp objectForKey:@"takeWOOwnershipResponse"];
+                //NSDictionary* tempClose = [temp objectForKey:@"takeWOOwnershipResponse"];
+                //Defect fix:033695
+                CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
+                NSString *methodName = customActionWebserviceModel.methodName;
+                methodName = [methodName stringByAppendingString:@"Response"];
+                NSDictionary* tempClose = [temp objectForKey:methodName];
+
                 if (!tempClose)
-                    temp = [temp objectForKey:@"WSNameResponse"];
+                    temp = [temp objectForKey:@"WSNameResponse"]; //Needs to remove this check , just for time being kept
                 else
                     temp = tempClose;
             }
@@ -240,9 +250,9 @@
         }
         if (temp) {
             if ([temp isKindOfClass:[NSDictionary class]]) {
-               NSDictionary* tempClose = [temp objectForKey:@"closeWorkOrderResponse"];
+               NSDictionary* tempClose = [temp objectForKey:@"closeWorkOrderResponse"]; //HS Same fix take mothod nme from DB
                 if (!tempClose)
-                    temp = [temp objectForKey:@"WSNameResponse"];
+                    temp = [temp objectForKey:@"WSNameResponse"];//dont need to check this
                 else
                     temp = tempClose;
             }
