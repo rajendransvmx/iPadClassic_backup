@@ -3,10 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.40.005
+Version = 16.40.006
 ===========================================
 
-AppStore Release version updated
+Defect fix: 033695
+	
+iPad - Data sync not happen after Web Service SFM Customer Action is invoked
 
 ——————
 
