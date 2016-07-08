@@ -21,6 +21,9 @@
 #import "SyncManager.h"
 #import "SFMPageEditManager.h"
 #import "ModifiedRecordsDAO.h"
+#import "CustomActionWebserviceModel.h"
+#import "CacheManager.h"
+#import "CacheConstants.h"
 
 @interface CustomXMLParser ()
 @property(nonatomic, strong) NSMutableDictionary *something;
@@ -190,11 +193,17 @@
         }
         if (temp) {
             if ([temp isKindOfClass:[NSDictionary class]]) {
-                NSDictionary* tempClose = [temp objectForKey:@"takeWOOwnershipResponse"];
-                if (!tempClose)
-                    temp = [temp objectForKey:@"WSNameResponse"];
-                else
+                //NSDictionary* tempClose = [temp objectForKey:@"takeWOOwnershipResponse"];
+                //Defect fix:033695
+                CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
+                NSString *methodName = customActionWebserviceModel.methodName;
+                methodName = [methodName stringByAppendingString:@"Response"];
+                NSDictionary* tempClose = [temp objectForKey:methodName];
+                if (tempClose)
+                {
                     temp = tempClose;
+
+                }
             }
             if (temp) {
                 if ([temp isKindOfClass:[NSDictionary class]]) {
