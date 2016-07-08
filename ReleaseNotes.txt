@@ -3,11 +3,10 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.40.004
+Version = 16.40.005
 ===========================================
 
-PRIQ-
-static resource file updated.
+AppStore Release version updated
 
 ——————
 
