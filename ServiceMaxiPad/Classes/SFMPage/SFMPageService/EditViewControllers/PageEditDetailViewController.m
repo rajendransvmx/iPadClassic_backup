@@ -264,7 +264,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
 
 - (void)scrollTableViewToIndexPath:(NSIndexPath *)indexPath andInternalOffSet:(CGFloat )internalOffSet {
     
-    
+
     [self reduceTableViewByHalf];
     
     [self scrollTableViewToGivenIndexPath:indexPath andInternalOffset:internalOffSet];
@@ -318,6 +318,8 @@ static NSString *cellIdentifier = @"cellIdentifier";
 //    NSLog(@"View Height %.0f",self.view.frame.size.height);
 //    NSLog(@"Keyboard Origin.y %.0f",self.keyBoardFrame.origin.y);
 //    NSLog(@"Keyboard Height %.0f",self.keyBoardHeight);
+    CGFloat visibleKeyboarHeight = self.view.frame.size.height - self.keyBoardFrame.origin.y;
+//    NSLog(@"Keyboard VisibleHeight %.0f",visibleKeyboarHeight);
 
     CGFloat bizRuleButtonHeight = 0;
     if (!self.bizRuleButton.hidden) {
@@ -327,7 +329,6 @@ static NSString *cellIdentifier = @"cellIdentifier";
     if (UIInterfaceOrientationIsPortrait( [[UIApplication sharedApplication] statusBarOrientation])) {
         
         if (self.keyBoardFrame.origin.y + self.keyBoardHeight > self.view.frame.size.height + self.navigationController.navigationBar.frame.size.height +  [UIApplication sharedApplication].statusBarFrame.size.height){
-            CGFloat visibleKeyboarHeight = self.view.frame.size.height - self.keyBoardFrame.origin.y;
             return  self.view.frame.size.height - visibleKeyboarHeight - 40 - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - bizRuleButtonHeight ;
         }
         else{
@@ -339,7 +340,6 @@ static NSString *cellIdentifier = @"cellIdentifier";
         
         
         if (self.keyBoardFrame.origin.y + self.keyBoardHeight > self.view.frame.size.height + self.navigationController.navigationBar.frame.size.height +  [UIApplication sharedApplication].statusBarFrame.size.height){
-            CGFloat visibleKeyboarHeight = self.view.frame.size.height - self.keyBoardFrame.origin.y;
             return  self.view.frame.size.height - visibleKeyboarHeight - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - bizRuleButtonHeight ;
         }
         else{
@@ -391,18 +391,21 @@ static NSString *cellIdentifier = @"cellIdentifier";
     else{
         self.keyBoardHeight = self.keyBoardFrame.size.width;
     }
-    
-     [self resizeViewForKeyboardOfIndexpath:selectedIndexpath];
+
     //SXLogInfo(@"Key Board will be shown %f",self.keyBoardHeight);
     if (self.keyBoardHeight) {
         
     }
+    [self resizeViewForKeyboardOfIndexpath:selectedIndexpath];
+
 }
 
 
 #pragma mark - ChildEditViewControllerDelegate Delegates
 - (void)keyboardShownInSelectedIndexPath:(NSIndexPath *)indexPath {
     selectedIndexpath=indexPath;
+    [self resizeViewForKeyboardOfIndexpath:selectedIndexpath];
+
 }
 
 
