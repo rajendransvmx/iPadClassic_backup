@@ -44,6 +44,6 @@
 }
 - (NSArray *)fieldNamesToBeRemovedFromQuery {
     
-    return @[@"searchObjects"];
+    return @[@"searchObjects", @"searchCriteria"];
 }
 @end
