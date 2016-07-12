@@ -14,6 +14,8 @@
 #import "MobileDeviceSettingDAO.h"
 #import "FactoryDAO.h"
 #import "Utility.h"
+#import "TagManager.h"
+#import "SFMSearchProcessModel.h"
 
 @interface SFMSearchQueryCreator()
 
@@ -186,6 +188,28 @@
     NSMutableString *searchString = [[NSMutableString alloc] initWithString:@" ( "];
     NSString *orOperator = @" OR ";
     NSInteger totalCount =  [self.searchObject.searchFields count];
+    
+    // 029883
+    
+    NSString *criteriaString = @"";
+    
+    switch (self.searchObject.searchCriteriaIndex) {
+        case SearchCriteriaContains:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@%%' ", searchText];
+            break;
+        case SearchCriteriaExactMatch:
+            criteriaString = [NSString stringWithFormat:@" = '%@' COLLATE NOCASE ", searchText];
+            break;
+        case SearchCriteriaEndsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@' ", searchText];
+            break;
+        case SearchCriteriaStartsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%@%%' ", searchText];
+            break;
+        default:
+            break;
+    }
+    
     for (int counter = 0;counter < totalCount;counter++) {
         
         if (counter > 0) {
@@ -195,7 +219,7 @@
         if (searchField.lookupFieldAPIName.length > 2) {
             NSString *aliasName =  [self getAliasNameForRelationship:searchField.lookupFieldAPIName];
             [searchString appendFormat:@" %@.%@ ",aliasName,searchField.fieldName];
-             [searchString appendFormat:@" LIKE '%%%@%%' ",searchText];
+            [searchString appendFormat:criteriaString,searchText];
         }
         else{
             if ([[searchField.displayType lowercaseString] isEqualToString:kSfDTReference]) {
@@ -204,13 +228,9 @@
             }
             else{
                 [searchString appendFormat:@" '%@'.%@ ",self.searchObject.targetObjectName,searchField.fieldName];
-                 [searchString appendFormat:@" LIKE '%%%@%%' ",searchText];
+                [searchString appendFormat:criteriaString,searchText];
             }
-            
         }
-        
-       
-        
     }
     [searchString appendString:@" ) "];
     return searchString;
@@ -230,10 +250,31 @@
 - (NSString *)getReferenceExpression:(NSString *)fieldName
                       withSearchText:(NSString *)searchText
                    andReferenceTable:(NSString *)referenceToTable {
-   
+    
+    // 029883
+    
+    NSString *criteriaString = @"";
+    
+    switch (self.searchObject.searchCriteriaIndex) {
+        case SearchCriteriaContains:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@%%' ", searchText];
+            break;
+        case SearchCriteriaExactMatch:
+            criteriaString = [NSString stringWithFormat:@" = '%@' COLLATE NOCASE ", searchText];
+            break;
+        case SearchCriteriaEndsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@' ", searchText];
+            break;
+        case SearchCriteriaStartsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%@%%' ", searchText];
+            break;
+        default:
+            break;
+    }
+    
     NSString *finalExpression = nil;
     if ([fieldName isEqualToString:@"RecordTypeId"]) {
-        finalExpression = [NSString stringWithFormat:@"( %@   in   (select  recordTypeId  from SFRecordType where recordType LIKE '%%%@%%' ) )" ,fieldName,searchText];
+        finalExpression = [NSString stringWithFormat:@"( %@   in   (select  recordTypeId  from SFRecordType where recordType %@ ) )" ,fieldName, criteriaString];
     }
     else
     {
@@ -241,7 +282,7 @@
         NSString *nameFieldValue = [self  getNameFieldNameForObject:referenceToTable];
         if (![Utility isStringEmpty:referenceToTable])
         {
-            finalExpression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from '%@' where ( %@ LIKE '%%%@%%')) OR %@   in   (select  localId  from '%@' where (%@ LIKE '%%%@%%')))" , fieldNameAppendedWithObjName,referenceToTable ,nameFieldValue ,searchText,fieldNameAppendedWithObjName,referenceToTable ,nameFieldValue,searchText];
+            finalExpression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from '%@' where ( %@ %@ )) OR %@   in   (select  localId  from '%@' where (%@ %@ )))" , fieldNameAppendedWithObjName,referenceToTable ,nameFieldValue ,criteriaString,fieldNameAppendedWithObjName,referenceToTable ,nameFieldValue,criteriaString];
         }
     }
     return finalExpression;

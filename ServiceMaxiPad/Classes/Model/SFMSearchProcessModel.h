@@ -41,6 +41,18 @@ attributes =     {
  But we are storing only whatever is required.
 */
 
+
+@class SFMSearchProcessModel;
+
+// 029883
+typedef enum : NSUInteger {
+    SearchCriteriaContains,
+    SearchCriteriaExactMatch,
+    SearchCriteriaEndsWith,
+    SearchCriteriaStartsWith
+} SearchCriteria;
+
+
 @interface SFMSearchProcessModel : NSObject
 /**
  string which represents local id of the search process
@@ -71,6 +83,9 @@ attributes =     {
  Array of search objects
  */
 @property (nonatomic, strong) NSArray *searchObjects;
+
+@property (nonatomic, strong) NSString *searchCriteria;
+
 
 + (NSDictionary *) getMappingDictionary;
 @end

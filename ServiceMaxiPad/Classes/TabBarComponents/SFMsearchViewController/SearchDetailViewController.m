@@ -35,14 +35,17 @@
 #import "PushNotificationHeaders.h"
 #import "SFMSearchCell.h"
 #import "SFObjectFieldDAO.h"
+#import "PageEditPickerFieldController.h"
+#import "SFMPickerData.h"
 
 #define SRCH_ROW_HEIGHT 80.0
 #define SRCH_SECTION_HEIGHT 50.0
 #define kIncludeOnlineItemsButtonTag 10
 
-@interface SearchDetailViewController ()<DownloadOnDemandDelegate, BarCodeScannerProtocol> {
+@interface SearchDetailViewController ()<DownloadOnDemandDelegate, BarCodeScannerProtocol, PageEditControlDelegate, UIPopoverControllerDelegate> {
     
     UIActivityIndicatorView *searchProgressIndicator;
+    int srcCriteriaIndex;
 }
 
 @property(nonatomic, strong) SMSplitPopover *masterPopoverController;
@@ -55,6 +58,8 @@
 @property (nonatomic, strong) BarCodeScannerUtility *barCodeScanner;
 
 @property (nonatomic, assign) BOOL isOnlineSearchInProgress;
+@property (nonatomic, strong)UIPopoverController *popOver;
+@property (nonatomic, strong) NSArray *srchCriteriaArray;
 
 @end
 
@@ -79,6 +84,8 @@
     self.searchDetailTableView.separatorColor = [UIColor colorWithHexString:@"#D7D7D7"];
     self.searchDetailTableView.backgroundColor = [UIColor clearColor];
     self.searchStringBeforeEditing = @"";
+    
+    [self setUpCriteria];
     [self setupSearchBar];
     
     //[self expandAllSections]; //*** uncomment this if the sections has to be expanded when search is loaded
@@ -92,6 +99,65 @@
     
     self.searchBar.inputAccessoryView = [self barcodeView];
 }
+
+
+// 029883
+-(void)setUpCriteria {
+ 
+    self.srchCriteriaArray = @[[[TagManager sharedInstance] tagByName:kTagSfmCriteriaContains], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaExactMatch], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaEndsWith], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaStartsWith]];
+    
+    srcCriteriaIndex = 0;
+    
+    self.searchCriteriaLbl.text = [[TagManager sharedInstance]tagByName:kTagSfmSearchCriteria];
+    self.searchCriteriaLbl.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
+    self.searchCriteriaLbl.textColor = [UIColor blackColor];
+    
+    self.searchCriteriaBtn.layer.cornerRadius = 5.0;
+    self.searchCriteriaBtn.layer.borderColor = [[UIColor lightGrayColor] CGColor];
+    self.searchCriteriaBtn.layer.borderWidth = 0.5;
+    [self.searchCriteriaBtn setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+    [self.searchCriteriaBtn setTitle:[[TagManager sharedInstance] tagByName:kTagSfmCriteriaContains] forState:(UIControlStateNormal)];
+    [self.searchCriteriaBtn addTarget:self action:@selector(displayCriteriaOptions) forControlEvents:(UIControlEventTouchDown)];
+    
+}
+
+-(void)displayCriteriaOptions {
+    if (!self.popOver) {
+        PageEditPickerFieldController *pickerView = [ViewControllerFactory createViewControllerByContext:ViewcontrollerPickerView];
+        pickerView.dataSource = [self getCriteriaPicklistArray];
+        pickerView.recordData = [[SFMRecordFieldData alloc] initWithFieldName:@"" value:@"" andDisplayValue:@""];
+        pickerView.indexPath = nil;
+        pickerView.delegate = self;
+        
+        self.popOver = [[UIPopoverController alloc] initWithContentViewController:pickerView];
+        self.popOver.popoverContentSize = CGSizeMake(300, 200);
+        self.popOver.delegate = self;
+    }
+    
+    [self.popOver presentPopoverFromRect:self.searchCriteriaBtn.bounds inView:self.searchCriteriaBtn permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
+
+-(NSArray *)getCriteriaPicklistArray {
+
+    
+    NSMutableArray *finalArray = [NSMutableArray array];
+    int index = 0;
+    for (NSString *criteria in self.srchCriteriaArray) {
+        SFMPickerData *pickerData = [[SFMPickerData alloc] initWithPickerValue:criteria label:criteria index:index];
+        [finalArray addObject:pickerData];
+        index++;
+    }
+    
+    return finalArray;
+}
+
+- (void)valueForField:(SFMRecordFieldData *)model forIndexPath:(NSIndexPath *)indexPath sender:(id)sender {
+    NSString *criteria = model.internalValue;
+    srcCriteriaIndex = (int)[self.srchCriteriaArray indexOfObject:criteria];
+    [self.searchCriteriaBtn setTitle:criteria forState:(UIControlStateNormal)];
+}
+
 - (void) setupSearchBar {
     
     self.searchBar.backgroundColor = [UIColor whiteColor];
@@ -219,6 +285,7 @@
             searchObject.displayFields = displayFields;
             searchObject.searchFields = searchFieldList;
             searchObject.sortFields = sortFields;
+            searchObject.searchCriteriaIndex = srcCriteriaIndex; // 029883
         }
     }
 }
@@ -900,6 +967,7 @@
     @synchronized([self class]) {
         @autoreleasepool {
              /* Get selected process */
+            self.searchProcess.searchCriteria = self.searchCriteriaBtn.titleLabel.text; // 029883
             [self.onlineSearchHandler performOnlineSearchWithSearchProcess:self.searchProcess andSearchText:self.searchBar.text];
         }
         

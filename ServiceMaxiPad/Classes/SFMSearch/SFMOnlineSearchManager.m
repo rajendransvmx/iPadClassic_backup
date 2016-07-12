@@ -73,7 +73,7 @@
     
     NSMutableDictionary *searchOperatorDict = [[NSMutableDictionary alloc]init];
     [searchOperatorDict setValue:kSFMSearchOperator forKey:kSVMXKey];
-    [searchOperatorDict setValue:@"Contains" forKey:kSVMXValue];
+    [searchOperatorDict setValue:self.searchProcessModel.searchCriteria forKey:kSVMXValue]; // 029883
     [valueMapArray addObject:searchOperatorDict];
     
     NSMutableDictionary *keyWordDict = [[NSMutableDictionary alloc]init];
