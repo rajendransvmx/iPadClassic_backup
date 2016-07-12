@@ -198,13 +198,14 @@
                 //Defect fix:033695
                 CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
                 NSString *methodName = customActionWebserviceModel.methodName;
-                methodName = [methodName stringByAppendingString:@"Response"];
+                methodName = [self getMethodNameForParsing:methodName];
                 NSDictionary* tempClose = [temp objectForKey:methodName];
-
-                if (!tempClose)
-                    temp = [temp objectForKey:@"WSNameResponse"]; //Needs to remove this check , just for time being kept
-                else
+                if (tempClose)
+                {
                     temp = tempClose;
+                    
+                }
+
             }
             if (temp) {
                 if ([temp isKindOfClass:[NSDictionary class]]) {
@@ -250,12 +251,25 @@
         }
         if (temp) {
             if ([temp isKindOfClass:[NSDictionary class]]) {
+            /*
                NSDictionary* tempClose = [temp objectForKey:@"closeWorkOrderResponse"]; //HS Same fix take mothod nme from DB
                 if (!tempClose)
                     temp = [temp objectForKey:@"WSNameResponse"];//dont need to check this
                 else
                     temp = tempClose;
             }
+            */
+                //Defect fix:033695 - Part2 Fixed for CustomWebservice Also.
+                CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
+                SFMPage *sfmpage = customActionWebserviceModel.sfmPage;
+                
+                NSString *methodName =  [self methodNameForCustomWebService:sfmpage.process.pageLayout.headerLayout.pageLevelEvents];
+                if (methodName)
+                {
+                    temp = [temp objectForKey:methodName];
+                }
+            }
+            
             if (temp) {
                 if ([temp isKindOfClass:[NSDictionary class]]) {
                     temp = [temp objectForKey:@"result"];
@@ -297,6 +311,43 @@
     /* refresh all screens with new data*/
     [self sendNotification:kUpadteWebserviceData andUserInfo:nil];
 }
+
+//Defect fix:033695 - Part2 Fixed for CustomWebService Also.
+-(NSString *)methodNameForCustomWebService:(NSArray *)thePageLevelEvent
+{
+    
+    NSString *theMethodName = nil;
+    NSString *theURL = nil;
+    for (NSDictionary *tempDict in thePageLevelEvent) {
+        NSString *eventCallType = [tempDict objectForKey:kPageEventCallType];
+        NSString *eventType = [tempDict objectForKey:kPageEventType];
+        
+        if ([eventCallType isEqualToString:@"WEBSERVICE"]) {
+            
+            if (([StringUtil containsString:kAfterSaveInsertKey inString:eventType]) || ([StringUtil containsString:kBeforeSaveProcessKey inString:eventType]) || ([StringUtil containsString:kAfterSaveProcessKey inString:eventType])) {
+                theURL = [tempDict objectForKey:kPageTargetCall];
+            }
+            
+        }
+    }
+    
+    theURL = [theURL stringByReplacingOccurrencesOfString:@"." withString:@"/"];
+    if (theURL)
+    {
+        theMethodName = [theURL lastPathComponent];
+        theMethodName = [self getMethodNameForParsing:theMethodName];
+        
+    }
+    
+    return theMethodName;
+}
+//As Server is expecting to append "Response" to methodName of CustomAction/CustomWebservice
+-(NSString *)getMethodNameForParsing:(NSString *)methodName{
+    NSString *methodNameforParsing = nil;
+    methodNameforParsing = [methodName stringByAppendingString:@"Response"];
+    return methodNameforParsing;
+}
+
 
 -(void)parshingHeaderRecord:(NSDictionary *)detailDictValueTemp
 {
