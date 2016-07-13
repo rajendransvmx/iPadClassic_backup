@@ -2335,14 +2335,18 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 -(void)executeSyncErrorReporting
 {
     SMAppDelegate *appDelegate = (SMAppDelegate*)[[UIApplication sharedApplication]delegate];
-    if ([appDelegate.syncReportingType isEqualToString:@"always"] || [appDelegate.syncReportingType isEqualToString:@"error"])
+    //HS 13 Jul syncErrorReporting andling for valid "errors"
+
+    if ([appDelegate.syncReportingType isEqualToString:@"always"] || (( [appDelegate.syncReportingType isEqualToString:@"error"]) && ([appDelegate.syncErrorDataArray count]!=0) ) )
     {
-        dispatch_async(_queue, ^{
-             MobileDataUsageExecuter *executor = [[MobileDataUsageExecuter alloc]initWithParentView:nil andFrame:CGRectZero];
-            [executor execute];
-        });
         
-        ConfigureLoggerAccordingToSettings();
+            dispatch_async(_queue, ^{
+                MobileDataUsageExecuter *executor = [[MobileDataUsageExecuter alloc]initWithParentView:nil andFrame:CGRectZero];
+                [executor execute];
+            });
+            
+            ConfigureLoggerAccordingToSettings();
+        
     }
     else
     {
