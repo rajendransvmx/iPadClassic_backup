@@ -30,6 +30,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>svmxmobilepulsespr16</string>
+				<string>svmxautomation</string>
 			</array>
 		</dict>
 	</array>

@@ -79,6 +79,12 @@ typedef enum {
     btn1.layer.cornerRadius = 4.f;
     btn1.layer.shadowOffset = CGSizeMake(4.0f,4.5f);
     btn1.layer.shadowRadius = 1.5f;
+    
+    
+    // VA: toggle button name
+    
+    btn1.accessibilityLabel = @"ToggleTabBar";
+    
     [self addBadgeToHomeButton];
     
     CalendarHomeViewController *calendarVCDefault = [ViewControllerFactory createViewControllerByContext:ViewControllerCalendar];

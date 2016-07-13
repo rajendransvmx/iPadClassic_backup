@@ -323,6 +323,12 @@ forLocalNotification:(UILocalNotification *)notification
 {
     [[SMLocalNotificationManager sharedInstance] clearBadgeCount];
     [[AttachmentsUploadManager sharedManager] modelUnderUploadProcess];
+    
+    // VA: app name
+    NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    self.window.rootViewController.accessibilityLabel = @"appName";
+    self.window.rootViewController.title = appName;
+    
 }
 
 
@@ -352,6 +358,13 @@ forLocalNotification:(UILocalNotification *)notification
             [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
         }
     }
+    
+    else if ([[url scheme] containsString:@"svmxautomation"])
+    {
+        
+        
+    }
+    
     return YES;
 }
 

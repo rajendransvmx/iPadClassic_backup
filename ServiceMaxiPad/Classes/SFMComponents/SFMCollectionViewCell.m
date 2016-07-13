@@ -62,7 +62,11 @@ static NSString *asterik = @"*";
 
 - (void)setFieldNameForeText:(NSString *)fieldName
 {
-    
+    // VA :
+    if(fieldName != nil)
+    {
+        [self.valueField setAccessibilityLabel:fieldName];
+    }
 }
 
 - (void)loadCell:(CellType)type

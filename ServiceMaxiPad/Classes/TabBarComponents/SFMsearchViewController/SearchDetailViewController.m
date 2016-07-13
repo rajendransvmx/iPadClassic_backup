@@ -623,6 +623,10 @@
         cell.hidden = NO;
     }
     
+    // VA :
+    
+   // cell.layer.borderColor = [[UIColor blueColor] CGColor];
+   // cell.layer.borderWidth = 1.0;
     
     return cell;
 }
@@ -646,6 +650,10 @@
     if (nil == sectionView) {
         sectionView = [[SFMSearchSection alloc] initWithReuseIdentifier:@"SectionIdentifier"];
     }
+    
+    // VA :
+  //  sectionView.layer.borderColor = [[UIColor redColor] CGColor];
+    //sectionView.layer.borderWidth = 1.0;
     
     sectionView.contentView.backgroundColor = [UIColor whiteColor];
     sectionView.section = section;

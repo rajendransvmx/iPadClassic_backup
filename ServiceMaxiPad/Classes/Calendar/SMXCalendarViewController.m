@@ -1080,12 +1080,12 @@
     }
     self.addEventBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     CGRect theFrame = rightButton.frame;
-    theFrame.origin.x = theFrame.origin.x -theFrame.size.width +28;
-    theFrame.size.width = theFrame.size.width - 5;
+    theFrame.origin.x = theFrame.origin.x - theFrame.size.width + 5;
+    theFrame.size.width = theFrame.size.width - 10;
     
     self.addEventBtn.frame = theFrame;
     NSString *title = [NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_Add]];
-   // self.addEventBtn.backgroundColor = [UIColor redColor];//HS 2 Jan
+//    self.addEventBtn.backgroundColor = [UIColor redColor];//HS 2 Jan
     [self.addEventBtn setTitle:title forState:UIControlStateNormal];
     self.addEventBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
@@ -1874,7 +1874,7 @@
         if (!rightButton) {
             
             rightButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            rightButton.frame = CGRectMake(0, 0, 100, 25);
+            rightButton.frame = CGRectMake(0, 0, 90, 25);
             [rightButton setTitle:[[TagManager sharedInstance]tagByName:kTagActions] forState:UIControlStateNormal];
             [rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [rightButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
@@ -1883,6 +1883,7 @@
             rightButton.titleLabel.textAlignment=NSTextAlignmentRight;
             rightButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
             self.navigationItem.rightBarButtonItem.enabled = YES;
+//            rightButton.backgroundColor = [UIColor blueColor];
         }
         self.navigationItem.rightBarButtonItem =[[UIBarButtonItem alloc] initWithCustomView:rightButton];
     }
