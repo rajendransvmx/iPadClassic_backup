@@ -219,7 +219,7 @@
         if (searchField.lookupFieldAPIName.length > 2) {
             NSString *aliasName =  [self getAliasNameForRelationship:searchField.lookupFieldAPIName];
             [searchString appendFormat:@" %@.%@ ",aliasName,searchField.fieldName];
-            [searchString appendFormat:criteriaString,searchText];
+            [searchString appendString:criteriaString];
         }
         else{
             if ([[searchField.displayType lowercaseString] isEqualToString:kSfDTReference]) {
@@ -228,7 +228,7 @@
             }
             else{
                 [searchString appendFormat:@" '%@'.%@ ",self.searchObject.targetObjectName,searchField.fieldName];
-                [searchString appendFormat:criteriaString,searchText];
+                [searchString appendString:criteriaString];
             }
         }
     }
