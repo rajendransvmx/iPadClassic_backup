@@ -490,7 +490,9 @@ PageManagerErrorType;
                     
                     if (defaultColumnDictionary.count > 0) {
                         keyField = aPageField.defaultColumnName;
-                        displayValue = [defaultColumnDictionary objectForKey:aPageField.defaultColumnName];
+                        
+                        // 033878 - commented below line
+                        //displayValue = [defaultColumnDictionary objectForKey:aPageField.defaultColumnName];
                         
                         [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
                         [fieldNameAndInternalValue setObject:displayValue?displayValue:kEmptyString forKey:aPageField.fieldName];
@@ -709,8 +711,15 @@ PageManagerErrorType;
         if ([StringUtil isStringEmpty:newValue])
             continue;
         NSArray *matchingKeys = [fieldNameAndInternalValue allKeysForObject:sfId];
-        if ([matchingKeys count] > 0)
-            [fieldNameAndInternalValue setValue:newValue forKey:[matchingKeys objectAtIndex:0]];
+        
+        // 033878
+        
+//         if ([matchingKeys count] > 0)
+//         [fieldNameAndInternalValue setValue:newValue forKey:[matchingKeys objectAtIndex:0]];
+        
+        for (int index = 0; index < [matchingKeys count]; index++) {
+            [fieldNameAndInternalValue setValue:newValue forKey:[matchingKeys objectAtIndex:index]];
+        }
     }
 }
 
