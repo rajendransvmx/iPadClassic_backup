@@ -383,12 +383,27 @@
     return conflictMap;
 }
 
+
+//030174
 + (NSMutableDictionary *)getRecordDictionaryForObjectRelationship:(SMObjectRelationModel *)model{
     
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] initWithCapacity:0];
     
-    NSString *queryString = [[NSString alloc] initWithFormat:@"SELECT tSource.id, tDestination.id FROM %@ tSource, %@ tDestination WHERE tDestination.%@ = tSource.localId or tDestination.%@ = tSource.id", model.parentName, model.childName, model.childFieldName, model.childFieldName];
+    NSString *queryString = [[NSString alloc] initWithFormat:@"SELECT tSource.id, tDestination.id FROM '%@' tSource, '%@' tDestination WHERE tDestination.%@ = tSource.localId", model.parentName, model.childName, model.childFieldName];
     
+    [self getdataThroughIdWithQuery:queryString inDictionary:dictionary];
+    
+    queryString = [[NSString alloc] initWithFormat:@"SELECT tSource.id, tDestination.id FROM '%@' tSource, '%@' tDestination WHERE tDestination.%@ = tSource.id", model.parentName, model.childName, model.childFieldName];
+    
+    [self getdataThroughIdWithQuery:queryString inDictionary:dictionary];
+    
+    return dictionary;
+}
+
+//030174
++(void)getdataThroughIdWithQuery:(NSString *)queryString inDictionary:(NSMutableDictionary *)dictionary{
+    
+    //    SXLogInfo(@"queryString:%@", queryString);
     @autoreleasepool {
         DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
         
@@ -421,7 +436,6 @@
             [resultSet close];
         }];
     }
-    return dictionary;
 }
 
 + (NSMutableArray *)getAllRelatedChildIdsForParentIds:(NSString *)childObject
