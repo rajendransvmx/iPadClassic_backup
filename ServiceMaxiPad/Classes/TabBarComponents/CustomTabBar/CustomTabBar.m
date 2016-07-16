@@ -480,7 +480,7 @@ typedef enum {
     
     CustomBadge *toolsBadge = (CustomBadge*)[self.btn7 viewWithTag:BADGE_TAG];
     CustomBadge *homeBadge = (CustomBadge*)[self.btn1 viewWithTag:BADGE_TAG];
-
+    /*
     if(count == 0) {
         toolsBadge.hidden = YES;
         homeBadge.hidden = YES;
@@ -500,7 +500,29 @@ typedef enum {
             [homeBadge autoBadgeSizeWithString:counterStr];
         }
     }
-}
+     */
+    //Defect Fix:033408 -An Error of "-1" is Displayed On the Tech's Ipad (Similar to Sync Conflict)
+    if(count > 0)
+    {
+        toolsBadge.hidden = NO;
+        homeBadge.hidden = NO;
+        
+        NSString *counterStr = [NSString stringWithFormat:@"%ld",(long)count];
+        
+        if(toolsBadge != nil) {
+            [toolsBadge autoBadgeSizeWithString:counterStr];
+        }
+        
+        if(homeBadge != nil) {
+            [homeBadge autoBadgeSizeWithString:counterStr];
+        }
+    }
+    else
+    {
+        toolsBadge.hidden = YES;
+        homeBadge.hidden = YES;
+    }
+  }
 
 #pragma mark - TapGesture
 - (void)handleTapGesture:(UITapGestureRecognizer *)recognizer {
