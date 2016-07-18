@@ -99,6 +99,19 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     reportsButton.layer.borderWidth = 0.8;
     
     
+    // VA :
+    lastSyncStatusTitleLabel.accessibilityLabel = @"kVADataSyncLastTimeLabel";
+    dataSyncLastSyncLabel.accessibilityLabel = @"kVADataSyncLastTimeValue";
+
+    nextSyncStatusTitleLabel.accessibilityLabel = @"kVADataSyncNextTimeLabel";
+    dataSyncNextSyncLabel.accessibilityLabel = @"kVADataSyncNextTimeValue";
+    
+    lastSyncStatusTitleLabel_Config.accessibilityLabel = @"kVAConfigSyncLastTimeLabel";
+    configSyncLastSyncLabel.accessibilityLabel = @"kVAConfigSyncLastTimeValue";
+    
+    nextSyncStatusTitleLabel_Config.accessibilityLabel = @"kVAConfigSyncNextTimeLabel";
+    configSyncNextSyncLabel.accessibilityLabel = @"kVAConfigSyncNextTimeValue";
+    
     [self updateDataSyncRelatedUI];
     [self updateConfigSyncRelatedUI];
     [self updateReportSyncRelatedUI];

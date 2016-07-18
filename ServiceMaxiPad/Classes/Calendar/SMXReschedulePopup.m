@@ -158,6 +158,11 @@
     
     [cPopOverView addSubview:cEndDateTimeButton];
     
+    // VA :
+    cStartDateTimeButton.accessibilityLabel = @"kVAEventStartDateTime";
+    cEndDateTimeButton.accessibilityLabel = @"kVAEventEndDateTime";
+    
+    
     CGRect frame;
     
     frame.origin = CGPointMake(cEndDateTimeButton.frame.origin.x + 10, cEndDateTimeButton.frame.origin.y + cEndDateTimeButton.frame.size.height + 10);
