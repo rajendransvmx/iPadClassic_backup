@@ -501,15 +501,17 @@ PageManagerErrorType;
                 if (aPageField.relatedObjectName != nil)
                 {
                     //    Below logic is used to get the default column name and value of the lookup fields.
-
+                    
                     NSDictionary *defaultColumnDictionary;
                     if (internalValue.length) {
-                       defaultColumnDictionary = [self getDefaultColumnNameForField:aPageField withFieldSfId:internalValue];
+                        defaultColumnDictionary = [self getDefaultColumnNameForField:aPageField withFieldSfId:internalValue];
                     }
                     
                     if (defaultColumnDictionary.count > 0) {
                         keyField = aPageField.defaultColumnName;
-                        displayValue = [defaultColumnDictionary objectForKey:aPageField.defaultColumnName];
+                        
+                        // 033878 - commented below line
+                        //displayValue = [defaultColumnDictionary objectForKey:aPageField.defaultColumnName];
                         
                         [fieldNameAndObjectApiName setObject:aPageField.relatedObjectName forKey:aPageField.fieldName];
                         [fieldNameAndInternalValue setObject:displayValue?displayValue:kEmptyString forKey:aPageField.fieldName];
@@ -755,10 +757,10 @@ PageManagerErrorType;
             continue;
         
         NSArray *matchingKeys = [fieldNameAndInternalValue allKeysForObject:sfId];
-
+        
         for (NSString *key in matchingKeys) {
                 [fieldNameAndInternalValue setValue:newValue forKey:key]; // Defect#025772. all the SFID's in the dictionary shud be replaced by the value.
-            }
+        }
     }
 }
 
