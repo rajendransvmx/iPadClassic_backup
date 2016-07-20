@@ -3,9 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.40.008
+Version = 16.40.009
 ===========================================
-Sync Error Reporting issue - Error entry will be only logged if there is any valid error during Sync.
+
+Forward ported:
+33878
+29883
 
 ——————
 
