@@ -19,8 +19,8 @@
     return @"SFM_Search_Objects";
 }
 - (NSArray *)fieldNamesToBeRemovedFromQuery {
-    
-    NSArray *array = [[NSArray alloc] initWithObjects:@"searchFields",@"displayFields",@"sortFields", nil];
+    //029883
+    NSArray *array = [[NSArray alloc] initWithObjects:@"searchFields",@"displayFields",@"sortFields", @"searchCriteriaIndex", nil];
     return array;
 }
 
@@ -30,20 +30,20 @@
     [requestSelect setDistinctRowsOnly];
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {
-    DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-    
-    [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-        NSString * query = [requestSelect query];
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
         
-        SQLResultSet * resultSet = [db executeQuery:query];
-        
-        while ([resultSet next]) {
-            SFMSearchObjectModel * model = [[SFMSearchObjectModel alloc] init];
-            [resultSet kvcMagic:model];
-            [records addObject:model];
-        }
-        [resultSet close];
-    }];
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                SFMSearchObjectModel * model = [[SFMSearchObjectModel alloc] init];
+                [resultSet kvcMagic:model];
+                [records addObject:model];
+            }
+            [resultSet close];
+        }];
     }
     return records;
 }
@@ -57,20 +57,20 @@
     [requestSelect addOrderByFields:@[@"sequence"]];
     NSMutableArray * records = [[NSMutableArray alloc] initWithCapacity:0];
     @autoreleasepool {
-    DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-    
-    [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-        NSString * query = [requestSelect query];
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
         
-        SQLResultSet * resultSet = [db executeQuery:query];
-        
-        while ([resultSet next]) {
-            SFMSearchObjectModel * model = [[SFMSearchObjectModel alloc] init];
-            [resultSet kvcMagic:model];
-            [records addObject:model];
-        }
-        [resultSet close];
-    }];
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                SFMSearchObjectModel * model = [[SFMSearchObjectModel alloc] init];
+                [resultSet kvcMagic:model];
+                [records addObject:model];
+            }
+            [resultSet close];
+        }];
     }
     return records;
 }

@@ -35,14 +35,17 @@
 #import "PushNotificationHeaders.h"
 #import "SFMSearchCell.h"
 #import "SFObjectFieldDAO.h"
+#import "PageEditPickerFieldController.h"
+#import "SFMPickerData.h"
 
 #define SRCH_ROW_HEIGHT 80.0
 #define SRCH_SECTION_HEIGHT 50.0
 #define kIncludeOnlineItemsButtonTag 10
 
-@interface SearchDetailViewController ()<DownloadOnDemandDelegate, BarCodeScannerProtocol> {
+@interface SearchDetailViewController ()<DownloadOnDemandDelegate, BarCodeScannerProtocol, PageEditControlDelegate, UIPopoverControllerDelegate> {
     
     UIActivityIndicatorView *searchProgressIndicator;
+    int srcCriteriaIndex;
 }
 
 @property(nonatomic, strong) SMSplitPopover *masterPopoverController;
@@ -55,6 +58,8 @@
 @property (nonatomic, strong) BarCodeScannerUtility *barCodeScanner;
 
 @property (nonatomic, assign) BOOL isOnlineSearchInProgress;
+@property (nonatomic, strong)UIPopoverController *popOver;
+@property (nonatomic, strong) NSArray *srchCriteriaArray;
 
 @end
 
@@ -67,7 +72,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-
+        
     }
     return self;
 }
@@ -79,11 +84,13 @@
     self.searchDetailTableView.separatorColor = [UIColor colorWithHexString:@"#D7D7D7"];
     self.searchDetailTableView.backgroundColor = [UIColor clearColor];
     self.searchStringBeforeEditing = @"";
+    
+    [self setUpCriteria];
     [self setupSearchBar];
     
     //[self expandAllSections]; //*** uncomment this if the sections has to be expanded when search is loaded
     [self addTableViewFooter];
-        //Include online items button in table footer.
+    //Include online items button in table footer.
     [self addObserverForNetworkChangeNotification];
     [self registerSyncStatusChangeNotification];
     
@@ -92,6 +99,65 @@
     
     self.searchBar.inputAccessoryView = [self barcodeView];
 }
+
+
+// 029883
+-(void)setUpCriteria {
+    
+    self.srchCriteriaArray = @[[[TagManager sharedInstance] tagByName:kTagSfmCriteriaContains], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaExactMatch], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaEndsWith], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaStartsWith]];
+    
+    srcCriteriaIndex = 0;
+    
+    self.searchCriteriaLbl.text = [[TagManager sharedInstance]tagByName:kTagSfmSearchCriteria];
+    self.searchCriteriaLbl.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
+    self.searchCriteriaLbl.textColor = [UIColor blackColor];
+    
+    self.searchCriteriaBtn.layer.cornerRadius = 5.0;
+    self.searchCriteriaBtn.layer.borderColor = [[UIColor lightGrayColor] CGColor];
+    self.searchCriteriaBtn.layer.borderWidth = 0.5;
+    [self.searchCriteriaBtn setTitleColor:[UIColor blackColor] forState:(UIControlStateNormal)];
+    [self.searchCriteriaBtn setTitle:[[TagManager sharedInstance] tagByName:kTagSfmCriteriaContains] forState:(UIControlStateNormal)];
+    [self.searchCriteriaBtn addTarget:self action:@selector(displayCriteriaOptions) forControlEvents:(UIControlEventTouchDown)];
+    
+}
+
+-(void)displayCriteriaOptions {
+    if (!self.popOver) {
+        PageEditPickerFieldController *pickerView = [ViewControllerFactory createViewControllerByContext:ViewcontrollerPickerView];
+        pickerView.dataSource = [self getCriteriaPicklistArray];
+        pickerView.recordData = [[SFMRecordFieldData alloc] initWithFieldName:@"" value:@"" andDisplayValue:@""];
+        pickerView.indexPath = nil;
+        pickerView.delegate = self;
+        
+        self.popOver = [[UIPopoverController alloc] initWithContentViewController:pickerView];
+        self.popOver.popoverContentSize = CGSizeMake(300, 200);
+        self.popOver.delegate = self;
+    }
+    
+    [self.popOver presentPopoverFromRect:self.searchCriteriaBtn.bounds inView:self.searchCriteriaBtn permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+}
+
+
+-(NSArray *)getCriteriaPicklistArray {
+    
+    
+    NSMutableArray *finalArray = [NSMutableArray array];
+    int index = 0;
+    for (NSString *criteria in self.srchCriteriaArray) {
+        SFMPickerData *pickerData = [[SFMPickerData alloc] initWithPickerValue:criteria label:criteria index:index];
+        [finalArray addObject:pickerData];
+        index++;
+    }
+    
+    return finalArray;
+}
+
+- (void)valueForField:(SFMRecordFieldData *)model forIndexPath:(NSIndexPath *)indexPath sender:(id)sender {
+    NSString *criteria = model.internalValue;
+    srcCriteriaIndex = (int)[self.srchCriteriaArray indexOfObject:criteria];
+    [self.searchCriteriaBtn setTitle:criteria forState:(UIControlStateNormal)];
+}
+
 - (void) setupSearchBar {
     
     self.searchBar.backgroundColor = [UIColor whiteColor];
@@ -205,7 +271,7 @@
             NSMutableArray *searchFieldList = [[NSMutableArray alloc] init];
             
             for (SFMSearchFieldModel *searchField in searchFieldArray){
-            
+                
                 if ([searchField.fieldType isEqualToString:kSearchFieldTypeSearch]) {
                     [searchFieldList addObject:searchField];
                 }
@@ -219,6 +285,7 @@
             searchObject.displayFields = displayFields;
             searchObject.searchFields = searchFieldList;
             searchObject.sortFields = sortFields;
+            searchObject.searchCriteriaIndex = srcCriteriaIndex; // 029883
         }
     }
 }
@@ -282,7 +349,7 @@
     
     id <SFObjectFieldDAO> objectFieldService = [FactoryDAO serviceByServiceType:ServiceTypeSFObjectField];
     NSMutableArray *dataArray = [NSMutableArray array]; //Objects are not respecting order if added in Dictionary so adding in Array and then adding in Dict. Defect fix-018053
-
+    
     for (int index = 0; index< [srchObj.displayFields count] ;index ++)
     {
         SFMSearchFieldModel *fieldModel = [srchObj.displayFields objectAtIndex:index];
@@ -298,7 +365,7 @@
             [dataArray addObject:fieldValueDict];
         }
     }
-     return dataArray;
+    return dataArray;
 }
 
 - (NSString *) getDisplayStringForValue:(NSString *)value withType:(NSString *)displayType {
@@ -307,12 +374,12 @@
     }
     
     if([displayType isEqualToString:kSfDTDateTime]) {
-
+        
         value = [DateUtil getUserReadableDateForDateBaseDate:value];
     }
     else if ([displayType isEqualToString:kSfDTDate]) {
-            
-            value = [DateUtil getUserReadableDateForDBDateTime:value];
+        
+        value = [DateUtil getUserReadableDateForDBDateTime:value];
     }
     
     else if ([displayType isEqualToString:kSfDTBoolean]) {
@@ -353,7 +420,7 @@
     }
     
     [self startOnlineSearchProgress:NO];
-
+    
     self.dataList = nil;
     [self reloadTableView];
     
@@ -392,7 +459,7 @@
     frame.origin.y = frame.origin.y - 4;
     frame.origin.x = frame.origin.x + frame.size.width;
     frame.size = CGSizeMake(60, 60);
-
+    
     searchProgressIndicator = [[UIActivityIndicatorView alloc] initWithFrame:frame];
     searchProgressIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhiteLarge;
     [searchProgressIndicator setColor:[UIColor grayColor]];
@@ -412,9 +479,9 @@
     else
     {
         [self doOnlineSearch];
- 
+        
     }
-
+    
 }
 
 // enable/disable progress indicator for online search ..
@@ -508,7 +575,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"CellIdentifier";
-
+    
     SFMSearchCell *cell = (SFMSearchCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     
     if (cell == nil) {
@@ -524,9 +591,9 @@
     if (![self isCellExpandedForSection:indexPath.section]) {
         cell.hidden = YES;
         return cell;
-
+        
     }
-
+    
     BOOL isOnlineRecord = [SFMOnlineSearchManager isOnlineRecord:[self getTransactionModelForIndexPath:indexPath]];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     
@@ -558,7 +625,7 @@
     NSString *value = @"";
     NSArray *keyArray = nil;
     NSString *key = nil;
-
+    
     for (int index = 0; index < [displayData count]; index ++)
     {
         if (index == 0)
@@ -574,7 +641,7 @@
                 else
                     cell.titleLabel.text = [[displayData objectAtIndex:index]objectForKey:key];
             }
-          
+            
         }
         else
         {
@@ -601,7 +668,7 @@
                     
                 }
             }
-          
+            
             if (index == 1)
             {
                 cell.fieldLabelOne.text = title;
@@ -651,7 +718,7 @@
     sectionView.section = section;
     sectionView.delegate = self;
     
-//    SFMSearchObjectModel *object = self.searchProcess.searchObjects[section];
+    //    SFMSearchObjectModel *object = self.searchProcess.searchObjects[section];
     
     NSString *text = [self titleForSection:section]; // [object name]; //@"Work Orders (7)";//[self titleForSection:section];
     sectionView.titleLabel.text = text;
@@ -660,7 +727,7 @@
     
     /**/
     
-//    if ([sectionView.titleLabel respondsToSelector:@selector(setAttributedText:)])
+    //    if ([sectionView.titleLabel respondsToSelector:@selector(setAttributedText:)])
     {
         // iOS6 and above : Use NSAttributedStrings
         UIFont *boldFont = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
@@ -685,14 +752,14 @@
     
     /**/
     
-   // [sectionView.contentView setBackgroundColor:[UIColor navBar]];
+    // [sectionView.contentView setBackgroundColor:[UIColor navBar]];
     //sectionView.accessoryImageView.backgroundColor = [UIColor yellowColor];
     
     if([self isCellExpandedForSection:section])
         sectionView.accessoryImageView.image = [UIImage imageNamed:@"sfm_down_arrow.png"];
     else
         sectionView.accessoryImageView.image = [UIImage imageNamed:@"sfm_right_arrow.png"];
-
+    
     return sectionView;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -708,7 +775,7 @@
     return view;
 }
 - (void) loadViewProcessForObjectName:(NSString *)objectName andLocalId:(NSString *)localID {
-
+    
     SFMPageViewController *pageViewController = [[SFMPageViewController alloc]init];
     SFMPageViewManager *pageManager = [[SFMPageViewManager alloc] initWithObjectName:objectName recordId:localID];
     
@@ -741,7 +808,7 @@
         [self showDoDViewWithSeachObject:srchObj
                        transactionObject:objectData
                        fromTableViewCell:[tableView cellForRowAtIndexPath:indexPath]];
-
+        
     } else {
         
         SFMRecordFieldData *localField = (SFMRecordFieldData *)[objectData valueForField:kLocalId];
@@ -808,7 +875,7 @@
             if ([secondLeveSubView isKindOfClass:[UITextField class]])
             {
                 searchBarTextField = (UITextField *)secondLeveSubView;
-                    break;
+                break;
             }
         }
     }
@@ -816,10 +883,10 @@
 }
 -(void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
 {
-//    if (![self.searchStringBeforeEditing isEqualToString:searchBar.text]) {
-//        [self performSearchFor:searchBar.text];
-//    }
-//    [searchBar resignFirstResponder];
+    //    if (![self.searchStringBeforeEditing isEqualToString:searchBar.text]) {
+    //        [self performSearchFor:searchBar.text];
+    //    }
+    //    [searchBar resignFirstResponder];
 }
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
@@ -836,8 +903,8 @@
     [self startOnlineSearchProgress:NO];
     
     //if (![self.searchStringBeforeEditing isEqualToString:searchBar.text]) {
-        [self showAnimator:YES];
-        [self performSearchFor:searchBar.text];
+    [self showAnimator:YES];
+    [self performSearchFor:searchBar.text];
     //}
 }
 /**
@@ -860,7 +927,7 @@
  */
 - (void)showAnimator:(BOOL)show {
     if (show) {
-      
+        
         if (!self.loadingHUD) {
             //Madhusudhan, App crash. View mush not be nill, So changed to app's key window from self.view.window.
             self.loadingHUD = [[MBProgressHUD alloc] initWithView:[[UIApplication sharedApplication] keyWindow]];
@@ -890,7 +957,7 @@
     }
     /*Cancel all previous */
     [self.onlineSearchHandler cancelAllPreviousOperations];
-   
+    
     /* Show activity Indicator */
     [self startOnlineSearchProgress:YES];
     [self performOnlineSeachInBackground];
@@ -898,10 +965,11 @@
 }
 
 - (void)performOnlineSeachInBackground{
- 
+    
     @synchronized([self class]) {
         @autoreleasepool {
-             /* Get selected process */
+            /* Get selected process */
+            self.searchProcess.searchCriteria = self.searchCriteriaBtn.titleLabel.text; // 029883
             [self.onlineSearchHandler performOnlineSearchWithSearchProcess:self.searchProcess andSearchText:self.searchBar.text];
         }
         
@@ -914,13 +982,13 @@
                            forSearchProcess:(SFMSearchProcessModel*)searchProcess
                               andSearchText:(NSString *)searchText {
     
-     @synchronized([self class]) {
-         if ([searchProcess.identifier isEqualToString:self.searchProcess.identifier]) {
-             self.dataList = dataDictionary;
-             [self performSelectorOnMainThread:@selector(reloadInitialData:) withObject:self.searchProcess.searchObjects waitUntilDone:NO];
-             [self startOnlineSearchProgress:NO];
-
-         }
+    @synchronized([self class]) {
+        if ([searchProcess.identifier isEqualToString:self.searchProcess.identifier]) {
+            self.dataList = dataDictionary;
+            [self performSelectorOnMainThread:@selector(reloadInitialData:) withObject:self.searchProcess.searchObjects waitUntilDone:NO];
+            [self startOnlineSearchProgress:NO];
+            
+        }
     }
 }
 - (void)onlineSearchFailedwithError:(NSError *)error
@@ -1016,7 +1084,7 @@
             }
         }
     }
-
+    
     [self reloadTableView];
 }
 
@@ -1085,11 +1153,11 @@
 - (void) disableOnlineSearchButtonIfNoProcess {
     
     if (self.searchProcess &&   [[SNetworkReachabilityManager sharedInstance] isNetworkReachable]
-) {
+        ) {
         [self enableIncludeOnlineButton:YES];
     }
     else {
-         [self enableIncludeOnlineButton:NO];
+        [self enableIncludeOnlineButton:NO];
     }
 }
 #pragma mark - Barcode Scanner

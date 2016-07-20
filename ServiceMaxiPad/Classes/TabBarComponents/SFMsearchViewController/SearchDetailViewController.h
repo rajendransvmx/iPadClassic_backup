@@ -21,6 +21,9 @@
 @property (strong, nonatomic) NSMutableArray *searchResultsArray;
 @property (strong, nonatomic) SFMSearchProcessModel *searchProcess;
 @property (nonatomic,strong) NSMutableDictionary *dataList;
+@property (strong, nonatomic) IBOutlet UILabel *searchCriteriaLbl;
+@property (strong, nonatomic) IBOutlet UIButton *searchCriteriaBtn;
+
 
 @property(nonatomic,strong) MBProgressHUD *loadingHUD;
 - (void) selectedProcess:(SFMSearchProcessModel *)processObject;
