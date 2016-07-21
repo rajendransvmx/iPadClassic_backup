@@ -3,11 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.005
+Version = 16.49.006
 ===========================================
 
 Defect:
 ==================
+033408 -An Error of "-1" is Displayed On the Tech's Ipad (Similar to Sync Conflict)
 
 
 …
@@ -15,4 +16,4 @@ Defect:
 
 NOTE:
 
-Name Space: SVMXDEV
+Name Space: SVMXC
