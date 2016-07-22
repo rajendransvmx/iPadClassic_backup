@@ -1782,7 +1782,6 @@
 		A64AB0AE1CF2F9E5008839FB /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA21CEDCC37008839FB /* libiconv.tbd */; };
 		A64AB0AF1CF2F9E5008839FB /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA01CEDCC27008839FB /* libicucore.tbd */; };
 		A64AB0B01CF2F9E5008839FB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD981CEDCBF3008839FB /* IOKit.framework */; };
-		A64AB0B11CF2F9E5008839FB /* libHitachiStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */; };
 		A64AB0B21CF2F9E5008839FB /* Resource.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD9B1CEDCBF3008839FB /* Resource.bundle */; };
 		A64AB0B31CF2F9E5008839FB /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BBFB76619F67565002070BC /* libsqlite3.0.dylib */; };
 		A64AB0B41CF2F9E5008839FB /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2175B19E57CDE00F22EA6 /* libsqlite3.dylib */; };
@@ -1810,7 +1809,6 @@
 		A64AB0CA1CF2F9E5008839FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2171E19E57C5A00F22EA6 /* CoreGraphics.framework */; };
 		A64AB0CB1CF2F9E5008839FB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2172019E57C5A00F22EA6 /* UIKit.framework */; };
 		A64AB0CC1CF2F9E5008839FB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2171C19E57C5A00F22EA6 /* Foundation.framework */; };
-		A64AB0CE1CF2F9E5008839FB /* Resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A64AADAB1CEDCD40008839FB /* Resource.bundle */; };
 		A64AB0CF1CF2F9E5008839FB /* com.servicemax.client.native.laptop.zip in Resources */ = {isa = PBXBuildFile; fileRef = 434408991C9035B600628FFB /* com.servicemax.client.native.laptop.zip */; };
 		A64AB0D01CF2F9E5008839FB /* json2.js in Resources */ = {isa = PBXBuildFile; fileRef = 184A8EC719E7A535006DA6BE /* json2.js */; };
 		A64AB0D11CF2F9E5008839FB /* bizRules-index.js in Resources */ = {isa = PBXBuildFile; fileRef = 427305201A10BD46005F41E1 /* bizRules-index.js */; };
@@ -1835,7 +1833,6 @@
 		A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3EF97801A036CAE00476293 /* DocumentsViewController.xib */; };
 		A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A981E19E7D58F006DA6BE /* iOS-Email-Retina-Orange@2x.png */; };
 		A64AB0E61CF2F9E5008839FB /* SCalendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320FB1AB7196A00A172E0 /* SCalendar@2x.png */; };
-		A64AB0E71CF2F9E5008839FB /* HitachiStudio in Resources */ = {isa = PBXBuildFile; fileRef = A64AAD961CEDCB61008839FB /* HitachiStudio */; };
 		A64AB0E81CF2F9E5008839FB /* ProductIQCustomActionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1195544B1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib */; };
 		A64AB0E91CF2F9E5008839FB /* NavBarCal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E21AB7178C00A172E0 /* NavBarCal@2x.png */; };
 		A64AB0EA1CF2F9E5008839FB /* recentlyCreated@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E619E7D58F006DA6BE /* recentlyCreated@2x.png */; };
@@ -2171,6 +2168,9 @@
 		D9F7EEF61A1083270098F8AF /* BizRulesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F7EEF41A1083270098F8AF /* BizRulesViewController.xib */; };
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
+		ECC338061D420319003F6717 /* libHitachiStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */; };
+		ECC338071D4213DC003F6717 /* HitachiStudio in Resources */ = {isa = PBXBuildFile; fileRef = A64AAD961CEDCB61008839FB /* HitachiStudio */; };
+		ECC3380F1D4214C5003F6717 /* BindInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = ECC3380E1D4214C5003F6717 /* BindInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FD441AD91CAA54DE00016C04 /* com.servicemax.client.usage.zip in Resources */ = {isa = PBXBuildFile; fileRef = FD441AD81CAA54DE00016C04 /* com.servicemax.client.usage.zip */; };
 /* End PBXBuildFile section */
 
@@ -4144,6 +4144,8 @@
 		DE9E10CC1AA9A28C00A87768 /* PushNotificationWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceHelper.h; sourceTree = "<group>"; };
 		DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationWebServiceHelper.m; sourceTree = "<group>"; };
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
+		EC1757A71D41F1D300B38E06 /* libVerifayaStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libVerifayaStudio.a; path = HitachiStudio/libVerifayaStudio.a; sourceTree = "<group>"; };
+		ECC3380E1D4214C5003F6717 /* BindInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BindInfo.h; path = HitachiStudio/BindInfo.h; sourceTree = "<group>"; };
 		FD441AD81CAA54DE00016C04 /* com.servicemax.client.usage.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.usage.zip; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -4203,6 +4205,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECC338061D420319003F6717 /* libHitachiStudio.a in Frameworks */,
 				A64AB0AA1CF2F9E5008839FB /* libzbar.a in Frameworks */,
 				A64AB0AB1CF2F9E5008839FB /* AdSupport.framework in Frameworks */,
 				A64AB0AC1CF2F9E5008839FB /* CoreTelephony.framework in Frameworks */,
@@ -4210,7 +4213,6 @@
 				A64AB0AE1CF2F9E5008839FB /* libiconv.tbd in Frameworks */,
 				A64AB0AF1CF2F9E5008839FB /* libicucore.tbd in Frameworks */,
 				A64AB0B01CF2F9E5008839FB /* IOKit.framework in Frameworks */,
-				A64AB0B11CF2F9E5008839FB /* libHitachiStudio.a in Frameworks */,
 				A64AB0B21CF2F9E5008839FB /* Resource.bundle in Frameworks */,
 				A64AB0B31CF2F9E5008839FB /* libsqlite3.0.dylib in Frameworks */,
 				A64AB0B41CF2F9E5008839FB /* libsqlite3.dylib in Frameworks */,
@@ -6658,6 +6660,7 @@
 		18A2171019E57C5A00F22EA6 = {
 			isa = PBXGroup;
 			children = (
+				ECC3380E1D4214C5003F6717 /* BindInfo.h */,
 				A64AADAB1CEDCD40008839FB /* Resource.bundle */,
 				A64AAD961CEDCB61008839FB /* HitachiStudio */,
 				18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */,
@@ -6680,6 +6683,7 @@
 		18A2171B19E57C5A00F22EA6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC1757A71D41F1D300B38E06 /* libVerifayaStudio.a */,
 				A64AADA81CEDCCA7008839FB /* AdSupport.framework */,
 				A64AADA61CEDCC89008839FB /* CoreTelephony.framework */,
 				A64AADA41CEDCC4F008839FB /* CoreFoundation.framework */,
@@ -7792,6 +7796,17 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		ECC338081D421441003F6717 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECC3380F1D4214C5003F6717 /* BindInfo.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		18A2171819E57C5A00F22EA6 /* ServiceMaxiPad */ = {
 			isa = PBXNativeTarget;
@@ -7837,6 +7852,7 @@
 				A64AB0A91CF2F9E5008839FB /* Frameworks */,
 				A64AB0CD1CF2F9E5008839FB /* Resources */,
 				A64AB1E81CF2F9E5008839FB /* Run Script */,
+				ECC338081D421441003F6717 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -8184,7 +8200,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A64AB0CE1CF2F9E5008839FB /* Resource.bundle in Resources */,
+				ECC338071D4213DC003F6717 /* HitachiStudio in Resources */,
 				A64AB0CF1CF2F9E5008839FB /* com.servicemax.client.native.laptop.zip in Resources */,
 				A64AB0D01CF2F9E5008839FB /* json2.js in Resources */,
 				A64AB0D11CF2F9E5008839FB /* bizRules-index.js in Resources */,
@@ -8209,7 +8225,6 @@
 				A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */,
 				A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */,
 				A64AB0E61CF2F9E5008839FB /* SCalendar@2x.png in Resources */,
-				A64AB0E71CF2F9E5008839FB /* HitachiStudio in Resources */,
 				A64AB0E81CF2F9E5008839FB /* ProductIQCustomActionViewController.xib in Resources */,
 				A64AB0E91CF2F9E5008839FB /* NavBarCal@2x.png in Resources */,
 				A64AB0EA1CF2F9E5008839FB /* recentlyCreated@2x.png in Resources */,
@@ -10347,7 +10362,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "032b6f13-f90a-48bb-b84a-f65674b4ab06";
-				VALID_ARCHS = "armv7 armv7s arm64";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -10390,7 +10405,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "032b6f13-f90a-48bb-b84a-f65674b4ab06";
-				VALID_ARCHS = "armv7 armv7s arm64";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

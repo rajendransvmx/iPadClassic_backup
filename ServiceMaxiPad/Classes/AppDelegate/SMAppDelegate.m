@@ -21,6 +21,7 @@
 #import "AttachmentsUploadManager.h"
 #import "PushNotificationUtility.h"
 #import "PushNotificationManager.h"
+#import "BindInfo.h"
 
 @implementation SMAppDelegate
 
@@ -111,6 +112,21 @@
          [UINavigationBar appearance].tintColor = [UIColor whiteColor];
      }
 */
+     
+     
+     // VA --------------------------------------
+     
+     BindInfo *bindingObj = [[BindInfo alloc]init];
+     
+     if ([bindingObj respondsToSelector:@selector(printLibraryVersion)]) {
+         [bindingObj printLibraryVersion];
+     }
+     else{
+         NSLog(@"Verifaya Binding Unsuccesful");
+     }
+     
+     // VA --------------------------------------
+     
      
      /** Setup Logger  */
      //HS 29Fev added one key
