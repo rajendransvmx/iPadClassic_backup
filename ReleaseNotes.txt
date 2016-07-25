@@ -3,13 +3,13 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.006
+Version = 16.49.007
 ===========================================
 
 Defect:
 ==================
-033408 -An Error of "-1" is Displayed On the Tech's Ipad (Similar to Sync Conflict)
-
+DefectFix :032530 -
+NOW literal when used in a data validation rule in an SFM not performing as expected.
 
 …
 ——————
