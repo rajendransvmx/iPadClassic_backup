@@ -3,17 +3,15 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.007
+Version = 16.49.008
 ===========================================
 
 Defect:
 ==================
-DefectFix :032530 -
-NOW literal when used in a data validation rule in an SFM not performing as expected.
-
+Barcode scanning lib change
 …
 ——————
 
 NOTE:
 
-Name Space: SVMXC
+Name Space: SVMXDEV

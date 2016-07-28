@@ -7,8 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-// ADD: import barcode reader APIs
-#import "ZBarSDK.h"
 
 /**
  *  @file   BarCodeScannerUtility.h
@@ -51,7 +49,7 @@
 
 
 
-@interface BarCodeScannerUtility : NSObject <ZBarReaderDelegate>
+@interface BarCodeScannerUtility : NSObject 
 
 @property (nonatomic, assign) id <BarCodeScannerProtocol> scannerDelegate;
 @property (nonatomic, strong) NSIndexPath *indexPath;
