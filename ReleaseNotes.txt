@@ -3,12 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.008
+Version = 16.49.009
 ===========================================
 
 Defect:
 ==================
-Barcode scanning lib change
+Barcode scanning lib issue
 …
 ——————
 

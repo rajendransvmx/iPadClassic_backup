@@ -261,7 +261,7 @@
     button.frame = CGRectMake(self.btnInfo.frame.origin.x-30, self.btnInfo.frame.origin.y-8, 50, 40.0);
     
     [self.scannerControllerView addSubview:button];
-    
+    [self.capture stop];
 }
 
 - (IBAction)btnCancel:(id)sender {
@@ -279,6 +279,7 @@
     self.btnInfo.hidden = NO;
     self.btnCancel.hidden = NO;
     [self.scannerControllerView setBackgroundColor:[UIColor blackColor]];
+    [self.capture start];
 }
 
 #pragma mark UIWebViewDelegate Methods
