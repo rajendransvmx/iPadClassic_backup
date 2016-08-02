@@ -3,12 +3,15 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.009
+Version = 16.49.010
 ===========================================
 
 Defect:
 ==================
-Barcode scanning lib issue
+
+Feature:
+==================
+IPAD-4249 Clients to send mandatory attributes to server
 …
 ——————
 
