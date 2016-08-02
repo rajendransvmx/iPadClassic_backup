@@ -4,15 +4,14 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.60.044
+Version = 15.60.045
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-033408
-An Error of "-1" is Displayed On the Tech's Ipad (Similar to Sync Conflict)
+Back ported: 028126
 
 ____
 
