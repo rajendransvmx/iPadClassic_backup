@@ -113,20 +113,21 @@
         [[SMXDateManager sharedManager] setSelectedEvent:nil];
     }
     cell.cSelectedEventButton = nil;
-
+    
     //[cell showEvents:[dictEvents objectForKey:cell.date]];
     
     NSArray *lEventArray = [self getEventsFromDictinory:[[SMXDateManager sharedManager] getdictEvents] withKey:cell.date];
     if (lEventArray.count) {
         SMXEvent *lEvent = [lEventArray objectAtIndex:0];
         if (!lEvent.newData) {
-            [self getSLAAndPriorityDataFromDB:lEventArray forCell:cell withIndex:indexPath];
+            // backport 028126
+            [self getSLAAndPriorityDataFromDB:lEventArray forCellDate:cell.date withIndex:indexPath];
         }
     }
     
     [cell showEvents:lEventArray];
     cDate = cell.date;
-
+    
     return cell;
 }
 
@@ -160,33 +161,29 @@
     return [eventList objectForKey:key];
 }
 
--(void)getSLAAndPriorityDataFromDB:(NSArray *)lEventArray forCell:(SMXDayCell *)cell withIndex:(NSIndexPath *)indexpath
+// backport 028126
+-(void)getSLAAndPriorityDataFromDB:(NSArray *)lEventArray forCellDate:(NSDate *)date withIndex:(NSIndexPath *)indexpath
 {
-
-    CalenderHelper *lCalendarHelper = self.prioritySLADBInProgressDict[cell.date];
+    
+    CalenderHelper *lCalendarHelper = self.prioritySLADBInProgressDict[date];
     if (lCalendarHelper == nil)
     {
         cLatestCellDataDownloadedIndexpath = indexpath;
-
+        
         lCalendarHelper = [CalenderHelper new];
         
         [lCalendarHelper setCompletionHandler:^(NSArray *eventArray){
             
             NSMutableDictionary*lEventDict = [[SMXDateManager sharedManager] dictEvents];
             
-            [lEventDict setObject:eventArray forKey:cell.date];
+            [lEventDict setObject:eventArray forKey:date];
             [[SMXDateManager sharedManager] setDictEvents:lEventDict];
             
-            [self.prioritySLADBInProgressDict removeObjectForKey:cell.date];
-//          [self reloadItemsAtIndexPaths:[NSArray arrayWithObjects:indexpath, nil]];
-           
-//            [self performSelectorOnMainThread:@selector(reloadItemsAtIndexPaths:) withObject:[NSArray arrayWithObjects:indexpath, nil] waitUntilDone:NO];
-            
-            
+            [self.prioritySLADBInProgressDict removeObjectForKey:date];
         }];
         [lCalendarHelper performSelectorInBackground:@selector(getSLAPriorityForEventArray:) withObject:lEventArray];
-
-        [self.prioritySLADBInProgressDict setObject:lCalendarHelper forKey:cell.date];
+        
+        [self.prioritySLADBInProgressDict setObject:lCalendarHelper forKey:date];
     }
 }
 
