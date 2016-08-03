@@ -2168,7 +2168,7 @@
 		D9F7EEF61A1083270098F8AF /* BizRulesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F7EEF41A1083270098F8AF /* BizRulesViewController.xib */; };
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
-		ECC338061D420319003F6717 /* libHitachiStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */; };
+		EC2D8DE21D51CBEA00EAB519 /* libVerifayaStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC1757A71D41F1D300B38E06 /* libVerifayaStudio.a */; };
 		ECC338071D4213DC003F6717 /* HitachiStudio in Resources */ = {isa = PBXBuildFile; fileRef = A64AAD961CEDCB61008839FB /* HitachiStudio */; };
 		ECC3380F1D4214C5003F6717 /* BindInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = ECC3380E1D4214C5003F6717 /* BindInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FD441AD91CAA54DE00016C04 /* com.servicemax.client.usage.zip in Resources */ = {isa = PBXBuildFile; fileRef = FD441AD81CAA54DE00016C04 /* com.servicemax.client.usage.zip */; };
@@ -4205,8 +4205,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECC338061D420319003F6717 /* libHitachiStudio.a in Frameworks */,
-				A64AB0AA1CF2F9E5008839FB /* libzbar.a in Frameworks */,
+				EC2D8DE21D51CBEA00EAB519 /* libVerifayaStudio.a in Frameworks */,
 				A64AB0AB1CF2F9E5008839FB /* AdSupport.framework in Frameworks */,
 				A64AB0AC1CF2F9E5008839FB /* CoreTelephony.framework in Frameworks */,
 				A64AB0AD1CF2F9E5008839FB /* CoreFoundation.framework in Frameworks */,
@@ -4240,6 +4239,7 @@
 				A64AB0CA1CF2F9E5008839FB /* CoreGraphics.framework in Frameworks */,
 				A64AB0CB1CF2F9E5008839FB /* UIKit.framework in Frameworks */,
 				A64AB0CC1CF2F9E5008839FB /* Foundation.framework in Frameworks */,
+				A64AB0AA1CF2F9E5008839FB /* libzbar.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
