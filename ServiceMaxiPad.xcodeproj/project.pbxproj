@@ -1782,7 +1782,6 @@
 		A64AB0AE1CF2F9E5008839FB /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA21CEDCC37008839FB /* libiconv.tbd */; };
 		A64AB0AF1CF2F9E5008839FB /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA01CEDCC27008839FB /* libicucore.tbd */; };
 		A64AB0B01CF2F9E5008839FB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD981CEDCBF3008839FB /* IOKit.framework */; };
-		A64AB0B21CF2F9E5008839FB /* Resource.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD9B1CEDCBF3008839FB /* Resource.bundle */; };
 		A64AB0B31CF2F9E5008839FB /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BBFB76619F67565002070BC /* libsqlite3.0.dylib */; };
 		A64AB0B41CF2F9E5008839FB /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2175B19E57CDE00F22EA6 /* libsqlite3.dylib */; };
 		A64AB0B51CF2F9E5008839FB /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2175F19E57CF200F22EA6 /* libiconv.dylib */; };
@@ -2168,6 +2167,7 @@
 		D9F7EEF61A1083270098F8AF /* BizRulesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F7EEF41A1083270098F8AF /* BizRulesViewController.xib */; };
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
+		E8D604BA1D51F0A400FFEE1A /* Resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E8D604B91D51F0A400FFEE1A /* Resource.bundle */; };
 		EC2D8DE21D51CBEA00EAB519 /* libVerifayaStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC1757A71D41F1D300B38E06 /* libVerifayaStudio.a */; };
 		ECC338071D4213DC003F6717 /* HitachiStudio in Resources */ = {isa = PBXBuildFile; fileRef = A64AAD961CEDCB61008839FB /* HitachiStudio */; };
 		ECC3380F1D4214C5003F6717 /* BindInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = ECC3380E1D4214C5003F6717 /* BindInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4019,7 +4019,6 @@
 		A64AADA41CEDCC4F008839FB /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		A64AADA61CEDCC89008839FB /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		A64AADA81CEDCCA7008839FB /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
-		A64AADAB1CEDCD40008839FB /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Resource.bundle; path = HitachiStudio/Resource.bundle; sourceTree = "<group>"; };
 		A64AB1EC1CF2F9E5008839FB /* ServiceMaxiPadAutomation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServiceMaxiPadAutomation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C31E66CF1AE65DBE00A8AE7E /* GetPriceDataServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceDataServiceLayer.h; sourceTree = "<group>"; };
 		C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetPriceDataServiceLayer.m; sourceTree = "<group>"; };
@@ -4144,6 +4143,7 @@
 		DE9E10CC1AA9A28C00A87768 /* PushNotificationWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceHelper.h; sourceTree = "<group>"; };
 		DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationWebServiceHelper.m; sourceTree = "<group>"; };
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
+		E8D604B91D51F0A400FFEE1A /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Resource.bundle; path = HitachiStudio/Resource.bundle; sourceTree = "<group>"; };
 		EC1757A71D41F1D300B38E06 /* libVerifayaStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libVerifayaStudio.a; path = HitachiStudio/libVerifayaStudio.a; sourceTree = "<group>"; };
 		ECC3380E1D4214C5003F6717 /* BindInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BindInfo.h; path = HitachiStudio/BindInfo.h; sourceTree = "<group>"; };
 		FD441AD81CAA54DE00016C04 /* com.servicemax.client.usage.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.usage.zip; sourceTree = "<group>"; };
@@ -4212,7 +4212,6 @@
 				A64AB0AE1CF2F9E5008839FB /* libiconv.tbd in Frameworks */,
 				A64AB0AF1CF2F9E5008839FB /* libicucore.tbd in Frameworks */,
 				A64AB0B01CF2F9E5008839FB /* IOKit.framework in Frameworks */,
-				A64AB0B21CF2F9E5008839FB /* Resource.bundle in Frameworks */,
 				A64AB0B31CF2F9E5008839FB /* libsqlite3.0.dylib in Frameworks */,
 				A64AB0B41CF2F9E5008839FB /* libsqlite3.dylib in Frameworks */,
 				A64AB0B51CF2F9E5008839FB /* libiconv.dylib in Frameworks */,
@@ -6660,8 +6659,8 @@
 		18A2171019E57C5A00F22EA6 = {
 			isa = PBXGroup;
 			children = (
+				E8D604B91D51F0A400FFEE1A /* Resource.bundle */,
 				ECC3380E1D4214C5003F6717 /* BindInfo.h */,
-				A64AADAB1CEDCD40008839FB /* Resource.bundle */,
 				A64AAD961CEDCB61008839FB /* HitachiStudio */,
 				18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */,
 				18A2174119E57C5A00F22EA6 /* ServiceMaxiPadTests */,
@@ -8200,6 +8199,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8D604BA1D51F0A400FFEE1A /* Resource.bundle in Resources */,
 				ECC338071D4213DC003F6717 /* HitachiStudio in Resources */,
 				A64AB0CF1CF2F9E5008839FB /* com.servicemax.client.native.laptop.zip in Resources */,
 				A64AB0D01CF2F9E5008839FB /* json2.js in Resources */,
@@ -10361,7 +10361,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "032b6f13-f90a-48bb-b84a-f65674b4ab06";
+				PROVISIONING_PROFILE = "9fb77437-746a-4c7b-8883-39212463bc9b";
 				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
@@ -10404,7 +10404,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadspr16;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "032b6f13-f90a-48bb-b84a-f65674b4ab06";
+				PROVISIONING_PROFILE = "9fb77437-746a-4c7b-8883-39212463bc9b";
 				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
