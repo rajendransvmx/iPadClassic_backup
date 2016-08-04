@@ -19,8 +19,8 @@
     return @"SFM_Search_Objects";
 }
 - (NSArray *)fieldNamesToBeRemovedFromQuery {
-    
-    NSArray *array = [[NSArray alloc] initWithObjects:@"searchFields",@"displayFields",@"sortFields", nil];
+    //029883
+    NSArray *array = [[NSArray alloc] initWithObjects:@"searchFields",@"displayFields",@"sortFields", @"searchCriteriaIndex", nil];
     return array;
 }
 

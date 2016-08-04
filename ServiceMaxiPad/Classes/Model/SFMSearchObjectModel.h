@@ -23,6 +23,9 @@
 /**
  This is a Model Class which represents SFM Search object
  */
+
+#import "SFMSearchProcessModel.h"
+
 @interface SFMSearchObjectModel : NSObject
 @property (nonatomic, strong) NSString *moduleId;
 @property (nonatomic, strong) NSString *name;
@@ -36,6 +39,7 @@
 @property (nonatomic, strong) NSArray *displayFields;
 @property (nonatomic, strong) NSArray *sortFields;
 @property (nonatomic) double sequence;
+@property (nonatomic, assign) SearchCriteria searchCriteriaIndex; // 029883
 
 + (NSDictionary *) getMappingDictionary;
 @end

@@ -14,6 +14,8 @@
 #import "MobileDeviceSettingDAO.h"
 #import "Utility.h"
 #import "FactoryDAO.h"
+#import "TagManager.h"
+#import "SFMSearchProcessModel.h"
 
 @interface SFMSearchQueryCreator()
 
@@ -69,7 +71,7 @@
         [finalQuery appendString:selectPart];
         
         /* Adding  From part */
-          [finalQuery appendFormat:@" FROM '%@' ",self.searchObject.targetObjectName];
+        [finalQuery appendFormat:@" FROM '%@' ",self.searchObject.targetObjectName];
         
         /* Adding left outer join part */
         if ([self.joinTables count] > 0) {
@@ -77,7 +79,7 @@
             [finalQuery appendFormat:@" %@ ",outerJoinPart];
         }
         
-         /* Adding expression and search criteria part */
+        /* Adding expression and search criteria part */
         NSString *whereClause =  [self getWhereClause:searchString fromExpression:expression];
         if (whereClause != nil) {
             [finalQuery appendString:whereClause];
@@ -89,7 +91,7 @@
             [finalQuery appendString:orderByString];
         }
         /* Adding limit string  */
-       [finalQuery appendFormat:@" LIMIT %d ",(int)self.maxNumberOfResults];
+        [finalQuery appendFormat:@" LIMIT %d ",(int)self.maxNumberOfResults];
     }
     
     return finalQuery;
@@ -101,8 +103,8 @@
     for (SFMSearchFieldModel *displayField in self.searchObject.displayFields) {
         
         if (displayField.lookupFieldAPIName.length > 2) {
-             NSString *aliasName  = [self getAliasNameForRelationship:displayField.lookupFieldAPIName];
-             [selectPart appendFormat:@" ,%@.%@ ",aliasName,displayField.fieldName];
+            NSString *aliasName  = [self getAliasNameForRelationship:displayField.lookupFieldAPIName];
+            [selectPart appendFormat:@" ,%@.%@ ",aliasName,displayField.fieldName];
         }
         else{
             [selectPart appendFormat:@" ,'%@'.%@ ",self.searchObject.targetObjectName,displayField.fieldName];
@@ -113,7 +115,7 @@
 
 - (NSString *)getAliasNameForRelationship:(NSString *)relationShipName {
     
-   
+    
     OuterJoinObject *joinObject =  [self.joinTables objectForKey:relationShipName];
     return joinObject.aliasName;
 }
@@ -186,6 +188,28 @@
     NSMutableString *searchString = [[NSMutableString alloc] initWithString:@" ( "];
     NSString *orOperator = @" OR ";
     NSInteger totalCount =  [self.searchObject.searchFields count];
+    
+    // 029883
+    
+    NSString *criteriaString = @"";
+    
+    switch (self.searchObject.searchCriteriaIndex) {
+        case SearchCriteriaContains:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@%%' ", searchText];
+            break;
+        case SearchCriteriaExactMatch:
+            criteriaString = [NSString stringWithFormat:@" = '%@' COLLATE NOCASE ", searchText];
+            break;
+        case SearchCriteriaEndsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@' ", searchText];
+            break;
+        case SearchCriteriaStartsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%@%%' ", searchText];
+            break;
+        default:
+            break;
+    }
+    
     for (int counter = 0;counter < totalCount;counter++) {
         
         if (counter > 0) {
@@ -195,22 +219,18 @@
         if (searchField.lookupFieldAPIName.length > 2) {
             NSString *aliasName =  [self getAliasNameForRelationship:searchField.lookupFieldAPIName];
             [searchString appendFormat:@" %@.%@ ",aliasName,searchField.fieldName];
-             [searchString appendFormat:@" LIKE '%%%@%%' ",searchText];
+            [searchString appendString:criteriaString];
         }
         else{
             if ([[searchField.displayType lowercaseString] isEqualToString:kSfDTReference]) {
-               NSString *expression =  [self getReferenceExpression:searchField.fieldName withSearchText:searchText andReferenceTable:searchField.relatedObjectName];
-                  [searchString appendFormat:@" %@ ",expression];
+                NSString *expression =  [self getReferenceExpression:searchField.fieldName withSearchText:searchText andReferenceTable:searchField.relatedObjectName];
+                [searchString appendFormat:@" %@ ",expression];
             }
             else{
                 [searchString appendFormat:@" '%@'.%@ ",self.searchObject.targetObjectName,searchField.fieldName];
-                 [searchString appendFormat:@" LIKE '%%%@%%' ",searchText];
+                [searchString appendString:criteriaString];
             }
-            
         }
-        
-       
-        
     }
     [searchString appendString:@" ) "];
     return searchString;
@@ -225,15 +245,36 @@
 -(BOOL)doesTableExist:(NSString *)objectName
 {
     return [SFMPageHelper checkIfTheTableExistsForObject:objectName];
-
+    
 }
 - (NSString *)getReferenceExpression:(NSString *)fieldName
                       withSearchText:(NSString *)searchText
                    andReferenceTable:(NSString *)referenceToTable {
-   
+    
+    // 029883
+    
+    NSString *criteriaString = @"";
+    
+    switch (self.searchObject.searchCriteriaIndex) {
+        case SearchCriteriaContains:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@%%' ", searchText];
+            break;
+        case SearchCriteriaExactMatch:
+            criteriaString = [NSString stringWithFormat:@" = '%@' COLLATE NOCASE ", searchText];
+            break;
+        case SearchCriteriaEndsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@' ", searchText];
+            break;
+        case SearchCriteriaStartsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%@%%' ", searchText];
+            break;
+        default:
+            break;
+    }
+    
     NSString *finalExpression = nil;
     if ([fieldName isEqualToString:@"RecordTypeId"]) {
-        finalExpression = [NSString stringWithFormat:@"( %@   in   (select  recordTypeId  from SFRecordType where recordType LIKE '%%%@%%' ) )" ,fieldName,searchText];
+        finalExpression = [NSString stringWithFormat:@"( %@   in   (select  recordTypeId  from SFRecordType where recordType %@ ) )" ,fieldName, criteriaString];
     }
     else
     {
@@ -241,7 +282,7 @@
         NSString *nameFieldValue = [self  getNameFieldNameForObject:referenceToTable];
         if (![Utility isStringEmpty:referenceToTable])
         {
-            finalExpression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from '%@' where ( %@ LIKE '%%%@%%')) OR %@   in   (select  localId  from '%@' where (%@ LIKE '%%%@%%')))" , fieldNameAppendedWithObjName,referenceToTable ,nameFieldValue ,searchText,fieldNameAppendedWithObjName,referenceToTable ,nameFieldValue,searchText];
+            finalExpression = [NSString stringWithFormat:@" ( %@   in   (select  Id  from '%@' where ( %@ %@ )) OR %@   in   (select  localId  from '%@' where (%@ %@ )))" , fieldNameAppendedWithObjName,referenceToTable ,nameFieldValue ,criteriaString,fieldNameAppendedWithObjName,referenceToTable ,nameFieldValue,criteriaString];
         }
     }
     return finalExpression;
@@ -261,20 +302,20 @@
         
         if (sortField.lookupFieldAPIName.length > 2) {
             NSString *aliasName = [self getAliasNameForRelationship:sortField.lookupFieldAPIName];
-              [orderByString appendFormat:@" %@.%@ COLLATE NOCASE %@ ",aliasName,sortField.fieldName,sortOrder];
+            [orderByString appendFormat:@" %@.%@ COLLATE NOCASE %@ ",aliasName,sortField.fieldName,sortOrder];
         }
         else if(sortField.relatedObjectName && [self doesTableExist:sortField.relatedObjectName])
         {
-             // 2-June BSP: For Defect 17514: Sorting on SFM Search
+            // 2-June BSP: For Defect 17514: Sorting on SFM Search
             NSString *aliasName = [self getAliasNameForRelationship:sortField.relatedObjectName];
             NSString *theFieldName = [self getNameFieldNameForObject:sortField.relatedObjectName];
             [orderByString appendFormat:@" '%@'.%@ COLLATE NOCASE %@ ",aliasName, theFieldName,sortOrder];
-
+            
         }
-      else
-      {
-          [orderByString appendFormat:@" '%@'.%@ COLLATE NOCASE %@ ",sortField.objectName,sortField.fieldName,sortOrder];
-      }
+        else
+        {
+            [orderByString appendFormat:@" '%@'.%@ COLLATE NOCASE %@ ",sortField.objectName,sortField.fieldName,sortOrder];
+        }
         if (counter != (totalCount - 1)) {
             [orderByString appendString:@" , "];
         }

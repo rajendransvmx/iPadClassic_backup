@@ -20,26 +20,38 @@
  *
  **/
 
-/* 
+/*
  
  TEMP : sample search process response
  
-Id = a17K0000002VK1HIAW;
-Name = "PN-0000005603";
-RecordTypeId = 012K00000000P4XIAU;
-"SVMXC__Active__c" = 0;
-"SVMXC__IsDefault__c" = 0;
-"SVMXC__IsStandard__c" = 0;
-"SVMXC__Name__c" = ProductStock;
-"SVMXC__ProcessID__c" = ProductStock;
-"SVMXC__Rule_Type__c" = "SRCH_NAMED_SEARCH";
-attributes =     {
-    type = "SVMXC__ServiceMax_Processes__c";
-    url = "/services/data/v31.0/sobjects/SVMXC__ServiceMax_Processes__c/a17K0000002VK1HIAW";
-};
-
+ Id = a17K0000002VK1HIAW;
+ Name = "PN-0000005603";
+ RecordTypeId = 012K00000000P4XIAU;
+ "SVMXC__Active__c" = 0;
+ "SVMXC__IsDefault__c" = 0;
+ "SVMXC__IsStandard__c" = 0;
+ "SVMXC__Name__c" = ProductStock;
+ "SVMXC__ProcessID__c" = ProductStock;
+ "SVMXC__Rule_Type__c" = "SRCH_NAMED_SEARCH";
+ attributes =     {
+ type = "SVMXC__ServiceMax_Processes__c";
+ url = "/services/data/v31.0/sobjects/SVMXC__ServiceMax_Processes__c/a17K0000002VK1HIAW";
+ };
+ 
  But we are storing only whatever is required.
-*/
+ */
+
+
+@class SFMSearchProcessModel;
+
+// 029883
+typedef enum : NSUInteger {
+    SearchCriteriaContains,
+    SearchCriteriaExactMatch,
+    SearchCriteriaEndsWith,
+    SearchCriteriaStartsWith
+} SearchCriteria;
+
 
 @interface SFMSearchProcessModel : NSObject
 /**
@@ -71,6 +83,9 @@ attributes =     {
  Array of search objects
  */
 @property (nonatomic, strong) NSArray *searchObjects;
+
+@property (nonatomic, strong) NSString *searchCriteria;
+
 
 + (NSDictionary *) getMappingDictionary;
 @end

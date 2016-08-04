@@ -37,9 +37,9 @@
 
 #pragma mark - Online seach methods
 - (void)performOnlineSearchWithSearchProcess:(SFMSearchProcessModel *)searchProcess
-                             andSearchText:(NSString *)searchText {
+                               andSearchText:(NSString *)searchText {
     
-   
+    
     self.searchText = searchText;
     self.searchProcessModel = searchProcess;
     [self removeAllCacheData];
@@ -73,7 +73,7 @@
     
     NSMutableDictionary *searchOperatorDict = [[NSMutableDictionary alloc]init];
     [searchOperatorDict setValue:kSFMSearchOperator forKey:kSVMXKey];
-    [searchOperatorDict setValue:@"Contains" forKey:kSVMXValue];
+    [searchOperatorDict setValue:self.searchProcessModel.searchCriteria forKey:kSVMXValue]; // 029883
     [valueMapArray addObject:searchOperatorDict];
     
     NSMutableDictionary *keyWordDict = [[NSMutableDictionary alloc]init];
@@ -233,7 +233,7 @@
         NSMutableArray *allIdsArray = [[NSMutableArray alloc] init];
         NSArray *allRecords = [onlineDataDictionary objectForKey:searchObject.objectId];
         for (TransactionObjectModel *transactionModel in allRecords) {
-           NSDictionary *valueDictionary =  [transactionModel getFieldValueDictionary];
+            NSDictionary *valueDictionary =  [transactionModel getFieldValueDictionary];
             SFMRecordFieldData *fieldData = [valueDictionary objectForKey:kId];
             if (fieldData.internalValue != nil) {
                 [allIdsArray addObject:fieldData.internalValue];
@@ -287,7 +287,7 @@
             }
         }
     }
-
+    
     SFMRecordFieldData *recordField = [[SFMRecordFieldData alloc] initWithFieldName:fieldName value:internalValue andDisplayValue:displayValue];
     return recordField;
 }
