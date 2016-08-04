@@ -3,16 +3,21 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.010
+Version = 16.49.011
 ===========================================
 
 Defect:
 ==================
 
+Forward ported:
+
+33878
+29883
+
+
 Feature:
 ==================
-IPAD-4249 Clients to send mandatory attributes to server
-…
+
 ——————
 
 NOTE:
