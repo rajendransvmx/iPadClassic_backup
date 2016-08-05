@@ -279,6 +279,13 @@
     NSString *projectTitle = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
     rootController.title = projectTitle;
  */
+    // VA
+    self.window.rootViewController.view.accessibilityLabel = @"kAppName";
+    NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+    self.window.rootViewController.view.accessibilityValue = appName;
+    
+    rootController.title = appName;
+    
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window setRootViewController:rootController];
     [self.window makeKeyAndVisible];
@@ -340,10 +347,6 @@ forLocalNotification:(UILocalNotification *)notification
     [[SMLocalNotificationManager sharedInstance] clearBadgeCount];
     [[AttachmentsUploadManager sharedManager] modelUnderUploadProcess];
     
-    // VA: app name
-    NSString *appName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
-    self.window.rootViewController.accessibilityLabel = @"appName";
-    self.window.rootViewController.title = appName;
     
 }
 

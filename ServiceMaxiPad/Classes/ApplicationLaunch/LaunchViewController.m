@@ -48,6 +48,9 @@
 {
     [super viewDidLoad];
     
+    //  VA
+    [signInButton setAccessibilityLabel:@"Sigin Portrait"];
+    
     [signInButton addTarget:self action:@selector(signInButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     if(UIDeviceOrientationIsPortrait(self.interfaceOrientation))
     {
