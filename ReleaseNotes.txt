@@ -3,16 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.011
+Version = 16.49.012
 ===========================================
 
 Defect:
 ==================
 
-Forward ported:
-
-33878
-29883
 
 
 Feature:
@@ -22,4 +18,4 @@ Feature:
 
 NOTE:
 
-Name Space: SVMXDEV
+Name Space: SVMXC
