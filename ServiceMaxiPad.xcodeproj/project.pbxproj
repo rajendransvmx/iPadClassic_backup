@@ -1007,8 +1007,6 @@
 		A64AADA31CEDCC37008839FB /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA21CEDCC37008839FB /* libiconv.tbd */; };
 		A64AADA51CEDCC4F008839FB /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA41CEDCC4F008839FB /* CoreFoundation.framework */; };
 		A64AADA71CEDCC89008839FB /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA61CEDCC89008839FB /* CoreTelephony.framework */; };
-		A64AADA91CEDCCA7008839FB /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA81CEDCCA7008839FB /* AdSupport.framework */; };
-		A64AADAA1CEDCCE9008839FB /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD9A1CEDCBF3008839FB /* libzbar.a */; };
 		A64AADAF1CF2F9E5008839FB /* SMXHourAndMinLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 184A8DBB19E7A0BE006DA6BE /* SMXHourAndMinLabel.m */; };
 		A64AADB01CF2F9E5008839FB /* ZKOAuthViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A9ECC19E6A15600919345 /* ZKOAuthViewController.m */; };
 		A64AADB11CF2F9E5008839FB /* SSZipArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 184A8F1919E7B7AD006DA6BE /* SSZipArchive.m */; };

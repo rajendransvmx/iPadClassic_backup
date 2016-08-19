@@ -3,19 +3,20 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.012
+Version = 16.49.013
 ===========================================
 
 Defect:
 ==================
-
+035387
 
 
 Feature:
 ==================
-
+	
+iPad App: Getting an exception after Step 1 during initial sync
 ——————
 
 NOTE:
 
-Name Space: SVMXC
+Name Space: SVMXDEV
