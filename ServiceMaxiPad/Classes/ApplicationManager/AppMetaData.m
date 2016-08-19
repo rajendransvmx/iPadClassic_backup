@@ -99,9 +99,13 @@ NSString* deviceName()
 - (void)loadApplicationMetaData
 {
     //013404
-    if (self.clientInfo == nil) {
-        
+    /*if (self.clientInfo == nil) { */
+    
+    if (self.clientInfo == nil)
+    {
         self.clientInfo = [NSMutableDictionary dictionary];
+
+    }
         UIDevice *currentDevice = [UIDevice currentDevice];
         
         NSString *type = [currentDevice model];
@@ -154,8 +158,9 @@ NSString* deviceName()
         
         NSArray *clientInfoArray = [[NSArray alloc] initWithObjects:dictionary, nil];
         
-        [clientInfo setObject:clientInfoArray forKey:@"clientInfo"];
-    }
+        [self.clientInfo setObject:clientInfoArray forKey:@"clientInfo"];
+   /* } */
+
 }
 #pragma mark - Instance Methods
 
@@ -185,7 +190,7 @@ NSString* deviceName()
 
 - (NSDictionary *)getApplicationMetaInfo
 {
-    return clientInfo;
+    return self.clientInfo;
 }
 
 
