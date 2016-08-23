@@ -33,12 +33,17 @@
 #import "StringUtil.h"
 #import "SMLogger.h"
 #import "PushNotificationHeaders.h"
+#import "FactoryDAO.h"
+#import "AttachmentErrorDAO.h"
+#import "AttachmentErrorService.h"
 
 
 #define MaximumDuration 120
 static NSInteger const kDeleteButton = 321;
 static NSString *const kMovExtension = @"mov";
 static NSString *const kJpgExtension = @"jpg";
+static NSString *const kAttachmentErrorMessage = @"message";
+static NSString *const kAttachmentErrorCode = @"errorCode";
 
 @interface ImagesVideosViewController ()
 
@@ -312,15 +317,22 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
             ![_downloadManager.downloadingDictionary objectForKey:selectedModel.localId] &&
             [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
         {
-            if (selectedModel.errorCode)
+            if (!selectedModel.errorCode)
             {
                 selectedModel.errorCode = 0;
                 selectedModel.errorMessage = nil;
                 [self.imagesAndVideosArray replaceObjectAtIndex:indexPath.row withObject:selectedModel];
                 [self.collectionView reloadItemsAtIndexPaths:[NSArray arrayWithObject:indexPath]];
-            }
-            [_downloadManager addDocumentAttachmentForDownload:selectedModel];
+                
+                id <AttachmentErrorDAO> attachmentErrorService = [FactoryDAO serviceByServiceType:ServiceTypeAttachmentError];
+                BOOL status =[attachmentErrorService insertAttachmentErrorTableWithModel:selectedModel];
+                if  (status){
+                    [_downloadManager addDocumentAttachmentForDownload:selectedModel];
+                    
+                }
+
                 [self.collectionView deselectItemAtIndexPath:indexPath animated:YES];
+            }
         }
     }
 }
@@ -397,6 +409,44 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
             UIImage *videoImage = [AttachmentUtility getThumbnailImageForFilePath:[AttachmentUtility filePathForAttachment:attachmentModel]];
             attachmentModel.thumbnailImage = [UIImage scaleImage:videoImage toSize:CGSizeMake(170.0f, 170.0f)];
         }
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSString * filePath = [AttachmentUtility getFullPath:attachmentId];
+        filePath=[filePath stringByAppendingString:attachmentModel.extensionName];
+        NSString * fileContent=[[NSString alloc]initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+        SXLogInfo(@"%@",fileContent);
+        id <AttachmentErrorDAO> attachmentErrorService = [FactoryDAO serviceByServiceType:ServiceTypeAttachmentError];
+
+        NSData *fileData = [fileContent dataUsingEncoding:NSUTF8StringEncoding];
+        if (fileData){
+            id fileArray=[NSJSONSerialization JSONObjectWithData:fileData options:0 error:nil];
+            if ([fileArray isKindOfClass:[NSArray class]]) {
+                for (NSDictionary *fileJson in fileArray) {
+                    
+                    if([fileJson objectForKey:kAttachmentErrorCode]){
+                        attachmentModel.errorCode=NSURLErrorFileDoesNotExist;
+                        attachmentModel.errorMessage =[fileJson objectForKey:kAttachmentErrorMessage];
+                        BOOL statusError=[attachmentErrorService updateAttachmentErrorTableWithModel:attachmentModel];
+                        if(statusError){
+                            NSError *fileManagerError;
+                            [fileManager removeItemAtPath:filePath error:&fileManagerError];
+                            if(fileManagerError){
+                                SXLogInfo(@"Error Deleting : %@",fileManagerError.description);
+                            }
+                        }
+                    }
+                }
+                
+            }
+            
+        }
+        else{
+            attachmentModel.isDownloaded = YES;
+            [attachmentErrorService deleteAttachmentsFromDBDirectoryForParentId:attachmentModel.parentId];
+        }
+        
+        
+        
         [self.imagesAndVideosArray replaceObjectAtIndex:row withObject:attachmentModel];
         //TODO: Remove from attachment error table
     }
@@ -418,6 +468,11 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
         [self.imagesAndVideosArray replaceObjectAtIndex:row withObject:attachmentModel];
         //TODO : Update database attachment error table
     }
+    
+    id <AttachmentErrorDAO> attachmentErrorService = [FactoryDAO serviceByServiceType:ServiceTypeAttachmentError];
+    [attachmentErrorService deleteAttachmentsFromDBDirectoryForParentId:attachmentModel.parentId];
+    
+    
     [self.collectionView reloadItemsAtIndexPaths:[NSArray arrayWithObject:indexPathToRefresh]];
     
 }

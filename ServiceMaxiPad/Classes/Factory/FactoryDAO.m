@@ -10,6 +10,7 @@
 #import "SFProcessDAO.h"
 #import "SFProcessService.h"
 #import "AttachmentService.h"
+#import "AttachmentErrorService.h"
 #import "MobileDeviceTagDAO.h"
 #import "MobileDeviceTagService.h"
 #import "SFExpressionService.h"
@@ -148,6 +149,9 @@
             break;
         case ServiceTypeAttachmentLocal:
             serviceObject = [[AttachmentLocalService alloc] init];
+            break;
+        case ServiceTypeAttachmentError:
+            serviceObject = [[AttachmentErrorService alloc] init];
             break;
         case ServiceTypeNamedSearch:
             serviceObject = [[SFNamedSearchService alloc] init];

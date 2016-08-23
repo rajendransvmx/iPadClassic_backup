@@ -189,6 +189,8 @@ extern NSString *const kAttachmentsTableName;
 //Attachments Documents, Images and Videos
 extern NSString *const kAttachmentTableName;
 extern NSString *const kAttachmentLocalTableName;
+extern NSString *const kAttachmentErrorTableName;
+
 
 /* SFExpression table */
 extern NSString *const kSFExpressionTableName;

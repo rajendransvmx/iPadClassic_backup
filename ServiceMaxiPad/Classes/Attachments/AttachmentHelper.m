@@ -10,6 +10,7 @@
 #import "FactoryDAO.h"
 #import "AttachmentService.h"
 #import "AttachmentDAO.h"
+#import "AttachmentErrorDAO.h"
 #import "AttachmentUtility.h"
 #import "AttachmentsDownloadManager.h"
 #import "DateUtil.h"
@@ -37,8 +38,12 @@ static NSString *const kThirdPartyApps                  = @"Third Party Apps";
 +(NSMutableArray*)getDocAttachmentsLinkedToParentId:(NSString*)parentsfId andOPDocsForRecordId:(NSString*)recordId {
     
     id <AttachmentDAO> attachmentService = [FactoryDAO serviceByServiceType:ServiceTypeAttachment];
+    id <AttachmentErrorDAO> attachmentErrorService = [FactoryDAO serviceByServiceType:ServiceTypeAttachmentError];
+
     
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kAttachmentTXParentId operatorType:SQLOperatorEqual andFieldValue:parentsfId];
+    DBCriteria * errorCriteria = [[DBCriteria alloc] initWithFieldName:kAttachmentERParentSFId operatorType:SQLOperatorEqual andFieldValue:parentsfId];
+    NSArray *errorAttachmentArray = [attachmentErrorService fetchAttachmentsErrorRecordsByFields:nil andCriteria:errorCriteria withDistinctFlag:NO];
     NSArray *attachmentArray = [attachmentService fetchRecordsByFields:nil andCriteria:criteria withDistinctFlag:NO];
     NSDictionary *videosDict = [AttachmentUtility videoTypesDict];
     NSDictionary *imagesDict = [AttachmentUtility imageTypesDict];
@@ -92,6 +97,18 @@ static NSString *const kThirdPartyApps                  = @"Third Party Apps";
             [documentsArray addObject:attachmentModel];
         }
     }
+    
+    for (int index=0; index<documentsArray.count; index++) {
+        AttachmentTXModel *attachmentModel=[documentsArray objectAtIndex:index];
+        for (AttachmentTXModel *errorModel in errorAttachmentArray) {
+            if ([errorModel.localId isEqualToString:attachmentModel.localId]) {
+                attachmentModel.errorCode=errorModel.errorCode;
+                attachmentModel.errorMessage=errorModel.errorMessage;
+                [documentsArray replaceObjectAtIndex:index withObject:attachmentModel];
+            }
+        }
+    }
+    
     NSSortDescriptor *dateSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"lastModifiedDate" ascending:NO];
     [documentsArray sortUsingDescriptors:[NSArray arrayWithObject:dateSortDescriptor]];
     return documentsArray;
@@ -147,6 +164,20 @@ static NSString *const kThirdPartyApps                  = @"Third Party Apps";
             }
         }
         
+    }
+    
+    id <AttachmentErrorDAO> attachmentErrorService = [FactoryDAO serviceByServiceType:ServiceTypeAttachmentError];
+    DBCriteria * errorCriteria = [[DBCriteria alloc] initWithFieldName:kAttachmentERParentSFId operatorType:SQLOperatorEqual andFieldValue:parentsfId];
+    NSArray *errorAttachmentArray = [attachmentErrorService fetchAttachmentsErrorRecordsByFields:nil andCriteria:errorCriteria withDistinctFlag:NO];
+    for (int index=0; index<imagesVideosArray.count; index++) {
+        AttachmentTXModel *attachmentModel=[imagesVideosArray objectAtIndex:index];
+        for (AttachmentTXModel *errorModel in errorAttachmentArray) {
+            if ([errorModel.localId isEqualToString:attachmentModel.localId]) {
+                attachmentModel.errorCode=errorModel.errorCode;
+                attachmentModel.errorMessage=errorModel.errorMessage;
+                [imagesVideosArray replaceObjectAtIndex:index withObject:attachmentModel];
+            }
+        }
     }
     NSSortDescriptor *dateSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"lastModifiedDate" ascending:NO];
     [imagesVideosArray sortUsingDescriptors:[NSArray arrayWithObject:dateSortDescriptor]];

@@ -201,7 +201,9 @@ NSString *const kAttachmentsTableName         = @"Attachments";
 
 //Attachments Documents, Images and Videos
 NSString *const kAttachmentTableName          = @"Attachment";
-NSString *const kAttachmentLocalTableName    = @"AttachmentLocal";
+NSString *const kAttachmentLocalTableName     = @"AttachmentLocal";
+NSString *const kAttachmentErrorTableName     = @"AttachmentError";
+
 
 /** SFExpression */
 NSString *const kSFExpressionTableName        = @"SFExpression";
