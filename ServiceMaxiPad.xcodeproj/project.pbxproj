@@ -876,6 +876,7 @@
 		5BEFF7B11A24450C0096B254 /* EditableDataValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B01A24450C0096B254 /* EditableDataValidator.m */; };
 		5BEFF7B31A248B950096B254 /* cloud-download.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B21A248B950096B254 /* cloud-download.png */; };
 		5BF1CFFE1A88BEC300F94471 /* SMXMonthCellEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */; };
+		67919D071D6D7A95005E0954 /* AttachmentErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 67919D061D6D7A95005E0954 /* AttachmentErrorService.m */; };
 		6A13E9CC1A9AB6DC00D12CED /* libsqlcipher.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A13E9CB1A9AB6DC00D12CED /* libsqlcipher.a */; };
 		6A1B48031A05FED00003BAA5 /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A1B48021A05FED00003BAA5 /* DatabaseManager.m */; };
 		6A1BCAFD1AA85DAB0074AB7D /* EventTransactionObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A1BCAFC1AA85DAB0074AB7D /* EventTransactionObjectModel.m */; };
@@ -3980,6 +3981,9 @@
 		5BEFF7B21A248B950096B254 /* cloud-download.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cloud-download.png"; sourceTree = "<group>"; };
 		5BF1CFFC1A88BEC300F94471 /* SMXMonthCellEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMonthCellEvent.h; sourceTree = "<group>"; };
 		5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMonthCellEvent.m; sourceTree = "<group>"; };
+		67919D051D6D7A95005E0954 /* AttachmentErrorService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorService.h; sourceTree = "<group>"; };
+		67919D061D6D7A95005E0954 /* AttachmentErrorService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorService.m; sourceTree = "<group>"; };
+		67919D081D6D7AAC005E0954 /* AttachmentErrorDAO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorDAO.h; sourceTree = "<group>"; };
 		6A13E9CB1A9AB6DC00D12CED /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsqlcipher.a; sourceTree = "<group>"; };
 		6A1B48011A05FED00003BAA5 /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseManager.h; sourceTree = "<group>"; };
 		6A1B48021A05FED00003BAA5 /* DatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseManager.m; sourceTree = "<group>"; };
@@ -5707,6 +5711,8 @@
 		183A9F2319E6B18400919345 /* DAOService */ = {
 			isa = PBXGroup;
 			children = (
+				67919D051D6D7A95005E0954 /* AttachmentErrorService.h */,
+				67919D061D6D7A95005E0954 /* AttachmentErrorService.m */,
 				C3C22DCC1AB2F0840072396E /* AttachmentLocalService.h */,
 				C3C22DCD1AB2F0840072396E /* AttachmentLocalService.m */,
 				C3EF978F1A036D0500476293 /* AttachmentService.h */,
@@ -5826,6 +5832,7 @@
 		183A9F7419E6B18400919345 /* DAOServiceProtocols */ = {
 			isa = PBXGroup;
 			children = (
+				67919D081D6D7AAC005E0954 /* AttachmentErrorDAO.h */,
 				C3C22DCB1AB2F0780072396E /* AttachmentLocalDAO.h */,
 				C3EF97921A036D1D00476293 /* AttachmentDAO.h */,
 				183A9F7519E6B18400919345 /* AttachmentsDAO.h */,
@@ -10303,6 +10310,7 @@
 				4083C3F51A0110F30029188D /* OPDocHTML.m in Sources */,
 				18A2178019E57ED000F22EA6 /* SMAppDelegate.m in Sources */,
 				FD09E1CD1D4A088A00972C95 /* ZXPDF417ErrorCorrection.m in Sources */,
+				67919D071D6D7A95005E0954 /* AttachmentErrorService.m in Sources */,
 				FD09E1341D4A088A00972C95 /* ZXSMSParsedResult.m in Sources */,
 				183A9FD819E6B18500919345 /* SFNamedSearchService.m in Sources */,
 				184A8E8019E7A0BE006DA6BE /* TKCalendarMonthViewController.m in Sources */,
