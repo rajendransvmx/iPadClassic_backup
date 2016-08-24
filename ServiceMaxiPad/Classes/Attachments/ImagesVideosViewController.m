@@ -400,7 +400,6 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
     
     if ([AttachmentUtility doesFileExists:[AttachmentUtility fileNameForAttachment:attachmentModel]])
     {
-        attachmentModel.isDownloaded = YES;
         if ([_downloadManager.imgDict valueForKey:extension])
         {
             attachmentModel.thumbnailImage = [AttachmentUtility scaleImage:[AttachmentUtility filePathForAttachment:attachmentModel] toSize:CGSizeMake(170.0f, 170.0f)];
