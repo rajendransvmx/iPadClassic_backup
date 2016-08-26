@@ -760,13 +760,13 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 
 + (NSDate *)localDateForGMTDate:(NSDate *)dateInGMT
 {
-   NSDate *localDateTime = [NSDate dateWithTimeInterval:[[NSTimeZone systemTimeZone] secondsFromGMT]
-                                              sinceDate:dateInGMT];
+   /*NSDate *localDateTime = [NSDate dateWithTimeInterval:[[NSTimeZone systemTimeZone] secondsFromGMT]
+                                              sinceDate:dateInGMT]; */
   
     
     //HS 21Jul
     
-    /*
+    
     NSDate *localDateTime;
     NSTimeZone *localTimeZone = [NSTimeZone localTimeZone];
     BOOL isDayLightTimeZone = [localTimeZone isDaylightSavingTime];
@@ -781,7 +781,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         localDateTime = [NSDate dateWithTimeInterval:[[NSTimeZone systemTimeZone] secondsFromGMT]
                                            sinceDate:dateInGMT];
     }
-     */
+    
     
    
     return localDateTime;
