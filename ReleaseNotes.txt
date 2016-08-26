@@ -3,11 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.49.016
+Version = 16.49.017
 ===========================================
 
 Defect:
 ==================
+
 
 
 
@@ -19,3 +20,4 @@ Feature:
 NOTE:
 
 Name Space: SVMXC
+ProductIq static resource updated.
