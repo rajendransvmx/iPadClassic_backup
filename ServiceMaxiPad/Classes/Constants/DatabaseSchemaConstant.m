@@ -26,7 +26,7 @@
 
 #import "DatabaseSchemaConstant.h"
 
-NSString *const kTableAttachmentErrorSchema = @"CREATE TABLE AttachmentError ('localId' VARCHAR, 'attachmentId' VARCHAR, 'errorMessage' VARCHAR, 'errorCode' INTEGER, 'fileName' VARCHAR, 'syncFlag' VARCHAR, 'type' VARCHAR, 'parentLocalId' VARCHAR, 'status' VARCHAR, 'action' VARCHAR, 'parentId' VARCHAR)";
+NSString *const kTableAttachmentErrorSchema = @"CREATE TABLE AttachmentError ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'attachment_id' VARCHAR, 'error_message' VARCHAR, 'error_code' INTEGER, 'file_name' VARCHAR, 'Sync_Flag' VARCHAR, 'type' VARCHAR, 'parent_localid' VARCHAR, 'status' VARCHAR, 'action' VARCHAR, 'parent_sfid' VARCHAR)";
 
 NSString *const kTableAttachmentsSchema = @"CREATE TABLE IF NOT EXISTS Attachments (attachmentId text(18) PRIMARY KEY NOT NULL, attachmentName text(255), parentId VARCHAR, attachmentBody BLOB)";
 

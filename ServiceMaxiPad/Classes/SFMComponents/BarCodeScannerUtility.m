@@ -8,11 +8,10 @@
 
 #import "BarCodeScannerUtility.h"
 #import "SMAppDelegate.h"
-#import "BarCoderScannerViewController.h"
 
-@interface BarCodeScannerUtility () <BarCoderScannerViewDelegate>
+@interface BarCodeScannerUtility ()
 
-@property (nonatomic, strong)BarCoderScannerViewController *scanner;
+@property(nonatomic, strong) ZBarReaderViewController *reader;
 
 @end
 
@@ -38,56 +37,89 @@
 - (void)loadScannerOnViewController:(UIViewController *)viewController forModalPresentationStyle:(NSInteger)presentationStyle {
     
     SXLogDebug(@"\n\n\n Loaded scanner");
-    self.scanner = [[BarCoderScannerViewController alloc] initWithNibName:@"BarCoderScannerViewController" bundle:nil];
-    self.scanner.readerDelegate = self;
-    self.scanner.view.frame = viewController.view.frame;
-    if(presentationStyle)
-        self.scanner.modalPresentationStyle = presentationStyle;
+    // ADD: present a barcode reader that scans from the camera feed
+    self.reader = [ZBarReaderViewController new];
+    self.reader.readerDelegate = self;
+    self.reader.supportedOrientationsMask = ZBarOrientationMaskAll;
     
-    if(presentationStyle ==   UIModalPresentationFullScreen) {
-        CGRect viewframe = [[UIScreen mainScreen] bounds];
-         if (viewframe.size.width != [UIApplication sharedApplication].statusBarFrame.size.width) {
-         viewframe = CGRectMake(0, 0, viewframe.size.height, viewframe.size.width);
-         }
-         self.scanner.view.frame = viewframe;
-    }
+    ZBarImageScanner *scanner = self.reader.scanner;
+    
+    // DO: (optional) additional reader configuration can be done here
 
-    [viewController presentViewController:self.scanner animated:NO completion:^{
-        
+    // Disabling rarely used I2/5 to improve performance
+    [scanner setSymbology: ZBAR_I25
+                   config: ZBAR_CFG_ENABLE
+                       to: 0];
+    
+    // present and release the controller
+    // Madhusudhan #023777, UI distorted on orientation.
+    if(presentationStyle)
+    self.reader.modalPresentationStyle = presentationStyle;
+    [viewController presentViewController:self.reader animated:YES completion:^{
+        [self.reader.readerView stop];
+        [self.reader.readerView flushCache];
+        [self.reader.readerView start];
     }];
 
+}
+#pragma mark - ZBar Delegates.
+- (void) imagePickerController: (UIImagePickerController*) reader didFinishPickingMediaWithInfo: (NSDictionary*) info
+{
+    // ADD: get the decode results
+    id<NSFastEnumeration> results = [info objectForKey: ZBarReaderControllerResults];
+    
+    ZBarSymbol *symbol = nil;
+    for(symbol in results)
+        //Grab the first barcode
+        break;
+    
+    //do something useful with the barcode data
+    if (self.scannerDelegate && [self.scannerDelegate respondsToSelector:@selector(barcodeSuccessfullyDecodedWithData:)]) {
+        
+        [self.scannerDelegate performSelector:@selector(barcodeSuccessfullyDecodedWithData:) withObject:symbol.data];
+    }
+    
+    //    using the barcode original image
+    //    imageview.image = [info objectForKey: UIImagePickerControllerOriginalImage];
+    
+    // ADD: dismiss the controller (NB dismiss from the *reader*!)
+    
+    if (![reader isBeingDismissed] && ![reader isBeingPresented]) {
+        SXLogDebug(@"\n\n Dismissed : Barcode being dismissed : %d, Barcode being Presented %d",[reader isBeingDismissed],[reader isBeingPresented]);
+        [reader dismissViewControllerAnimated:YES completion:^{
+            [self.reader.readerView stop];
+            [self.reader.readerView flushCache];
+            self.reader = nil;
+        }];
+    }
+    SXLogDebug(@"\n\nBarcode being dismissed : %d, Barcode being Presented %d",[reader isBeingDismissed],[reader isBeingPresented]);
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    
+   
+    if (self.scannerDelegate && [self.scannerDelegate respondsToSelector:@selector(barcodeCaptureCancelled)]) {
+        
+        [self.scannerDelegate performSelector:@selector(barcodeCaptureCancelled)];
+    }
+    
+    if (![picker isBeingDismissed] && ![picker isBeingPresented]) {
+
+        SXLogDebug(@"\n\nDismissed : Barcode being dismissed : %d, Barcode being Presented %d",[picker isBeingDismissed],[picker isBeingPresented]);
+        [picker dismissViewControllerAnimated:YES completion:^{
+            [self.reader.readerView stop];
+            [self.reader.readerView flushCache];
+            self.reader = nil;
+        }];
+    }
+    SXLogDebug(@"\n\nBarcode being dismissed : %d, Barcode being Presented %d",[picker isBeingDismissed],[picker isBeingPresented]);
 }
 
 - (void)dealloc
 {
     _scannerDelegate = nil;
-    _scanner = nil;
+    _reader = nil;
 }
-
-#pragma mark ZXingDelegates
-
-- (void)decoded:(NSString*)data {
-    [self.scanner dismissViewControllerAnimated:NO completion:^{
-        self.scanner = nil;
-        if (self.scannerDelegate && [self.scannerDelegate respondsToSelector:@selector(barcodeSuccessfullyDecodedWithData:)]) {
-            
-            [self.scannerDelegate performSelector:@selector(barcodeSuccessfullyDecodedWithData:) withObject:data];
-        }
-    }];
-    
-}
-
-- (void)cancelled {
-    
-    [self.scanner dismissViewControllerAnimated:NO completion:^{
-        self.scanner = nil;
-        if (self.scannerDelegate && [self.scannerDelegate respondsToSelector:@selector(barcodeCaptureCancelled)]) {
-            [self.scannerDelegate performSelector:@selector(barcodeCaptureCancelled)];
-        }
-        
-    }];
-}
-
 
 
 @end

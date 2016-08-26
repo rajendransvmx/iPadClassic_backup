@@ -239,11 +239,6 @@ static NSString *kFormulaDateForModule = @"yyyy-MM-dd";
 + (NSDate *)dateFromString:(NSString *)string inFormat:(NSString *)format;
 
 
-//Method for returning DateTime for DaylightTime Zone
-+ (NSDate *)dateFromStringForDaylightTimeZone:(NSString *)gmtDate;
-
-
-
 /**
  * @name   stringFromDate:(NSDate *)date inFormat:(NSString *)format
  *

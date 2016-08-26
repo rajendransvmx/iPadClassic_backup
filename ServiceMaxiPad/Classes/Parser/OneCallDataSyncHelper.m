@@ -254,9 +254,12 @@
         DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:@"sfId" operatorType:SQLOperatorNotIn andFieldValues:idsArray];
         DBCriteria *aCriteria2 = [[DBCriteria alloc] initWithFieldName:@"objectName" operatorType:SQLOperatorEqual andFieldValue:tempObjectName];
         
-        NSArray *criteriaArray = @[aCriteria1,aCriteria2];
+        //035422
+        DBCriteria *aCriteria3 = [[DBCriteria alloc] initWithFieldName:@"sfId" operatorType:SQLOperatorIsNotNull andFieldValues:nil];
         
-        DBRequestDelete *deleteRequest = [[DBRequestDelete alloc] initWithTableName:@"Sync_Records_Heap" whereCriteria:criteriaArray andAdvanceExpression:@"1 AND 2"];
+        NSArray *criteriaArray = @[aCriteria1,aCriteria2, aCriteria3];
+        
+        DBRequestDelete *deleteRequest = [[DBRequestDelete alloc] initWithTableName:@"Sync_Records_Heap" whereCriteria:criteriaArray andAdvanceExpression:@"1 AND 2 AND 3"];
         [self.commonServices executeStatement:[deleteRequest query]];
         
         deleteRequest = [[DBRequestDelete alloc] initWithTableName:kModifiedRecords whereCriteria:criteriaArray andAdvanceExpression:nil];

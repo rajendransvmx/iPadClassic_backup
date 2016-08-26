@@ -323,36 +323,6 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
                 
                 [ResolveConflictsHelper deleteConflictRecord:syncConflictModel];
                 //conflictsResolved = TRUE;
-                
-                //HS 2June -- Remove Child record related to Header roecord, in case of Remove.
-                NSArray *childRecordArray = [ResolveConflictsHelper fetchChildRecordsFromModifiedRecords:deleteId];
-                
-                
-                if (childRecordArray.count > 0) {
-                    
-                    NSMutableArray *recordIds  = [[NSMutableArray alloc] init];
-                    NSMutableArray *childObjectNameArr = [[NSMutableArray alloc]init];
-
-                    
-                    for (ModifiedRecordModel *mrModel in childRecordArray) {
-                        
-                         [ResolveConflictsHelper deleteRecordWithFieldName:@"localId" forRecord:mrModel.recordLocalId fromObjectName:mrModel.objectName];
-                        
-                        if ([StringUtil isStringNotNULL:mrModel.recordLocalId] && ![StringUtil isStringEmpty:mrModel.recordLocalId]) {
-                            [recordIds addObject:mrModel.recordLocalId];
-                        }
-                        
-                    }
-
-                    
-                     ModifiedRecordsService *modifiedRrcordServiceObj = [[ModifiedRecordsService alloc] init];
-                   
-                        [modifiedRrcordServiceObj deleteRecordsForRecordLocalIds:recordIds];
-                    
-                }
-                
-                
-                //HS 2June ends here
             }
             
             if([syncConflictModel.overrideFlag isEqualToString:kResolveConflictHold]) {
@@ -486,22 +456,6 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     }
     return recordIds;
 }
-
-//HS 2June
-+(NSArray *)fetchChildRecordsFromModifiedRecords:(NSString *)parentRecordLocalId
-{
-    NSArray *childModifiedRecords = nil;
-    id service = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-    if ([service conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
-        
-        DBCriteria *criteria = [[DBCriteria alloc]initWithFieldName:@"parentLocalId" operatorType:SQLOperatorEqual andFieldValue:parentRecordLocalId];
-        
-        childModifiedRecords =  [service fetchDataForFields:@[@"recordLocalId",@"objectName"] criterias:@[criteria] objectName:kModifiedRecords andModelClass:[ModifiedRecordModel class]];
-    }
-    
-    return childModifiedRecords;
-}
-//
 
 +(NSInteger)getNonHoldConflictsCount {
     NSInteger count = 0;

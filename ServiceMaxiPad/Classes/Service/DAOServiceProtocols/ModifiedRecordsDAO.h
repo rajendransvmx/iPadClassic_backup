@@ -39,7 +39,6 @@
 -(void)updateRecordsSent:(ModifiedRecordModel *)model;
 - (BOOL)doesAnyRecordExistForSyncing;
 - (BOOL)checkIfNonInsertRecordsExist;
--(BOOL)checkIfNonAfterSaveInsertRecordsExist;//HS1June
 - (NSArray *)getInsertRecordsAsArray;
 
 @end

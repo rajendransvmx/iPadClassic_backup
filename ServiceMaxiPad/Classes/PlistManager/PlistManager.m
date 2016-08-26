@@ -289,10 +289,6 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
     
     [userDefaults synchronize];
     [PlistManager loadCustomerOrgInfo];
-    
-    //Defect Fix:035387
-    [[AppMetaData sharedInstance] loadApplicationMetaData];
-
     [[CustomerOrgInfo sharedInstance] explainMe];
 }
 

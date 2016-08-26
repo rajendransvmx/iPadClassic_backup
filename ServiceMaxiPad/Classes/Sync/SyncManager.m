@@ -338,11 +338,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                     }
                     
                 }
-            else//HS 16June Defect Fix:020834
-            {
-                BOOL conflictResolved = [ResolveConflictsHelper checkResolvedConflicts];
-                
-            }//HS 16June
             }
             break;
             
@@ -534,7 +529,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 
 - (void)performDataSync
 {
-    
     [self initiateCustomDataSync];
    // [self initiateDataSync];
 }
@@ -873,7 +867,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
         if (!didRestart) {
             
             [self updateSyncStatus];
-            self.isDataSyncInLoop = NO;
+        self.isDataSyncInLoop = NO;
             self.isDataSyncRunning = NO;
             self.dataSyncStatus = SyncStatusSuccess;
             
@@ -2279,13 +2273,8 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
         doesExist =  [modifiedRecordService doesAnyRecordExistForSyncing];
         if (doesExist) {
-            BOOL nonInsertRecordsExist = [modifiedRecordService checkIfNonInsertRecordsExist]; //HS 31May - check for AfterInsert operation type
-            
-            BOOL AfterSaveInsertRecordsExist = [modifiedRecordService checkIfNonAfterSaveInsertRecordsExist]; //HS 31May - check for AfterInsert operation type
-
-            if ((!nonInsertRecordsExist) || ((AfterSaveInsertRecordsExist))) { // if only insert records exist..
-               // if ((!nonInsertRecordsExist) && (!nonAfterSaveInsertRecordsExist)) { // if only insert records exist..
-
+            BOOL nonInsertRecordsExist = [modifiedRecordService checkIfNonInsertRecordsExist];
+            if (!nonInsertRecordsExist) { // if only insert records exist..
                 TransactionObjectService *transObjectService = [[TransactionObjectService alloc] init];
                 SyncErrorConflictService *conflictService = [[SyncErrorConflictService alloc] init];
                 NSArray *insertRecords = [modifiedRecordService getInsertRecordsAsArray];
@@ -2347,16 +2336,17 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 {
     SMAppDelegate *appDelegate = (SMAppDelegate*)[[UIApplication sharedApplication]delegate];
     //HS 13 Jul syncErrorReporting andling for valid "errors"
-    //Defect Fix:033904
-    
+
     if ([appDelegate.syncReportingType isEqualToString:@"always"] || (( [appDelegate.syncReportingType isEqualToString:@"error"]) && ([appDelegate.syncErrorDataArray count]!=0) ) )
     {
-        dispatch_async(_queue, ^{
-             MobileDataUsageExecuter *executor = [[MobileDataUsageExecuter alloc]initWithParentView:nil andFrame:CGRectZero];
-            [executor execute];
-        });
         
-        ConfigureLoggerAccordingToSettings();
+            dispatch_async(_queue, ^{
+                MobileDataUsageExecuter *executor = [[MobileDataUsageExecuter alloc]initWithParentView:nil andFrame:CGRectZero];
+                [executor execute];
+            });
+            
+            ConfigureLoggerAccordingToSettings();
+        
     }
     else
     {

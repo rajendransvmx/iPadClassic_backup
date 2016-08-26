@@ -450,7 +450,6 @@
 -(BOOL)checkIfNonInsertRecordsExist {
     BOOL recordsExist = NO;
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kSyncRecordOperation operatorType:SQLOperatorNotEqual andFieldValue:@"INSERT"];
-    
     NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria] andAdvancedExpression:nil];
     
     if(totalCount > 0) {
@@ -459,23 +458,6 @@
     
     return recordsExist;
 }
-
-//HS 1June
--(BOOL)checkIfNonAfterSaveInsertRecordsExist {
-    BOOL recordsExist = NO;
-    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kSyncRecordOperation operatorType:SQLOperatorEqual andFieldValue:@"AFTERINSERT"];
-    NSInteger totalCount =  [self getNumberOfRecordsFromObject:[self tableName] withDbCriteria:@[criteria] andAdvancedExpression:nil];
-    
-    if(totalCount > 0) {
-        recordsExist = YES;
-    }
-    
-    return recordsExist;
-}
-
-//Make the above common function passing operatortype.
-
-//HS 1June ends here
 -(NSArray *)getInsertRecordsAsArray {
     DBCriteria *criteria = [[DBCriteria alloc]initWithFieldName:@"operation" operatorType:SQLOperatorEqual andFieldValue:@"INSERT"];
     DBRequestSelect *selectQuery = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteria] andAdvanceExpression:nil];

@@ -142,8 +142,6 @@
     return shouldConinue;
 }
 
-
-
 - (void)webViewDidStartLoad:(UIWebView *)webView {
     SXLogDebug(@"webViewDidStartLoad");
 }

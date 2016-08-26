@@ -25,7 +25,6 @@
 #import "CacheManager.h"
 #import "CacheConstants.h"
 
-
 @interface CustomXMLParser ()
 @property(nonatomic, strong) NSMutableDictionary *something;
 @property(nonatomic, strong) NSMutableDictionary *currentDictionary;
@@ -198,14 +197,13 @@
                 //Defect fix:033695
                 CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
                 NSString *methodName = customActionWebserviceModel.methodName;
-                methodName = [self getMethodNameForParsing:methodName];
+               methodName = [self getMethodNameForParsing:methodName];
                 NSDictionary* tempClose = [temp objectForKey:methodName];
                 if (tempClose)
                 {
                     temp = tempClose;
-                    
-                }
 
+                }
             }
             if (temp) {
                 if ([temp isKindOfClass:[NSDictionary class]]) {
@@ -251,25 +249,23 @@
         }
         if (temp) {
             if ([temp isKindOfClass:[NSDictionary class]]) {
-            /*
-               NSDictionary* tempClose = [temp objectForKey:@"closeWorkOrderResponse"]; //HS Same fix take mothod nme from DB
+                /*
+               NSDictionary* tempClose = [temp objectForKey:@"closeWorkOrderResponse"];
                 if (!tempClose)
-                    temp = [temp objectForKey:@"WSNameResponse"];//dont need to check this
+                    temp = [temp objectForKey:@"WSNameResponse"];
                 else
                     temp = tempClose;
-            }
-            */
+                 */
                 //Defect fix:033695 - Part2 Fixed for CustomWebservice Also.
                 CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
                 SFMPage *sfmpage = customActionWebserviceModel.sfmPage;
                 
-                NSString *methodName =  [self methodNameForCustomWebService:sfmpage.process.pageLayout.headerLayout.pageLevelEvents];
+               NSString *methodName =  [self methodNameForCustomWebService:sfmpage.process.pageLayout.headerLayout.pageLevelEvents];
                 if (methodName)
                 {
                     temp = [temp objectForKey:methodName];
                 }
             }
-            
             if (temp) {
                 if ([temp isKindOfClass:[NSDictionary class]]) {
                     temp = [temp objectForKey:@"result"];
@@ -312,6 +308,7 @@
     [self sendNotification:kUpadteWebserviceData andUserInfo:nil];
 }
 
+
 //Defect fix:033695 - Part2 Fixed for CustomWebService Also.
 -(NSString *)methodNameForCustomWebService:(NSArray *)thePageLevelEvent
 {
@@ -336,7 +333,7 @@
     {
         theMethodName = [theURL lastPathComponent];
         theMethodName = [self getMethodNameForParsing:theMethodName];
-        
+
     }
     
     return theMethodName;

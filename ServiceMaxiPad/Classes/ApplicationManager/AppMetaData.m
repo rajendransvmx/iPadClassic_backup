@@ -8,7 +8,6 @@
 
 #import "AppMetaData.h"
 #import <sys/utsname.h>
-#import "CustomerOrgInfo.h"
 
 
 const NSString *kDeviceType = @"type";
@@ -99,13 +98,9 @@ NSString* deviceName()
 - (void)loadApplicationMetaData
 {
     //013404
-    /*if (self.clientInfo == nil) { */
-    
-    if (self.clientInfo == nil)
-    {
+    if (self.clientInfo == nil) {
+        
         self.clientInfo = [NSMutableDictionary dictionary];
-
-    }
         UIDevice *currentDevice = [UIDevice currentDevice];
         
         NSString *type = [currentDevice model];
@@ -123,44 +118,17 @@ NSString* deviceName()
         NSString *osVer =       @"iosversion:";
         NSString *appVer =      @"appversion:";
         NSString *deviceVer =   @"deviceversion:";
-        //HS 19Jul added keys for Sync
-        /*
-         appversion:16.49.002
-         appname:SVMX_MFL
-         userid:005F0000005dz0xIAA
-         clientudid:undefined
-         syncstarttime:Wed, 13 Jul 2016 09:13:56 GMT
-         */
-        NSString *appName = @"appname:";
-        NSString *userId = @"userid:";
-        NSString *clientUDID = @"clientudid:";
-        NSString *syncStartTime = @"syncstarttime:";
-        
-        NSString *udid =  [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        
-        NSString *userid = [userDefaults objectForKey:@"ps_user_id"];
-        
-        
         NSString *iosVersionString = [NSString stringWithFormat:@"%@%@",osVer,self.currentOSVersion ];
         NSString *appVersionString = [NSString stringWithFormat:@"%@%@",appVer,self.currentApplicationVersion];
         NSString *devVersionString = [NSString stringWithFormat:@"%@%@",deviceVer,devVersion];
         
-        NSString *appNameString = [NSString stringWithFormat:@"%@%@",appName,@"SVMX_iPad"];
-        NSString *userIdString = [NSString stringWithFormat:@"%@%@",userId,userid];
-        NSString *clientUDIDString = [NSString stringWithFormat:@"%@%@",clientUDID,udid];
-        NSString *syncStartTimeString = [NSString stringWithFormat:@"%@%@",syncStartTime,@""];
-
-        
-        NSArray *infoArray = [[NSArray alloc ] initWithObjects:iosVersionString,appVersionString,devVersionString,appNameString,userIdString,clientUDIDString,syncStartTimeString, nil];
-        
-        NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:[infoArray mutableCopy],@"clientInfo",type,@"clientType", nil];
+        NSArray *infoArray = [[NSArray alloc ] initWithObjects:iosVersionString,appVersionString,devVersionString, nil];
+        NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:infoArray,@"clientInfo",type,@"clientType", nil];
         
         NSArray *clientInfoArray = [[NSArray alloc] initWithObjects:dictionary, nil];
         
-        [self.clientInfo setObject:clientInfoArray forKey:@"clientInfo"];
-   /* } */
-
+        [clientInfo setObject:clientInfoArray forKey:@"clientInfo"];
+    }
 }
 #pragma mark - Instance Methods
 
@@ -190,7 +158,7 @@ NSString* deviceName()
 
 - (NSDictionary *)getApplicationMetaInfo
 {
-    return self.clientInfo;
+    return clientInfo;
 }
 
 

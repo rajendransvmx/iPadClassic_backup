@@ -207,15 +207,6 @@ extern NSString *const kAttachmentTXName;
 extern NSString *const kAttachmentTXSystemModStamp;
 extern NSString *const kAttachmentTXLastModifiedById;
 
-/*Attachment error objects */
-extern NSString *const kAttachmentERlocalId ;
-extern NSString *const kAttachmentERParentSFId;
-extern NSString *const kAttachmentERId;
-extern NSString *const kAttachmentERName;
-extern NSString *const kAttachmentERErrorCode;
-extern NSString *const kAttachmentERErrorMessage;
-
-
 
 /*NamedSearch constants*/
 extern NSString *const kNamedSearchId;

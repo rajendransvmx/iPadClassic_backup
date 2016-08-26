@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 ServiceMax Inc. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>"
+#import <UIKit/UIKit.h>
 
 #import "SMAppDelegate.h"
 

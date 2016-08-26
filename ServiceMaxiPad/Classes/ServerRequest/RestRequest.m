@@ -1211,16 +1211,8 @@
             {
                 return self.requestParameter.requestInformation;
             }
-            //HS 19Jul updating timeStamp for Server Call
-            NSString *currentTime = [DateUtil gmtStringFromDate:[NSDate date] inFormat:kDateFormatType1];
+            
             NSDictionary *clientDictionary = [[AppMetaData sharedInstance] getApplicationMetaInfo];
-            NSMutableArray *infoArray = [clientDictionary objectForKey:@"clientInfo"];
-             infoArray =  [[infoArray objectAtIndex:0]objectForKey:@"clientInfo"];
-            
-           NSString *syncstartTime = [NSString stringWithFormat:@"%@%@",@"syncstarttime:",currentTime];
-            [infoArray replaceObjectAtIndex:6 withObject:syncstartTime];
-            //HS ends here
-            
             NSMutableDictionary *postDict = [[NSMutableDictionary alloc] initWithDictionary:clientDictionary] ;
            
             if (self.eventName != nil) {

@@ -217,15 +217,6 @@ NSString *const kAttachmentTXName             = @"Name";
 NSString *const kAttachmentTXSystemModStamp   = @"SystemModStamp";
 NSString *const kAttachmentTXLastModifiedById = @"LastModifiedById";
 
-/*Attachment error objects */
-NSString *const kAttachmentERlocalId          = @"localId";
-NSString *const kAttachmentERParentSFId       = @"parentId";
-NSString *const kAttachmentERId               = @"attachmentId";
-NSString *const kAttachmentERName             = @"fileName";
-NSString *const kAttachmentERErrorCode        = @"errorCode";
-NSString *const kAttachmentERErrorMessage     = @"errorMessage";
-
-
 /*NamedSearch constants*/
 NSString *const kNamedSearchId              = @"Id";
 NSString *const kNamedSearchLookupColumn    = ORG_NAME_SPACE@"__Default_Lookup_Column__c";

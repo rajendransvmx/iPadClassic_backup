@@ -757,10 +757,10 @@ PageManagerErrorType;
             continue;
         
         NSArray *matchingKeys = [fieldNameAndInternalValue allKeysForObject:sfId];
-
+        
         for (NSString *key in matchingKeys) {
                 [fieldNameAndInternalValue setValue:newValue forKey:key]; // Defect#025772. all the SFID's in the dictionary shud be replaced by the value.
-            }
+        }
     }
 }
 

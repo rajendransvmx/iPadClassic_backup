@@ -57,8 +57,4 @@
 
 +(NSString *)getJSONStringForThirdPartyAppConnect; // For Numerial Third Party App connect - BSP 12Jun
 
-+ (NSMutableArray*)getAttachmentFields:(AttachmentTXModel*)model;
-
-+ (NSDictionary *)getDataDict:(AttachmentTXModel *)attachmentModel;
-
 @end

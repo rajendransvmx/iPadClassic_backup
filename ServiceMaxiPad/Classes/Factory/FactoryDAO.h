@@ -72,7 +72,6 @@ typedef enum ServiceType : NSUInteger
     ServiceTypeUserGPSLog,                  /** UserGPS Log */
     ServiceTypeAttachment,                  /** Attachment TX images, videos, pdf, doc etc */
     ServiceTypeAttachmentLocal,             /** Locally created attachments **/
-    ServiceTypeAttachmentError,             /** Server deleted attachments **/
     ServiceTypeOPDocHTML,                   /** HTML Table */
     ServiceTypeOPDocSignature,              /** Signature Table */
     ServiceTypeNamedSerachFilter,
