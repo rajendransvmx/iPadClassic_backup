@@ -3,21 +3,21 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.50.002
+Version = 16.50.003
 ===========================================
 
 Defect:
 ==================
-035422
-
-
+n/a
 
 Feature:
 ==================
+n/a
 	
 ——————
 
 NOTE:
 
-Name Space: SVMXC
-Biz Rule and DateTime static resources resource updated.
+1. NameSpace: SVMXC
+2. Launch Images and icons have been changed to reflect SUM 16.
+
