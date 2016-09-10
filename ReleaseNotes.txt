@@ -3,11 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.50.005
+Version = 16.50.006
 ===========================================
 
 Defect:
-Sync Error Reporting AWS service break
+Location service alert dialog message changed for app store push
 
 Feature:
 ==================
@@ -18,5 +18,5 @@ n/a
 NOTE:
 
 1. NameSpace: SVMXC
-2. Static lib “offline.sal.model” reverted back to old one.
+
 
