@@ -3,11 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.50.006
+Version = 16.50.007
 ===========================================
 
 Defect:
-Location service alert dialog message changed for app store push
+added vuforiaview url schema in the plist for PTC vuforiaview app support
 
 Feature:
 ==================
