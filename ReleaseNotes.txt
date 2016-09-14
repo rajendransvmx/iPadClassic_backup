@@ -3,12 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.50.006
+Version = 16.50.007
 ===========================================
 
 Defect:
-Location service alert dialog message changed for app store push
-
+036258 : iOS beta 10.0.1 - when tapped on search in lookups, the app gets hanged on iPad
 Feature:
 ==================
 n/a
