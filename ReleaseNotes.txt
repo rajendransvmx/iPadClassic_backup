@@ -3,11 +3,13 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.50.007
+Version = 16.50.008
 ===========================================
 
 Defect:
-added vuforiaview url schema in the plist for PTC vuforiaview app support
+036258 : 
+IOS beta 10.0.1 - when tapped on search in lookups, the app gets hanged on iPad
+
 
 Feature:
 ==================
