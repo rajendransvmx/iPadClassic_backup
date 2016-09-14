@@ -4,7 +4,7 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.011
+Version = 16.20.010
  
 ===========================================
 
@@ -12,16 +12,8 @@ Version = 16.20.011
 Fixed Defects
 -------------
 
-Forward ported
-
-28248
-12895
-
-BackF ported:
-030322
-Brining PIQ into foreground during MFL initial sync.
-
-1. 031318
+Back ported:
+036258
 
 
 Namespace - SVMXC
