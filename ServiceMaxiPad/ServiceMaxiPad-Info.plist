@@ -41,11 +41,11 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>${PRODUCT_NAME} would like to use your location.</string>
+	<string>Your location will be used to manage, dispatch and schedule your activities in the application.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>This allows ${PRODUCT_NAME} access to your location information</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>${PRODUCT_NAME} would like to use your location.</string>
+	<string>Your location will be used to manage, dispatch and schedule your activities in the application.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
