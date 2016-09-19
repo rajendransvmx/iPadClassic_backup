@@ -1232,13 +1232,13 @@ PageManagerErrorType;
                                                                                              objectName:componemtModel.objectName];
                 record.criteriaObjects = [NSMutableArray arrayWithArray:[expressionParser expressionCriteriaObjects]];
                 record.expression = [expressionParser advanceExpression];
-            
+            }
+        
             NSMutableArray * detailArray = [self getDetailData:record];
-            
             if ([detailArray count] > 0) {
                 [detailRecord setObject:detailArray forKey:componemtModel.sfId];
             }
-        }
+        
     }
     [self resetPicklistAndRecordTypeData];
     
