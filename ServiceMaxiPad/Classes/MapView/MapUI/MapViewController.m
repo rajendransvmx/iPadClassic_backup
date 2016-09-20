@@ -234,7 +234,18 @@
         {
             if ([workOrder.serviceLocationModel isValidAddress])
             {
-                [addressArrayWaypoints addObject: workOrder.serviceLocationModel.serviceLocation];
+                //HS Defect Fix:026894
+                if ((workOrder.serviceLocationModel.latitude) && (workOrder.serviceLocationModel.longitude))
+                {
+                    NSString *latLongStr = [NSString stringWithFormat:@"%@,%@",workOrder.serviceLocationModel.latitude,workOrder.serviceLocationModel.longitude];
+                    [addressArrayWaypoints addObject:latLongStr];
+                }
+                else
+                {
+                    
+                    [addressArrayWaypoints addObject: workOrder.serviceLocationModel.serviceLocation];
+                }
+               
             }
             else
             {

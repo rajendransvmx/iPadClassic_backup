@@ -96,7 +96,18 @@
 
 - (BOOL)isValidAddress {
     
-    return ![StringUtil isStringEmpty:self.serviceLocation];
+    //HS Defect Fix:026894
+    BOOL isValid = NO;
+    if (!([StringUtil isStringEmpty:self.latitude] && [StringUtil isStringEmpty:self.longitude]))
+    {
+        isValid = YES;
+    }
+    else if(![StringUtil isStringEmpty:self.serviceLocation])
+    {
+        isValid = YES;
+
+    }
+    return isValid;
 }
 
 - (void)explainMe
