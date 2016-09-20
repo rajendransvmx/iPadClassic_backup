@@ -2,14 +2,14 @@
 ServiceMax Win 15 SP iPad Release Win15SPBuild
 
 *******************************************
-Version = 15.20.041
+Version = 15.20.042
 ===========================================
 -------------
 Fixed Defects
 -------------
 
 Back ported:
-23585
+036258
 
 -------------
 Known Issues
