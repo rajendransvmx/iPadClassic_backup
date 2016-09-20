@@ -4,14 +4,15 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.60.046
+Version = 15.60.047
 
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-Back ported: 036258
+Back Ported : 032530
+NOW literal when used in a data validation rule in an SFM not performing as expected.
 
 ____
 
