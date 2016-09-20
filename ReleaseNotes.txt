@@ -3,13 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.50.008
+Version = 16.59.001
 ===========================================
 
 Defect:
-036258 : 
-IOS beta 10.0.1 - when tapped on search in lookups, the app gets hanged on iPad
-
+026894 : iPad not showing locations in the right place based off of Longitude/Latitude
 
 Feature:
 ==================
