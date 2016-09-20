@@ -36,7 +36,11 @@
     }
     return self;
 }
-
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    self.preferredContentSize = CGSizeMake(730, 600);
+    
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -225,8 +229,8 @@
 }
 -(void)viewWillLayoutSubviews
 {
-    self.view.superview.bounds = CGRectMake(0, 0, 730, 600);
-
+    [super viewWillLayoutSubviews];
+    self.preferredContentSize = CGSizeMake(730, 600);
 }
 
 - (void)dealloc {
