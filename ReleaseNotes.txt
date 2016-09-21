@@ -4,7 +4,7 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.010
+Version = 16.20.011
  
 ===========================================
 
@@ -12,8 +12,8 @@ Version = 16.20.010
 Fixed Defects
 -------------
 
-Back ported:
-036258
+Back Ported : 032530
+NOW literal when used in a data validation rule in an SFM not performing as expected.
 
 
 Namespace - SVMXC
