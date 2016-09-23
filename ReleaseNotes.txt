@@ -3,11 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.40.012
+Version = 16.40.013
 ===========================================
 
-Back Ported : 032530
-NOW literal when used in a data validation rule in an SFM not performing as expected.
+29883
+
 
 NOTE:
 
