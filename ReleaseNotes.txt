@@ -4,16 +4,14 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.011
+Version = 16.20.012
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-
-Back Ported : 032530
-NOW literal when used in a data validation rule in an SFM not performing as expected.
+Fixed BizRule Hanging issue, updated the datetimeutil.js (client.lib)
 
 
 Namespace - SVMXC
