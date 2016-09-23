@@ -46,6 +46,7 @@
     
     UIActivityIndicatorView *searchProgressIndicator;
     int srcCriteriaIndex;
+    NSArray *srchCriteriaStdArray;
 }
 
 @property(nonatomic, strong) SMSplitPopover *masterPopoverController;
@@ -105,6 +106,8 @@
 -(void)setUpCriteria {
  
     self.srchCriteriaArray = @[[[TagManager sharedInstance] tagByName:kTagSfmCriteriaContains], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaExactMatch], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaEndsWith], [[TagManager sharedInstance] tagByName:kTagSfmCriteriaStartsWith]];
+    
+    srchCriteriaStdArray = @[@"Contains", @"Exact Match", @"Ends With", @"Starts With"];
     
     srcCriteriaIndex = 0;
     
@@ -963,11 +966,11 @@
 }
 
 - (void)performOnlineSeachInBackground{
- 
+    
     @synchronized([self class]) {
         @autoreleasepool {
-             /* Get selected process */
-            self.searchProcess.searchCriteria = self.searchCriteriaBtn.titleLabel.text; // 029883
+            /* Get selected process */
+            self.searchProcess.searchCriteria = [srchCriteriaStdArray objectAtIndex:srcCriteriaIndex]; // 029883
             [self.onlineSearchHandler performOnlineSearchWithSearchProcess:self.searchProcess andSearchText:self.searchBar.text];
         }
         
