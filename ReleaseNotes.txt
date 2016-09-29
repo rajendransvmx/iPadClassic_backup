@@ -3,11 +3,13 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.50.008
+Version = 16.50.009
 ===========================================
 
 Defect:
-036258 : iOS beta 10.0.1 - when tapped on search in lookups, the app gets hanged on iPad
+
+029883
+
 Feature:
 ==================
 n/a
