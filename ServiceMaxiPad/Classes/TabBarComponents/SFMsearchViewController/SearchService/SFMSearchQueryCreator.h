@@ -15,5 +15,6 @@
 - (id)initWithSearchObject:(SFMSearchObjectModel*)newSearchObject
        withOuterJoinTables:(NSDictionary *)outerJoinTables;
 - (NSString *)generateQuery:(NSString *)expression andSearchText:(NSString *)searchString;
+- (NSString *)generateQueryForReference:(SFMSearchObjectModel *)searchObject searchString:(NSString *)searchString expression:(NSString *)expression dataArray:(NSArray *)dataArray;
 
 @end

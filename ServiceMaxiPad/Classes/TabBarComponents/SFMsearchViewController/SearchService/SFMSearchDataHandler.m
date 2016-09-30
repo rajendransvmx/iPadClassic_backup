@@ -78,6 +78,17 @@
     //NSLog(@"OBJECT QUERY %@",searchQuery);
     if (searchQuery != nil) {
         NSMutableArray *dataArray = [self loadResults:searchQuery];
+        
+        if (dataArray.count == 0) {
+            
+            NSString *newSearchQuery = [self getSearchObjectNameFieldValueQuery:newSearchObject searchString:newSearchStr expression:expression];
+            
+            if (newSearchQuery != nil) {
+                
+                dataArray = [self loadResults:newSearchQuery];
+            }
+        }
+
         [self replaceReferenceValuesIn:dataArray];
         [self loadDisplaysValues:dataArray];
         return dataArray;
@@ -99,6 +110,75 @@
         }
     }
     return resulstDictionary;
+}
+
+- (NSString *)getSearchObjectNameFieldValueQuery:(SFMSearchObjectModel *)searchObject searchString:(NSString *)searchString expression:(NSString *)expression {
+    
+    NSMutableString *queryForObjectNameFieldValue = [[NSMutableString alloc] init];
+    NSString *searchQuery;
+    
+    [queryForObjectNameFieldValue appendFormat:@"Select DISTINCT Id from ObjectNameFieldValue "];
+    [queryForObjectNameFieldValue appendFormat:@" WHERE "];
+    
+    NSMutableArray *whereClauseArray = [[NSMutableArray alloc] init];
+    
+    NSString *criteriaString = @"";
+    
+    switch (self.searchObject.searchCriteriaIndex) {
+        case SearchCriteriaContains:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@%%' ", searchString];
+            break;
+        case SearchCriteriaExactMatch:
+            criteriaString = [NSString stringWithFormat:@" = '%@' COLLATE NOCASE ", searchString];
+            break;
+        case SearchCriteriaEndsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@' ", searchString];
+            break;
+        case SearchCriteriaStartsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%@%%' ", searchString];
+            break;
+        default:
+            break;
+    }
+
+    for (SFMSearchFieldModel *searchField in searchObject.searchFields) {
+        
+        if ([searchField.displayType isEqualToString:kSfDTReference]) {
+            
+            NSString *whereString = [NSString stringWithFormat:@" ( value %@ ) ", criteriaString];
+            [whereClauseArray addObject:whereString];
+        }
+    }
+    
+    [queryForObjectNameFieldValue appendFormat:@" %@ ", [whereClauseArray componentsJoinedByString:@" OR "]];
+    
+    NSArray *dataArray = [self loadResults:queryForObjectNameFieldValue];
+    
+    NSMutableArray *dataIdsArray = [[NSMutableArray alloc] init];
+    
+    if (dataArray.count > 0) {
+        
+        for (TransactionObjectModel *dataDict in dataArray)
+        {
+            NSDictionary *valueDict = [dataDict getFieldValueDictionary];
+            
+            for (SFMRecordFieldData *fieldData in [valueDict allValues]) {
+                
+                if((fieldData.internalValue != nil) && (![Utility isStringEmpty:fieldData.internalValue])) {
+                    
+                    [dataIdsArray addObject:fieldData.internalValue];
+                }
+            }
+        }
+
+        SFMSearchQueryCreator *queryCreator = [[SFMSearchQueryCreator alloc] initWithSearchObject:self.searchObject withOuterJoinTables:self.outerJoinTables];
+        
+        searchQuery = [queryCreator generateQueryForReference:searchObject searchString:searchString expression:expression dataArray:dataIdsArray];
+        
+        return searchQuery;
+    }
+    
+    return nil;
 }
 
 #pragma mark - Loading Reference field value

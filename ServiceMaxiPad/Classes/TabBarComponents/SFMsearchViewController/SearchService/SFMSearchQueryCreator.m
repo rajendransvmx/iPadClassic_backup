@@ -323,4 +323,132 @@
     return orderByString;
 }
 
+- (NSString *)generateQueryForReference:(SFMSearchObjectModel *)searchObject searchString:(NSString *)searchString expression:(NSString *)expression dataArray:(NSArray *)dataArray {
+    
+    NSMutableString *finalQuery = [[NSMutableString alloc] initWithString:@" SELECT "];
+    
+    /* Adding  select part */
+    NSString *selectPart = [self getSelectPart];
+    [finalQuery appendString:selectPart];
+    
+    /* Adding  From part */
+    [finalQuery appendFormat:@" FROM '%@' ",self.searchObject.targetObjectName];
+    
+    /* Adding left outer join part */
+    if ([self.joinTables count] > 0) {
+        NSString *outerJoinPart = [self getOuterJoinPart];
+        [finalQuery appendFormat:@" %@ ",outerJoinPart];
+    }
+    
+    /* Adding expression and search criteria part */
+    NSString *whereClause =  [self getWhereClauseForReference:searchString fromExpression:expression dataArray:dataArray];
+    if (whereClause != nil) {
+        [finalQuery appendString:whereClause];
+    }
+    
+    if ([self.searchObject.sortFields count]> 0) {
+        
+        NSString *orderByString = [self getOrderByString];
+        [finalQuery appendString:orderByString];
+    }
+    
+    /* Adding limit string  */
+    [finalQuery appendFormat:@" LIMIT %ld ",(long)self.maxNumberOfResults];
+    
+    return finalQuery;
+}
+
+- (NSString *)getWhereClauseForReference:(NSString *)searchText fromExpression:(NSString *)expression dataArray:(NSArray *)dataArray {
+    
+    searchText = [searchText stringByReplacingOccurrencesOfString:@"'" withString:@"''"];
+    NSMutableString *whereString = [[NSMutableString alloc] initWithString:@"WHERE"];
+    BOOL doesSearchTextExist = NO;
+    
+    if (dataArray.count > 0) {
+        
+        NSMutableArray *newDataArray = [[NSMutableArray alloc] init];
+        for (int i = 0; i < dataArray.count; i++) {
+            
+            NSString *dataString = [dataArray objectAtIndex:i];
+            [newDataArray addObject:[NSString stringWithFormat:@"'%@'", dataString]];
+        }
+        
+        NSString *finalString = [self getSearchFieldTextForReference:searchText dataArray:newDataArray];
+        [whereString appendFormat:@"  %@", finalString];
+        doesSearchTextExist = YES;
+    }
+    
+    /* Adding expression and search criteria part */
+    if (expression.length > 0) {
+        if (doesSearchTextExist) {
+            [whereString appendString:@" AND "];
+        }
+        [whereString appendFormat:@"  ( %@ )",expression];
+        doesSearchTextExist = YES;
+    }
+    
+    if (doesSearchTextExist) {
+        return whereString;
+    }
+    return nil;
+    
+}
+
+- (NSString *)getSearchFieldTextForReference:(NSString *)searchText dataArray:(NSArray *)dataArray {
+    
+    NSMutableString *searchString = [[NSMutableString alloc] initWithString:@" ( "];
+    NSString *orOperator = @" OR ";
+    NSInteger totalCount =  [self.searchObject.searchFields count];
+    
+    NSString *criteriaString = @"";
+    
+    switch (self.searchObject.searchCriteriaIndex) {
+        case SearchCriteriaContains:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@%%' ", searchText];
+            break;
+        case SearchCriteriaExactMatch:
+            criteriaString = [NSString stringWithFormat:@" = '%@' COLLATE NOCASE ", searchText];
+            break;
+        case SearchCriteriaEndsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%%%@' ", searchText];
+            break;
+        case SearchCriteriaStartsWith:
+            criteriaString = [NSString stringWithFormat:@" LIKE '%@%%' ", searchText];
+            break;
+        default:
+            break;
+    }
+
+    for (int counter = 0;counter < totalCount;counter++) {
+        
+        if (counter > 0) {
+            [searchString appendString:orOperator];
+        }
+        SFMSearchFieldModel *searchField = [self.searchObject.searchFields objectAtIndex:counter];
+        
+        if (searchField.lookupFieldAPIName.length > 2) {
+            NSString *aliasName =  [self getAliasNameForRelationship:searchField.lookupFieldAPIName];
+            [searchString appendFormat:@" %@.%@ ",aliasName,searchField.fieldName];
+            [searchString appendString:criteriaString];
+        }
+        else{
+            if ([[searchField.displayType lowercaseString] isEqualToString:kSfDTReference]) {
+                
+                [searchString appendFormat:@"'%@'.%@", searchField.objectName, searchField.fieldName];
+                [searchString appendFormat:@" IN "];
+                
+                NSString *dataString = [dataArray componentsJoinedByString:@", "];
+                [searchString appendFormat:@"( %@ )", dataString];
+            }
+            else{
+                [searchString appendFormat:@" '%@'.%@ ",self.searchObject.targetObjectName,searchField.fieldName];
+                [searchString appendString:criteriaString];
+            }
+        }
+    }
+    
+    [searchString appendString:@" ) "];
+    return searchString;
+}
+
 @end
