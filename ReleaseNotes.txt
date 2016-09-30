@@ -3,11 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.59.001
+Version = 16.59.002
 ===========================================
 
 Defect:
-026894 : iPad not showing locations in the right place based off of Longitude/Latitude
+036565 Unable to do offline search when search field is a look up and not downloaded to DB
 
 Feature:
 ==================
