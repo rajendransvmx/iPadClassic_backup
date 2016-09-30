@@ -364,6 +364,13 @@
     NSMutableString *whereString = [[NSMutableString alloc] initWithString:@"WHERE"];
     BOOL doesSearchTextExist = NO;
     
+    NSMutableString *finalString = [[NSMutableString alloc] init];
+
+    if ([self.searchObject.searchFields count] > 0 && searchText.length > 0) {
+        [finalString appendFormat:@"%@", [self getSearchFieldStringOnText:searchText]];
+        doesSearchTextExist = YES;
+    }
+
     if (dataArray.count > 0) {
         
         NSMutableArray *newDataArray = [[NSMutableArray alloc] init];
@@ -373,11 +380,20 @@
             [newDataArray addObject:[NSString stringWithFormat:@"'%@'", dataString]];
         }
         
-        NSString *finalString = [self getSearchFieldTextForReference:searchText dataArray:newDataArray];
-        [whereString appendFormat:@"  %@", finalString];
+        if (finalString.length > 0) {
+            NSString *orOperator = @" OR ";
+            [finalString appendFormat:@"%@", orOperator];
+        }
+        
+        [finalString appendFormat:@"%@", [self getSearchFieldTextForReference:searchText dataArray:newDataArray]];
         doesSearchTextExist = YES;
     }
     
+    if (finalString.length > 0) {
+        
+        [whereString appendFormat:@"  %@ ",finalString];
+    }
+
     /* Adding expression and search criteria part */
     if (expression.length > 0) {
         if (doesSearchTextExist) {

@@ -73,26 +73,39 @@
     NSString *expression = [self searchExpression];
     [self fillUpDisplaysValues];
     
-    SFMSearchQueryCreator *queryCreator = [[SFMSearchQueryCreator alloc] initWithSearchObject:self.searchObject withOuterJoinTables:self.outerJoinTables];
-    NSString *searchQuery = [queryCreator generateQuery:expression andSearchText:newSearchStr];
-    //NSLog(@"OBJECT QUERY %@",searchQuery);
-    if (searchQuery != nil) {
-        NSMutableArray *dataArray = [self loadResults:searchQuery];
+    NSString *newSearchQuery = [self getSearchObjectNameFieldValueQuery:newSearchObject searchString:newSearchStr expression:expression];
+    
+    if (newSearchQuery != nil) {
         
-        if (dataArray.count == 0) {
-            
-            NSString *newSearchQuery = [self getSearchObjectNameFieldValueQuery:newSearchObject searchString:newSearchStr expression:expression];
-            
-            if (newSearchQuery != nil) {
-                
-                dataArray = [self loadResults:newSearchQuery];
-            }
-        }
-
+        NSMutableArray *dataArray = [self loadResults:newSearchQuery];
+        
+        dataArray = [self loadResults:newSearchQuery];
+        
         [self replaceReferenceValuesIn:dataArray];
         [self loadDisplaysValues:dataArray];
         return dataArray;
     }
+
+//    SFMSearchQueryCreator *queryCreator = [[SFMSearchQueryCreator alloc] initWithSearchObject:self.searchObject withOuterJoinTables:self.outerJoinTables];
+//    NSString *searchQuery = [queryCreator generateQuery:expression andSearchText:newSearchStr];
+//    //NSLog(@"OBJECT QUERY %@",searchQuery);
+//    if (searchQuery != nil) {
+//        NSMutableArray *dataArray = [self loadResults:searchQuery];
+//        
+//        if (dataArray.count == 0) {
+//            
+//            NSString *newSearchQuery = [self getSearchObjectNameFieldValueQuery:newSearchObject searchString:newSearchStr expression:expression];
+//            
+//            if (newSearchQuery != nil) {
+//                
+//                dataArray = [self loadResults:newSearchQuery];
+//            }
+//        }
+//
+//        [self replaceReferenceValuesIn:dataArray];
+//        [self loadDisplaysValues:dataArray];
+//        return dataArray;
+//    }
     return nil;
 }
 
@@ -175,6 +188,12 @@
         
         searchQuery = [queryCreator generateQueryForReference:searchObject searchString:searchString expression:expression dataArray:dataIdsArray];
         
+        return searchQuery;
+    }
+    else {
+        
+        SFMSearchQueryCreator *queryCreator = [[SFMSearchQueryCreator alloc] initWithSearchObject:self.searchObject withOuterJoinTables:self.outerJoinTables];
+        NSString *searchQuery = [queryCreator generateQuery:expression andSearchText:searchString];
         return searchQuery;
     }
     
