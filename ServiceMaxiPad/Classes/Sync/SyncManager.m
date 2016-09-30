@@ -2336,6 +2336,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 {
     SMAppDelegate *appDelegate = (SMAppDelegate*)[[UIApplication sharedApplication]delegate];
     //HS 13 Jul syncErrorReporting andling for valid "errors"
+    //Defect Fix:033904
 
     if ([appDelegate.syncReportingType isEqualToString:@"always"] || (( [appDelegate.syncReportingType isEqualToString:@"error"]) && ([appDelegate.syncErrorDataArray count]!=0) ) )
     {

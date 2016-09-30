@@ -289,6 +289,9 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
     
     [userDefaults synchronize];
     [PlistManager loadCustomerOrgInfo];
+    
+    [[AppMetaData sharedInstance] loadApplicationMetaData];
+    
     [[CustomerOrgInfo sharedInstance] explainMe];
 }
 

@@ -98,37 +98,68 @@ NSString* deviceName()
 - (void)loadApplicationMetaData
 {
     //013404
-    if (self.clientInfo == nil) {
-        
+    /*if (self.clientInfo == nil) { */
+    
+    if (self.clientInfo == nil)
+    {
         self.clientInfo = [NSMutableDictionary dictionary];
-        UIDevice *currentDevice = [UIDevice currentDevice];
         
-        NSString *type = [currentDevice model];
-        
-        self.currentDeviceType = type;
-        
-        self.currentOSVersion= [currentDevice systemVersion];
-        
-        self.currentApplicationVersion = [[NSBundle mainBundle]
-                                          objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
-        
-        NSString *devVersion = deviceName();
-        
-        self.currentDeviceVersion = devVersion;
-        NSString *osVer =       @"iosversion:";
-        NSString *appVer =      @"appversion:";
-        NSString *deviceVer =   @"deviceversion:";
-        NSString *iosVersionString = [NSString stringWithFormat:@"%@%@",osVer,self.currentOSVersion ];
-        NSString *appVersionString = [NSString stringWithFormat:@"%@%@",appVer,self.currentApplicationVersion];
-        NSString *devVersionString = [NSString stringWithFormat:@"%@%@",deviceVer,devVersion];
-        
-        NSArray *infoArray = [[NSArray alloc ] initWithObjects:iosVersionString,appVersionString,devVersionString, nil];
-        NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:infoArray,@"clientInfo",type,@"clientType", nil];
-        
-        NSArray *clientInfoArray = [[NSArray alloc] initWithObjects:dictionary, nil];
-        
-        [clientInfo setObject:clientInfoArray forKey:@"clientInfo"];
     }
+    UIDevice *currentDevice = [UIDevice currentDevice];
+    
+    NSString *type = [currentDevice model];
+    
+    self.currentDeviceType = type;
+    
+    self.currentOSVersion= [currentDevice systemVersion];
+    
+    self.currentApplicationVersion = [[NSBundle mainBundle]
+                                      objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+    
+    NSString *devVersion = deviceName();
+    
+    self.currentDeviceVersion = devVersion;
+    NSString *osVer =       @"iosversion:";
+    NSString *appVer =      @"appversion:";
+    NSString *deviceVer =   @"deviceversion:";
+    //HS 30Sep added keys for Sync
+    /*
+     appversion:16.49.002
+     appname:SVMX_MFL
+     userid:005F0000005dz0xIAA
+     clientudid:undefined
+     syncstarttime:Wed, 13 Jul 2016 09:13:56 GMT
+     */
+    NSString *appName = @"appname:";
+    NSString *userId = @"userid:";
+    NSString *clientUDID = @"clientudid:";
+    NSString *syncStartTime = @"syncstarttime:";
+    
+    NSString *udid =  [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    
+    NSString *userid = [userDefaults objectForKey:@"ps_user_id"];
+    
+    
+    NSString *iosVersionString = [NSString stringWithFormat:@"%@%@",osVer,self.currentOSVersion ];
+    NSString *appVersionString = [NSString stringWithFormat:@"%@%@",appVer,self.currentApplicationVersion];
+    NSString *devVersionString = [NSString stringWithFormat:@"%@%@",deviceVer,devVersion];
+    
+    NSString *appNameString = [NSString stringWithFormat:@"%@%@",appName,@"SVMX_iPad"];
+    NSString *userIdString = [NSString stringWithFormat:@"%@%@",userId,userid];
+    NSString *clientUDIDString = [NSString stringWithFormat:@"%@%@",clientUDID,udid];
+    NSString *syncStartTimeString = [NSString stringWithFormat:@"%@%@",syncStartTime,@""];
+    
+    
+    NSArray *infoArray = [[NSArray alloc ] initWithObjects:iosVersionString,appVersionString,devVersionString,appNameString,userIdString,clientUDIDString,syncStartTimeString, nil];
+    
+    NSDictionary *dictionary = [[NSDictionary alloc] initWithObjectsAndKeys:[infoArray mutableCopy],@"clientInfo",type,@"clientType", nil];
+    
+    NSArray *clientInfoArray = [[NSArray alloc] initWithObjects:dictionary, nil];
+    
+    [self.clientInfo setObject:clientInfoArray forKey:@"clientInfo"];
+    /* } */
+    
 }
 #pragma mark - Instance Methods
 
