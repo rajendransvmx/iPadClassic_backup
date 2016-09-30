@@ -3,11 +3,10 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.59.002
+Version = 16.59.001
 ===========================================
 
 Defect:
-036565 Unable to do offline search when search field is a look up and not downloaded to DB
 
 Feature:
 ==================
