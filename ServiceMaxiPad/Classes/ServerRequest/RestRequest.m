@@ -487,6 +487,8 @@
         case RequestTypeUserTrunk:
         case RequestSFMObjectDefinition:
         case RequestDependantPickListRest:
+        case RequestMasterSyncTimeLog:
+
 
         case RequestStaticResourceLibrary:
             eventType = kSync;
@@ -634,6 +636,7 @@
         case RequestDataPurge:
         case RequestSFMSearch:
         case RequestTypeUserTrunk:
+        case RequestMasterSyncTimeLog:
             url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
         case RequestDocumentInfoFetch:
@@ -848,6 +851,9 @@
             break;
         case  RequestOneCallDataSync:
             self.eventName = kOneCallSync;
+            break;
+        case  RequestMasterSyncTimeLog:
+            self.eventName = @"MASTER_SYNC_LOG";
             break;
         case RequestServicemaxVersion:
             self.eventName = @"";

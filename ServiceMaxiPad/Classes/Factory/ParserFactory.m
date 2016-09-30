@@ -43,6 +43,8 @@
 #import "ProdIQObjectDescribeParser.h"
 #import "ProdIQDataParser.h"
 #import "ProdIQDeleteDataParser.h"
+#import "MobileDataUsageParser.h"
+
 
 @implementation ParserFactory
 
@@ -377,6 +379,9 @@
                 break;
             case RequestProductIQDeleteData:
                 parser = [[ProdIQDeleteDataParser alloc] init];
+                break;
+            case RequestMasterSyncTimeLog:
+                parser = [[MobileDataUsageParser alloc] init];
                 break;
             default:
                 SXLogWarning(@"Invalid parser type requested");

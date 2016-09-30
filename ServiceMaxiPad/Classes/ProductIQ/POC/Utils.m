@@ -8,12 +8,15 @@
 
 #import "Utils.h"
 #import "ProductIQHomeViewController.h"
+#import "CustomerOrgInfo.h"
+#import "MobileDataUsageExecuter.h"
+
 
 @implementation Utils
 
 -(void)respondWithLoginDetails:(NSString *)params {
-    NSString *accessToken = [[ProductIQHomeViewController getInstance] getAccessToken];
-    NSString *instanceUrl = [[ProductIQHomeViewController getInstance] getInstanceUrl];
+    NSString *accessToken = [[CustomerOrgInfo sharedInstance] accessToken];
+    NSString *instanceUrl = [[CustomerOrgInfo sharedInstance] instanceURL];
     NSMutableDictionary *resp = [[NSMutableDictionary alloc] init];
     [resp setObject:accessToken forKey:@"access_token"];
     [resp setObject:instanceUrl forKey:@"instance_url"];
@@ -37,8 +40,15 @@
     NSData *data = [NSJSONSerialization dataWithJSONObject:params options:0 error:&error];
     NSString *resp = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
-    UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
-    [browser stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", methodName, resp]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        UIWebView *browser = [[ProductIQHomeViewController getInstance] getBrowser];
+        if (browser == nil)
+        {
+            browser = [[MobileDataUsageExecuter getInstance] getBrowser];
+        }
+        [browser stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", methodName, resp]];
+        
+    });
 }
 
 @end

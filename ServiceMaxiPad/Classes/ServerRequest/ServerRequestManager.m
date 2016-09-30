@@ -416,6 +416,9 @@
     switch (currentRequest.requestType) {
             
         case RequestValidateProfile:
+            nextRequestType = RequestMasterSyncTimeLog;
+            break;
+        case RequestMasterSyncTimeLog:
             nextRequestType = RequestMobileDeviceTags;
             break;
         case RequestMobileDeviceTags:
@@ -614,10 +617,13 @@
     RequestType nextRequestType = 0;
     
     if (currentRequest == nil) {
-        nextRequestType = RequestMobileDeviceTags;
+        nextRequestType = RequestMasterSyncTimeLog;
     }
     
     switch (currentRequest.requestType) {
+        case RequestMasterSyncTimeLog:
+            nextRequestType = RequestMobileDeviceTags;
+            break;
         case RequestMobileDeviceTags:
             nextRequestType = RequestOneCallMetaSync;
             break;
@@ -689,13 +695,17 @@
     RequestType nextRequestType = 0;
     
     if (currentRequest == nil) {
-        nextRequestType = RequestOneCallDataSync;
+        nextRequestType = RequestMasterSyncTimeLog;
     }
     
     switch (currentRequest.requestType) {
+        case RequestMasterSyncTimeLog:
+            nextRequestType = RequestOneCallDataSync;
+            break;
         case RequestOneCallDataSync:
             nextRequestType = RequestTypeUserTrunk;
             break;
+
         case RequestTypeUserTrunk:
             nextRequestType = RequestAdvancedDownLoadCriteria;//RequestGetPriceDataTypeZero;
             break;

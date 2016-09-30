@@ -20,13 +20,13 @@
     NSRange r1 = [input rangeOfString:@"/"];
     
     NSString *className = [input substringToIndex:r1.location];
-    //NSLog(@"!!!%@!!!", className);
+    NSLog(@"!!!%@!!!", className);
     
     input = [input substringFromIndex:[className length] + 1];
     NSRange r2 = [input rangeOfString:@"/"];
     
     NSString *methodName = [input substringToIndex:r2.location];
-    //NSLog(@"--- %@ ---", methodName);
+    NSLog(@"--- %@ ---", methodName);
     
     input = [input substringFromIndex:[methodName length] + 1];
     input = [input stringByReplacingOccurrencesOfString:@"+" withString:@" "];

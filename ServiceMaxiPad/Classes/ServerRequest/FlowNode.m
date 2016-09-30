@@ -192,7 +192,14 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
                                                                      withRequestType:requestType];
      
         [request addClientRequestIdentifier:self.flowId];
-        request.shouldIncludeTimeLogs = [[ServerRequestManager sharedInstance]isTimeLogEnabledForCategoryType:self.nodecategoryType];
+        if(requestType == RequestMasterSyncTimeLog)
+        {
+            request.shouldIncludeTimeLogs = NO;
+        }
+        else{
+            request.shouldIncludeTimeLogs = [[ServerRequestManager sharedInstance]isTimeLogEnabledForCategoryType:self.nodecategoryType];
+        }
+        
         request.categoryType = self.nodecategoryType;
         
         [self addRequestToRequestArray:request];
@@ -690,6 +697,11 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
 - (void)didRequestFailedWithError:(NSError *)error Response:(id)responseObject andRequestObject:(id)request
 {
     [[CacheManager sharedInstance]clearCacheByKey:@"PageIds"];
+    if (error !=nil)
+    {
+        [FlowNode reportErrorToAWS:error withResponseObject:responseObject withRequestObject:request];
+        
+    }
 
     NSLog(@"Request failed with error %@ %@ Request : %@",[error description],[responseObject description],[request description]);
     NSError *serverError = [SMInternalErrorUtility checkForErrorInResponse:responseObject withStatusCode:-999 andError:error];
@@ -702,6 +714,74 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
          */
         [self  request:request failedWithError:error andResponse:responseObject];
     }
+}
+
+//IPAD-4283 Back Porting Sync error reporting for WIN 16
++(void)reportErrorToAWS:(NSError*)error withResponseObject:(id)responseObject withRequestObject:(id)requestObject
+{
+    NSMutableDictionary *errorDict = [NSMutableDictionary dictionaryWithCapacity:1];
+    
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    //appDelegate.syncReportingType = @"error";
+    if([appDelegate.syncReportingType isEqualToString:@"error"] ||[appDelegate.syncReportingType isEqualToString:@"always"])
+    {
+        //errorDict = responseObject
+        RestRequest *requestObjectDict = (RestRequest *)requestObject;
+        if(([responseObject isKindOfClass:[NSArray class]]) && (([[[responseObject objectAtIndex:0]allKeys]containsObject:@"errorCode"]) || [[[responseObject objectAtIndex:0]allKeys]containsObject:@"errors"]))
+        {
+            [errorDict setObject:responseObject forKey:@"Response"];
+            
+            
+            if ([requestObjectDict dataDictionary])
+            {
+                [errorDict setObject:[requestObjectDict dataDictionary] forKey:@"dataDictionary"];
+                
+            }
+            if ([requestObjectDict eventName])
+            {
+                [errorDict setObject:[requestObjectDict eventName] forKey:@"eventName"];
+                
+            }
+            if ([requestObjectDict eventType])
+            {
+                [errorDict setObject:[requestObjectDict eventType] forKey:@"eventType"];
+                
+            }
+            if ([requestObjectDict profileId])
+            {
+                [errorDict setObject:[requestObjectDict profileId] forKey:@"profileId"];
+                
+            }
+            if ([requestObjectDict userId])
+            {
+                [errorDict setObject:[requestObjectDict userId] forKey:@"userId"];
+                
+            }
+            if ([requestObjectDict apiType])
+            {
+                [errorDict setObject:[requestObjectDict apiType] forKey:@"apiType"];
+                
+            }
+            
+            
+            if (errorDict != nil)
+            {
+                if (appDelegate.syncErrorDataArray == nil)
+                {
+                    NSMutableArray *arr = [[NSMutableArray alloc]init];
+                    appDelegate.syncErrorDataArray = arr;
+                }
+                [appDelegate.syncErrorDataArray addObject:errorDict];
+                
+            }
+            
+        }
+        
+        
+        
+        
+    }
+    
 }
 
 @end

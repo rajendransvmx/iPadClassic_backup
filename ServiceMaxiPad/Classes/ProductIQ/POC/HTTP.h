@@ -17,7 +17,11 @@
     NSString *type;
     NSString *methodName;
     NSString *jsCallback;
+    NSString *totalPages;
+    NSString *currentPage;
+    NSMutableString *paramStr;
 }
+@property(nonatomic,strong)NSMutableString *tempStr;
 
 -(void)callServer:(NSString *)params;
 

@@ -13,6 +13,7 @@
 #import "OpDocHelper.h"
 #import "SFMCustomActionWebServiceHelper.h"
 #import "TagConstant.h"
+#import "WebserviceResponseStatus.h"
 
 extern NSString *kInitialSyncStatusNotification;
 extern NSString *kConfigSyncStatusNotification;
@@ -31,6 +32,10 @@ extern NSString *kUpadteWebserviceData;
 
 @property(nonatomic, assign) BOOL isConfigSyncDueAlertShown;
 @property(nonatomic, assign) BOOL isGetPriceCallEnabled;
+
+@property (nonatomic,assign) SyncType syncType;
+@property (nonatomic,strong) WebserviceResponseStatus *syncResponseStatus;
+@property (nonatomic,strong) NSError *syncError;
 
 // ...
 
@@ -89,5 +94,8 @@ extern NSString *kUpadteWebserviceData;
 
 - (void)enqueueSyncQueue:(SyncType)syncType;
 - (SyncType)dequeueSyncQueue;
+
+- (void)handleSyncCompletion;
+- (dispatch_queue_t)getSyncErrorReportQueue;
 
 @end

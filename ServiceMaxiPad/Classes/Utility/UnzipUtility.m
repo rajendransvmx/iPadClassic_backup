@@ -33,6 +33,9 @@
                            @"com.servicemax.client.installigence",
                            @"com.servicemax.client.sal",
                            @"com.servicemax.client.testframework",
+                           @"com.servicemax.client.native.laptop",
+                           @"com.servicemax.client.offline.sal.model",
+                           @"com.servicemax.client.usage",
                            nil];
     return listOfLibs;
 }
