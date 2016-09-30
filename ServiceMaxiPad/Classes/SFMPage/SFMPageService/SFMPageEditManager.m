@@ -2137,7 +2137,10 @@
                 
                 if([fieldType isEqualToString:kSfDTDate] || [fieldType isEqualToString:kSfDTDateTime])
                 {
-                    finalValue = [DateUtil evaluateDateLiteral:finalValue  dataType:fieldType];
+                    if ([self isItALiteral:finalValue]) {
+                        //defect#036563
+                        finalValue = [DateUtil evaluateDateLiteral:finalValue  dataType:fieldType];
+                    }
                     if ([fieldType isEqualToString:kSfDTDate]) {
                         finalValue = [self getDateForMapping:finalValue];
                     }
@@ -2184,6 +2187,30 @@
     }
 }
 
+
+-(BOOL)isItALiteral:(NSString *)literal{
+    
+    BOOL isLiteral = NO;
+    if([literal caseInsensitiveCompare:kLiteralNow] == NSOrderedSame)
+    {
+        isLiteral = YES;
+    }
+    else if ([literal caseInsensitiveCompare:kLiteralToday] == NSOrderedSame)
+    {
+        isLiteral = YES;
+    }
+    else if ([literal caseInsensitiveCompare:kLiteralTomorrow] == NSOrderedSame)
+    {
+        isLiteral = YES;
+        
+    }
+    else if ([literal caseInsensitiveCompare:kLiteralYesterday] == NSOrderedSame)
+    {
+        isLiteral = YES;
+        
+    }
+    return isLiteral;
+}
 
 -(void)makeEntryInModifiedRecordsForSourceRecords:(NSDictionary *)sourceRecords sourceObject:(NSString *)objectName recordType:(NSString *)recordType
 {
