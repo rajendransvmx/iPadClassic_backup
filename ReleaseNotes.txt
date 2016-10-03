@@ -3,10 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.59.001
+Version = 16.59.003
 ===========================================
 
 Defect:
+Removed white listing of vulforia
 
 Feature:
 ==================
@@ -16,6 +17,6 @@ n/a
 
 NOTE:
 
-1. NameSpace: SVMXC
+1. NameSpace: SVMXDEV
 
 
