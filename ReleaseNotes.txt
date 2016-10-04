@@ -3,10 +3,9 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.40.015
+Version = 16.40.016
 ===========================================
-
-IPAD-4270 SPR 16 SP Backport - iPad to send mandatory attributes to server
+IPAD-4307 iPad - Text field moves partially behind the top bar
 
 
 
