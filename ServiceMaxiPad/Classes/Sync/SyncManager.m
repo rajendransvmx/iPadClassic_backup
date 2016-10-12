@@ -46,6 +46,9 @@
 #import "StringUtil.h"
 #import "TransactionObjectService.h"
 #import "SyncErrorConflictService.h"
+#import "SMAppDelegate.h"
+#import "MobileDataUsageExecuter.h"
+#import "AutoLockManager.h"
 
 const NSInteger alertViewTagForDataSync     = 888888;
 const NSInteger alertViewTagForInitialSync  = 888890;
@@ -75,9 +78,14 @@ NSString *syncMetaDataFile                  = @"SyncMetaData.plist";
 
 //static dispatch_once_t _sharedSyncManagerInstanceGuard;
 static SyncManager *_instance;
+static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncReportQueueSpecificKey;
 
 
 @interface SyncManager ()<UIAlertViewDelegate>
+{
+    dispatch_queue_t    _queue;
+    
+}
 
 @property (nonatomic, strong) SyncScheduler *configSyncScheduler;
 @property (nonatomic, strong) SyncScheduler *dataSyncScheduler;
@@ -99,7 +107,7 @@ static SyncManager *_instance;
 @property (nonatomic) BOOL isAfterInsert;
 @property (nonatomic) BOOL isAfterUpdate;
 
-@property(nonatomic, assign) BOOL isDataSyncRunning;
+@property (nonatomic, assign) BOOL isDataSyncRunning;
 @property (nonatomic) BOOL isDataSyncInLoop;
 
 
@@ -258,11 +266,19 @@ static SyncManager *_instance;
     self.initialSyncStatus = SyncStatusCompleted;
     self.configSyncStatus = SyncStatusCompleted;
     self.dataSyncStatus = SyncStatusCompleted;
+    
+    _queue = dispatch_queue_create([[NSString stringWithFormat:@"syncreport.%@", self] UTF8String], NULL);
+    dispatch_queue_set_specific(_queue, kDispatchSyncReportQueueSpecificKey, (__bridge void *)self, NULL);
+    
     return self;
 }
 
 - (void)dealloc {
     // Should never be called, but just here for clarity really.
+    if (_queue) {
+        _queue = nil;
+        _queue = 0x00;
+    }
 }
 
 #pragma mark - Class Methods
@@ -581,16 +597,23 @@ static SyncManager *_instance;
 - (void)recievedInitialSyncResponse:(WebserviceResponseStatus *)responseStatus
 {
     self.initialSyncStatus = responseStatus.syncStatus;
+    self.syncType = SyncTypeInitial;
+    self.syncResponseStatus = responseStatus;
     
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"Initial Sync Finished");
+         [self executeSyncErrorReporting];
         [self currentInitialSyncFinished];
         [self updateUserTableIfRecordDoesnotExist];
     }
     else  if ( (responseStatus.syncStatus == SyncStatusFailed) ||  (responseStatus.syncStatus == SyncStatusNetworkError))
     {
         SXLogDebug(@"Initial Sync failed");
+        if(responseStatus.syncError!=nil) {
+            self.syncError=[responseStatus.syncError copy];
+        }
+        [self executeSyncErrorReporting];
         [self currentInitialSyncFailedWithError:responseStatus.syncError];
     }
 }
@@ -599,10 +622,13 @@ static SyncManager *_instance;
 - (void)recievedDataSyncResponse:(WebserviceResponseStatus *)responseStatus
 {
     self.dataSyncStatus = responseStatus.syncStatus;
+    self.syncType = SyncTypeData;
+    self.syncResponseStatus = responseStatus;
     
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
         SXLogDebug(@"Data Sync Finished");
+        [self executeSyncErrorReporting];
         [self PerformSYncBasedOnFlags];
         
         //[self currentDataSyncfinished];
@@ -612,6 +638,10 @@ static SyncManager *_instance;
               || (responseStatus.syncStatus == SyncStatusNetworkError))
     {
         SXLogDebug(@"Data Sync failed");
+        if(responseStatus.syncError!=nil) {
+            self.syncError=[responseStatus.syncError copy];
+        }
+         [self executeSyncErrorReporting];
         
         if (responseStatus.syncProgressState == SyncStatusFailedWithRevokeTokenFlag)
         {
@@ -629,17 +659,24 @@ static SyncManager *_instance;
 - (void)recievedConfigSyncResponse:(WebserviceResponseStatus *)responseStatus
 {
     self.configSyncStatus = responseStatus.syncStatus;
+    self.syncResponseStatus = responseStatus;
+    self.syncType = SyncTypeConfig;
     
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {        
         [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:YES];
 
         SXLogDebug(@"Config Sync Finished");
+         [self executeSyncErrorReporting];
         [self currentConfigSyncFinished];
     }
     else  if (responseStatus.syncStatus == SyncStatusFailed ||  responseStatus.syncStatus == SyncStatusNetworkError)
     {
         SXLogDebug(@"Config Sync failed");
+        if(responseStatus.syncError!=nil) {
+            self.syncError=[responseStatus.syncError copy];
+        }
+        [self executeSyncErrorReporting];
         [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:NO];
         [self currentConfigSyncFailedWithError:responseStatus.syncError];
     }
@@ -665,6 +702,11 @@ static SyncManager *_instance;
             {
                 notification = kInitialSyncStatusNotification;
                 [self recievedInitialSyncResponse:wsResponseStatus];
+                if(wsResponseStatus.syncStatus == SyncStatusSuccess)
+                {
+                    shouldNotify = NO;
+                }
+                
             }
                 break;
                 
@@ -699,6 +741,10 @@ static SyncManager *_instance;
             {
                 notification = kConfigSyncStatusNotification;
                 [self recievedConfigSyncResponse:wsResponseStatus];
+                if(wsResponseStatus.syncStatus == SyncStatusSuccess)
+                {
+                    shouldNotify = NO;
+                }
             }
                 break;
             case CategoryTypeCustomWebServiceCall: //call for webservice
@@ -2230,6 +2276,123 @@ static SyncManager *_instance;
     }
     return doesExist;
 }
+
+#pragma mark Sync Error Report
+//IPAD-4283 Back Porting Sync error reporting for WIN 16
+
+-(void)executeSyncErrorReporting
+{
+    SMAppDelegate *appDelegate = (SMAppDelegate*)[[UIApplication sharedApplication]delegate];
+    //HS 13 Jul syncErrorReporting andling for valid "errors"
+    //Defect Fix:033904
+    
+    if ([appDelegate.syncReportingType isEqualToString:@"always"] || (( [appDelegate.syncReportingType isEqualToString:@"error"]) && ([appDelegate.syncErrorDataArray count]!=0) ) )
+    {
+        dispatch_async(_queue, ^{
+            MobileDataUsageExecuter *executor = [[MobileDataUsageExecuter alloc]initWithParentView:nil andFrame:CGRectZero];
+            [executor execute];
+        });
+        
+        ConfigureLoggerAccordingToSettings();
+    }
+    else
+    {
+        [self handleSyncCompletion];
+    }
+}
+
+- (void)handleSyncCompletion
+{
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    appDelegate.syncDataArray = nil;
+    appDelegate.syncErrorDataArray = nil;
+    
+    switch (self.syncType) {
+        case SyncTypeInitial:
+            [self handleInitialSyncCompletion];
+            break;
+        case SyncTypeConfig:
+            [self handleConfigSyncCompletion];
+            break;
+        case SyncTypeData:
+            [self handleDataSyncCompletion];
+            break;
+        default:
+            break;
+    }
+    self.syncResponseStatus = nil;
+}
+
+- (void)handleInitialSyncCompletion
+{
+    if (self.syncResponseStatus.syncStatus == SyncStatusSuccess)
+    {
+        [self currentInitialSyncFinished];
+        [self updateUserTableIfRecordDoesnotExist];
+        [[AutoLockManager sharedManager] enableAutoLockSettingFor:initialSyncAL]; // Enable the user controlled device lock. 26-May-2015
+        [self notifyStatus:kInitialSyncStatusNotification];
+    }
+    else  if ( (self.syncResponseStatus.syncStatus == SyncStatusFailed) ||  (self.syncResponseStatus.syncStatus == SyncStatusNetworkError))
+    {
+        [self currentInitialSyncFailedWithError:self.syncError];
+    }
+}
+
+- (void)handleConfigSyncCompletion
+{
+    if (self.syncResponseStatus.syncStatus == SyncStatusSuccess)
+    {
+        [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:YES];
+        [self currentConfigSyncFinished];
+        [self notifyStatus:kConfigSyncStatusNotification];
+    }
+    else  if (self.syncResponseStatus.syncStatus == SyncStatusFailed ||  self.syncResponseStatus.syncStatus == SyncStatusNetworkError)
+    {
+        [[DatabaseConfigurationManager sharedInstance] postMetaSyncDatabaseConfigurationByResult:NO];
+        [self currentConfigSyncFailedWithError:self.syncError];
+    }
+}
+
+- (void)notifyStatus:(NSString*)notification {
+    SyncProgressStatusHandler *syncProgressHandler = [[SyncProgressStatusHandler alloc] init];
+    SyncProgressDetailModel   *syncProgressModel = [syncProgressHandler getProgressDetailsForStatus:self.syncResponseStatus];
+    
+    syncProgressModel.syncError = self.syncError;
+    NSDictionary *syncStatus = nil;
+    
+    if (syncProgressModel != nil)
+    {
+        syncStatus = [NSDictionary dictionaryWithObject:syncProgressModel forKey:@"syncstatus"];
+    }
+    else
+    {
+        syncStatus = [NSDictionary dictionaryWithObject:@"In Progress" forKey:@"syncstatus"];
+    }
+    
+    [self sendNotification:notification andUserInfo:syncStatus];
+}
+
+- (void)handleDataSyncCompletion
+{
+    if (self.syncResponseStatus.syncStatus == SyncStatusSuccess)
+    {
+        [self PerformSYncBasedOnFlags];
+    }
+    else  if (   (self.syncResponseStatus.syncStatus == SyncStatusFailed)
+              || (self.syncResponseStatus.syncStatus == SyncStatusRefreshTokenFailedWithError)
+              || (self.syncResponseStatus.syncStatus == SyncStatusNetworkError))
+    {
+        [self currentDataSyncFailedWithError:self.syncError];
+    }
+    
+}
+
+- (dispatch_queue_t)getSyncErrorReportQueue
+{
+    return _queue;
+}
+
+
 
 
 @end

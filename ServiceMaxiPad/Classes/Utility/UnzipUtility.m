@@ -24,6 +24,10 @@
                            @"com.servicemax.client.sfmopdocdelivery",
                            @"com.servicemax.client.tablet.sal.sfmopdoc.model",
                            @"com.servicemax.client",
+                           @"com.servicemax.client.sal",
+                           @"com.servicemax.client.native.laptop",
+                           @"com.servicemax.client.offline.sal.model",
+                           @"com.servicemax.client.usage",
                            nil];
     return listOfLibs;
 }

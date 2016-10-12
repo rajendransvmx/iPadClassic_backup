@@ -23,6 +23,7 @@
 #import "ModifiedRecordsDAO.h"
 #import "DateUtil.h"
 #import "ModifiedRecordsService.h"
+#import "FlowNode.h"
 
 typedef enum {
     OneCallSyncPutDelete = 1,
@@ -735,6 +736,16 @@ typedef enum {
         NSError *error = [self handleErrorIfAny:internalResponse];
         if (error != nil) {
             callBack.errorInParsing = error;
+            //Send the error to AWS
+            if([internalResponse count] > 0){
+                
+                NSDictionary *someDictionary = [internalResponse objectAtIndex:0];
+                NSArray *errors = [someDictionary objectForKey:@"errors"];
+                if ([errors count ] > 0) {
+                    [FlowNode reportErrorToAWS:nil withResponseObject:internalResponse withRequestObject:nil];
+                }
+            }
+            //AWS error handling ends here
         }
     }
 }

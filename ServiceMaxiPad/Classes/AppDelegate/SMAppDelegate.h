@@ -18,6 +18,12 @@
 @property (strong, nonatomic) UIWindow *window;
 @property (copy) void (^backgroundSessionCompletionHandler)();
 
+//IPAD-4283 Back Porting Sync error reporting for WIN 16
+@property(nonatomic,strong)NSString *syncReportingType;
+@property(nonatomic,strong)NSMutableArray *syncDataArray;
+@property(nonatomic,strong)NSMutableArray *syncErrorDataArray;
+@property(nonatomic,strong)NSString *serverUrl;
+
 /**
  * @name  loadWithController:(UIViewController *)rootController
  *

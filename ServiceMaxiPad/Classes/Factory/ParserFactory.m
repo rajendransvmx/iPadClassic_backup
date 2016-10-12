@@ -37,6 +37,8 @@
 #import "UserTrunkDataParser.h"
 #import "APNSParser.h"
 #import "CustomWebServiceParser.h"
+#import "MobileDataUsageParser.h"
+
 
 //#import "GroupProfileParser.h"
 
@@ -353,6 +355,9 @@
             break;
         case RequestTypeCustomActionWebServiceAfterBefore:
             parser = [[CustomWebServiceParser alloc] init];
+            break;
+        case RequestMasterSyncTimeLog:
+            parser = [[MobileDataUsageParser alloc] init];
             break;
         
         default:

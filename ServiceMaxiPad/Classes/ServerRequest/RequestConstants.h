@@ -63,6 +63,7 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestStaticResourceLibrary,
     RequestSubmitDocument,
     RequestGeneratePDF,
+    RequestMasterSyncTimeLog,
     
     RequestDataOnDemandGetPriceInfo,
     RequestDataOnDemandGetData,

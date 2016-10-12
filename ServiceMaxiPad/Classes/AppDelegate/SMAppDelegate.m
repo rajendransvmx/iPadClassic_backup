@@ -66,6 +66,13 @@
          [UINavigationBar appearance].tintColor = [UIColor whiteColor];
      }
 */
+     
+     //IPAD-4283 Back Porting Sync error reporting for WIN 16
+     NSMutableArray *arr = [[NSMutableArray alloc]init];
+     self.syncErrorDataArray = arr;
+     
+     NSMutableArray *arr2 = [[NSMutableArray alloc]init];
+     self.syncDataArray = arr2;
      /** Setup Logger  */
      SMLogPerformInitialSetup();
      ConfigureLoggerAccordingToSettings();

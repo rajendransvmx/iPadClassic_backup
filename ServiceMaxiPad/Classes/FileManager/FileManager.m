@@ -11,7 +11,11 @@
 #import "StringUtil.h"
 
 static NSString *const kRootDirectoryName = ORG_NAME_SPACE;
-static NSString *const kCoreLibraryDirectoryName = @"CoreLib";
+//static NSString *const kCoreLibraryDirectoryName = @"CoreLib"; //HS 3Oct for sync Error Reporting lib path
+
+static NSString *const kCoreLibraryDirectoryName = @"modules";//HS 3Oct for sync Error Reporting lib path
+
+
 
 //PA
 static NSString *const kPerforamanceLogDirectoryName = @"PerformanceLog";

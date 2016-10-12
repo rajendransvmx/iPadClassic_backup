@@ -96,6 +96,9 @@
             case RequestTypeCustomActionWebServiceAfterBefore:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
+            case RequestMasterSyncTimeLog:
+                requestClass = [self getRestRequestByType:requestType];
+                break;
             case RequestDependentPicklist:
             case RequestChatter:
             case RequestTechnicianDetails:

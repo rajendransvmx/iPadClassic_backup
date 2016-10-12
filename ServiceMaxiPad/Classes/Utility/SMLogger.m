@@ -45,6 +45,7 @@
 #import "DBRequestSelect.h"
 #import "DatabaseConfigurationManager.h"
 #import "SMLoggerHelper.h"
+#import "SMAppDelegate.h"
 
 @implementation SMLogger
 
@@ -193,6 +194,18 @@ void SMLogEnqueueLogMessage( NSString *message, NSString *methodContext, NSInteg
 {
     PumpLogIntoDatabase(message, methodContext, logLevel, @"Application Level");
     //use this method to write output to file or database depending on your requirement.
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    if ([appDelegate.syncReportingType isEqualToString:@"always"] || [appDelegate.syncReportingType isEqualToString:@"error"])
+    {
+        setDataForSyncError(message, methodContext, logLevel, @"Application level");
+        
+    }
+    
+    else
+    {
+        setDataForSyncError(message, methodContext, logLevel, @"Application level");
+        
+    }
 }
 
 #pragma mark - application support methods
@@ -294,4 +307,62 @@ void PumpLogIntoDatabase(NSString *message, NSString *methodContext, NSInteger l
         [jobLogService deleteJobLogsIfRecordCountCrossedLimit];
     }
 }
+
+//IPAD-4283 Back Porting Sync error reporting for WIN 16
+void setDataForSyncError(NSString *message, NSString *methodContext, NSInteger logLevel, NSString *category)
+{
+    SMAppDelegate *appDelegate = (SMAppDelegate *)[[UIApplication sharedApplication]delegate];
+    
+    if([methodContext length] > kMaxLogMethodLength) {
+        methodContext = [methodContext substringToIndex:kMaxLogMethodLength];
+    }
+    //message = [message stringByReplacingOccurrencesOfString:@"\"" withString:@"&quot;"];
+    if ([message length] > kMaxLogMesssageLength) {
+        
+        message = [message substringToIndex:kMaxLogMesssageLength];
+    }
+    JobLogModel *logModel = [[JobLogModel alloc]init];
+    logModel.profileId = [CustomerOrgInfo sharedInstance].currentUserId;
+    logModel.groupId = @"";
+    logModel.type = @"iPad";
+    logModel.category = category;
+    logModel.message = message;
+    logModel.operation = methodContext;
+    logModel.level = logLevel;
+    
+    logModel.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
+    [dict setObject:[CustomerOrgInfo sharedInstance].currentUserId forKey:@"profileId"];
+    [dict setObject:@"" forKey:@"groupId"];
+    [dict setObject:@"iPad" forKey:@"type"];
+    [dict setObject:category forKey:@"category"];
+    [dict setObject:message forKey:@"message"];
+    [dict setObject:methodContext forKey:@"operation"];
+    [dict setObject:[NSString stringWithFormat:@"%ld",(long)logLevel] forKey:@"level"];
+    
+    @autoreleasepool {
+        if ([appDelegate.syncReportingType isEqualToString:@"always"])
+        {
+            
+            if (appDelegate.syncDataArray == nil)
+            {
+                NSMutableArray *arr = [[NSMutableArray alloc]init];
+                appDelegate.syncDataArray = arr;
+            }
+            
+            [appDelegate.syncDataArray addObject:dict];
+            
+        }
+        else if([appDelegate.syncReportingType isEqualToString:@"error"])
+        {
+            //[appDelegate.syncErrorDataArray addObject:dict];
+            
+        }
+        
+    }
+    
+    
+}
+
+
 @end
