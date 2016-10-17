@@ -3,11 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.59.004
+Version = 16.59.005
 ===========================================
 
 Defect:
-036038 iPad - Output Document. Customer Signature
+036888  Search on Multi-Select Picklist Field freezes iPad app
 
 Feature:
 ==================
@@ -17,6 +17,6 @@ n/a
 
 NOTE:
 
-1. NameSpace: SVMXDEV
+1. NameSpace: SVMXC
 
 
