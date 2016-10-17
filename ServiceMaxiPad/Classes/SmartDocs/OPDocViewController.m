@@ -353,7 +353,13 @@
     {
         self.signEventName = eventName;
         self.signEventParameterString = jsonParameterString;
-        [self captureSignature];
+        //      ProcessUniqueName + "_" + RecordId + "_" + DOM_Id
+        //      UniqueName is the value of the attribute "signature-name" of the signature button dom
+        NSString *combinedString = [NSString stringWithFormat:@"%@_%@_",self.processIdentifier,self.localIdentifier];
+        NSString *domElementId = [jsonParameterString stringByReplacingOccurrencesOfString:combinedString withString:@""];
+        NSString *jsQuery = [NSString stringWithFormat:@"document.querySelectorAll('[signature-name=\"%@\"]')[0].innerText.toString();",domElementId];
+        NSString *buttonTitle = [self.jsExecuter.jsWebView stringByEvaluatingJavaScriptFromString:jsQuery];
+        [self captureSignatureWithTitle:buttonTitle];
     }
     else if([eventName isEqualToString:@"issignatureavailable"])
     {
@@ -465,8 +471,7 @@
  * @return void
  *
  */
-- (void)captureSignature
-{
+- (void)captureSignatureWithTitle:(NSString*)title{
     if (isShowingSignatureCapture)
         return;
     
@@ -516,6 +521,8 @@
     [sign.view.layer setShadowOffset:CGSizeMake(2.0, 2.0)];
     
 	[self.view addSubview:sign.view];
+    sign.titleLabel.text = title;
+
     
     isShowingSignatureCapture = YES;
 }
