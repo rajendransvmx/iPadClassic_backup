@@ -3,11 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.59.003
+Version = 16.59.004
 ===========================================
 
 Defect:
-Removed white listing of vulforia
+036038 iPad - Output Document. Customer Signature
 
 Feature:
 ==================
