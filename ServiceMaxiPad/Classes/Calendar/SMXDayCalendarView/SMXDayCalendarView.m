@@ -285,6 +285,7 @@
     boolAnimate = NO;
     
     [self updateHeader];
+    [dayContainerScroll.collectionViewDay reloadData];
     
     if ([NSDate isTheSameDateTheCompA:[NSDate componentsOfCurrentDate] compB:[NSDate componentsOfDate:[[SMXDateManager sharedManager] currentDate]]]) {
         [dayContainerScroll scrollRectToVisible:CGRectMake(0, dayContainerScroll.labelWithActualHour.frame.origin.y, dayContainerScroll.frame.size.width, dayContainerScroll.frame.size.height) animated:YES];
