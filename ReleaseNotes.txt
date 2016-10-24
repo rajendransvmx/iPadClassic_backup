@@ -3,11 +3,11 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.59.005
+Version = 16.59.006
 ===========================================
 
 Defect:
-036888  Search on Multi-Select Picklist Field freezes iPad app
+
 
 Feature:
 ==================
