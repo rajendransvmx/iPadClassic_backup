@@ -59,8 +59,24 @@
     self.valueField.text = (NSString*)value;
 }
 
+-(NSString*)formatNumericField:(NSString*) dataType recordData:(NSString *)originalString{
+    
+    NSString *finalString = originalString;
+    if(([dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
+        || [dataType isEqualToString:kSfDTDouble]
+        || [dataType isEqualToString:kSfDTPercent]) && originalString.length>0){
+        double value = originalString.doubleValue;
+        finalString  = [[NSString alloc] initWithFormat:@"%.*f",(int)self.scale,value];
+        
+    }
+    return finalString;
+}
+
 - (void)textFieldDidChange:(TextField *)textField
 {
+    NSString *formattedString  = [self formatNumericField:self.dataType recordData:self.value];
+    [self setValue:formattedString];
+
     if(self.delegate && [self.delegate respondsToSelector:@selector(cellValue:didChangeForIndexpath:)])
     {
         [self.delegate cellValue:self.value didChangeForIndexpath:self.indexPath];
