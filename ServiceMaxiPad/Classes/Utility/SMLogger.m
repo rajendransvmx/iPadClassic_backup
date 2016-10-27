@@ -333,7 +333,7 @@ void setDataForSyncError(NSString *message, NSString *methodContext, NSInteger l
     
     logModel.timeStamp = [DateUtil getDatabaseStringForDate:[NSDate date]];
     NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
-    [dict setObject:[CustomerOrgInfo sharedInstance].currentUserId forKey:@"profileId"];
+    [dict setObject:[CustomerOrgInfo sharedInstance].currentUserId!=nil?[CustomerOrgInfo sharedInstance].currentUserId:@"" forKey:@"profileId"];
     [dict setObject:@"" forKey:@"groupId"];
     [dict setObject:@"iPad" forKey:@"type"];
     [dict setObject:category forKey:@"category"];
