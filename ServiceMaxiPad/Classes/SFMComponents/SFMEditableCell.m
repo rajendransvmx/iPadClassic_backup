@@ -62,9 +62,9 @@
 -(NSString*)formatNumericField:(NSString*) dataType recordData:(NSString *)originalString{
     
     NSString *finalString = originalString;
-    if([dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
+    if(([dataType isEqualToString:kSfDTCurrency]  //Except integer for other numberfields should consider.
        || [dataType isEqualToString:kSfDTDouble]
-       || [dataType isEqualToString:kSfDTPercent]){
+       || [dataType isEqualToString:kSfDTPercent]) && originalString.length>0){
         double value = originalString.doubleValue;
         finalString  = [[NSString alloc] initWithFormat:@"%.*f",(int)self.scale,value];
         
