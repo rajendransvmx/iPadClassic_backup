@@ -245,8 +245,8 @@
     NSString *selectedValue = [self getDisplayValue];
     NSString *internalValue = [self getInternalValue];
     
-    self.recordData.internalValue = selectedValue;
-    self.recordData.displayValue = internalValue;
+    self.recordData.displayValue = selectedValue;
+    self.recordData.internalValue = internalValue;
     
     [self.delegate valueForField:self.recordData forIndexPath:self.indexPath sender:self];
     
