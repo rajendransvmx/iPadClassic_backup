@@ -112,11 +112,12 @@
     NSString *parameterString =  [[absoluteUrl absoluteString] stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@://params?",scheme] withString:@""];
     NSString *paramString=  [parameterString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
+    // 037139
+    if (paramString == nil) {
+        paramString = @"";
+    }
+    
     if ([scheme hasPrefix:kDataRequest]) {
-        
-        if (paramString == nil) {
-            paramString = @"";
-        }
         NSDictionary *parmDict =  [NSDictionary dictionaryWithObjectsAndKeys:paramString,@"param",scheme,@"scheme",nil];
         [self performSelectorOnMainThread:@selector(passPreRegisteredEventWithData:) withObject:parmDict waitUntilDone:NO];
     }
