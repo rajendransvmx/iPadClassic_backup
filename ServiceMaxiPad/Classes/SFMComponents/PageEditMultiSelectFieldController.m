@@ -65,16 +65,11 @@
     [self setUpdataSource];
 }
 
--(void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:YES];
-    self.preferredContentSize = CGSizeMake(700, 600);
-    
-}
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
     
-    self.preferredContentSize = CGSizeMake(700, 600);
+    self.view.superview.bounds = CGRectMake(0, 0, 700, 600);
     self.view.superview.layer.masksToBounds = YES;
     self.view.superview.layer.cornerRadius  = 6.0;
 }
