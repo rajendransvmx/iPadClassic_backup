@@ -28,8 +28,8 @@
     self.fileNameLabel.text = attachmentModel.nameWithoutExtension;
     self.errorLabel.text = [AttachmentUtility restAPIErrorMessageByErrorCode:(int)attachmentModel.errorCode];
     NSString *fileSizeInUnits = [NSString stringWithFormat:@"%.2f %@",
-                                 [AttachmentUtility calculateFileSizeInUnit:(unsigned long long)attachmentModel.bodyLength],
-                                 [AttachmentUtility calculateUnit:(unsigned long long)attachmentModel.bodyLength]];
+                                 [AttachmentUtility getFileSizeInSizeUnit:(unsigned long long)attachmentModel.bodyLength],
+                                 [AttachmentUtility getFileSizeUnit:(unsigned long long)attachmentModel.bodyLength]];
     self.fileSizeLabel.text = fileSizeInUnits;
 }
 

@@ -83,28 +83,38 @@
 }
 
 
-+ (float)calculateFileSizeInUnit:(unsigned long long)contentLength
++ (float)getFileSizeInSizeUnit:(unsigned long long)lengthOfContent
 {
-    if(contentLength >= pow(1024, 3))
-        return (float) (contentLength / (float)pow(1024, 3));
-    else if(contentLength >= pow(1024, 2))
-        return (float) (contentLength / (float)pow(1024, 2));
-    else if(contentLength >= 1024)
-        return (float) (contentLength / (float)1024);
-    else
-        return (float) (contentLength);
+    float returnLengthOfContent = (float)lengthOfContent;
+    
+    if(lengthOfContent >= pow(1024, 3)) {
+        returnLengthOfContent = (float) (lengthOfContent / (float)pow(1024, 3));
+    }
+    else if(lengthOfContent >= pow(1024, 2)) {
+        returnLengthOfContent = (float) (lengthOfContent / (float)pow(1024, 2));
+    }
+    else if(lengthOfContent >= 1024) {
+        returnLengthOfContent = (float) (lengthOfContent / (float)1024);
+    }
+    
+    return returnLengthOfContent;
 }
 
-+ (NSString *)calculateUnit:(unsigned long long)contentLength
++ (NSString *)getFileSizeUnit:(unsigned long long)lengthOfContent
 {
-    if(contentLength >= pow(1024, 3))
-        return @"GB";
-    else if(contentLength >= pow(1024, 2))
-        return @"MB";
-    else if(contentLength >= 1024)
-        return @"KB";
-    else
-        return @"Bytes";
+    NSString *returnString = @"Bytes";
+    
+    if(lengthOfContent >= pow(1024, 3)) {
+        returnString = @"GB";
+    }
+    else if(lengthOfContent >= pow(1024, 2)){
+        returnString = @"MB";
+    }
+    else if(lengthOfContent >= 1024) {
+        returnString = @"KB";
+    }
+    
+    return returnString;
 }
 
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSString *)docDirectoryPath

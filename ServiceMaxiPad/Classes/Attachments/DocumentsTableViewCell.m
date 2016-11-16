@@ -92,8 +92,8 @@ static NSInteger offset = 32;
     self.titleLabel.text = attachmentTXModel.nameWithoutExtension;
     self.dateLabel.text = attachmentTXModel.displayDateString;
     NSString *fileSizeInUnits = [NSString stringWithFormat:@"%.2f %@",
-                                 [AttachmentUtility calculateFileSizeInUnit:(unsigned long long)attachmentTXModel.bodyLength],
-                                 [AttachmentUtility calculateUnit:(unsigned long long)attachmentTXModel.bodyLength]];
+                                 [AttachmentUtility getFileSizeInSizeUnit:(unsigned long long)attachmentTXModel.bodyLength],
+                                 [AttachmentUtility getFileSizeUnit:(unsigned long long)attachmentTXModel.bodyLength]];
     self.sizeLabel.text = fileSizeInUnits;
     self.downloadProgressView.hidden = ![downloadInfo allKeys];
     

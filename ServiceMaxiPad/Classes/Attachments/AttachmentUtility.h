@@ -35,16 +35,16 @@
 + (NSString *)trimWhitespace:(NSString *)text;
 
 /**A method for getting unit filesize.
- @param (unsigned long long)contentLength size in bytes.
+ @param (unsigned long long)lengthOfCotent size in bytes.
  @return size in units.
  */
-+ (float)calculateFileSizeInUnit:(unsigned long long)contentLength;
++ (float)getFileSizeInSizeUnit:(unsigned long long)lengthOfContent;
 
 /**A method for getting unit.
- @param (unsigned long long)contentLength size in bytes.
+ @param (unsigned long long)lengthOfCotent size in bytes.
  @return units of size e.g MB, KB, GB.
  */
-+ (NSString *)calculateUnit:(unsigned long long)contentLength;
++ (NSString *)getFileSizeUnit:(unsigned long long)lengthOfContent;
 
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSString *)docDirectoryPath;
 

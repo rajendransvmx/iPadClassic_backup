@@ -19,8 +19,8 @@
 {
     self.fileNameLabel.text = attachmentModel.name;
     NSString *fileSizeInUnits = [NSString stringWithFormat:@"%.2f %@",
-                                 [AttachmentUtility calculateFileSizeInUnit:(unsigned long long)attachmentModel.bodyLength],
-                                 [AttachmentUtility calculateUnit:(unsigned long long)attachmentModel.bodyLength]];
+                                 [AttachmentUtility getFileSizeInSizeUnit:(unsigned long long)attachmentModel.bodyLength],
+                                 [AttachmentUtility getFileSizeUnit:(unsigned long long)attachmentModel.bodyLength]];
     self.fileSizeLabel.text = fileSizeInUnits;
     NSDictionary *downloadInfo = [[AttachmentsDownloadManager sharedManager].downloadingDictionary objectForKey:attachmentModel.localId];
     self.progressView.hidden = ![downloadInfo allKeys];
