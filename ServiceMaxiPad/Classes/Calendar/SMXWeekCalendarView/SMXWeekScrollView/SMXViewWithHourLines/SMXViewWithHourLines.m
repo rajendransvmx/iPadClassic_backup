@@ -70,13 +70,13 @@ static UIImage *lineImage;
                 labelHourMin.topInset=-5.0f;
                 labelHourMin.leftInset=18.0f;
                 labelHourMin.font=[UIFont fontWithName:@"HelveticaNeue-Medium" size:14.0f];
-                [labelHourMin setTextColor:[UIColor colorWithHexString:@"434343"]];
+                [labelHourMin setTextColor:[UIColor colorFromHexString:@"434343"]];
                 if (min == 0) {
                     [labelHourMin showText];
                     CGFloat width = [labelHourMin widthThatWouldFit];
                     
                     UIView *view1 = [[UIView alloc] initWithFrame:CGRectMake(labelHourMin.frame.origin.x+50, 25., self.frame.size.width-labelHourMin.frame.origin.x-width+20, 1.)];
-                    view1.backgroundColor=[UIColor colorWithHexString:@"D7D7D7"];
+                    view1.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
                     [view1 setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
                     [labelHourMin setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
                     [labelHourMin addSubview:view1];
@@ -112,12 +112,12 @@ static UIImage *lineImage;
     }
     lHour = (lHour>12? lHour - 12 : lHour); //converting to 0-12 hrs standard
     [label setText:[NSString stringWithFormat:@"%02d:%02ld %@", lHour, (long)comp.minute, lAmPm]];
-    [label setTextColor:[UIColor colorWithHexString:@"e15001"]];
+    [label setTextColor:[UIColor colorFromHexString:@"e15001"]];
     label.font = [UIFont fontWithName:kHelveticaNeueRegular size:12.0];
     CGFloat width = [label widthThatWouldFit];
     view = [[UIView alloc] initWithFrame:CGRectMake(label.frame.origin.x+width, HEIGHT_CELL_MIN/2., _width-label.frame.origin.x-width, 1.)];
     [view setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-    [view setBackgroundColor:[UIColor colorWithHexString:kOrangeColor]];
+    [view setBackgroundColor:[UIColor colorFromHexString:kOrangeColor]];
     [label addSubview:view];
     
     currentTimeLayer=[[UIImageView alloc] initWithFrame:CGRectMake(label.frame.origin.x, label.frame.origin.y,160,25.)];

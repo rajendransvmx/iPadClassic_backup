@@ -519,7 +519,7 @@
         colorString = [CalenderHelper getTheHexaCodeForTheSettingId:@"IPAD006_SET004"];
         self.thirdImageView.image = nil;
     }
-    borderColor = [UIColor colorWithHexString:colorString];
+    borderColor = [UIColor colorFromHexString:colorString];
     
     self.borderView.backgroundColor = borderColor;//[UIColor colorWithRed:67.0/255.0 green:67.0/255.0 blue:67.0/255.0 alpha:1.0];
 }

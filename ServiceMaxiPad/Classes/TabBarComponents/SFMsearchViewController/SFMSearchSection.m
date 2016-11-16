@@ -25,7 +25,7 @@
         /** Seperator for Search section */
         UIView *seperatorView = [[UIView alloc] initWithFrame:CGRectMake(seperatorPadding, self.frame.size.height - seperatorHeight, self.frame.size.width - 2 * (seperatorPadding), seperatorHeight)];
         seperatorView.tag = 101;
-        seperatorView.backgroundColor = [UIColor colorWithHexString:kSeperatorLineColorForSearchSection];
+        seperatorView.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColorForSearchSection];
         [self addSubview:seperatorView];
         
         /** Accessory image view for Search section */

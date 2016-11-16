@@ -281,7 +281,7 @@ typedef enum {
     tabBarView.layer.shadowRadius = 1.0f;
     tabBarView.layer.shadowOpacity = 0.35f;
     tabBarView.layer.shadowColor = [UIColor grayColor].CGColor;
-    tabBarView.backgroundColor = [UIColor colorWithHexString:@"#F2F2F2"];
+    tabBarView.backgroundColor = [UIColor colorFromHexString:@"#F2F2F2"];
     [self.view addSubview:tabBarView];
     
     CGFloat spaceMargin = (self.view.bounds.size.width - btn1.frame.origin.x + btn1.frame.size.width)/7 - 108; //As per spec(70 from left , for 1st button - 92, rest btn margin -131

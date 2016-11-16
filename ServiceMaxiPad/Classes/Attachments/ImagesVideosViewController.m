@@ -728,7 +728,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
 {
     [self hideAttachmentPopover];
     [popoverController setPopoverContentSize:CGSizeMake(300.0f, 119.0f)];
-    popoverController.contentViewController.view.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+    popoverController.contentViewController.view.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
     [popoverController presentPopoverFromRect:button.frame
                                        inView:self.view
                      permittedArrowDirections:UIPopoverArrowDirectionAny

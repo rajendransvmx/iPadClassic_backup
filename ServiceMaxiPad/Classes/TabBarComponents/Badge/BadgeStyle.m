@@ -91,8 +91,8 @@
     id instance = [[super alloc] init];
     [instance setBadgeFontType:BadgeStyleFontTypeHelveticaNeueMedium];
     [instance setBadgeTextColor:[UIColor whiteColor]];
-    [instance setBadgeInsetColor:[UIColor colorWithHexString:@"#FF6633"]];
-    [instance setBadgeFrameColor:[UIColor colorWithHexString:@"#FF6633"]];
+    [instance setBadgeInsetColor:[UIColor colorFromHexString:@"#FF6633"]];
+    [instance setBadgeFrameColor:[UIColor colorFromHexString:@"#FF6633"]];
     [instance setBadgeFrame:YES];
     [instance setBadgeShadow:YES];
     [instance setBadgeShining:YES];

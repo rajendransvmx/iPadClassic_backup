@@ -56,7 +56,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorWithHexString:kPageViewMasterBGColor];
+    self.view.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     // Do any additional setup after loading the view.
@@ -159,7 +159,7 @@
     //Add one pixel seperator line to each cell
     UIView *seperatorLine = [[UIView alloc]initWithFrame:CGRectMake(5,49
                                                                     , self.tableView.frame.size.width, 1)];
-    seperatorLine.backgroundColor = [UIColor colorWithHexString:kSeperatorLineColor];
+    seperatorLine.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
     [cell.contentView addSubview:seperatorLine];
     
     cell.textLabel.text = cellText;

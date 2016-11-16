@@ -79,7 +79,7 @@
 
 -(void)initialSetUp
 {
-    NSDictionary *barButtonItemAttributes = @{NSFontAttributeName: [UIFont fontWithName:kHelveticaNeueThin size:kFontSize16], NSForegroundColorAttributeName :[UIColor colorWithHexString:@"#E15001"]};
+    NSDictionary *barButtonItemAttributes = @{NSFontAttributeName: [UIFont fontWithName:kHelveticaNeueThin size:kFontSize16], NSForegroundColorAttributeName :[UIColor colorFromHexString:@"#E15001"]};
     
     [self.cancelButton setTitle:[[TagManager sharedInstance] tagByName:kCancelButtonTitle]];
     [self.cancelButton setTitleTextAttributes:barButtonItemAttributes forState:UIControlStateNormal];

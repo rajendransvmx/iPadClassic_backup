@@ -75,7 +75,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
-    self.tableView.backgroundColor = [UIColor clearColor];//[UIColor colorWithHexString:kPageViewMasterBGColor];
+    self.tableView.backgroundColor = [UIColor clearColor];//[UIColor colorFromHexString:kPageViewMasterBGColor];
     self.tableView.scrollEnabled = NO;
     
     [self addTableViewHeader];
@@ -522,7 +522,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         removeButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 50)];
         [removeButton addTarget:self action:@selector(removeChildLine:) forControlEvents:UIControlEventTouchUpInside];
         [removeButton setTitle:@"Remove" forState:UIControlStateNormal];
-        [removeButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
+        [removeButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
         [removeButton.titleLabel setFont:[UIFont fontWithName:kHelveticaNeueLight size:kFontSize16]];
 
     }
@@ -534,7 +534,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     UIButton *removeButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 50)];
     [removeButton addTarget:self action:@selector(removeChildLine:) forControlEvents:UIControlEventTouchUpInside];
     [removeButton setTitle:[[TagManager sharedInstance]tagByName:kTagConflictRemove] forState:UIControlStateNormal];
-    [removeButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
+    [removeButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
     [removeButton.titleLabel setFont:[UIFont fontWithName:kHelveticaNeueLight size:kFontSize16]];
     
     return removeButton;
@@ -1252,7 +1252,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     UIButton *actionButton = [[UIButton alloc] initWithFrame:CGRectZero];
     [actionButton addTarget:self action:@selector(showLinkedProcessList:) forControlEvents:UIControlEventTouchUpInside];
     [actionButton setTitle:title forState:UIControlStateNormal];
-    [actionButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
+    [actionButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
     [actionButton.titleLabel setFont:[UIFont fontWithName:kHelveticaNeueLight size:kFontSize16]];
     return actionButton;
 }
@@ -1278,7 +1278,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
     [self.popOver setPopoverContentSize:[controller getPopoverContentSize] animated:NO];
     
     
-    self.popOver.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+    self.popOver.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
     
     CGRect frame = CGRectMake(button.frame.origin.x, button.frame.origin.y,
                               button.frame.size.width, button.frame.size.height-20);

@@ -56,7 +56,7 @@
     self.historyTableView.frame = tableViewFrame;
     
     
-    self.historyTableView.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+    self.historyTableView.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
     self.historyTableView.layer.borderWidth = 1.0;
     self.historyTableView.layer.cornerRadius = 5.00;
 
@@ -221,14 +221,14 @@
 {
     if (status) {
         seeMore.userInteractionEnabled = YES;
-        seeMore.backgroundColor = [UIColor colorWithHexString:@"#FF6633"];
+        seeMore.backgroundColor = [UIColor colorFromHexString:@"#FF6633"];
         [seeMore setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     }
     else {
         seeMore.userInteractionEnabled = NO;
-        seeMore.layer.borderColor =[UIColor colorWithHexString:@"#AEAEAE"].CGColor;
-        [seeMore setBackgroundColor:[UIColor colorWithHexString:@"#AEAEAE"]];
-        [seeMore setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+        seeMore.layer.borderColor =[UIColor colorFromHexString:@"#AEAEAE"].CGColor;
+        [seeMore setBackgroundColor:[UIColor colorFromHexString:@"#AEAEAE"]];
+        [seeMore setTitleColor:[UIColor colorFromHexString:@"#FFFFFF"] forState:UIControlStateNormal];
 
     }
 }

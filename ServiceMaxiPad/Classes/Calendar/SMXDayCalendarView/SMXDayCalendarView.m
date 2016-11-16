@@ -184,7 +184,7 @@
 -(void)dayCalendarPopup{
     if (grayCalenderBkView==nil) {
         
-        [CalendarPopupContent setColor:[UIColor colorWithHexString:@"F2F2F2"]];
+        [CalendarPopupContent setColor:[UIColor colorFromHexString:@"F2F2F2"]];
         [CalendarPopupContent setdayPopup:TRUE];
         [CalendarPopupContent setWidth:100];
         [CalendarPopupContent setHight:100];
@@ -197,7 +197,7 @@
         
         monthCalender=[[CalendarMonthViewController alloc] initWithSunday:YES];
         monthCalender.view.frame=CGRectMake(0, -366, 322, 416);
-        monthCalender.view.backgroundColor=[UIColor colorWithHexString:@"F2F2F2"];
+        monthCalender.view.backgroundColor=[UIColor colorFromHexString:@"F2F2F2"];
         [self calenderButton];
         [self currentDayButtonCall:monthCalender.view];
         [grayCalenderBkView addSubview:monthCalender.view];
@@ -231,7 +231,7 @@
 
 -(UIImageView *)grayLine:(CGRect)rect{
     UIImageView *grayLine=[[UIImageView alloc] initWithFrame:rect];
-    grayLine.backgroundColor=[UIColor colorWithHexString:@"D7D7D7"];
+    grayLine.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
     return grayLine;
 }
 -(void)calenderButton{

@@ -163,7 +163,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
             isTableScrollable = [controller isBorderNeeded];
             if (isTableScrollable) {
                 controller.view.layer.cornerRadius = 10.0;
-                controller.view.layer.borderColor = [[UIColor colorWithHexString:kSeperatorLineColor] CGColor];
+                controller.view.layer.borderColor = [[UIColor colorFromHexString:kSeperatorLineColor] CGColor];
                 controller.view.layer.borderWidth = 1.0;
             }
         }
@@ -226,7 +226,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
 {
     CALayer *bottomBorder = [CALayer layer];
     bottomBorder.frame = CGRectMake(0, CGRectGetHeight(self.sectionButton.bounds)-1, CGRectGetWidth(self.sectionButton.bounds), 1.0f);
-    bottomBorder.backgroundColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+    bottomBorder.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
     [self.sectionButton.layer addSublayer:bottomBorder];
 }
 

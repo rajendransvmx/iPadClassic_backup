@@ -126,7 +126,7 @@ float const kDefaultAnimationDuration = 0.25;
 {
     if (!_splitLineView) {
         _splitLineView = [[UIView alloc]initWithFrame:CGRectMake(self.masterWidth, 0, self.splitLineWidth, self.bounds.size.height)];
-        _splitLineView.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+        _splitLineView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
         _splitLineView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin;
     }
     return _splitLineView;

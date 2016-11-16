@@ -36,16 +36,16 @@
 - (void)configureErrorOffline:(AttachmentTXModel *)attachmentTXModel
 {
     self.cloudImageView.image = [UIImage imageNamed:@"Attachment-File-Missing"];
-    [self.fileNameLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
-    [self.fileSizeLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
-    [self.errorLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
+    [self.fileNameLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
+    [self.fileSizeLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
+    [self.errorLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
 }
 
 - (void)configureErrorOnline:(AttachmentTXModel *)attachmentTXModel
 {
     self.cloudImageView.image = [UIImage imageNamed:@"Attachment-File-Missing"];
-    [self.fileNameLabel setTextColor:[UIColor colorWithHexString:@"#157DFB"]];
-    [self.fileSizeLabel setTextColor:[UIColor colorWithHexString:@"#157DFB"]];
+    [self.fileNameLabel setTextColor:[UIColor colorFromHexString:@"#157DFB"]];
+    [self.fileSizeLabel setTextColor:[UIColor colorFromHexString:@"#157DFB"]];
     [self.errorLabel setTextColor:[UIColor colorWithRed:1 green:0 blue:0 alpha:1]];
 }
 

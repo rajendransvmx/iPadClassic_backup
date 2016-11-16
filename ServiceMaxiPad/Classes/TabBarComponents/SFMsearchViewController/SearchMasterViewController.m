@@ -78,18 +78,18 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
         
-        cell.textLabel.highlightedTextColor = [UIColor colorWithHexString:kWhiteColor];
-        cell.detailTextLabel.highlightedTextColor = [UIColor colorWithHexString:kWhiteColor];
+        cell.textLabel.highlightedTextColor = [UIColor colorFromHexString:kWhiteColor];
+        cell.detailTextLabel.highlightedTextColor = [UIColor colorFromHexString:kWhiteColor];
         UIView *bgColorView = [[UIView alloc] init];
-        [bgColorView setBackgroundColor:[UIColor colorWithHexString:kMasterSelectionColor]];
+        [bgColorView setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
         [cell setSelectedBackgroundView:bgColorView];
         
         UIView *seperatorView = [[UIView alloc] initWithFrame:CGRectMake(10, (SRCH_ROW_HEIGHT - 1), self.searchMasterTableView.frame.size.width - 10, 1)];
-        seperatorView.backgroundColor = [UIColor colorWithHexString:kSeperatorLineColor];
+        seperatorView.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
         [cell.contentView addSubview:seperatorView];
     }
     cell.backgroundColor = [UIColor clearColor];
-    cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
+    cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
     cell.detailTextLabel.textColor = [UIColor blackColor];
     cell.detailTextLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize14];

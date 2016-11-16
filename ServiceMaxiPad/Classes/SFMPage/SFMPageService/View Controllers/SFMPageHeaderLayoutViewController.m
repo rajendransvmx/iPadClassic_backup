@@ -78,7 +78,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.pageCollectionView.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+    self.pageCollectionView.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
     self.pageCollectionView.layer.borderWidth = 1.0;
     self.pageCollectionView.layer.cornerRadius = 5.00;
 

@@ -21,7 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.tableView.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+    self.tableView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 }
 
@@ -52,16 +52,16 @@
                                       reuseIdentifier:cellIdentifier];
     }
     cell.textLabel.text =[self.list objectAtIndex:indexPath.row];
-    cell.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+    cell.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
         cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:16.0];
-    cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
+    cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
     
     UIView *seperatorLine = [[UIView alloc]initWithFrame:CGRectMake(10,39
                                                                     , 295, 1)];
 
-    seperatorLine.backgroundColor = [UIColor colorWithHexString:kSeperatorLineColor];
+    seperatorLine.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
     UIView *bgColorView = [[UIView alloc] init];
-    [bgColorView setBackgroundColor:[UIColor colorWithHexString:kMasterSelectionColor]];
+    [bgColorView setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
     [cell setSelectedBackgroundView:bgColorView];   
     [cell.contentView addSubview:seperatorLine];
     return cell;

@@ -119,14 +119,14 @@
     self.selectedItemTable.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     self.selectedItemlabel.text = [[TagManager sharedInstance] tagByName:kTag_Tap_ItemToSelect];
-    self.selectedItemlabel.textColor = [UIColor colorWithHexString:@"#434343"];
+    self.selectedItemlabel.textColor = [UIColor colorFromHexString:@"#434343"];
     
     self.selectedlabel.text = [[TagManager sharedInstance] tagByName:kTag_Select];
 }
 
 - (void)setLabelValues
 {
-    NSDictionary *barButtonItemAttributes = @{NSFontAttributeName: [UIFont fontWithName:kHelveticaNeueThin size:kFontSize16], NSForegroundColorAttributeName: [UIColor colorWithHexString:@"#E15001"]};
+    NSDictionary *barButtonItemAttributes = @{NSFontAttributeName: [UIFont fontWithName:kHelveticaNeueThin size:kFontSize16], NSForegroundColorAttributeName: [UIColor colorFromHexString:@"#E15001"]};
     
     [self.cancelButton setTitle:[[TagManager sharedInstance] tagByName:kCancelButtonTitle]];
     [self.cancelButton setTitleTextAttributes:barButtonItemAttributes forState:UIControlStateNormal];
@@ -174,7 +174,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"CellIdentiifier"];
     }
     
-    cell.textLabel.textColor = [UIColor colorWithHexString:@"#434343"];
+    cell.textLabel.textColor = [UIColor colorFromHexString:@"#434343"];
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
     
     cell.textLabel.text = [self textForCell:tableView indexPath:indexPath];
@@ -407,7 +407,7 @@
     self.searchBar.layer.backgroundColor = [UIColor whiteColor].CGColor;
     self.searchBar.layer.borderWidth = 1;
     [[NSClassFromString(@"UISearchBarTextField") appearanceWhenContainedIn:[UISearchBar class], nil] setBorderStyle:UITextBorderStyleNone];
-    self.searchBar.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+    self.searchBar.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
 }
 
 
@@ -499,7 +499,7 @@
 {
     if ([Utility isCameraAvailable]) {
         UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 46)];
-        barCodeView.backgroundColor = [UIColor colorWithHexString:@"B5B7BE"];
+        barCodeView.backgroundColor = [UIColor colorFromHexString:@"B5B7BE"];
         
         CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
         

@@ -40,8 +40,8 @@
 
 
         self.moreButton.backgroundColor = [UIColor clearColor];
-        [_moreButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
-        [_moreButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateSelected];
+        [_moreButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
+        [_moreButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateSelected];
         _moreButton.titleLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize16];
         [_moreButton setTitle:[[TagManager sharedInstance]tagByName:kTagmore] forState:UIControlStateNormal];
         [_moreButton setTitle:[[TagManager sharedInstance]tagByName:kTagmore] forState:UIControlStateSelected];

@@ -32,7 +32,7 @@ static NSString *asterik = @"*";
         self.nameField.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize14];
         self.nameField.tag = 100;
         self.nameField.text = @"";
-        self.nameField.textColor = [UIColor colorWithHexString:kTextFieldFontColor];
+        self.nameField.textColor = [UIColor colorFromHexString:kTextFieldFontColor];
         [self addSubview:self.nameField];
     }
     return self;
@@ -171,11 +171,11 @@ static NSString *asterik = @"*";
     NSMutableAttributedString *attributedFieldName = nil;
     if ([stringValue length] > 0) {
         UIFont *aFont =  [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize14];
-        NSDictionary *attributeDictionary = @{NSForegroundColorAttributeName:[UIColor colorWithHexString:kTextFieldFontColor],NSFontAttributeName:aFont};
+        NSDictionary *attributeDictionary = @{NSForegroundColorAttributeName:[UIColor colorFromHexString:kTextFieldFontColor],NSFontAttributeName:aFont};
         attributedFieldName = [[NSMutableAttributedString alloc] initWithString:stringValue attributes:attributeDictionary];
         if (_shouldShowAsteric) {
             
-            NSDictionary *attributeDictionary2 = @{NSForegroundColorAttributeName:[UIColor colorWithHexString:kOrangeColor]};
+            NSDictionary *attributeDictionary2 = @{NSForegroundColorAttributeName:[UIColor colorFromHexString:kOrangeColor]};
             NSAttributedString *astericString = [[NSAttributedString alloc] initWithString:asterik attributes:attributeDictionary2];
             [attributedFieldName appendAttributedString:astericString];
         }

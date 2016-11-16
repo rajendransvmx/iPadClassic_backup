@@ -254,7 +254,7 @@
 {
     if ([Utility isCameraAvailable]) {
         UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.window.frame.size.width, 46)];
-        barCodeView.backgroundColor = [UIColor colorWithHexString:@"B5B7BE"];
+        barCodeView.backgroundColor = [UIColor colorFromHexString:@"B5B7BE"];
         
         CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
         
