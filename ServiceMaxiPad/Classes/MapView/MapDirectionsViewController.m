@@ -329,44 +329,45 @@ NSInteger const kTechAnnotationIndex = -1;
 
 -(void)zoomToFitMapAnnotations:(MKMapView*)aMapView
 {
-    if([aMapView.annotations count] == 0)
+    if(aMapView.annotations.count == 0) {
         return;
-
-    CLLocationCoordinate2D topLeftCoord;
-    topLeftCoord.latitude = -90;
-    topLeftCoord.longitude = 180;
+    }
     
-    CLLocationCoordinate2D bottomRightCoord;
-    bottomRightCoord.latitude = 90;
-    bottomRightCoord.longitude = -180;
+    CLLocationCoordinate2D topLeftCoordinate = CLLocationCoordinate2DMake(-90, 180);
+    CLLocationCoordinate2D bottomRightCoordinate = CLLocationCoordinate2DMake(90, -180);
     
-    for(UICRouteAnnotation *annotation in  aMapView.annotations)
+    for(UICRouteAnnotation *annotation in aMapView.annotations)
     {
         if (![annotation isKindOfClass:[MKUserLocation class]]) {
-            topLeftCoord.longitude = fmin(topLeftCoord.longitude, annotation.coordinate.longitude);
-            topLeftCoord.latitude = fmax(topLeftCoord.latitude, annotation.coordinate.latitude);
+            topLeftCoordinate.latitude = fmax(topLeftCoordinate.latitude, annotation.coordinate.latitude);
+            topLeftCoordinate.longitude = fmin(topLeftCoordinate.longitude, annotation.coordinate.longitude);
             
-            bottomRightCoord.longitude = fmax(bottomRightCoord.longitude, annotation.coordinate.longitude);
-            bottomRightCoord.latitude = fmin(bottomRightCoord.latitude, annotation.coordinate.latitude);
+            bottomRightCoordinate.latitude = fmin(bottomRightCoordinate.latitude, annotation.coordinate.latitude);
+            bottomRightCoordinate.longitude = fmax(bottomRightCoordinate.longitude, annotation.coordinate.longitude);
         }
     }
     
-    MKCoordinateRegion region;
-    region.center.latitude = topLeftCoord.latitude - (topLeftCoord.latitude - bottomRightCoord.latitude) * 0.5;
-    region.center.longitude = topLeftCoord.longitude + (bottomRightCoord.longitude - topLeftCoord.longitude) * 0.5;
-    region.span.latitudeDelta = fabs(topLeftCoord.latitude - bottomRightCoord.latitude) * 1.5;
-    region.span.longitudeDelta = fabs(bottomRightCoord.longitude - topLeftCoord.longitude) * 1.5;
+    //create region now
+    MKCoordinateRegion mapRegion;
+    
+    //lat and long
+    mapRegion.center.latitude = topLeftCoordinate.latitude - (topLeftCoordinate.latitude - bottomRightCoordinate.latitude) * 0.5;
+    mapRegion.center.longitude = topLeftCoordinate.longitude + (bottomRightCoordinate.longitude - topLeftCoordinate.longitude) * 0.5;
+    
+    //deltas
+    mapRegion.span.latitudeDelta = fabs(topLeftCoordinate.latitude - bottomRightCoordinate.latitude) * 1.5;
+    mapRegion.span.longitudeDelta = fabs(bottomRightCoordinate.longitude - topLeftCoordinate.longitude) * 1.5;
+    
     @try {
-        region = [aMapView regionThatFits:region];
-        [aMapView setRegion:region animated:YES];
+        mapRegion = [aMapView regionThatFits:mapRegion];
+        [aMapView setRegion:mapRegion animated:YES];
     }
     @catch (NSException *exception) {
-     
+        
         SXLogError(@"Resizing map to annotations failed. %@",exception.description);
     }
     
     //[aMapView showAnnotations:aMapView.annotations animated:YES];
-    
 }
 
 
