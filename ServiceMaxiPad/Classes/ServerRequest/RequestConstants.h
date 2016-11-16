@@ -138,7 +138,10 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestProductIQObjectDescribe,
     RequestProductIQTxFetch,
     RequestProductIQData,
-    RequestProductIQDeleteData
+    RequestProductIQDeleteData,
+    
+    /** Sync Profiling **/
+    RequestTypeSyncProfiling
 };
 
 extern NSString *const kContentType;
