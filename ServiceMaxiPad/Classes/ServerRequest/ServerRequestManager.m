@@ -99,6 +99,7 @@
         case CategoryTypeChatterFeedUpdate:
         case CategoryTypeCustomWebServiceCall:
         case CategoryTypeCustomWebServiceAfterBeforeCall:
+        case CategoryTypeSyncProfiling:
             isapplicable = NO;
             break;
 
@@ -366,6 +367,9 @@
             break;
         case CategoryTypeProductIQData:
             requestType = [self getNextRequestForProductIQData:currentRequest andPreviousRequest:previousRequest];
+            break;
+        case CategoryTypeSyncProfiling:
+            requestType = [self getNextRequestForSyncProfiling:currentRequest andPreviousRequest:previousRequest];
             break;
         default:
             break;
@@ -1328,6 +1332,27 @@
             break;
         case RequestCleanUp:
             nextRequestType = RequestTypeNone;
+        default:
+            break;
+    }
+    return nextRequestType;
+}
+
+
+#pragma mark - Sync Profiling
+
+- (RequestType)getNextRequestForSyncProfiling:(SVMXServerRequest *)currentRequest andPreviousRequest:(SVMXServerRequest *)previousRequest {
+    
+    RequestType nextRequestType = 0;
+    
+    if (currentRequest == nil) {
+        nextRequestType = RequestTypeSyncProfiling;
+    }
+    
+    switch (currentRequest.requestType) {
+        case RequestTypeSyncProfiling:
+            nextRequestType = RequestTypeNone;
+            break;
         default:
             break;
     }
