@@ -195,21 +195,20 @@ typedef enum {
 
 - (void)hideNewTabBar
 {
+    // PCRD-69 #77
+    // Tab bar hide animation code..
+    CATransition *tabbarAnimation = [CATransition animation];
     
-    // set up an animation for the transition between the views
-    CATransition *animation = [CATransition animation];
-    [animation setDuration:0.5];
-    [animation setType:kCATransitionPush];
-    [animation setSubtype:kCATransitionFromRight];
-    [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    
-    [[tabBarView layer] addAnimation:animation forKey:@"SwitchToView1"];
-    //Animation done
+    // apply push animation from right direction, also with ease in-ease out..
+    [tabbarAnimation setType:kCATransitionPush];
+    [tabbarAnimation setSubtype:kCATransitionFromRight];
+    [tabbarAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+
+    [tabbarAnimation setDuration:0.5];
+    [[tabBarView layer] addAnimation:tabbarAnimation forKey:@"kTabBarAnimation"];
     
     tabBarView.hidden = 1;
     self.transparentView.hidden = YES;
-    //self.btn1.hidden = 0;
-    
 }
 
 - (void)showNewTabBar
@@ -398,21 +397,19 @@ typedef enum {
     
     //HS new ends
     
+    // PCRD-69 #77
+    // Tab bar show animation code..
+    CATransition *tabbarAnimation = [CATransition animation];
     
+    // add push animation from left direction, also with ease in-ease out..
+    [tabbarAnimation setType:kCATransitionPush];
+    [tabbarAnimation setSubtype:kCATransitionFromLeft];
+    [tabbarAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
     
+    [tabbarAnimation setDuration:0.5];
+    [[tabBarView layer] addAnimation:tabbarAnimation forKey:@"kTabBarAnimation"];
     
-    // Add my new buttons to the view
-    //[self.view addSubview:btn1];
-    
-    // set up an animation for the transition between the views
-    CATransition *animation = [CATransition animation];
-    [animation setDuration:0.5];
-    [animation setType:kCATransitionPush];
-    [animation setSubtype:kCATransitionFromLeft];
-    [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    [[tabBarView layer] addAnimation:animation forKey:@"SwitchToView1"];
-    
-    //Animation done
+    // end of tabbar animation code
     
     [tabBarView addSubview:btn2];
     [tabBarView addSubview:btn3];
