@@ -220,23 +220,7 @@
  */
 - (NSString *)custSubstringFrom:(NSInteger)from to:(NSInteger)to;
 
-/**
- * @name custStringWithReplacingOccurrencesOfString:withString:
- *
- * @author Pushpak
- *
- * @brief Replacement of standard NSString method
- * - (NSString *)stringByReplacingOccurrencesOfString:(NSString *)target withString:(NSString *)replacement
- *
- *
- *
- * @param target string that has to be matched
- * @param replacement string that has to be replaced
- *
- * @return Resulting NSString object.
- *
- */
-- (NSString *)custStringWithReplacingOccurrencesOfString:(NSString *)target withString:(NSString *)replacement;
+// PCRD-90 #279
 
 - (BOOL)custContainsString:(NSString*)other;
 
