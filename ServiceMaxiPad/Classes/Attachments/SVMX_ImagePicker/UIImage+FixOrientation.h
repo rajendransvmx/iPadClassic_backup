@@ -10,6 +10,6 @@
 
 @interface UIImage (FixOrientation)
 
-- (UIImage *)fixOrientation;
+- (UIImage *)fixImageOrientation;
 
 @end

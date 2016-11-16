@@ -871,7 +871,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
         if([info objectForKey:UIImagePickerControllerReferenceURL] == nil)
         {
             UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-            image = [image fixOrientation];
+            image = [image fixImageOrientation];
             NSData *dataToSaveFromImage = UIImageJPEGRepresentation(image,0.5);
             UIImageWriteToSavedPhotosAlbum(image,
                                            self,

@@ -10,33 +10,41 @@
 
 @implementation UIImage (FixOrientation)
 
-- (UIImage *)fixOrientation {
+- (UIImage *)fixImageOrientation {
     
-    // No-op if the orientation is already correct
-    if (self.imageOrientation == UIImageOrientationUp) return self;
+    // If the orientation is already correct, do nothing
+    if (self.imageOrientation == UIImageOrientationUp) {
+        return self;
+    }
     
-    // We need to calculate the proper transformation to make the image upright.
-    // We do it in 2 steps: Rotate if Left/Right/Down, and then flip if Mirrored.
-    CGAffineTransform transform = CGAffineTransformIdentity;
+    // There are two steps to calculate the transformation to make the image upright - Rotate if the image is left or right or down, and then flip if image is mirrored.
+    CGAffineTransform afflineTransform = CGAffineTransformIdentity;
     
     switch (self.imageOrientation) {
         case UIImageOrientationDown:
         case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, self.size.width, self.size.height);
-            transform = CGAffineTransformRotate(transform, M_PI);
+        {
+            afflineTransform = CGAffineTransformTranslate(afflineTransform, self.size.width, self.size.height);
+            afflineTransform = CGAffineTransformRotate(afflineTransform, M_PI);
             break;
+        }
             
         case UIImageOrientationLeft:
         case UIImageOrientationLeftMirrored:
-            transform = CGAffineTransformTranslate(transform, self.size.width, 0);
-            transform = CGAffineTransformRotate(transform, M_PI_2);
+        {
+            afflineTransform = CGAffineTransformTranslate(afflineTransform, self.size.width, 0);
+            afflineTransform = CGAffineTransformRotate(afflineTransform, M_PI_2);
             break;
+        }
             
         case UIImageOrientationRight:
         case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, 0, self.size.height);
-            transform = CGAffineTransformRotate(transform, -M_PI_2);
+        {
+            afflineTransform = CGAffineTransformTranslate(afflineTransform, 0, self.size.height);
+            afflineTransform = CGAffineTransformRotate(afflineTransform, -M_PI_2);
             break;
+        }
+            
         case UIImageOrientationUp:
         case UIImageOrientationUpMirrored:
             break;
@@ -45,15 +53,20 @@
     switch (self.imageOrientation) {
         case UIImageOrientationUpMirrored:
         case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, self.size.width, 0);
-            transform = CGAffineTransformScale(transform, -1, 1);
+        {
+            afflineTransform = CGAffineTransformTranslate(afflineTransform, self.size.width, 0);
+            afflineTransform = CGAffineTransformScale(afflineTransform, -1, 1);
             break;
+        }
             
         case UIImageOrientationLeftMirrored:
         case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, self.size.height, 0);
-            transform = CGAffineTransformScale(transform, -1, 1);
+        {
+            afflineTransform = CGAffineTransformTranslate(afflineTransform, self.size.height, 0);
+            afflineTransform = CGAffineTransformScale(afflineTransform, -1, 1);
             break;
+        }
+            
         case UIImageOrientationUp:
         case UIImageOrientationDown:
         case UIImageOrientationLeft:
@@ -61,33 +74,28 @@
             break;
     }
     
-    // Now we draw the underlying CGImage into a new context, applying the transform
-    // calculated above.
-    CGContextRef ctx = CGBitmapContextCreate(NULL, self.size.width, self.size.height,
-                                             CGImageGetBitsPerComponent(self.CGImage), 0,
-                                             CGImageGetColorSpace(self.CGImage),
-                                             CGImageGetBitmapInfo(self.CGImage));
-    CGContextConcatCTM(ctx, transform);
-    switch (self.imageOrientation) {
-        case UIImageOrientationLeft:
-        case UIImageOrientationLeftMirrored:
-        case UIImageOrientationRight:
-        case UIImageOrientationRightMirrored:
-            // Grr...
-            CGContextDrawImage(ctx, CGRectMake(0,0,self.size.height,self.size.width), self.CGImage);
-            break;
-            
-        default:
-            CGContextDrawImage(ctx, CGRectMake(0,0,self.size.width,self.size.height), self.CGImage);
-            break;
+    // Draw underlying CGImage into a new context and then applying the transform calculated above.
+    CGContextRef context = CGBitmapContextCreate(NULL, self.size.width, self.size.height,
+                                                 CGImageGetBitsPerComponent(self.CGImage), 0,
+                                                 CGImageGetColorSpace(self.CGImage),
+                                                 CGImageGetBitmapInfo(self.CGImage));
+    CGContextConcatCTM(context, afflineTransform);
+    
+    if (self.imageOrientation == UIImageOrientationLeft || self.imageOrientation == UIImageOrientationLeftMirrored || self.imageOrientation == UIImageOrientationRight || self.imageOrientation == UIImageOrientationRightMirrored) {
+        
+        CGContextDrawImage(context, CGRectMake(0,0,self.size.height,self.size.width), self.CGImage);
+    }
+    else {
+        
+        CGContextDrawImage(context, CGRectMake(0,0,self.size.width,self.size.height), self.CGImage);
     }
     
-    // And now we just create a new UIImage from the drawing context
-    CGImageRef cgimg = CGBitmapContextCreateImage(ctx);
-    UIImage *img = [UIImage imageWithCGImage:cgimg];
-    CGContextRelease(ctx);
-    CGImageRelease(cgimg);
-    return img;
+    // Create new UIImage from the drawing context
+    CGImageRef cgImage = CGBitmapContextCreateImage(context);
+    UIImage *image = [UIImage imageWithCGImage:cgImage];
+    CGContextRelease(context);
+    CGImageRelease(cgImage);
+    return image;
 }
 
 @end
