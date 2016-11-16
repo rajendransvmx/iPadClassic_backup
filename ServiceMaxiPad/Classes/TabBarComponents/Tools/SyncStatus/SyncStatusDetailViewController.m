@@ -151,7 +151,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
         return;
     }
     
-    [sender setTitleColor:[UIColor colorWithHexString:@"#FF6633"] forState:UIControlStateNormal];
+    [sender setTitleColor:[UIColor colorFromHexString:@"#FF6633"] forState:UIControlStateNormal];
     
     if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
     {
@@ -181,7 +181,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     }
     else
     {
-        [sender setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+        [sender setTitleColor:[UIColor colorFromHexString:@"#FFFFFF"] forState:UIControlStateNormal];
         
         if ( [[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
         {
@@ -548,7 +548,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
 
         }
         
-        [dataSyncStatusLabel setTextColor:[UIColor colorWithHexString:@"#FF6633"]];
+        [dataSyncStatusLabel setTextColor:[UIColor colorFromHexString:@"#FF6633"]];
     }
     else
     {
@@ -627,7 +627,7 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     } else if (self.localOpDocFiles.count > 0 || [status isEqualToString:kFailed]) {
         NSString *statusString = [NSString stringWithFormat:@"%lu %@",(unsigned long)self.localOpDocFiles.count,[[TagManager sharedInstance]tagByName:KTagReportSyncFailed]];
         reportSyncStatusLabel.text = statusString;
-        [reportSyncStatusLabel setTextColor:[UIColor colorWithHexString:@"#FF6633"]];
+        [reportSyncStatusLabel setTextColor:[UIColor colorFromHexString:@"#FF6633"]];
         enabledReportsButton = YES;
     } else {
         reportSyncStatusLabel.text = [[TagManager sharedInstance] tagByName:KTagSuccess];

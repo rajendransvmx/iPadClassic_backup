@@ -147,7 +147,7 @@
 - (void)updateLabelText:(UILabel *)label
 {
     label.text = self.productName;
-    label.textColor = [UIColor colorWithHexString:@"#262626"];
+    label.textColor = [UIColor colorFromHexString:@"#262626"];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -407,7 +407,7 @@
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    cell.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+    cell.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
 }
 
 - (ChatterFeedComments *)getFeetCommentForIndexPath:(NSIndexPath *)indexPath
@@ -547,11 +547,11 @@
 - (void)setUpProductImage:(UIImage *)image
 {
     if (image != nil) {
-        self.leftImageView.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+        self.leftImageView.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
         self.leftImageView.layer.borderWidth = 1.0f;
         self.leftImageView.image = image;
         
-        self.topImageView.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+        self.topImageView.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
         self.topImageView.layer.borderWidth = 1.0f;
         self.topImageView.image = image;
     }

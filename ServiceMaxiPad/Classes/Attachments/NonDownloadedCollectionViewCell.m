@@ -19,8 +19,8 @@
 {
     self.fileNameLabel.text = attachmentModel.name;
     NSString *fileSizeInUnits = [NSString stringWithFormat:@"%.2f %@",
-                                 [AttachmentUtility calculateFileSizeInUnit:(unsigned long long)attachmentModel.bodyLength],
-                                 [AttachmentUtility calculateUnit:(unsigned long long)attachmentModel.bodyLength]];
+                                 [AttachmentUtility getFileSizeInSizeUnit:(unsigned long long)attachmentModel.bodyLength],
+                                 [AttachmentUtility getFileSizeUnit:(unsigned long long)attachmentModel.bodyLength]];
     self.fileSizeLabel.text = fileSizeInUnits;
     NSDictionary *downloadInfo = [[AttachmentsDownloadManager sharedManager].downloadingDictionary objectForKey:attachmentModel.localId];
     self.progressView.hidden = ![downloadInfo allKeys];
@@ -43,17 +43,17 @@
 - (void)configureNonDownloadedOffline:(AttachmentTXModel *)attachmentTXModel
 {
     self.cloudImageView.image = [UIImage imageNamed:@"Attachment-DownloadFileOffline"];
-    [self.fileNameLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
-    [self.fileSizeLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
+    [self.fileNameLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
+    [self.fileSizeLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
     [self.progressView setHidden:YES];
 }
 
 - (void)configureNonDownloadedOnline:(AttachmentTXModel *)attachmentTXModel
 {
     self.cloudImageView.image = [UIImage imageNamed:@"Attachment-FileinCloud"];
-    [self.fileNameLabel setTextColor:[UIColor colorWithHexString:@"#157DFB"]];
-    [self.fileSizeLabel setTextColor:[UIColor colorWithHexString:@"#157DFB"]];
-    [self.progressView setProgressTintColor:[UIColor colorWithHexString:@"#FF6633"]];// Anoop: SPR 15SP
+    [self.fileNameLabel setTextColor:[UIColor colorFromHexString:@"#157DFB"]];
+    [self.fileSizeLabel setTextColor:[UIColor colorFromHexString:@"#157DFB"]];
+    [self.progressView setProgressTintColor:[UIColor colorFromHexString:@"#FF6633"]];// Anoop: SPR 15SP
 }
 
 @end

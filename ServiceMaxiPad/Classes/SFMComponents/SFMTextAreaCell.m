@@ -39,8 +39,8 @@
         textView.tag = 101;
         textView.text = @"";
         textView.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
-        textView.textColor = [UIColor colorWithHexString:kEditableTextFieldColor];
-        textView.layer.borderColor = [[UIColor colorWithHexString:kSeperatorLineColor] CGColor];
+        textView.textColor = [UIColor colorFromHexString:kEditableTextFieldColor];
+        textView.layer.borderColor = [[UIColor colorFromHexString:kSeperatorLineColor] CGColor];
         textView.layer.cornerRadius = 4;
         textView.layer.borderWidth = 1;
         textView.inputAccessoryView = [self barcodeView];
@@ -73,8 +73,8 @@
     [editButton addTarget:self
                    action:@selector(editTapped:)
          forControlEvents:UIControlEventTouchUpInside];
-    [editButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
-    [editButton setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateSelected];
+    [editButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
+    [editButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateSelected];
     [editButton setBackgroundColor:[UIColor whiteColor]];
     editButton.opaque = YES;
     self.clipsToBounds = YES;
@@ -231,7 +231,7 @@
 {
     if ([Utility isCameraAvailable]) {
         UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.window.frame.size.width, 46)];
-        barCodeView.backgroundColor = [UIColor colorWithHexString:@"B5B7BE"];
+        barCodeView.backgroundColor = [UIColor colorFromHexString:@"B5B7BE"];
         
         CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
         

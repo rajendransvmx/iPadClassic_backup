@@ -32,11 +32,11 @@
     if (inTitle.length) {
         
         NSAttributedString *normalTitle = [[NSAttributedString alloc]initWithString:inTitle attributes:@{NSFontAttributeName:[UIFont fontWithName:kHelveticaNeueLight size:kFontSize14],
-                                                                                                         NSForegroundColorAttributeName:[UIColor colorWithHexString:@"#797979"]}];
+                                                                                                         NSForegroundColorAttributeName:[UIColor colorFromHexString:@"#797979"]}];
         
         
         NSAttributedString *selectedTitle = [[NSAttributedString alloc]initWithString:inTitle attributes:@{NSFontAttributeName:[UIFont fontWithName:kHelveticaNeueBold size:kFontSize14],
-                                                                                                           NSForegroundColorAttributeName:[UIColor colorWithHexString:kOrangeColor]}];
+                                                                                                           NSForegroundColorAttributeName:[UIColor colorFromHexString:kOrangeColor]}];
         
         
         [btn setAttributedTitle:normalTitle forState:UIControlStateNormal];

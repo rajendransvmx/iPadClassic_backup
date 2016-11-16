@@ -37,7 +37,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithHexString:@"#E15001"];
+    self.navigationController.navigationBar.barTintColor = [UIColor colorFromHexString:@"#E15001"];
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController.navigationBar setTranslucent:NO];
     
@@ -47,7 +47,7 @@
 
     UIPageControl *pageControl = [UIPageControl appearance];
     pageControl.pageIndicatorTintColor = [UIColor lightGrayColor];
-    pageControl.currentPageIndicatorTintColor = [UIColor colorWithHexString:@"#E15001"];
+    pageControl.currentPageIndicatorTintColor = [UIColor colorFromHexString:@"#E15001"];
     pageControl.backgroundColor = [UIColor whiteColor];
 
 }

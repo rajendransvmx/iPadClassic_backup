@@ -339,7 +339,7 @@ static  ProductIQHomeViewController *instance;
 {
     if ([self isCameraAvailable]) {
         UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 46)];
-        barCodeView.backgroundColor = [UIColor colorWithHexString:@"B5B7BE"];
+        barCodeView.backgroundColor = [UIColor colorFromHexString:@"B5B7BE"];
         
         CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
         
@@ -371,7 +371,7 @@ static  ProductIQHomeViewController *instance;
         self.barCodeView.userInteractionEnabled = YES;
         self.barCodeView.tag = 101;
         
-        self.barCodeView.backgroundColor = [UIColor colorWithHexString:@"B5B7BE"];
+        self.barCodeView.backgroundColor = [UIColor colorFromHexString:@"B5B7BE"];
         
         CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
         

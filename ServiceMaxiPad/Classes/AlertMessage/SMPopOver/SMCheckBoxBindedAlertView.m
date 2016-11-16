@@ -109,7 +109,7 @@
 - (void)drawBorder
 {
     UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0.0, height, width, 2.0)];
-    label.backgroundColor=[UIColor colorWithHexString:kSeperatorLineColor];
+    label.backgroundColor=[UIColor colorFromHexString:kSeperatorLineColor];
     [self.alertViewContainer addSubview:label];
     label = nil;
 }

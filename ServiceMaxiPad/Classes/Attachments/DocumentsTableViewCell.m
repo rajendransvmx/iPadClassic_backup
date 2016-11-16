@@ -92,8 +92,8 @@ static NSInteger offset = 32;
     self.titleLabel.text = attachmentTXModel.nameWithoutExtension;
     self.dateLabel.text = attachmentTXModel.displayDateString;
     NSString *fileSizeInUnits = [NSString stringWithFormat:@"%.2f %@",
-                                 [AttachmentUtility calculateFileSizeInUnit:(unsigned long long)attachmentTXModel.bodyLength],
-                                 [AttachmentUtility calculateUnit:(unsigned long long)attachmentTXModel.bodyLength]];
+                                 [AttachmentUtility getFileSizeInSizeUnit:(unsigned long long)attachmentTXModel.bodyLength],
+                                 [AttachmentUtility getFileSizeUnit:(unsigned long long)attachmentTXModel.bodyLength]];
     self.sizeLabel.text = fileSizeInUnits;
     self.downloadProgressView.hidden = ![downloadInfo allKeys];
     
@@ -133,9 +133,9 @@ static NSInteger offset = 32;
 - (void)offlineLayout
 {
     self.iconImgView.image = [UIImage imageNamed:@"Attachment-DownloadFileOffline"];
-    [self.titleLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
-    [self.dateLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
-    [self.sizeLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
+    [self.titleLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
+    [self.dateLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
+    [self.sizeLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
     self.downloadProgressView.hidden = YES;
 }
 
@@ -157,10 +157,10 @@ static NSInteger offset = 32;
     {
         self.iconImgView.image = [UIImage imageNamed:@"Attachment-FileinCloud"];
     }
-    [self.titleLabel setTextColor:[UIColor colorWithHexString:@"#434343"]];
-    [self.dateLabel setTextColor:[UIColor colorWithHexString:@"#797979"]];
-    [self.sizeLabel setTextColor:[UIColor colorWithHexString:@"#797979"]];
-    [self.downloadProgressView setProgressTintColor:[UIColor colorWithHexString:@"#FF6633"]];//Anoop: SPR 15SP
+    [self.titleLabel setTextColor:[UIColor colorFromHexString:@"#434343"]];
+    [self.dateLabel setTextColor:[UIColor colorFromHexString:@"#797979"]];
+    [self.sizeLabel setTextColor:[UIColor colorFromHexString:@"#797979"]];
+    [self.downloadProgressView setProgressTintColor:[UIColor colorFromHexString:@"#FF6633"]];//Anoop: SPR 15SP
 }
 
 

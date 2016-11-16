@@ -45,7 +45,7 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
     [SFMCellFactory registerCellsFor:self.pageLayoutCollectionView];
     self.pageLayoutCollectionView.backgroundColor = [UIColor clearColor];
     self.pageLayoutCollectionView.backgroundView = nil;
-    self.view.backgroundColor = [UIColor colorWithHexString:kPageViewMasterBGColor];
+    self.view.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];
     self.pageLayoutCollectionView.scrollEnabled = NO;
     self.pageLayoutCollectionView.frame = self.view.bounds;
     

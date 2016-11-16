@@ -112,15 +112,15 @@
      {
          signOutBtn.userInteractionEnabled = YES;
          signOutBtn.layer.borderColor = [UIColor orangeColor].CGColor;
-         [signOutBtn setBackgroundColor:[UIColor colorWithHexString:@"#FF6633"]];
-         [signOutBtn setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+         [signOutBtn setBackgroundColor:[UIColor colorFromHexString:@"#FF6633"]];
+         [signOutBtn setTitleColor:[UIColor colorFromHexString:@"#FFFFFF"] forState:UIControlStateNormal];
      }
      else
      {
         signOutBtn.userInteractionEnabled = NO;
-        signOutBtn.layer.borderColor =[UIColor colorWithHexString:@"#AEAEAE"].CGColor;
-        [signOutBtn setBackgroundColor:[UIColor colorWithHexString:@"#AEAEAE"]];
-        [signOutBtn setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+        signOutBtn.layer.borderColor =[UIColor colorFromHexString:@"#AEAEAE"].CGColor;
+        [signOutBtn setBackgroundColor:[UIColor colorFromHexString:@"#AEAEAE"]];
+        [signOutBtn setTitleColor:[UIColor colorFromHexString:@"#FFFFFF"] forState:UIControlStateNormal];
      }
 }
 
@@ -281,7 +281,7 @@
 -(void)setBgColorForSelectBtn:(id)inSender
 {
     UIButton *btn = (UIButton *)inSender;
-    btn.backgroundColor = [UIColor colorWithHexString:@"E15001"];
+    btn.backgroundColor = [UIColor colorFromHexString:@"E15001"];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
     
 }
@@ -291,10 +291,10 @@
     UIButton *btn = (UIButton *)inBtnSender;
     CGFloat borderWidth = 1.0f;
     //btn.frame =CGRectInset(btn.frame, -borderWidth, -borderWidth);
-    btn.layer.borderColor =[UIColor colorWithHexString:@"#E15001"].CGColor;
+    btn.layer.borderColor =[UIColor colorFromHexString:@"#E15001"].CGColor;
     btn.layer.borderWidth = borderWidth;
     [btn setBackgroundColor:[UIColor clearColor]];
-    [btn setTitleColor:[UIColor colorWithHexString:@"#E15001"] forState:UIControlStateNormal];
+    [btn setTitleColor:[UIColor colorFromHexString:@"#E15001"] forState:UIControlStateNormal];
     [btn addTarget:self action:@selector(setBgColorForSelectBtn:) forControlEvents:UIControlEventTouchDown];
 }
 

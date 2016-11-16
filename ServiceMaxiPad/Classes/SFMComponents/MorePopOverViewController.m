@@ -84,7 +84,7 @@
     [self.view addSubview:self.fieldNameLabel];
     
     UIView * lineView = [[UIView alloc]initWithFrame:CGRectMake(0, _fieldNameLabel.frame.size.height + 5, 290, 1)];
-    lineView.backgroundColor = [UIColor colorWithHexString:kSeperatorLineColor];
+    lineView.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
     [self.view addSubview:lineView];
     
     self.fieldValueTextView = [[UITextView alloc]initWithFrame:CGRectMake(5,lineView.frame.origin.y + 2,290,95)];

@@ -728,7 +728,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
 {
     [self hideAttachmentPopover];
     [popoverController setPopoverContentSize:CGSizeMake(300.0f, 119.0f)];
-    popoverController.contentViewController.view.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+    popoverController.contentViewController.view.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
     [popoverController presentPopoverFromRect:button.frame
                                        inView:self.view
                      permittedArrowDirections:UIPopoverArrowDirectionAny
@@ -871,7 +871,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
         if([info objectForKey:UIImagePickerControllerReferenceURL] == nil)
         {
             UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-            image = [image fixOrientation];
+            image = [image fixImageOrientation];
             NSData *dataToSaveFromImage = UIImageJPEGRepresentation(image,0.5);
             UIImageWriteToSavedPhotosAlbum(image,
                                            self,

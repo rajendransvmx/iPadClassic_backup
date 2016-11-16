@@ -39,13 +39,13 @@
 
 - (void)populateUI
 {
-    self.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+    self.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
     
     self.textField.placeholder = [[TagManager sharedInstance] tagByName:kTag_NewPost];
     self.textField.delegate = self;
     
     [self.button setTitle:[[TagManager sharedInstance] tagByName:kTagSfmChatterShreButton] forState:UIControlStateNormal];
-    [self.button setTitleColor:[UIColor colorWithHexString:@"#E15001"] forState:UIControlStateNormal];
+    [self.button setTitleColor:[UIColor colorFromHexString:@"#E15001"] forState:UIControlStateNormal];
     [self.button.titleLabel setFont:[UIFont fontWithName:kHelveticaNeueThin size:kFontSize16]];
     [self.button addTarget:self action:@selector(shareButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     
@@ -60,7 +60,7 @@
 
 - (void)addBoottomBorder
 {
-    self.borderView.backgroundColor = [UIColor colorWithHexString:@"#CECECE"];
+    self.borderView.backgroundColor = [UIColor colorFromHexString:@"#CECECE"];
     self.borderView.autoresizingMask = UIViewAutoresizingFlexibleWidth ;
 }
 

@@ -41,7 +41,7 @@
     [self.checkBox addTarget:self action:@selector(checkboxBtnChecked:) forControlEvents:UIControlEventTouchUpInside];
     
     
-    self.resolveLabel.textColor =  [UIColor colorWithHexString:kOrangeColor];
+    self.resolveLabel.textColor =  [UIColor colorFromHexString:kOrangeColor];
     self.resolveLabel.text = [[TagManager sharedInstance]tagByName:kTag_Confirm];
 
 }

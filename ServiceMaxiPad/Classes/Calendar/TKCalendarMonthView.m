@@ -343,7 +343,7 @@ static UIImage *imageCircleOrange;
 	NSString *str = [NSString stringWithFormat:@"%d",day];
 	CGRect rect = r;
 	if (mark==AppointmentMarkBlue) {
-        UIColor *blueColorMark = [UIColor colorWithHexString:kOrangeColor];//color: days with events
+        UIColor *blueColorMark = [UIColor colorFromHexString:kOrangeColor];//color: days with events
         UIImage *overlayImage=[self imageWithColor:blueColorMark];
 		rect.origin.x += 2;
         if (forIpad) {
@@ -442,7 +442,7 @@ static UIImage *imageCircleOrange;
 //    NSString *str = [NSString stringWithFormat:@"%d",day];
 //    CGRect rect = r;
 //    if (mark==AppointmentMarkBlue) {
-//        UIColor *blueColorMark = [UIColor colorWithHexString:kOrangeColor];//color: days with events
+//        UIColor *blueColorMark = [UIColor colorFromHexString:kOrangeColor];//color: days with events
 //        UIImage *overlayImage=[UIImage imageNamed:@"orangeCircle.png"];//[self imageWithColor:blueColorMark];
 //        rect.origin.x +=(rect.size.width-iPadSelectedDateCircleDiameter)/2;
 //        if (forIpad) {
@@ -1311,7 +1311,7 @@ static UIImage *imageCircleOrange;
 		_monthYear.backgroundColor = [CalendarPopupContent getColor];//[UIColor whiteColor];//color: month name
 		_monthYear.font = [UIFont boldSystemFontOfSize:22];
         _monthYear.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:20.0f];
-        [_monthYear setTextColor:[UIColor colorWithHexString:@"434343"]];
+        [_monthYear setTextColor:[UIColor colorFromHexString:@"434343"]];
 		_monthYear.textColor = [UIColor colorWithRed:59/255. green:73/255. blue:88/255. alpha:1];
 	}
 	return _monthYear;

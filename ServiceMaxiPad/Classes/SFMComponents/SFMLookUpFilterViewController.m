@@ -44,7 +44,7 @@
     self.filterTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.view.layer.cornerRadius = 5.0;
     
-    [self.applyButton setTitleColor:[UIColor colorWithHexString:@"#E15001"] forState:UIControlStateNormal];
+    [self.applyButton setTitleColor:[UIColor colorFromHexString:@"#E15001"] forState:UIControlStateNormal];
 }
 
 - (void)didReceiveMemoryWarning

@@ -51,7 +51,7 @@
     self.detailView = [[UIView alloc] initWithFrame:CGRectZero];
     
     self.detailLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    self.detailLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
+    self.detailLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
     self.detailLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
     self.detailLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     [self.detailView addSubview:self.detailLabel];
@@ -65,7 +65,7 @@
     [self addSubview:self.pageFieldView];
     
     self.noDataLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    self.noDataLabel.textColor = [UIColor colorWithHexString:kTextFieldFontColor];
+    self.noDataLabel.textColor = [UIColor colorFromHexString:kTextFieldFontColor];
     self.noDataLabel.font = [UIFont fontWithName:kHelveticaNeueItalic size:kFontSize20];
     self.noDataLabel.userInteractionEnabled = NO;
     [self addSubview:self.noDataLabel];

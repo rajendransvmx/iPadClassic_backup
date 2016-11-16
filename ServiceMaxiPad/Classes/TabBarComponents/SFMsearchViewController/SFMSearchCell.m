@@ -54,19 +54,19 @@
 
 
     
-    self.titleLabel.textColor =  [UIColor colorWithHexString:kEditableTextFieldColor];//[UIColor blackColor];
+    self.titleLabel.textColor =  [UIColor colorFromHexString:kEditableTextFieldColor];//[UIColor blackColor];
     self.titleLabel.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
     
-    self.fieldLabelOne.textColor = [UIColor colorWithHexString:kTextFieldFontColor];
+    self.fieldLabelOne.textColor = [UIColor colorFromHexString:kTextFieldFontColor];
     self.fieldLabelOne.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize14];
     
-    self.fieldValueOne.textColor = [UIColor colorWithHexString:kEditableTextFieldColor];
+    self.fieldValueOne.textColor = [UIColor colorFromHexString:kEditableTextFieldColor];
     self.fieldValueOne.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize16];
     
-    self.fieldLabelTwo.textColor = [UIColor colorWithHexString:kTextFieldFontColor];
+    self.fieldLabelTwo.textColor = [UIColor colorFromHexString:kTextFieldFontColor];
     self.fieldLabelTwo.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize14];
     
-    self.fieldValueTwo.textColor = [UIColor colorWithHexString:kEditableTextFieldColor];
+    self.fieldValueTwo.textColor = [UIColor colorFromHexString:kEditableTextFieldColor];
     self.fieldValueTwo.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize16];
     
     

@@ -206,11 +206,11 @@ static AttachmentsDownloadManager *attachmentDownloadManager = nil;
     [downloadInfo setValue:downloadTask forKey:kDocumentsDownloadKeyTask];
     
     NSString *fileSizeInUnits = [NSString stringWithFormat:@"%.2f %@",
-                                 [AttachmentUtility calculateFileSizeInUnit:(unsigned long long)attachmentModel.bodyLength],
-                                 [AttachmentUtility calculateUnit:(unsigned long long)attachmentModel.bodyLength]];
+                                 [AttachmentUtility getFileSizeInSizeUnit:(unsigned long long)attachmentModel.bodyLength],
+                                 [AttachmentUtility getFileSizeUnit:(unsigned long long)attachmentModel.bodyLength]];
     
     NSMutableString *detailLabelText = [NSMutableString stringWithFormat:@"0 %@ of %@",
-                                        [AttachmentUtility calculateUnit:(unsigned long long)attachmentModel.bodyLength],
+                                        [AttachmentUtility getFileSizeUnit:(unsigned long long)attachmentModel.bodyLength],
                                         fileSizeInUnits
                                         ];
     [downloadInfo setValue:detailLabelText forKey:kDocumentsDownloadKeyDetails];
@@ -303,12 +303,12 @@ static AttachmentsDownloadManager *attachmentDownloadManager = nil;
                 float progress = (double)downloadTask.countOfBytesReceived/(double)totalDownloadBytes;
                 
                 NSString *fileSizeInUnits = [NSString stringWithFormat:@"%.2f %@",
-                                             [AttachmentUtility calculateFileSizeInUnit:(unsigned long long)totalDownloadBytes],
-                                             [AttachmentUtility calculateUnit:(unsigned long long)totalDownloadBytes]];
+                                             [AttachmentUtility getFileSizeInSizeUnit:(unsigned long long)totalDownloadBytes],
+                                             [AttachmentUtility getFileSizeUnit:(unsigned long long)totalDownloadBytes]];
                 
                 NSMutableString *detailLabelText = [NSMutableString stringWithFormat:@"%.2f %@ of %@",
-                                                    [AttachmentUtility calculateFileSizeInUnit:(unsigned long long)totalBytesWritten],
-                                                    [AttachmentUtility calculateUnit:(unsigned long long)totalBytesWritten],
+                                                    [AttachmentUtility getFileSizeInSizeUnit:(unsigned long long)totalBytesWritten],
+                                                    [AttachmentUtility getFileSizeUnit:(unsigned long long)totalBytesWritten],
                                                     fileSizeInUnits
                                                     ];
                 

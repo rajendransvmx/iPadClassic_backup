@@ -87,15 +87,15 @@
     {
         self.purgeDataNowButton.userInteractionEnabled = YES;
         self.purgeDataNowButton.layer.borderColor      = [UIColor orangeColor].CGColor;
-        [self.purgeDataNowButton setBackgroundColor:[UIColor colorWithHexString:@"#FF6633"]];
-        [self.purgeDataNowButton setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+        [self.purgeDataNowButton setBackgroundColor:[UIColor colorFromHexString:@"#FF6633"]];
+        [self.purgeDataNowButton setTitleColor:[UIColor colorFromHexString:@"#FFFFFF"] forState:UIControlStateNormal];
     }
     else
     {
         self.purgeDataNowButton.userInteractionEnabled = NO;
-        self.purgeDataNowButton.layer.borderColor      =[UIColor colorWithHexString:@"#AEAEAE"].CGColor;
-        [self.purgeDataNowButton setBackgroundColor:[UIColor colorWithHexString:@"#AEAEAE"]];
-        [self.purgeDataNowButton setTitleColor:[UIColor colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+        self.purgeDataNowButton.layer.borderColor      =[UIColor colorFromHexString:@"#AEAEAE"].CGColor;
+        [self.purgeDataNowButton setBackgroundColor:[UIColor colorFromHexString:@"#AEAEAE"]];
+        [self.purgeDataNowButton setTitleColor:[UIColor colorFromHexString:@"#FFFFFF"] forState:UIControlStateNormal];
     }
 }
 
@@ -236,7 +236,7 @@
 -(void)setBgColorForSelectBtn:(id)inSender
 {
     UIButton *btn = (UIButton *)inSender;
-    btn.backgroundColor = [UIColor colorWithHexString:@"E15001"];
+    btn.backgroundColor = [UIColor colorFromHexString:@"E15001"];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
     
 }
@@ -245,10 +245,10 @@
 {
     UIButton *btn = (UIButton *)inBtnSender;
     CGFloat borderWidth = 1.0f;
-    btn.layer.borderColor =[UIColor colorWithHexString:@"#E15001"].CGColor;
+    btn.layer.borderColor =[UIColor colorFromHexString:@"#E15001"].CGColor;
     btn.layer.borderWidth = borderWidth;
     [btn setBackgroundColor:[UIColor clearColor]];
-    [btn setTitleColor:[UIColor colorWithHexString:@"#E15001"] forState:UIControlStateNormal];
+    [btn setTitleColor:[UIColor colorFromHexString:@"#E15001"] forState:UIControlStateNormal];
     [btn addTarget:self action:@selector(setBgColorForSelectBtn:) forControlEvents:UIControlEventTouchDown];
 }
 

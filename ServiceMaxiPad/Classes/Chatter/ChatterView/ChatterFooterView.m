@@ -25,7 +25,7 @@
     self = [super initWithReuseIdentifier:reuseIdentifier];
     if (self) {
         
-        self.contentView.backgroundColor = [UIColor colorWithHexString:kActionBgColor];
+        self.contentView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
         [self populateUI];
     }
     return self;
@@ -54,7 +54,7 @@
 - (void)addBoottomBorder
 {
     self.borderView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.borderView.backgroundColor = [UIColor colorWithHexString:@"#CECECE"];
+    self.borderView.backgroundColor = [UIColor colorFromHexString:@"#CECECE"];
     self.borderView.autoresizingMask = UIViewAutoresizingFlexibleWidth ;
     [self.contentView addSubview:self.borderView];
 }

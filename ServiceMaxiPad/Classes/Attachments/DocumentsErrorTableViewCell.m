@@ -59,16 +59,16 @@
 - (void)configureDocumentsOffline:(AttachmentTXModel *)attachmentTXModel
 {
     self.iconImgView.image = [UIImage imageNamed:@"Attachment-File-Missing"];
-    [self.titleLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
-    [self.descriptionLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
-    [self.errorLabel setTextColor:[UIColor colorWithHexString:@"#9A9A9B"]];
+    [self.titleLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
+    [self.descriptionLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
+    [self.errorLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
 }
 
 - (void)configureDocumentsOnline:(AttachmentTXModel *)attachmentTXModel
 {
     self.iconImgView.image = [UIImage imageNamed:@"Attachment-File-Missing"];
-    [self.titleLabel setTextColor:[UIColor colorWithHexString:@"#434343"]];
-    [self.descriptionLabel setTextColor:[UIColor colorWithHexString:@"#434343"]];
+    [self.titleLabel setTextColor:[UIColor colorFromHexString:@"#434343"]];
+    [self.descriptionLabel setTextColor:[UIColor colorFromHexString:@"#434343"]];
     [self.errorLabel setTextColor:[UIColor colorWithRed:1 green:0 blue:0 alpha:1]];
 }
 

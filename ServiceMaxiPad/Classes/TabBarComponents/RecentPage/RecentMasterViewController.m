@@ -106,7 +106,7 @@
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
     }
     cell.textLabel.text = [self.recentObjects objectAtIndex:indexPath.row];
-    cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
+    cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize16];
     cell.backgroundColor = [UIColor clearColor];
     return cell;

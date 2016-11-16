@@ -130,14 +130,14 @@ SFMPageMasterSectionType;
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
 
-        cell.textLabel.highlightedTextColor = [UIColor colorWithHexString:kWhiteColor];
+        cell.textLabel.highlightedTextColor = [UIColor colorFromHexString:kWhiteColor];
         UIView *bgColorView = [[UIView alloc] init];
-        [bgColorView setBackgroundColor:[UIColor colorWithHexString:kMasterSelectionColor]];
+        [bgColorView setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
         [cell setSelectedBackgroundView:bgColorView];
 
     }
     cell.backgroundColor = [UIColor clearColor];
-    cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
+    cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
     NSString *title = [self rowTitleForIndexPath:indexPath];
     if ([StringUtil isStringEmpty:title]) {
@@ -398,7 +398,7 @@ SFMPageMasterSectionType;
                        index:(NSInteger) index
 {
     if (isAllSectionShown) {
-        [sender setTitleColor:[UIColor colorWithHexString:kOrangeColor] forState:UIControlStateNormal];
+        [sender setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
         [sender setEnabled:YES];
     }
     else{

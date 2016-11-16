@@ -57,7 +57,7 @@
     self.troubleshootTableView.delegate = self;
     self.troubleshootTableView.dataSource = self;
     [self setSearchBarBackGround];
-    self.searchBar.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+    self.searchBar.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
     self.troubleshootTableView.tableFooterView = [[UIView alloc] init] ;
     self.detailViewController = [self.smSplitViewController.viewControllers lastObject];
     self.searchBar.placeholder = [[TagManager sharedInstance]tagByName:kTag_search];
@@ -98,10 +98,10 @@
         TroubleshootDataModel *model =[self.productDetailsArray objectAtIndex:indexPath.row];
         cell.textLabel.text = model.Name;
         cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
-        cell.textLabel.textColor = [UIColor colorWithHexString:kOrangeColor];
-        cell.textLabel.highlightedTextColor = [UIColor colorWithHexString:kWhiteColor];
+        cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+        cell.textLabel.highlightedTextColor = [UIColor colorFromHexString:kWhiteColor];
         UIView *bgColorView = [[UIView alloc] init];
-        [bgColorView setBackgroundColor:[UIColor colorWithHexString:kMasterSelectionColor]];
+        [bgColorView setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
         [cell setSelectedBackgroundView:bgColorView];
         return cell;
     }
@@ -334,7 +334,7 @@
     self.searchBar.layer.backgroundColor = [UIColor whiteColor].CGColor;
     self.searchBar.layer.borderWidth = 1;
     [[NSClassFromString(@"UISearchBarTextField") appearanceWhenContainedIn:[UISearchBar class], nil] setBorderStyle:UITextBorderStyleNone];
-    self.searchBar.layer.borderColor = [UIColor colorWithHexString:kSeperatorLineColor].CGColor;
+    self.searchBar.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section

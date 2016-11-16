@@ -101,7 +101,7 @@ static NSString *priorityCellIdentifier = @"PriorityTaskCell";
     UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     UIBarButtonItem *spacer1 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     self.titleToolBar.items = @[self.cancelBarButton,spacer,self.titleBarButtonItem,spacer1,self.saveBarButton];
-    self.descriptionTextView.layer.borderColor = [UIColor colorWithHexString:kActionBgColor].CGColor;
+    self.descriptionTextView.layer.borderColor = [UIColor colorFromHexString:kActionBgColor].CGColor;
     self.descriptionTextView.layer.borderWidth = 2.0f;
     self.descriptionTextView.layer.cornerRadius = 4.0f;
     

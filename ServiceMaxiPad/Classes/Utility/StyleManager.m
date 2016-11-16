@@ -38,14 +38,14 @@ Contains UIColor and UIFont constants for use throughout the app.
  ----------------------------------------------------------------------------------------------------*/
 + (UIColor*)navBarBG;
 {
-	return [UIColor colorWithHexString:@"#FF6633"];
+	return [UIColor colorFromHexString:@"#FF6633"];
 }
 
 /*----------------------------------------------------------------------------------------------------
  ----------------------------------------------------------------------------------------------------*/
 + (UIColor*)navBarTitleColor;
 {
-	return [UIColor colorWithHexString:@"#FFFFFF"];
+	return [UIColor colorFromHexString:@"#FFFFFF"];
 }
 /*----------------------------------------------------------------------------------------------------
  ----------------------------------------------------------------------------------------------------*/
@@ -56,45 +56,49 @@ Contains UIColor and UIFont constants for use throughout the app.
 
 /*----------------------------------------------------------------------------------------------------
  ----------------------------------------------------------------------------------------------------*/
-+ (UIColor*)colorWithHexString:(NSString*)hex
++ (UIColor*)colorFromHexString:(NSString*)hexValue
 {
-    NSString *cString = [[hex stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
+    NSString *colorString = [[hexValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
     
     // strip 0X if it appears
-    if ([cString hasPrefix:@"0X"]) cString = [cString substringFromIndex:2];
+    if ([colorString hasPrefix:@"0X"]) {
+        colorString = [colorString substringFromIndex:2];
+    }
     
-    // strip 0X if it appears
-    if ([cString hasPrefix:@"#"]) cString = [cString substringFromIndex:1];
+    // strip # if it appears
+    if ([colorString hasPrefix:@"#"]) {
+        colorString = [colorString substringFromIndex:1];
+    }
     
     // String should be 6 or 8 characters
-    if ([cString length] < 6) return [UIColor grayColor];
+    if ([colorString length] < 6) {
+        return [UIColor grayColor];
+    }
     
-    
-    
-    if ([cString length] != 6) return  [UIColor grayColor];
+    if ([colorString length] != 6) {
+        return  [UIColor grayColor];
+    }
     
     // Separate into r, g, b substrings
-    NSRange range;
-    range.location = 0;
-    range.length = 2;
-    NSString *rString = [cString substringWithRange:range];
+    NSRange stringRange;
+    stringRange.length = 2;
     
-    range.location = 2;
-    NSString *gString = [cString substringWithRange:range];
-    
-    range.location = 4;
-    NSString *bString = [cString substringWithRange:range];
+    stringRange.location = 0;
+    NSString *redString = [colorString substringWithRange:stringRange];
+    stringRange.location = 2;
+    NSString *greenString = [colorString substringWithRange:stringRange];
+    stringRange.location = 4;
+    NSString *blueString = [colorString substringWithRange:stringRange];
     
     // Scan values
-    unsigned int r, g, b;
-    [[NSScanner scannerWithString:rString] scanHexInt:&r];
-    [[NSScanner scannerWithString:gString] scanHexInt:&g];
-    [[NSScanner scannerWithString:bString] scanHexInt:&b];
+    unsigned int red, green, blue;
+    [[NSScanner scannerWithString:redString] scanHexInt:&red];
+    [[NSScanner scannerWithString:greenString] scanHexInt:&green];
+    [[NSScanner scannerWithString:blueString] scanHexInt:&blue];
     
-    return [UIColor colorWithRed:((float) r / 255.0f)
-                           green:((float) g / 255.0f)
-                            blue:((float) b / 255.0f)
-                           alpha:1.0f];
+    UIColor *color = [UIColor colorWithRed:((float) red / 255.0f) green:((float) green / 255.0f) blue:((float) blue / 255.0f) alpha:1.0f];
+    
+    return color;
 }
 @end
 
