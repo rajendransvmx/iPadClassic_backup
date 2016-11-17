@@ -32,37 +32,50 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 }
 
 + (NSDate *)getDateFromString:(NSString *)someDateString {
-    
-    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-    NSDateFormatter *dateFormater = [[NSDateFormatter alloc] init];
-    [dateFormater setDateFormat:@"yyyy-MM-dd"];
-    [dateFormater setTimeZone:gmt];
-    NSDate *someDate = [dateFormater dateFromString:someDateString];
-    dateFormater = nil;
+    NSTimeZone *gmtTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    //Set the timezone to GMT.
+    NSDateFormatter *svmxDateFormatter = [[NSDateFormatter alloc] init];
+    //Set the date format.
+    [svmxDateFormatter setDateFormat:@"yyyy-MM-dd"];
+    //Set the timezone of the dateformatter to GMT.
+    [svmxDateFormatter setTimeZone:gmtTimeZone];
+    //Get the date from the formatter string.
+    NSDate *someDate = [svmxDateFormatter dateFromString:someDateString];
+    svmxDateFormatter = nil;
     return someDate;
 }
 
 + (NSString *)currentDateInGMTForOPDoc {
-    NSDate *date = [NSDate date];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-    [dateFormatter setTimeZone:gmt];
-    [dateFormatter setDateFormat:@"yyyyMMddHHmmss"];
-    NSString *someDate = [dateFormatter stringFromDate:date];
-//    NSString *newDateString = [NSString stringWithFormat:@"%@ 00:00:00",[someDate substringToIndex:10]];
-//    NSDate *newDate = [dateFormatter dateFromString:newDateString];
+    NSDate *currentDate = [NSDate date];
+    //Get current date.
+    NSDateFormatter *svmxDateFormatter = [[NSDateFormatter alloc] init];
+    //GMT TimeZone.
+    NSTimeZone *gmtTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    //Set DateFormatter to GMT TimeZone.
+    [svmxDateFormatter setTimeZone:gmtTimeZone];
+    //Set the date format.
+    [svmxDateFormatter setDateFormat:@"yyyyMMddHHmmss"];
+    //Get the date string from the formatter.
+    NSString *someDate = [svmxDateFormatter stringFromDate:currentDate];
     return someDate;
 }
 
 + (NSDate *)todayDateInGMT {
-    NSDate *date = [NSDate date];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-    [dateFormatter setTimeZone:gmt];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSString *someDate = [dateFormatter stringFromDate:date];
+    NSDate *currentDate = [NSDate date];
+    //Get the current date
+    NSDateFormatter *svmxDateFormatter = [[NSDateFormatter alloc] init];
+    //Set the timezone to GMT
+    NSTimeZone *gmtTimeZone = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    //Date formatter set to GMT
+    [svmxDateFormatter setTimeZone:gmtTimeZone];
+    //Set the date format
+    [svmxDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    //Get the date string from formatter
+    NSString *someDate = [svmxDateFormatter stringFromDate:currentDate];
+    //Append time values for the date string
     NSString *newDateString = [NSString stringWithFormat:@"%@ 00:00:00",[someDate substringToIndex:10]];
-    NSDate *newDate = [dateFormatter dateFromString:newDateString];
+    //Get the new date
+    NSDate *newDate = [svmxDateFormatter dateFromString:newDateString];
     return newDate;
 }
 
@@ -200,14 +213,18 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
 #pragma mark-
 #pragma mark Literal utilities
 + (NSString *)today:(NSInteger)numberOfDays andJusDate:(BOOL)isDateOnly{
-    NSDate *date = [NSDate date];
+    NSDate *currentDate = [NSDate date];
     NSTimeInterval timeIntervalToBeAdded = 60* 60.0 * 24 * numberOfDays;
-    NSDate *finalDate = [date dateByAddingTimeInterval:timeIntervalToBeAdded];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    NSTimeZone *gmt = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
-    [dateFormatter setTimeZone:gmt];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSString *someDate = [dateFormatter stringFromDate:finalDate];
+    NSDate *finalDate = [currentDate dateByAddingTimeInterval:timeIntervalToBeAdded];
+    NSDateFormatter *svmxDateFormatter = [[NSDateFormatter alloc] init];
+    //Set the timezone to GMT.
+    NSTimeZone *gmtTimezone = [NSTimeZone timeZoneWithAbbreviation:@"GMT"];
+    //Set the dateformatter to GMT timezone.
+    [svmxDateFormatter setTimeZone:gmtTimezone];
+    //Set the date format.
+    [svmxDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    //Get the date from the final date.
+    NSString *someDate = [svmxDateFormatter stringFromDate:finalDate];
     
     NSString *newDateString = nil;
     if (isDateOnly) {
@@ -217,7 +234,7 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
         newDateString = someDate;
     }
     newDateString = [newDateString stringByReplacingOccurrencesOfString:@" " withString:@"T"];
-    dateFormatter = nil;
+    svmxDateFormatter = nil;
     return newDateString;
 }
 
