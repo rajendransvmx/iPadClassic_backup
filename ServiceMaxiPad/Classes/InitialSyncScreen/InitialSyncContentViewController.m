@@ -1,18 +1,18 @@
 //
-//  PageContentViewController.m
+//  InitialSyncContentViewController.m
 //  ServiceMaxMobile
 //
 //  Created by Damodar on 25/08/14.
 //  Copyright (c) 2014 Servicemax. All rights reserved.
 //
 
-#import "PageContentViewController.h"
+#import "InitialSyncContentViewController.h"
 
-@interface PageContentViewController ()
+@interface InitialSyncContentViewController ()
 
 @end
 
-@implementation PageContentViewController
+@implementation InitialSyncContentViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

@@ -416,8 +416,6 @@
 		183AA36519E6DA2500919345 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA35C19E6DA2500919345 /* AFURLSessionManager.m */; };
 		183AA36F19E6DA9600919345 /* InitialSyncViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA36819E6DA9600919345 /* InitialSyncViewController.m */; };
 		183AA37019E6DA9600919345 /* InitialSyncViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA36919E6DA9600919345 /* InitialSyncViewController.xib */; };
-		183AA37119E6DA9600919345 /* PageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA36B19E6DA9600919345 /* PageContentViewController.m */; };
-		183AA37219E6DA9600919345 /* PageContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA36C19E6DA9600919345 /* PageContentViewController.xib */; };
 		183AA37319E6DA9600919345 /* PageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA36E19E6DA9600919345 /* PageViewController.m */; };
 		183AA37819E6DAFE00919345 /* LaunchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA37619E6DAFE00919345 /* LaunchViewController.m */; };
 		183AA37919E6DAFE00919345 /* LaunchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA37719E6DAFE00919345 /* LaunchViewController.xib */; };
@@ -1548,7 +1546,6 @@
 		A64AAFC81CF2F9E5008839FB /* SFMPageViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA13719E6D26300919345 /* SFMPageViewModel.m */; };
 		A64AAFC91CF2F9E5008839FB /* NSDate+CalendarGrid.m in Sources */ = {isa = PBXBuildFile; fileRef = 184A8D7D19E7A0BE006DA6BE /* NSDate+CalendarGrid.m */; };
 		A64AAFCA1CF2F9E5008839FB /* SFMSearchServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A9FBF19E6B18500919345 /* SFMSearchServiceLayer.m */; };
-		A64AAFCB1CF2F9E5008839FB /* PageContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA36B19E6DA9600919345 /* PageContentViewController.m */; };
 		A64AAFCC1CF2F9E5008839FB /* TimeLogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B54E1281A00AD5F00BBEED6 /* TimeLogModel.m */; };
 		A64AAFCD1CF2F9E5008839FB /* ProductIQManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 11596B551BBECD0D00C92872 /* ProductIQManager.m */; };
 		A64AAFCE1CF2F9E5008839FB /* SFMDateCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA20019E6D3C200919345 /* SFMDateCell.m */; };
@@ -1854,7 +1851,6 @@
 		A64AB0FD1CF2F9E5008839FB /* recapture.png in Resources */ = {isa = PBXBuildFile; fileRef = 40CA1A0519FE4E9C0097F5A1 /* recapture.png */; };
 		A64AB0FE1CF2F9E5008839FB /* com.servicemax.client.offline.sal.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = 4344089A1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip */; };
 		A64AB0FF1CF2F9E5008839FB /* checkbox-disabled-checked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 18FE08F919EE827800CB8925 /* checkbox-disabled-checked@2x.png */; };
-		A64AB1001CF2F9E5008839FB /* PageContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA36C19E6DA9600919345 /* PageContentViewController.xib */; };
 		A64AB1011CF2F9E5008839FB /* SFMPageMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA18D19E6D26400919345 /* SFMPageMasterViewController.xib */; };
 		A64AB1021CF2F9E5008839FB /* SLATimerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA19B19E6D26400919345 /* SLATimerView.xib */; };
 		A64AB1031CF2F9E5008839FB /* SFMPageDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA17319E6D26400919345 /* SFMPageDetailViewController.xib */; };
@@ -2139,6 +2135,8 @@
 		C3EF97A91A036D7300476293 /* Attachment-Word@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C3EF979E1A036D7300476293 /* Attachment-Word@2x.png */; };
 		C8DB64F31B2ED88000886A02 /* EditMenuLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = C8DB64F21B2ED88000886A02 /* EditMenuLabel.m */; };
 		C8E0D03D1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C8E0D03C1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.m */; };
+		CD0CE9081DDC759A005BA93C /* InitialSyncContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0CE9061DDC759A005BA93C /* InitialSyncContentViewController.m */; };
+		CD0CE9091DDC759A005BA93C /* InitialSyncContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0CE9071DDC759A005BA93C /* InitialSyncContentViewController.xib */; };
 		D713615F19ED1D51008BCACE /* TextFieldHelperDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D713615E19ED1D51008BCACE /* TextFieldHelperDelegate.m */; };
 		D74A3D0A1A0381E000357474 /* PriceBookDataHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D74A3D031A0381E000357474 /* PriceBookDataHandler.m */; };
 		D74A3D0B1A0381E000357474 /* PriceBookTargetHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D74A3D051A0381E000357474 /* PriceBookTargetHandler.m */; };
@@ -3236,9 +3234,6 @@
 		183AA36719E6DA9600919345 /* InitialSyncViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitialSyncViewController.h; sourceTree = "<group>"; };
 		183AA36819E6DA9600919345 /* InitialSyncViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InitialSyncViewController.m; sourceTree = "<group>"; };
 		183AA36919E6DA9600919345 /* InitialSyncViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InitialSyncViewController.xib; sourceTree = "<group>"; };
-		183AA36A19E6DA9600919345 /* PageContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageContentViewController.h; sourceTree = "<group>"; };
-		183AA36B19E6DA9600919345 /* PageContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageContentViewController.m; sourceTree = "<group>"; };
-		183AA36C19E6DA9600919345 /* PageContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PageContentViewController.xib; sourceTree = "<group>"; };
 		183AA36D19E6DA9600919345 /* PageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageViewController.h; sourceTree = "<group>"; };
 		183AA36E19E6DA9600919345 /* PageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageViewController.m; sourceTree = "<group>"; };
 		183AA37519E6DAFE00919345 /* LaunchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LaunchViewController.h; sourceTree = "<group>"; };
@@ -4289,6 +4284,9 @@
 		C8DB64F21B2ED88000886A02 /* EditMenuLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditMenuLabel.m; sourceTree = "<group>"; };
 		C8E0D03B1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoDynamicTypeTableViewCell.h; sourceTree = "<group>"; };
 		C8E0D03C1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoDynamicTypeTableViewCell.m; sourceTree = "<group>"; };
+		CD0CE9051DDC759A005BA93C /* InitialSyncContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitialSyncContentViewController.h; sourceTree = "<group>"; };
+		CD0CE9061DDC759A005BA93C /* InitialSyncContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InitialSyncContentViewController.m; sourceTree = "<group>"; };
+		CD0CE9071DDC759A005BA93C /* InitialSyncContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InitialSyncContentViewController.xib; sourceTree = "<group>"; };
 		D713615D19ED1D51008BCACE /* TextFieldHelperDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldHelperDelegate.h; sourceTree = "<group>"; };
 		D713615E19ED1D51008BCACE /* TextFieldHelperDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldHelperDelegate.m; sourceTree = "<group>"; };
 		D74A3D021A0381E000357474 /* PriceBookDataHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriceBookDataHandler.h; sourceTree = "<group>"; };
@@ -6438,9 +6436,9 @@
 				183AA36719E6DA9600919345 /* InitialSyncViewController.h */,
 				183AA36819E6DA9600919345 /* InitialSyncViewController.m */,
 				183AA36919E6DA9600919345 /* InitialSyncViewController.xib */,
-				183AA36A19E6DA9600919345 /* PageContentViewController.h */,
-				183AA36B19E6DA9600919345 /* PageContentViewController.m */,
-				183AA36C19E6DA9600919345 /* PageContentViewController.xib */,
+				CD0CE9051DDC759A005BA93C /* InitialSyncContentViewController.h */,
+				CD0CE9061DDC759A005BA93C /* InitialSyncContentViewController.m */,
+				CD0CE9071DDC759A005BA93C /* InitialSyncContentViewController.xib */,
 				183AA36D19E6DA9600919345 /* PageViewController.h */,
 				183AA36E19E6DA9600919345 /* PageViewController.m */,
 			);
@@ -9244,13 +9242,13 @@
 				18800CF51A08D14400930FF9 /* TextSizeDetailViewController.xib in Resources */,
 				184A9CB219E7D591006DA6BE /* ObjectHighlightBar.png in Resources */,
 				189AE1601BC5132700AD549D /* ProductIQ.zip in Resources */,
+				CD0CE9091DDC759A005BA93C /* InitialSyncContentViewController.xib in Resources */,
 				18EFFC581B3D1C4200BE15A0 /* wizardComponentIcon@2x.png in Resources */,
 				184A9E0F19E7D592006DA6BE /* map_chat@2x.png in Resources */,
 				8B2F4BF71A0C8D0100D2A346 /* u259.png in Resources */,
 				40CA1A0619FE4E9C0097F5A1 /* recapture.png in Resources */,
 				4344089D1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip in Resources */,
 				18FE08FD19EE827800CB8925 /* checkbox-disabled-checked@2x.png in Resources */,
-				183AA37219E6DA9600919345 /* PageContentViewController.xib in Resources */,
 				FD09E1F41D4A092300972C95 /* BarCodeScannerHelp.html in Resources */,
 				183AA1D419E6D26400919345 /* SFMPageMasterViewController.xib in Resources */,
 				183AA1DC19E6D26400919345 /* SLATimerView.xib in Resources */,
@@ -9545,7 +9543,6 @@
 				A64AB0FD1CF2F9E5008839FB /* recapture.png in Resources */,
 				A64AB0FE1CF2F9E5008839FB /* com.servicemax.client.offline.sal.model.zip in Resources */,
 				A64AB0FF1CF2F9E5008839FB /* checkbox-disabled-checked@2x.png in Resources */,
-				A64AB1001CF2F9E5008839FB /* PageContentViewController.xib in Resources */,
 				A64AB1011CF2F9E5008839FB /* SFMPageMasterViewController.xib in Resources */,
 				A64AB1021CF2F9E5008839FB /* SLATimerView.xib in Resources */,
 				A64AB1031CF2F9E5008839FB /* SFMPageDetailViewController.xib in Resources */,
@@ -10520,7 +10517,6 @@
 				183AA1A519E6D26400919345 /* SFMPageViewModel.m in Sources */,
 				184A8E5919E7A0BE006DA6BE /* NSDate+CalendarGrid.m in Sources */,
 				183A9FFA19E6B18500919345 /* SFMSearchServiceLayer.m in Sources */,
-				183AA37119E6DA9600919345 /* PageContentViewController.m in Sources */,
 				FD09E1701D4A088A00972C95 /* ZXDataMatrixBase256Encoder.m in Sources */,
 				6B54E1291A00AD5F00BBEED6 /* TimeLogModel.m in Sources */,
 				11596B561BBECD0D00C92872 /* ProductIQManager.m in Sources */,
@@ -10770,6 +10766,7 @@
 				C362BE721A1442220067E09E /* UIImage+FixOrientation.m in Sources */,
 				183AA1C319E6D26400919345 /* SFMPageChildLayoutViewController.m in Sources */,
 				183A9A7A19E6949800919345 /* DBCriteria.m in Sources */,
+				CD0CE9081DDC759A005BA93C /* InitialSyncContentViewController.m in Sources */,
 				FD09E13E1D4A088A00972C95 /* ZXVEventResultParser.m in Sources */,
 				18A2179419E5850300F22EA6 /* OAuthService.m in Sources */,
 				FD09E18C1D4A088A00972C95 /* ZXAI01weightDecoder.m in Sources */,
@@ -11359,7 +11356,6 @@
 				A64AAFC81CF2F9E5008839FB /* SFMPageViewModel.m in Sources */,
 				A64AAFC91CF2F9E5008839FB /* NSDate+CalendarGrid.m in Sources */,
 				A64AAFCA1CF2F9E5008839FB /* SFMSearchServiceLayer.m in Sources */,
-				A64AAFCB1CF2F9E5008839FB /* PageContentViewController.m in Sources */,
 				A64AAFCC1CF2F9E5008839FB /* TimeLogModel.m in Sources */,
 				A64AAFCD1CF2F9E5008839FB /* ProductIQManager.m in Sources */,
 				A64AAFCE1CF2F9E5008839FB /* SFMDateCell.m in Sources */,
