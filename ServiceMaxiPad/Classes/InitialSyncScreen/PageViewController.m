@@ -73,35 +73,42 @@
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
 {
-    NSUInteger index = ((InitialSyncContentViewController*) viewController).pageIndex;
+    InitialSyncContentViewController* initialSyncViewController = (InitialSyncContentViewController*) viewController;
+    NSUInteger pageViewIndex = initialSyncViewController.pageIndex;
     
-    //return nil if for first page or if index is not found
-    if ((index == 0) || (index == NSNotFound)) {
+    //return nil if index is not found
+    if (pageViewIndex == NSNotFound) {
         return nil;
     }
+    //return nil if for first page
+    else if (pageViewIndex == 0) {
+        return nil;
+    }
+    else {
+        pageViewIndex--;
+    }
     
-    index--;
-    
-    return [self getViewControllerAtIndex:index];
+    return [self getViewControllerAtIndex:pageViewIndex];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
 {
-    NSUInteger index = ((InitialSyncContentViewController*) viewController).pageIndex;
+    InitialSyncContentViewController* initialSyncViewController = (InitialSyncContentViewController*) viewController;
+    NSUInteger pageViewIndex = initialSyncViewController.pageIndex;
     
     //return nil if index is not found
-    if (index == NSNotFound) {
+    if (pageViewIndex == NSNotFound) {
         return nil;
     }
-    
-    index++;
-    
     //return nil if for last page
-    if (index == [self.pageImages count]) {
+    else if (pageViewIndex == [self.pageImages count]) {
         return nil;
     }
+    else {
+        pageViewIndex++;
+    }
     
-    return [self getViewControllerAtIndex:index];
+    return [self getViewControllerAtIndex:pageViewIndex];
 }
 
 - (InitialSyncContentViewController *)getViewControllerAtIndex:(NSUInteger)index
