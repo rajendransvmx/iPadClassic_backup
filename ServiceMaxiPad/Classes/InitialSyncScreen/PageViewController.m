@@ -11,7 +11,7 @@
 
 @interface PageViewController ()
 @property (nonatomic, strong) UIPageViewController *pageViewCtr;
-@property (strong, nonatomic) NSArray *pageImages;
+@property (strong, nonatomic) NSArray *arrayOfPageImages;
 @end
 
 @implementation PageViewController
@@ -30,7 +30,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    self.pageImages = @[@"Tutorial-1.png",
+    self.arrayOfPageImages = @[@"Tutorial-1.png",
                         @"Tutorial-2.png",
                         @"Tutorial-3.png",
                         @"Tutorial-4.png",
@@ -71,9 +71,9 @@
 
 #pragma mark - Page View Controller Data Source
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
+- (UIViewController *)pageViewController:(UIPageViewController *)initialSyncPageViewController viewControllerBeforeViewController:(UIViewController *)initialSyncContentViewController
 {
-    InitialSyncContentViewController* initialSyncViewController = (InitialSyncContentViewController*) viewController;
+    InitialSyncContentViewController* initialSyncViewController = (InitialSyncContentViewController*) initialSyncContentViewController;
     NSUInteger pageViewIndex = initialSyncViewController.pageIndex;
     
     //return nil if index is not found
@@ -91,21 +91,24 @@
     return [self getViewControllerAtIndex:pageViewIndex];
 }
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
+- (UIViewController *)pageViewController:(UIPageViewController *)initialSyncPageViewController viewControllerAfterViewController:(UIViewController *)initialSyncContentViewController
 {
-    InitialSyncContentViewController* initialSyncViewController = (InitialSyncContentViewController*) viewController;
+    InitialSyncContentViewController* initialSyncViewController = (InitialSyncContentViewController*) initialSyncContentViewController ;
     NSUInteger pageViewIndex = initialSyncViewController.pageIndex;
     
     //return nil if index is not found
     if (pageViewIndex == NSNotFound) {
-        return nil;
-    }
-    //return nil if for last page
-    else if (pageViewIndex == [self.pageImages count]) {
+        
         return nil;
     }
     else {
+        
         pageViewIndex++;
+        
+        //return nil if for last page
+        if (pageViewIndex == [self.arrayOfPageImages count]) {
+            return nil;
+        }
     }
     
     return [self getViewControllerAtIndex:pageViewIndex];
@@ -113,13 +116,13 @@
 
 - (InitialSyncContentViewController *)getViewControllerAtIndex:(NSUInteger)index
 {
-    if([self.pageImages count] == 0) {
+    if([self.arrayOfPageImages count] == 0) {
         return nil;
     }
     
     // Create a new view controller and pass suitable data.
     InitialSyncContentViewController *tipsRotator = [[InitialSyncContentViewController alloc] initWithNibName:@"InitialSyncContentViewController" bundle:nil];
-    tipsRotator.imageFile = self.pageImages[index];
+    tipsRotator.imageFile = self.arrayOfPageImages[index];
     tipsRotator.pageIndex = index;
     
     return tipsRotator;
@@ -129,7 +132,7 @@
 
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController
 {
-    return [self.pageImages count];
+    return [self.arrayOfPageImages count];
 }
 
 
