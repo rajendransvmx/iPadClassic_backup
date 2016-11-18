@@ -56,9 +56,9 @@ Contains UIColor and UIFont constants for use throughout the app.
 
 /*----------------------------------------------------------------------------------------------------
  ----------------------------------------------------------------------------------------------------*/
-+ (UIColor*)colorFromHexString:(NSString*)hexValue
++ (UIColor*)colorFromHexString:(NSString*)hxVal
 {
-    NSString *colorString = [[hexValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
+    NSString *colorString = [[hxVal stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
     
     // strip 0X if it appears
     if ([colorString hasPrefix:@"0X"]) {
@@ -71,12 +71,8 @@ Contains UIColor and UIFont constants for use throughout the app.
     }
     
     // String should be 6 or 8 characters
-    if ([colorString length] < 6) {
+    if ([colorString length] < 6 || [colorString length] != 6) {
         return [UIColor grayColor];
-    }
-    
-    if ([colorString length] != 6) {
-        return  [UIColor grayColor];
     }
     
     // Separate into r, g, b substrings
