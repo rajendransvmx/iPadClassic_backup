@@ -33,9 +33,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.view.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];
+    self.view.backgroundColor = [UIColor getUIColorFromHexValue:kPageViewMasterBGColor];
     self.tableView.backgroundColor = [UIColor clearColor];
-    self.disclosureButton.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];;
+    self.disclosureButton.backgroundColor = [UIColor getUIColorFromHexValue:kPageViewMasterBGColor];;
     [self.tableView registerNib:[UINib nibWithNibName:@"BizRuleTableViewCell" bundle:nil] forCellReuseIdentifier:@"warningcell"];
     [self.disclosureButton setImage:[UIImage imageNamed:@"up_arrow_gray.png"] forState:UIControlStateNormal];
     // This will remove extra separators from tableview

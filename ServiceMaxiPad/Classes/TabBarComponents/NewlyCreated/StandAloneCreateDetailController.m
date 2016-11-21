@@ -46,7 +46,7 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
-    self.view.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];
+    self.view.backgroundColor = [UIColor getUIColorFromHexValue:kPageViewMasterBGColor];
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
@@ -94,7 +94,7 @@
         
         UIView *seperatorLine = [[UIView alloc]initWithFrame:CGRectMake(0,49
                                                                         , self.tableView.frame.size.width, 1)];
-        seperatorLine.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
+        seperatorLine.backgroundColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor];
         [cell.contentView addSubview:seperatorLine];
         
         //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -113,9 +113,9 @@
     UIFont *detailLabelFont = [UIFont fontWithName:kHelveticaNeueLight size:16.0];
     
     cell.textLabel.font = textLabelFont;
-    cell.textLabel.textColor = [UIColor colorFromHexString:@"#434343"];
+    cell.textLabel.textColor = [UIColor getUIColorFromHexValue:@"#434343"];
     cell.detailTextLabel.font = detailLabelFont;
-    cell.detailTextLabel.textColor = [UIColor colorFromHexString:@"#797979"];
+    cell.detailTextLabel.textColor = [UIColor getUIColorFromHexValue:@"#797979"];
 
 
     cell.textLabel.text = processModel.processName;
@@ -173,7 +173,7 @@
     navController.delegate = lProductIQcontroller;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
     navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorFromHexString:@"#FF6633"];
+    navController.navigationBar.barTintColor = [UIColor getUIColorFromHexValue:@"#FF6633"];
     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
     

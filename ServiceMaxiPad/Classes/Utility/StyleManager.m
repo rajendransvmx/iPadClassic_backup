@@ -38,14 +38,14 @@ Contains UIColor and UIFont constants for use throughout the app.
  ----------------------------------------------------------------------------------------------------*/
 + (UIColor*)navBarBG;
 {
-	return [UIColor colorFromHexString:@"#FF6633"];
+	return [UIColor getUIColorFromHexValue:@"#FF6633"];
 }
 
 /*----------------------------------------------------------------------------------------------------
  ----------------------------------------------------------------------------------------------------*/
 + (UIColor*)navBarTitleColor;
 {
-	return [UIColor colorFromHexString:@"#FFFFFF"];
+	return [UIColor getUIColorFromHexValue:@"#FFFFFF"];
 }
 /*----------------------------------------------------------------------------------------------------
  ----------------------------------------------------------------------------------------------------*/
@@ -56,10 +56,10 @@ Contains UIColor and UIFont constants for use throughout the app.
 
 /*----------------------------------------------------------------------------------------------------
  ----------------------------------------------------------------------------------------------------*/
-+ (UIColor*)colorFromHexString:(NSString*)hxVal
++ (UIColor*)getUIColorFromHexValue:(NSString*)hxVal
 {
     NSString *colorString = [[hxVal stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
-    
+
     // strip 0X if it appears
     if ([colorString hasPrefix:@"0X"]) {
         colorString = [colorString substringFromIndex:2];
@@ -75,14 +75,19 @@ Contains UIColor and UIFont constants for use throughout the app.
         return [UIColor grayColor];
     }
     
-    // Separate into r, g, b substrings
+    // Separate into red, green, blue substrings
     NSRange stringRange;
     stringRange.length = 2;
     
+    //for red
     stringRange.location = 0;
     NSString *redString = [colorString substringWithRange:stringRange];
+    
+    //for green
     stringRange.location = 2;
     NSString *greenString = [colorString substringWithRange:stringRange];
+    
+    //for blue
     stringRange.location = 4;
     NSString *blueString = [colorString substringWithRange:stringRange];
     

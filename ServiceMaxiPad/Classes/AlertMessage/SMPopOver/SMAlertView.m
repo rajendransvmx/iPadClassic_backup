@@ -101,7 +101,7 @@
     
     [titleLabel setTextColor:[UIColor colorWithRed:61.0f/255 green:61.0f/255 blue:61.0f/255 alpha:1]];
     titleLabel.backgroundColor = [UIColor colorWithRed:239.0f/255 green:239.0f/255 blue:239.0f/255 alpha:1];
-    titleLabel.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];
+    titleLabel.backgroundColor = [UIColor getUIColorFromHexValue:kPageViewMasterBGColor];
     titleLabel.layer.cornerRadius = 4;
     height = height + 35 + 45 +10.0f;
     [self.alertViewContainer addSubview:titleLabel];
@@ -117,12 +117,12 @@
         cancelButton.tag = 1000;
         cancelButton.layer.borderWidth = 1;
         cancelButton.layer.borderColor = [UIColor orangeColor].CGColor;
-        cancelButton.layer.borderColor = [UIColor colorFromHexString:kOrangeColor].CGColor;
+        cancelButton.layer.borderColor = [UIColor getUIColorFromHexValue:kOrangeColor].CGColor;
         
         cancelButton.titleLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize15];
         
         [cancelButton setBackgroundColor:[UIColor clearColor]];
-        [cancelButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
+        [cancelButton setTitleColor:[UIColor getUIColorFromHexValue:kOrangeColor] forState:UIControlStateNormal];
         [cancelButton addTarget:self action:@selector(onButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         cancelButton.backgroundColor = [UIColor whiteColor];
     }
@@ -139,7 +139,7 @@
         otherButton.titleLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize15];
         
         otherButton.layer.borderColor = [UIColor whiteColor].CGColor;
-        otherButton.backgroundColor = [UIColor colorFromHexString:kOrangeColor];
+        otherButton.backgroundColor = [UIColor getUIColorFromHexValue:kOrangeColor];
         [otherButton addTarget:self action:@selector(onButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     }
     [self setFrameForButtonsCancelButton:cancelButtonTitle otherButton:otherButtonTitle];

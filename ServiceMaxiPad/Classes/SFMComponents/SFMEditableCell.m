@@ -37,12 +37,12 @@
         self.valueField.frame = fr;
 
         self.valueField.userInteractionEnabled = YES;
-        self.valueField.backgroundColor = [UIColor colorFromHexString:kWhiteColor];
+        self.valueField.backgroundColor = [UIColor getUIColorFromHexValue:kWhiteColor];
         self.valueField.borderStyle = UITextBorderStyleRoundedRect | UITextBorderStyleLine;
         self.valueField.tag = 101;
         self.valueField.text = @"";
         self.valueField.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
-        self.valueField.textColor = [UIColor colorFromHexString:kEditableTextFieldColor];
+        self.valueField.textColor = [UIColor getUIColorFromHexValue:kEditableTextFieldColor];
         [self addSubview:self.valueField];
 
     }

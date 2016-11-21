@@ -22,7 +22,7 @@
 {
     [super viewDidLoad];
 
-    self.tableView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+    self.tableView.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
     self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
 }
 
@@ -97,7 +97,7 @@
         UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, frame.origin.y,
                                                                        frame.size.width, frame.size.height)];
         textLabel.text = model.processName;
-        textLabel.textColor = [UIColor colorFromHexString:@"#E15001"];
+        textLabel.textColor = [UIColor getUIColorFromHexValue:@"#E15001"];
         textLabel.font = [UIFont fontWithName:kHelveticaNeueThin size:kFontSize16];
         textLabel.numberOfLines = 2;
         
@@ -106,11 +106,11 @@
     if (([self.linkedProces count] - 1) != indexPath.row) {
         
         UIView *seperatorLine = [[UIView alloc] initWithFrame:CGRectMake(15, CGRectGetMaxY(frame) - 1, self.tableView.frame.size.width, 1)];
-        seperatorLine.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
+        seperatorLine.backgroundColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor];
         
         [cell.contentView addSubview:seperatorLine];
     }
-    cell.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+    cell.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
     
     return cell;
 }
@@ -156,20 +156,20 @@
         [self removeHeaderSubView:(UITableViewHeaderFooterView *)view];
         
         UITableViewHeaderFooterView *headerView = (UITableViewHeaderFooterView *)view;
-        headerView.contentView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+        headerView.contentView.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
       
         CGRect frame = headerView.contentView.frame;
       
         UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, frame.origin.y,
                                                                        frame.size.width, frame.size.height)];
         textLabel.text = [[TagManager sharedInstance]tagByName:kTag_LineItemActions];
-        textLabel.textColor = [UIColor colorFromHexString:@"#434343"];
+        textLabel.textColor = [UIColor getUIColorFromHexValue:@"#434343"];
         textLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize16];
         [headerView addSubview:textLabel];
         
         UIView *seperatorView = [[UIView alloc] initWithFrame:CGRectMake(15, view.frame.size.height,
                                                                          tableView.frame.size.width, 1)];
-        seperatorView.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
+        seperatorView.backgroundColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor];
         [headerView.contentView addSubview:seperatorView];
     }
 }

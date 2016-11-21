@@ -36,7 +36,7 @@
     [super viewDidLoad];
     
     CGFloat borderWidth = 1.0f;    
-    slaView.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
+    slaView.layer.borderColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor].CGColor;
     slaView.layer.borderWidth = borderWidth;
     slaView.layer.cornerRadius = 5.00;
     

@@ -159,11 +159,11 @@
         cell.cellDate=date;
         //[cell setArrayEvents:[dictEvents objectForKey:date]];
         if (indexPath.row % 7 == 0 || (indexPath.row + 1) % 7 == 0) {
-            [cell.labelDay setTextColor:[UIColor colorFromHexString:@"797979"]];
+            [cell.labelDay setTextColor:[UIColor getUIColorFromHexValue:@"797979"]];
         }
         if ([components day]==1) {
             cell.isFirstDayOfTheMonth=YES;
-            [cell.labelDay setTextColor:[UIColor colorFromHexString:@"434343"]];
+            [cell.labelDay setTextColor:[UIColor getUIColorFromHexValue:@"434343"]];
             [cell firstDayOfTheMonth];
             [cell.labelDay setText:[NSString stringWithFormat:@"%@ %i",[arrayMonthNameAbrev objectAtIndex:(int)[components month]-1],(int)[components day]]];
             [cell setFont:[UIFont fontWithName:@"HelveticaNeue-Medium" size:18.0f]];

@@ -34,9 +34,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+    self.view.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
     attachmentTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    attachmentTableView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+    attachmentTableView.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
     attachmentTableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     attachmentTableView.scrollEnabled = FALSE;
     NSString *addFromCamera = [[TagManager sharedInstance] tagByName:kTagAddFromCamera];
@@ -67,12 +67,12 @@
     {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:SimpleTableIdentifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
-        cell.contentView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+        cell.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
+        cell.contentView.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
     }
     
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:16.0f];
-    cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+    cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     cell.textLabel.text = [_optionsArray objectAtIndex:indexPath.row];
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
     return cell;

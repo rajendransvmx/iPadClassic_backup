@@ -119,7 +119,7 @@
                                 spacer,self.titleBarButtonItem,
                                 spacer1,self.saveBarButton];
     
-    self.resolutionTableView.layer.borderColor = [UIColor colorFromHexString:kActionBgColor].CGColor;
+    self.resolutionTableView.layer.borderColor = [UIColor getUIColorFromHexValue:kActionBgColor].CGColor;
     self.resolutionTableView.layer.borderWidth = 2.0f;
     self.resolutionTableView.layer.cornerRadius = 4.0f;
     
@@ -132,7 +132,7 @@
     self.accountNameLabel.text     = @"";
     self.detailsTextView.text      = @"";
     self.detailsLabel.text         = [[TagManager sharedInstance]tagByName:kTag_details];
-    self.objectNameLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+    self.objectNameLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     self.objectLabel.textColor     = [UIColor grayColor];
     self.objectLabel.font          = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize14];
     self.accountLabel.textColor    = [UIColor grayColor];

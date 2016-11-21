@@ -150,7 +150,7 @@ static NSMutableDictionary *eventPlace;
             
             if ((((buttonOfNumber+1) >= maxNumOfButtons) && ([arrayEvents count] -i) >1)) {
                 [button setTitle:[NSString stringWithFormat:@"  (and %i more)", (int)[arrayEvents count] - (i)] forState:UIControlStateNormal];
-                [button.titleLabel setTextColor:[UIColor colorFromHexString:@"797979"]];
+                [button.titleLabel setTextColor:[UIColor getUIColorFromHexValue:@"797979"]];
                 [button.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:13.0f]];
                 break;
             } else {
@@ -172,7 +172,7 @@ static NSMutableDictionary *eventPlace;
                 [button.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:13.0f]];
                 [button setEvent:event];
                 [button setProtocol:self];
-                [button setTitleColor:[UIColor colorFromHexString:@"434343"] forState:UIControlStateNormal];
+                [button setTitleColor:[UIColor getUIColorFromHexValue:@"434343"] forState:UIControlStateNormal];
                 if (event.isMultidayEvent) {
                     int eventPoint=[SMXMonthCellEvent getValueForKey:event.localID];
                     if (event.eventIndex!=0) {
@@ -181,7 +181,7 @@ static NSMutableDictionary *eventPlace;
                     }
                     if ((eventPoint==numberOfButton) && ([arrayEvents count]-i)>1) {
                         [button setTitle:[NSString stringWithFormat:@"  (and %i more)", (int)[arrayEvents count] - (i)] forState:UIControlStateNormal];
-                        [button setTitleColor:[UIColor colorFromHexString:@"797979"] forState:UIControlStateNormal];
+                        [button setTitleColor:[UIColor getUIColorFromHexValue:@"797979"] forState:UIControlStateNormal];
                         [button.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:13.0f]];
                         CGRect rect=button.frame;
                         rect.origin.y =yFirstButton+(eventPoint-1)*height+(eventPoint-1)*ButtonPadding;
@@ -203,7 +203,7 @@ static NSMutableDictionary *eventPlace;
                         //24 march 2015
                         if(([arrayEvents count]-i)>1 && buttonOfNumber+1>=numberOfButton){
                             [button setTitle:[NSString stringWithFormat:@"  (and %i more)", (int)[arrayEvents count] - (i)] forState:UIControlStateNormal];
-                            [button setTitleColor:[UIColor colorFromHexString:@"797979"] forState:UIControlStateNormal];
+                            [button setTitleColor:[UIColor getUIColorFromHexValue:@"797979"] forState:UIControlStateNormal];
                             [button.titleLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:13.0f]];
                             break;
                         }else{
@@ -217,7 +217,7 @@ static NSMutableDictionary *eventPlace;
                             button.frame=rect;
                         }
                     }
-                    button.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
+                    button.backgroundColor=[UIColor getUIColorFromHexValue:@"D7D7D7"];
                 }else{
                     /*  non multiday events */
                 }

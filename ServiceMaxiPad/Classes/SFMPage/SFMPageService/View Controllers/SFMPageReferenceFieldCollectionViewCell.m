@@ -65,7 +65,7 @@
     self.fieldValue.backgroundColor = [UIColor clearColor]; //HS 12Jan
 
     if (isRefernceRecordExist) {
-        self.fieldValue.textColor = [UIColor colorFromHexString:@"#E15001"];
+        self.fieldValue.textColor = [UIColor getUIColorFromHexValue:@"#E15001"];
 
         [self addTapGesture];
     }

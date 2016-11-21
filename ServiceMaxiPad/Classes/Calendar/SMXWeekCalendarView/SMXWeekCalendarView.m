@@ -93,13 +93,13 @@
 }
 -(UIImageView *)borderView:(CGRect)rect{
     UIImageView *grayLine=[[UIImageView alloc] initWithFrame:rect];
-    grayLine.layer.borderColor=[UIColor colorFromHexString:@"D7D7D7"].CGColor;
+    grayLine.layer.borderColor=[UIColor getUIColorFromHexValue:@"D7D7D7"].CGColor;
     grayLine.layer.borderWidth=1.0f;
     return grayLine;
 }
 -(UIImageView *)grayLine:(CGRect )rect{
     grayBorder=[[UIImageView alloc] initWithFrame:rect];
-    grayBorder.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
+    grayBorder.backgroundColor=[UIColor getUIColorFromHexValue:@"D7D7D7"];
     return grayBorder;
 }
 - (void)scrollToPage:(int)_intPage {

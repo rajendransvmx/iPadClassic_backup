@@ -100,14 +100,14 @@
         cell = [[BadgeTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
         
-        cell.textLabel.highlightedTextColor = [UIColor colorFromHexString:kWhiteColor];
+        cell.textLabel.highlightedTextColor = [UIColor getUIColorFromHexValue:kWhiteColor];
         UIView *bgColorView = [[UIView alloc] init];
-        [bgColorView setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
+        [bgColorView setBackgroundColor:[UIColor getUIColorFromHexValue:kMasterSelectionColor]];
         [cell setSelectedBackgroundView:bgColorView];
         
     }
     cell.backgroundColor = [UIColor clearColor];
-    cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+    cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
     NSString *title = [self rowTitleForIndexPath:indexPath];
     //If empty string then show information instead leaving blank
@@ -376,7 +376,7 @@
                     sender:(id)sender
 {
     if (isAllSectionShown) {
-        [sender setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
+        [sender setTitleColor:[UIColor getUIColorFromHexValue:kOrangeColor] forState:UIControlStateNormal];
         [sender setEnabled:YES];
     }
     else{
@@ -440,7 +440,7 @@
     
     ChildEditViewController * viewController =(ChildEditViewController *) [ViewControllerFactory createViewControllerByContext:ViewControllerSFMEditChildLineList];
     
-    viewController.view.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];
+    viewController.view.backgroundColor = [UIColor getUIColorFromHexValue:kPageViewMasterBGColor];
     [viewController loadDataWithSfmPage:self.sfmPage forIndexPath:indexPath];
     return viewController;
     

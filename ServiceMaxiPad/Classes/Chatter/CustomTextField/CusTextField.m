@@ -38,7 +38,7 @@
 
 - (void)drawPlaceholderInRect:(CGRect)rect
 {
-    UIColor *colour = [UIColor colorFromHexString:@"#A1A1A1"];
+    UIColor *colour = [UIColor getUIColorFromHexValue:@"#A1A1A1"];
     
     UIFont *fontType = [UIFont fontWithName:kHelveticaNeueItalic
                                         size:kFontSize18];

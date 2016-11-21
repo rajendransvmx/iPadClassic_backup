@@ -23,7 +23,7 @@
 // values are from 0-255
 + (UIColor*)colorWithIntegerRed:(unsigned char)red green:(unsigned char)green blue:(unsigned char)blue alpha:(unsigned char)alpha;
 
-+ (UIColor*)colorFromHexString:(NSString*)hxVal;
++ (UIColor*)getUIColorFromHexValue:(NSString*)hxVal;
 @end
 
 /*----------------------------------------------------------------------------------------------------

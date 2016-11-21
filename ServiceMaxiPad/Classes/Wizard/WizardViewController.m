@@ -61,7 +61,7 @@
 {
     [super viewDidLoad];
     self.tableView.delegate = self;
-    self.tableView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+    self.tableView.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
     self.view.backgroundColor = [UIColor redColor];
     // Do any additional setup after loading the view from its nib.
 }
@@ -109,12 +109,12 @@
     
     [textLabel setNumberOfLines:2];
     textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:16.0];
-    textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+    textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     
     //Add one pixel seperator line to each cell
     UIView *seperatorLine = [[UIView alloc]initWithFrame:CGRectMake(10,39
                                                                     , 295, 1)];
-    seperatorLine.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
+    seperatorLine.backgroundColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor];
     [cell.contentView addSubview:seperatorLine];
     
     NSInteger tempSection = indexPath.section;
@@ -158,7 +158,7 @@
                         cell.userInteractionEnabled = YES;
                         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
                         if ([[wizardComponent.customActionType uppercaseString] isEqualToString:@"WEB-SERVICE"])  {
-                            cell.accessoryView = [self setIcon:[UIColor colorFromHexString:kOrangeColor]];
+                            cell.accessoryView = [self setIcon:[UIColor getUIColorFromHexValue:kOrangeColor]];
                         }else{
                             cell.accessoryView = nil;
                         }
@@ -167,7 +167,7 @@
                             textLabel.enabled = NO;
                             cell.userInteractionEnabled = NO;
                             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-                            cell.accessoryView = [self setIcon:[UIColor colorFromHexString:kTextFieldFontColor]];
+                            cell.accessoryView = [self setIcon:[UIColor getUIColorFromHexValue:kTextFieldFontColor]];
                         }else{
                             textLabel.enabled = YES;
                             cell.userInteractionEnabled = YES;
@@ -198,7 +198,7 @@
             }
         }
     }
-    cell.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+    cell.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
     return cell;
 }
 
@@ -244,7 +244,7 @@
     if ([view isKindOfClass:[UITableViewHeaderFooterView class]])
     {
         UITableViewHeaderFooterView *headerView = (UITableViewHeaderFooterView *)view;
-        headerView.contentView.backgroundColor = [UIColor colorFromHexString:kActionBgColor];
+        headerView.contentView.backgroundColor = [UIColor getUIColorFromHexValue:kActionBgColor];
         
         //Remove all subview of cell contentview
         
@@ -277,13 +277,13 @@
             }
         }
         }
-        titleLabel.textColor = [UIColor colorFromHexString:@"#434343"];
+        titleLabel.textColor = [UIColor getUIColorFromHexValue:@"#434343"];
         titleLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:16];
 
         //add line
         
         UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(10, 24,310,1)];
-        lineView.backgroundColor = [UIColor colorFromHexString:kHeaderSeperatorLineColor];
+        lineView.backgroundColor = [UIColor getUIColorFromHexValue:kHeaderSeperatorLineColor];
         [headerView.contentView addSubview:lineView];
     }
     

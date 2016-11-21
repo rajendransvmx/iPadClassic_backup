@@ -46,7 +46,7 @@ static NSString *reusableIdentifier = @"TaskCell";
     UIBarButtonItem *addNewTaskNavButton = [[UIBarButtonItem alloc]initWithTitle:title style:UIBarButtonItemStylePlain target:self action:@selector(addNewTask)];
     self.navigationItem.rightBarButtonItem = addNewTaskNavButton;
     [self.tableView setSeparatorInset:UIEdgeInsetsZero];
-    [self.tableView setSeparatorColor:[UIColor colorFromHexString:kActionBgColor]];
+    [self.tableView setSeparatorColor:[UIColor getUIColorFromHexValue:kActionBgColor]];
     self.tableView.tableFooterView = [UIView new];
     self.tableView.allowsMultipleSelectionDuringEditing = NO;
 }
@@ -123,7 +123,7 @@ static NSString *reusableIdentifier = @"TaskCell";
     }
     cell.detailTextLabel.text = literalSupportedText;
     if ([cell.detailTextLabel.text isEqualToString:[[TagManager sharedInstance] tagByName:kTag_Today]]) {
-        cell.detailTextLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+        cell.detailTextLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     } else {
         cell.detailTextLabel.textColor = [UIColor blackColor];
     }

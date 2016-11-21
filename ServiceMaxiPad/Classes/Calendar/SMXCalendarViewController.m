@@ -1820,7 +1820,7 @@
 
 -(UIImageView *)grayLine:(CGRect)rect{
     UIImageView *grayLine=[[UIImageView alloc] initWithFrame:rect];
-    grayLine.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
+    grayLine.backgroundColor=[UIColor getUIColorFromHexValue:@"D7D7D7"];
     return grayLine;
 }
 #pragma mark - SMXButtonAddEventWithPopover Protocol
@@ -1917,7 +1917,7 @@
     [grayCalenderBkView addTarget:self action:@selector(hideCalender:) forControlEvents:UIControlEventTouchUpInside];
     grayCalenderBkView.backgroundColor=[UIColor clearColor];
     UIImageView *imageView=[[UIImageView alloc] initWithFrame:CGRectMake(0,0, self.view.frame.size.width,self.view.frame.size.height-0)];
-    imageView.backgroundColor=[UIColor colorFromHexString:@"434343"];
+    imageView.backgroundColor=[UIColor getUIColorFromHexValue:@"434343"];
     imageView.alpha=0.3;
     [grayCalenderBkView addSubview:imageView];
     [self.view addSubview:grayCalenderBkView];
@@ -2144,7 +2144,7 @@
     navController.delegate = sfmopdoc;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
     navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorFromHexString:@"#FF6633"];
+    navController.navigationBar.barTintColor = [UIColor getUIColorFromHexValue:@"#FF6633"];
     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
@@ -2612,7 +2612,7 @@
     navController.delegate = lProductIQcontroller;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
     navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorFromHexString:@"#FF6633"];
+    navController.navigationBar.barTintColor = [UIColor getUIColorFromHexValue:@"#FF6633"];
     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
     */
@@ -2625,7 +2625,7 @@
     navController.delegate = lProductIQcontroller;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
     navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorFromHexString:@"#FF6633"];
+    navController.navigationBar.barTintColor = [UIColor getUIColorFromHexValue:@"#FF6633"];
     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
     
