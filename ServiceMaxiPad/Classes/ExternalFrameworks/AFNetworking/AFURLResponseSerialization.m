@@ -213,8 +213,6 @@ static BOOL AFErrorOrUnderlyingErrorHasCode(NSError *error, NSInteger code) {
     id responseObject = nil;
     NSString *responseString = [[NSString alloc] initWithData:data encoding:stringEncoding];
     if (responseString && ![responseString isEqualToString:@" "]) {
-        // Workaround for a bug in NSJSONSerialization when Unicode character escape codes are used instead of the actual character
-        // See http://stackoverflow.com/a/12843465/157142
         data = [responseString dataUsingEncoding:NSUTF8StringEncoding];
 
         NSError *serializationError = nil;
