@@ -65,7 +65,10 @@ typedef NS_ENUM(NSUInteger, CategoryType) {
      CategoryTypeLookupSearch,
     
     /** Product IQ **/
-    CategoryTypeProductIQData
+    CategoryTypeProductIQData,
+    
+    /** Sync Profling **/
+    CategoryTypeSyncProfiling
 };
 
 typedef NS_ENUM(NSUInteger, SyncType) {

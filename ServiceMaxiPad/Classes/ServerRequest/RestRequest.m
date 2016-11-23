@@ -711,6 +711,9 @@
         case RequestProductIQDeleteData:
             url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
+        case RequestTypeSyncProfiling:
+            url = @"https://empp.servicemax-api.com/instrument/clientsync"; // [self getUrlWithStringApppended:@""];
+            break;
         default:
             break;
     }
