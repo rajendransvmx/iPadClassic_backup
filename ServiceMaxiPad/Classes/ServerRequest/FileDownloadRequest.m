@@ -27,7 +27,6 @@
                 fileToBeDownloaded = [self.requestParameter.values objectAtIndex:0];
             }
             
-            //NSString *urlString = @"http://upload.wikimedia.org/wikipedia/commons/5/5d/Crateva_religiosa.jpg";
             NSString *urlString = [self getBaseUrlDependingOnTheRequest:fileToBeDownloaded];
             NSURL *apiURL = [NSURL URLWithString:urlString];
             NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:apiURL];

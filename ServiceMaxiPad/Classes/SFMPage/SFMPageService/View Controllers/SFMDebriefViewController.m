@@ -190,7 +190,7 @@
         UIView * view2 = [[UIView alloc] initWithFrame:CGRectMake(footerView.contentView.bounds.origin.x + 30, 0, tableView.bounds.size.width - 30 , 1)];
         
         
-        view2.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
+        view2.backgroundColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor];
         
         [footerView.contentView addSubview:view2];
     }
@@ -542,7 +542,7 @@
         CALayer * layer = [[CALayer alloc] init];
         layer.name = @"border";
         layer.frame = layerFrame;
-        layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor ].CGColor;//[UIColor grayColor].CGColor;
+        layer.borderColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor ].CGColor;//[UIColor grayColor].CGColor;
         layer.borderWidth = 1;
         layer.cornerRadius = 4;
 

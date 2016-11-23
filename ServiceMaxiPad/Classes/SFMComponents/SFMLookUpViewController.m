@@ -97,7 +97,7 @@
     
     UIImage *checkboxImage = [UIImage imageNamed:@"checkbox-unselected.png"];
     [self.includeOnlineButton setImage:checkboxImage  forState:UIControlStateNormal];
-    [self.includeOnlineButton setTitleColor:[UIColor colorFromHexString:@"#FF6633"] forState:UIControlStateNormal];
+    [self.includeOnlineButton setTitleColor:[UIColor getUIColorFromHexValue:@"#FF6633"] forState:UIControlStateNormal];
     
     NSString *includeOnlineTitle = [[TagManager sharedInstance]tagByName:kTag_IncludeOnline];
     if (!includeOnlineTitle) {
@@ -125,9 +125,9 @@
 
 -(void)setUpSearchButton
 {
-    [self.searchButton.layer setBorderColor:[[UIColor colorFromHexString:@"#FF6633"] CGColor]];
+    [self.searchButton.layer setBorderColor:[[UIColor getUIColorFromHexValue:@"#FF6633"] CGColor]];
     [self.searchButton.layer setBorderWidth:1.0];
-    [self.searchButton setTitleColor:[UIColor colorFromHexString:@"#FF6633"] forState:UIControlStateNormal];
+    [self.searchButton setTitleColor:[UIColor getUIColorFromHexValue:@"#FF6633"] forState:UIControlStateNormal];
     [self.searchButton setTitle:[[TagManager sharedInstance]tagByName:kTagSfmLookUpSearch] forState:UIControlStateNormal];
 }
 
@@ -240,12 +240,12 @@
 
 -(void)setUpViews
 {
-    NSDictionary *barButtonItemAttributes = @{NSFontAttributeName: [UIFont fontWithName:kHelveticaNeueThin size:kFontSize16], NSForegroundColorAttributeName :[UIColor colorFromHexString:@"#E15001"]};
+    NSDictionary *barButtonItemAttributes = @{NSFontAttributeName: [UIFont fontWithName:kHelveticaNeueThin size:kFontSize16], NSForegroundColorAttributeName :[UIColor getUIColorFromHexValue:@"#E15001"]};
     
     
-    self.lookUpToolBar.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];
+    self.lookUpToolBar.backgroundColor = [UIColor getUIColorFromHexValue:kPageViewMasterBGColor];
     self.searchView.layer.borderWidth = 2;
-    self.searchView.layer.borderColor = [UIColor colorFromHexString:kPageViewMasterBGColor].CGColor;
+    self.searchView.layer.borderColor = [UIColor getUIColorFromHexValue:kPageViewMasterBGColor].CGColor;
     self.searchView.layer.cornerRadius = 5;
     
     [self.cancelBarButtonItem setTitle:[[TagManager sharedInstance] tagByName:kCancelButtonTitle]];
@@ -332,7 +332,7 @@
   
     UIView *subView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, 30)];
     UILabel * tableViewHeader = [[UILabel alloc] initWithFrame:CGRectMake(10,0, self.tableView.frame.size.width-20, 30)];
-    tableViewHeader.backgroundColor = [UIColor colorFromHexString:kPageViewMasterBGColor];
+    tableViewHeader.backgroundColor = [UIColor getUIColorFromHexValue:kPageViewMasterBGColor];
     [subView addSubview:tableViewHeader];
     [headerView.contentView addSubview:subView];
     
@@ -397,10 +397,10 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
-    cell.textLabel.textColor = [UIColor colorFromHexString:@"#434343"];
+    cell.textLabel.textColor = [UIColor getUIColorFromHexValue:@"#434343"];
     
     cell.detailTextLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize14];
-    cell.detailTextLabel.textColor = [UIColor colorFromHexString:@"#797979"];
+    cell.detailTextLabel.textColor = [UIColor getUIColorFromHexValue:@"#797979"];
 
     
     return cell;
@@ -943,7 +943,7 @@
     self.searchView.layer.backgroundColor = [UIColor whiteColor].CGColor;
     self.searchView.layer.borderWidth = 1;
     [[NSClassFromString(@"UISearchBarTextField") appearanceWhenContainedIn:[UISearchBar class], nil] setBorderStyle:UITextBorderStyleNone];
-    self.searchView.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
+    self.searchView.layer.borderColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor].CGColor;
     
 
 }

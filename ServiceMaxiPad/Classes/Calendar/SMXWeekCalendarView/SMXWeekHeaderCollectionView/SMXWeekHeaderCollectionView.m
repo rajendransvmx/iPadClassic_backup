@@ -117,21 +117,21 @@ static int firstdayOfTheWeek;
     [cell cleanCell];
     cell.date = dateOfLabel;
     cell.label.font=[UIFont fontWithName:@"HelveticaNeue-Medium" size:18.0];
-    [cell.label setTextColor:[UIColor colorFromHexString:@"434343"]];
+    [cell.label setTextColor:[UIColor getUIColorFromHexValue:@"434343"]];
     [cell.label setText:[NSString stringWithFormat:@"%@", [arrayWeekAbrevWithThreeChars objectAtIndex:compDateOfLabel.weekday-1]]];
     
     [cell.label setAttributedText:[self getStringHighlighted:[NSString stringWithFormat:@"%@", [arrayWeekAbrevWithThreeChars objectAtIndex:compDateOfLabel.weekday-1]] date:[NSString stringWithFormat:@"%li",(long)compDateOfLabel.day]]];
    // [cell.dateLabel setText:[NSString stringWithFormat:@"%i",compDateOfLabel.day]];
     
     if (compDateOfLabel.weekday == 1) {
-        [cell.label setTextColor:[UIColor colorFromHexString:@"797979"]];
+        [cell.label setTextColor:[UIColor getUIColorFromHexValue:@"797979"]];
         firstdayOfTheWeek=(int)compDateOfLabel.day;
     }else if(compDateOfLabel.weekday == 7){
-        [cell.label setTextColor:[UIColor colorFromHexString:@"797979"]];
+        [cell.label setTextColor:[UIColor getUIColorFromHexValue:@"797979"]];
     }
     
     if ([NSDate isTheSameDateTheCompA:compDateOfLabel compB:[NSDate componentsOfCurrentDate]]) {
-        [cell.label setTextColor:[UIColor colorFromHexString:@"e15001"]];
+        [cell.label setTextColor:[UIColor getUIColorFromHexValue:@"e15001"]];
         //[cell.dateLabel setTextColor:[UIColor smxOrangeColor]];
     }
     return cell;

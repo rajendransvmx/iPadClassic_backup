@@ -32,7 +32,7 @@
     if(selected) {
         self.backgroundColor = [UIColor whiteColor];
     } else {
-        self.backgroundColor = [UIColor colorFromHexString:kOrangeColor];
+        self.backgroundColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     }
     [super setSelected:selected];
 }
@@ -78,7 +78,7 @@
 
 - (void)setupUI {
     
-    self.titleLabel.textColor = [UIColor colorFromHexString:kEditableTextFieldColor];
+    self.titleLabel.textColor = [UIColor getUIColorFromHexValue:kEditableTextFieldColor];
     self.titleLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize16];
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -90,11 +90,11 @@
     [self.cancelButton setTitle:[[TagManager sharedInstance]tagByName:kTag_CancelDownload] forState:UIControlStateSelected];
     
     [self.cancelButton.titleLabel setFont:[UIFont fontWithName:kHelveticaNeueLight size:15.0]];
-    [self.cancelButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateSelected];
+    [self.cancelButton setTitleColor:[UIColor getUIColorFromHexValue:kOrangeColor] forState:UIControlStateSelected];
     self.cancelButton.selected = NO;
     [self.cancelButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.cancelButton.layer.borderWidth = 1;
-    self.cancelButton.layer.borderColor = [UIColor colorFromHexString:kOrangeColor].CGColor;
+    self.cancelButton.layer.borderColor = [UIColor getUIColorFromHexValue:kOrangeColor].CGColor;
 
     self.titleLabel.text = [self getCellDetailTitleStringForIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
 }

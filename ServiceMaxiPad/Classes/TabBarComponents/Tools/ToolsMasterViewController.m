@@ -128,13 +128,13 @@
         cell = [[BadgeTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         
         UIView *bgColorView = [[UIView alloc] init];
-        [bgColorView setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
+        [bgColorView setBackgroundColor:[UIColor getUIColorFromHexValue:kMasterSelectionColor]];
         [cell setSelectedBackgroundView:bgColorView];
         
         cell.backgroundColor = [UIColor clearColor];
-        cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+        cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
         cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
-        cell.textLabel.highlightedTextColor = [UIColor colorFromHexString:kWhiteColor];
+        cell.textLabel.highlightedTextColor = [UIColor getUIColorFromHexValue:kWhiteColor];
     }
     
     cell.textLabel.text = [[self.masterItems objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
@@ -191,7 +191,7 @@
     frame.origin.y = frame.size.height - 1.0;
     frame.size.height = 1.0;
     UIView *separatorLine = [[UIView alloc] initWithFrame:frame];
-    [separatorLine setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
+    [separatorLine setBackgroundColor:[UIColor getUIColorFromHexValue:kMasterSelectionColor]];
     [headerView addSubview:separatorLine];
     
     return headerView;

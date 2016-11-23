@@ -580,7 +580,7 @@
      navController.delegate = lProductIQcontroller;
      navController.modalPresentationStyle = UIModalPresentationFullScreen;
      navController.navigationBar.hidden = NO;
-     navController.navigationBar.barTintColor = [UIColor colorFromHexString:@"#FF6633"];
+     navController.navigationBar.barTintColor = [UIColor getUIColorFromHexValue:@"#FF6633"];
      navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
      [self.navigationController presentViewController:navController animated:YES completion:nil];
      */
@@ -620,7 +620,7 @@
     navController.delegate = lProductIQcontroller;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
     navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorFromHexString:@"#FF6633"];
+    navController.navigationBar.barTintColor = [UIColor getUIColorFromHexValue:@"#FF6633"];
     navController.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
@@ -735,7 +735,7 @@
     navController.delegate = sfmopdoc;
     navController.modalPresentationStyle = UIModalPresentationFullScreen;
     navController.navigationBar.hidden = NO;
-    navController.navigationBar.barTintColor = [UIColor colorFromHexString:@"#FF6633"];
+    navController.navigationBar.barTintColor = [UIColor getUIColorFromHexValue:@"#FF6633"];
     navController.navigationBar.tintColor = [UIColor whiteColor];
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }

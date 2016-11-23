@@ -57,7 +57,7 @@
     self.troubleshootTableView.delegate = self;
     self.troubleshootTableView.dataSource = self;
     [self setSearchBarBackGround];
-    self.searchBar.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
+    self.searchBar.layer.borderColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor].CGColor;
     self.troubleshootTableView.tableFooterView = [[UIView alloc] init] ;
     self.detailViewController = [self.smSplitViewController.viewControllers lastObject];
     self.searchBar.placeholder = [[TagManager sharedInstance]tagByName:kTag_search];
@@ -98,10 +98,10 @@
         TroubleshootDataModel *model =[self.productDetailsArray objectAtIndex:indexPath.row];
         cell.textLabel.text = model.Name;
         cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
-        cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
-        cell.textLabel.highlightedTextColor = [UIColor colorFromHexString:kWhiteColor];
+        cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
+        cell.textLabel.highlightedTextColor = [UIColor getUIColorFromHexValue:kWhiteColor];
         UIView *bgColorView = [[UIView alloc] init];
-        [bgColorView setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
+        [bgColorView setBackgroundColor:[UIColor getUIColorFromHexValue:kMasterSelectionColor]];
         [cell setSelectedBackgroundView:bgColorView];
         return cell;
     }
@@ -334,7 +334,7 @@
     self.searchBar.layer.backgroundColor = [UIColor whiteColor].CGColor;
     self.searchBar.layer.borderWidth = 1;
     [[NSClassFromString(@"UISearchBarTextField") appearanceWhenContainedIn:[UISearchBar class], nil] setBorderStyle:UITextBorderStyleNone];
-    self.searchBar.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
+    self.searchBar.layer.borderColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor].CGColor;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section

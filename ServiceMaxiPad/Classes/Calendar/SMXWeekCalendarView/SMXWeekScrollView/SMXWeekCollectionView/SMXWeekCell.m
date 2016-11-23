@@ -115,22 +115,22 @@ static UIImage *lineImage;
 
 -(UIImageView *)grayDashPatternLine:(CGRect )rect{
     UIImageView *grayLine=[[UIImageView alloc] initWithFrame:rect];
-    grayLine.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
+    grayLine.backgroundColor=[UIColor getUIColorFromHexValue:@"D7D7D7"];
      _border = [CAShapeLayer layer];
-      _border.strokeColor = [UIColor colorFromHexString:@"D7D7D7"].CGColor;
+      _border.strokeColor = [UIColor getUIColorFromHexValue:@"D7D7D7"].CGColor;
      _border.fillColor = nil;
      _border.lineDashPattern = @[@5];
     return grayLine;
 }
 -(UIImageView *)grayLine:(CGRect )rect{
     UIImageView *grayLine=[[UIImageView alloc] initWithFrame:rect];
-    grayLine.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
+    grayLine.backgroundColor=[UIColor getUIColorFromHexValue:@"D7D7D7"];
     return grayLine;
 }
 -(void)grayBottomLine:(CGRect )rect{
     if (!celBottombaar) {
         celBottombaar=[[UIImageView alloc] initWithFrame:rect];
-        celBottombaar.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
+        celBottombaar.backgroundColor=[UIColor getUIColorFromHexValue:@"D7D7D7"];
         [self addSubview:celBottombaar];
     }else{
         celBottombaar.frame=rect;
@@ -164,7 +164,7 @@ static UIImage *lineImage;
                 UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width+1, 1.)];//cell line separeter
                // [view.layer setBorderColor:[[UIColor colorWithPatternImage:lineImage] CGColor]];
                 [view setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-                view.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
+                view.backgroundColor=[UIColor getUIColorFromHexValue:@"D7D7D7"];
                 [labelHourMin setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
                 [labelHourMin addSubview:view];
                 [self addSubview:labelHourMin];

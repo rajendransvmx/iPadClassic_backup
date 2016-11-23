@@ -67,10 +67,10 @@
     ProductManualModel *model =[self.productDetailsArray objectAtIndex:indexPath.row];
     cell.textLabel.text = model.prod_manual_name;
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
-    cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
-    cell.textLabel.highlightedTextColor = [UIColor colorFromHexString:kWhiteColor];
+    cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
+    cell.textLabel.highlightedTextColor = [UIColor getUIColorFromHexValue:kWhiteColor];
     UIView *bgColorView = [[UIView alloc] init];
-    [bgColorView setBackgroundColor:[UIColor colorFromHexString:kMasterSelectionColor]];
+    [bgColorView setBackgroundColor:[UIColor getUIColorFromHexValue:kMasterSelectionColor]];
     [cell setSelectedBackgroundView:bgColorView];
     return cell;
 

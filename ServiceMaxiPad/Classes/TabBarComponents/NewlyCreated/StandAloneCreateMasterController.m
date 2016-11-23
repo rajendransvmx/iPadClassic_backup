@@ -205,7 +205,7 @@
     {
         cell = [[NoDynamicTypeTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         [cell setSelectionStyle:UITableViewCellSelectionStyleDefault];
-        cell.textLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+        cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
         cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize16];
         cell.backgroundColor = [UIColor clearColor];
         

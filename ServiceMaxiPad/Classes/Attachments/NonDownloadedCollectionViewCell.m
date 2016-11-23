@@ -43,17 +43,17 @@
 - (void)configureNonDownloadedOffline:(AttachmentTXModel *)attachmentTXModel
 {
     self.cloudImageView.image = [UIImage imageNamed:@"Attachment-DownloadFileOffline"];
-    [self.fileNameLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
-    [self.fileSizeLabel setTextColor:[UIColor colorFromHexString:@"#9A9A9B"]];
+    [self.fileNameLabel setTextColor:[UIColor getUIColorFromHexValue:@"#9A9A9B"]];
+    [self.fileSizeLabel setTextColor:[UIColor getUIColorFromHexValue:@"#9A9A9B"]];
     [self.progressView setHidden:YES];
 }
 
 - (void)configureNonDownloadedOnline:(AttachmentTXModel *)attachmentTXModel
 {
     self.cloudImageView.image = [UIImage imageNamed:@"Attachment-FileinCloud"];
-    [self.fileNameLabel setTextColor:[UIColor colorFromHexString:@"#157DFB"]];
-    [self.fileSizeLabel setTextColor:[UIColor colorFromHexString:@"#157DFB"]];
-    [self.progressView setProgressTintColor:[UIColor colorFromHexString:@"#FF6633"]];// Anoop: SPR 15SP
+    [self.fileNameLabel setTextColor:[UIColor getUIColorFromHexValue:@"#157DFB"]];
+    [self.fileSizeLabel setTextColor:[UIColor getUIColorFromHexValue:@"#157DFB"]];
+    [self.progressView setProgressTintColor:[UIColor getUIColorFromHexValue:@"#FF6633"]];// Anoop: SPR 15SP
 }
 
 @end

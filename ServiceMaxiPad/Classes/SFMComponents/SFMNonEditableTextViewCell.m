@@ -42,8 +42,8 @@
         textView.text = @"";
         textView.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
         textView.textColor = [UIColor darkGrayColor];
-        textView.textColor = [UIColor colorFromHexString:kTextFieldFontColor];
-        textView.layer.borderColor = [[UIColor colorFromHexString:kSeperatorLineColor] CGColor];
+        textView.textColor = [UIColor getUIColorFromHexValue:kTextFieldFontColor];
+        textView.layer.borderColor = [[UIColor getUIColorFromHexValue:kSeperatorLineColor] CGColor];
         textView.layer.cornerRadius = 4;
         textView.layer.borderWidth = 1;
         textView.editable = NO;

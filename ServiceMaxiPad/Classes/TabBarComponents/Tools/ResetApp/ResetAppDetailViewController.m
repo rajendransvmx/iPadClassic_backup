@@ -135,7 +135,7 @@
 -(void)setBgColorForSelectBtn:(id)inSender
 {
     UIButton *btn = (UIButton *)inSender;
-    btn.backgroundColor = [UIColor colorFromHexString:@"E15001"];
+    btn.backgroundColor = [UIColor getUIColorFromHexValue:@"E15001"];
     [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateHighlighted];
 }
 
@@ -143,10 +143,10 @@
 {
     UIButton *btn = (UIButton *)inBtnSender;
     CGFloat borderWidth = 1.0f;
-    btn.layer.borderColor =[UIColor colorFromHexString:@"#E15001"].CGColor;
+    btn.layer.borderColor =[UIColor getUIColorFromHexValue:@"#E15001"].CGColor;
     btn.layer.borderWidth = borderWidth;
     [btn setBackgroundColor:[UIColor clearColor]];
-    [btn setTitleColor:[UIColor colorFromHexString:@"#E15001"] forState:UIControlStateNormal];
+    [btn setTitleColor:[UIColor getUIColorFromHexValue:@"#E15001"] forState:UIControlStateNormal];
     [btn addTarget:self action:@selector(setBgColorForSelectBtn:) forControlEvents:UIControlEventTouchDown];
 }
 
@@ -156,15 +156,15 @@
     {
         resetAppBtn.userInteractionEnabled = YES;
         resetAppBtn.layer.borderColor = [UIColor orangeColor].CGColor;
-        [resetAppBtn setBackgroundColor:[UIColor colorFromHexString:@"#FF6633"]];
-        [resetAppBtn setTitleColor:[UIColor colorFromHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+        [resetAppBtn setBackgroundColor:[UIColor getUIColorFromHexValue:@"#FF6633"]];
+        [resetAppBtn setTitleColor:[UIColor getUIColorFromHexValue:@"#FFFFFF"] forState:UIControlStateNormal];
     }
     else
     {
         resetAppBtn.userInteractionEnabled = NO;
-        resetAppBtn.layer.borderColor =[UIColor colorFromHexString:@"#AEAEAE"].CGColor;
-        [resetAppBtn setBackgroundColor:[UIColor colorFromHexString:@"#AEAEAE"]];
-        [resetAppBtn setTitleColor:[UIColor colorFromHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+        resetAppBtn.layer.borderColor =[UIColor getUIColorFromHexValue:@"#AEAEAE"].CGColor;
+        [resetAppBtn setBackgroundColor:[UIColor getUIColorFromHexValue:@"#AEAEAE"]];
+        [resetAppBtn setTitleColor:[UIColor getUIColorFromHexValue:@"#FFFFFF"] forState:UIControlStateNormal];
     }
 }
 

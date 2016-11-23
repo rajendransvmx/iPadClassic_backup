@@ -33,7 +33,7 @@
         self.valueField.tag = 101;
         self.valueField.text = @"";
         self.valueField.font = [UIFont fontWithName:kHelveticaNeueRegular size:kFontSize18];
-        self.valueField.textColor = [UIColor colorFromHexString:kTextFieldFontColor];
+        self.valueField.textColor = [UIColor getUIColorFromHexValue:kTextFieldFontColor];
         [self addSubview:self.valueField];
     }
     return self;

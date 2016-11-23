@@ -391,7 +391,7 @@
     buttonDetailPopover = [[UIButton alloc] initWithFrame:CGRectMake(gap, 5, width, height)];
     [buttonDetailPopover setAutoresizingMask:UIViewAutoresizingFlexibleRightMargin];
 
-    [buttonDetailPopover setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
+    [buttonDetailPopover setTitleColor:[UIColor getUIColorFromHexValue:kOrangeColor] forState:UIControlStateNormal];
     [buttonDetailPopover setTitle:[[TagManager sharedInstance]tagByName:kTag_Open] forState:UIControlStateNormal];
     buttonDetailPopover.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
     [buttonDetailPopover.titleLabel setFont:[UIFont fontWithName:FONT_HELVETICANUE_LIGHT size:18.]];
@@ -411,7 +411,7 @@
     CGFloat gap = 20;
     
     buttonReschedulePopover = [[UIButton alloc] initWithFrame:CGRectMake(sizeView.width-width - gap, 55, width, height)];
-    [buttonReschedulePopover setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
+    [buttonReschedulePopover setTitleColor:[UIColor getUIColorFromHexValue:kOrangeColor] forState:UIControlStateNormal];
     [buttonReschedulePopover setTitle:[[TagManager sharedInstance]tagByName:kTag_Reschedule] forState:UIControlStateNormal];
     buttonReschedulePopover.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
 
@@ -562,7 +562,7 @@
 
     if (isViewProcess) {
         
-        [contactNameLabel setTextColor:[UIColor colorFromHexString:kOrangeColor]];
+        [contactNameLabel setTextColor:[UIColor getUIColorFromHexValue:kOrangeColor]];
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openViewProcessForContact:)];
         tapGesture.numberOfTapsRequired = 1;
         contactNameLabel.userInteractionEnabled = YES;
@@ -1040,8 +1040,8 @@
     moreButton.backgroundColor=[UIColor clearColor];
     [moreButton setTitle:[[TagManager sharedInstance]tagByName:kTagmore] forState:UIControlStateNormal];
     [moreButton setTitle:[[TagManager sharedInstance]tagByName:kTagmore] forState:UIControlStateSelected];
-    [moreButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
-    [moreButton setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateSelected];
+    [moreButton setTitleColor:[UIColor getUIColorFromHexValue:kOrangeColor] forState:UIControlStateNormal];
+    [moreButton setTitleColor:[UIColor getUIColorFromHexValue:kOrangeColor] forState:UIControlStateSelected];
     moreButton.titleLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize16];
     [moreButton addTarget:self action:@selector(moreButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     return moreButton;

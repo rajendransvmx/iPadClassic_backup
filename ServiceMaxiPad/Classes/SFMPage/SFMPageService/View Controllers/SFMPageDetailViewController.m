@@ -58,7 +58,7 @@
 {
     CALayer *bottomBorder = [CALayer layer];
     bottomBorder.frame = CGRectMake(0, CGRectGetHeight(self.selectedSectionButton.bounds)-1, CGRectGetWidth(self.selectedSectionButton.bounds), 1.0f);
-    bottomBorder.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
+    bottomBorder.backgroundColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor].CGColor;
     [self.selectedSectionButton.layer addSublayer:bottomBorder];
 }
 

@@ -71,7 +71,7 @@
 }
 -(UIImageView *)grayLine:(CGRect )rect{
     grayBorder=[[UIImageView alloc] initWithFrame:rect];
-    grayBorder.backgroundColor=[UIColor colorFromHexString:@"D7D7D7"];
+    grayBorder.backgroundColor=[UIColor getUIColorFromHexValue:@"D7D7D7"];
     return grayBorder;
 }
 -(UIImageView *)whiteLine:(CGRect )rect{

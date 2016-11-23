@@ -47,7 +47,7 @@ extern NSInteger const kTechAnnotationIndex;
 @property (nonatomic, strong) NSArray * workOrderArray;
 
 - (void)update;
-- (void)zoomToFitMapAnnotations:(MKMapView*)aMapView;
+- (void)zoomMapViewToFitAnnotations:(MKMapView*)aMapView;
 - (void)moveToCurrentLocation:(id)sender;
 
 @end

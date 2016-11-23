@@ -31,9 +31,9 @@
 
 - (void)initialSetUp
 {
-    self.userName.textColor = [UIColor colorFromHexString:kEditableTextFieldColor];
-    self.chatText.textColor = [UIColor colorFromHexString:kTextFieldFontColor];
-    self.time.textColor = [UIColor colorFromHexString:kTextFieldFontColor];
+    self.userName.textColor = [UIColor getUIColorFromHexValue:kEditableTextFieldColor];
+    self.chatText.textColor = [UIColor getUIColorFromHexValue:kTextFieldFontColor];
+    self.time.textColor = [UIColor getUIColorFromHexValue:kTextFieldFontColor];
 
     self.userImageView.layer.cornerRadius = self.userImageView.frame.size.height/2;
     self.userImageView.clipsToBounds = YES;

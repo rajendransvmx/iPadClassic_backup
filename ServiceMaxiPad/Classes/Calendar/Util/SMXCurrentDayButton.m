@@ -34,7 +34,7 @@
 }
 -(void)initialsetup:(UIView *)parent{
     [self setTitle:[[TagManager sharedInstance]tagByName:kTagChatterToday] forState:UIControlStateNormal];
-    [self setTitleColor:[UIColor colorFromHexString:kOrangeColor] forState:UIControlStateNormal];
+    [self setTitleColor:[UIColor getUIColorFromHexValue:kOrangeColor] forState:UIControlStateNormal];
     [self setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     self.titleLabel.font = [UIFont fontWithName:@"Helvetica Neue" size:18.0];
     [self addTarget:self action:@selector(loadCurrentWeek:) forControlEvents:UIControlEventTouchUpInside];
@@ -44,7 +44,7 @@
 }
 -(void)buttonBorder:(UIButton *)button{
     button.layer.borderWidth=0.0f;
-    button.layer.borderColor=[UIColor colorFromHexString:kOrangeColor].CGColor;
+    button.layer.borderColor=[UIColor getUIColorFromHexValue:kOrangeColor].CGColor;
     button.layer.cornerRadius = 2.f;
 }
 -(void)loadCurrentWeek:(id)sender{

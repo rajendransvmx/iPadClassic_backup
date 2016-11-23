@@ -72,7 +72,7 @@
 - (void)setLeftBorder
 {
     CALayer *leftBorder = [CALayer layer];
-    leftBorder.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
+    leftBorder.borderColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor].CGColor;
     leftBorder.borderWidth = 1;
     leftBorder.frame = CGRectMake(0, 0, 1.0, CGRectGetHeight(self.pageCollectionView.bounds));
     [self.pageCollectionView.layer addSublayer:leftBorder];

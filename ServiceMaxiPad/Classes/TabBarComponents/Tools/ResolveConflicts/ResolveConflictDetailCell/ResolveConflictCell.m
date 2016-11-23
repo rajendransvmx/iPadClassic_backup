@@ -37,11 +37,11 @@
     self.objectNameLabel.font      = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize18];
     self.objectNameLabel.textColor = [UIColor grayColor];
     
-    self.resolveLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+    self.resolveLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     self.resolveLabel.font      = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize16];
     
     self.userResolutionLabel.font        = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize16];
-    self.changeResolutionLabel.textColor = [UIColor colorFromHexString:kOrangeColor];
+    self.changeResolutionLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
 }
 
 - (void)configureCellForResolve {

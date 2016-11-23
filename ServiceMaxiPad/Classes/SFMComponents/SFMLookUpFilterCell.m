@@ -79,12 +79,12 @@
 
 - (void)highlightTextColour
 {
-    self.filterName.textColor = [UIColor colorFromHexString:@"#434343"];
+    self.filterName.textColor = [UIColor getUIColorFromHexValue:@"#434343"];
 }
 
 - (void)grayOutTextColour
 {
-    self.filterName.textColor = [UIColor colorFromHexString:@"#A1A1A1"];
+    self.filterName.textColor = [UIColor getUIColorFromHexValue:@"#A1A1A1"];
 }
 
 - (void)setValueForCheckBox:(BOOL)value

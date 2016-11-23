@@ -115,7 +115,7 @@
     }
     NSMutableAttributedString *attString=[[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ %@",time,hour]];
     NSDictionary *attrDict = @{
-                               NSForegroundColorAttributeName : [UIColor colorFromHexString:@"797979"]
+                               NSForegroundColorAttributeName : [UIColor getUIColorFromHexValue:@"797979"]
                                };
         [attString addAttributes:attrDict range:NSMakeRange([attString length]-[hour length],[hour length]
                                                             )];

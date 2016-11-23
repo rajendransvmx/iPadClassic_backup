@@ -82,7 +82,7 @@
 {
     [super viewDidLoad];
     self.expandedViewControllers = [[NSMutableArray alloc]init];
-    self.searchDetailTableView.separatorColor = [UIColor colorFromHexString:@"#D7D7D7"];
+    self.searchDetailTableView.separatorColor = [UIColor getUIColorFromHexValue:@"#D7D7D7"];
     self.searchDetailTableView.backgroundColor = [UIColor clearColor];
     self.searchStringBeforeEditing = @"";
     
@@ -170,7 +170,7 @@
     self.searchBar.layer.backgroundColor = [UIColor whiteColor].CGColor;
     self.searchBar.layer.borderWidth = 1;
     [[NSClassFromString(@"UISearchBarTextField") appearanceWhenContainedIn:[UISearchBar class], nil] setBorderStyle:UITextBorderStyleNone];
-    self.searchBar.layer.borderColor = [UIColor colorFromHexString:kSeperatorLineColor].CGColor;
+    self.searchBar.layer.borderColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor].CGColor;
 }
 - (void)registerSyncStatusChangeNotification
 {
@@ -585,7 +585,7 @@
         cell = [[SFMSearchCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         
         UIView *seperatorView = [[UIView alloc] initWithFrame:CGRectMake(10, (SRCH_ROW_HEIGHT - 1), self.searchDetailTableView.frame.size.width - 20, 1)];
-        seperatorView.backgroundColor = [UIColor colorFromHexString:kSeperatorLineColor];
+        seperatorView.backgroundColor = [UIColor getUIColorFromHexValue:kSeperatorLineColor];
         seperatorView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         [cell.contentView addSubview:seperatorView];
         
@@ -604,10 +604,10 @@
     UIImage *normalImage;
     if (!isOnlineRecord) {
         normalImage = [UIImage imageNamed:@"sfm_right_arrow"];
-        cell.textLabel.textColor = [UIColor colorFromHexString:kEditableTextFieldColor];
+        cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kEditableTextFieldColor];
     } else{
         normalImage = [UIImage imageNamed:@"cloud-download"];
-        cell.textLabel.textColor = [UIColor colorFromHexString:kSeperatorLineColorForSearchSection];
+        cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kSeperatorLineColorForSearchSection];
     }
     
     //HS 12 June defect fix:018043
@@ -726,7 +726,7 @@
     NSString *text = [self titleForSection:section]; // [object name]; //@"Work Orders (7)";//[self titleForSection:section];
     sectionView.titleLabel.text = text;
     sectionView.titleLabel.font = [UIFont fontWithName:kHelveticaNeueMedium size:kFontSize18];
-    sectionView.titleLabel.textColor = [UIColor colorFromHexString:@"#333333"];
+    sectionView.titleLabel.textColor = [UIColor getUIColorFromHexValue:@"#333333"];
     
     /**/
     
@@ -1150,7 +1150,7 @@
         [includeOnlineBtn setBackgroundColor:[UIColor navBarBG]];
     }
     else {
-        [includeOnlineBtn setBackgroundColor:[UIColor colorFromHexString:@"#AEAEAE"]];
+        [includeOnlineBtn setBackgroundColor:[UIColor getUIColorFromHexValue:@"#AEAEAE"]];
     }
 }
 - (void) disableOnlineSearchButtonIfNoProcess {
@@ -1168,7 +1168,7 @@
 {
     if ([Utility isCameraAvailable]) {
         UIView *barCodeView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.window.frame.size.width, 46)];
-        barCodeView.backgroundColor = [UIColor colorFromHexString:@"B5B7BE"];
+        barCodeView.backgroundColor = [UIColor getUIColorFromHexValue:@"B5B7BE"];
         
         CGRect buttonFrame = CGRectMake(0, 6, 72, 32);
         

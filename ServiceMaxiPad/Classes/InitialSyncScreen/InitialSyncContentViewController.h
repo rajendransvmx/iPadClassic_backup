@@ -1,5 +1,5 @@
 //
-//  PageContentViewController.h
+//  InitialSyncContentViewController.h
 //  ServiceMaxMobile
 //
 //  Created by Damodar on 25/08/14.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PageContentViewController : UIViewController
+@interface InitialSyncContentViewController : UIViewController
 
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 

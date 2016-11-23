@@ -29,7 +29,7 @@
 -(void)loadView
 {
     UIView *view = [[UIView alloc]initWithFrame:[[UIScreen mainScreen]applicationFrame]];
-    view.backgroundColor = [UIColor colorFromHexString:@"e1bee7"];
+    view.backgroundColor = [UIColor getUIColorFromHexValue:@"e1bee7"];
     self.view = view ;
     
 }
