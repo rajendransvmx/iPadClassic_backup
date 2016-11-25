@@ -2163,6 +2163,12 @@
 		EC42EC2B1DDAEA2200419D7D /* ValidateProfileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */; };
 		ECAFEF041DD994C60065AB96 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
 		ECAFEF071DD99C710065AB96 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
+		ECE752BD1DE6F465005D34C7 /* SyncManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */; };
+		ECE752C01DE6FA66005D34C7 /* DateUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A2179919E585D700F22EA6 /* DateUtil.m */; };
+		ECE752C11DE6FA6C005D34C7 /* SNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A99EE19E6890C00919345 /* SNetworkReachabilityManager.m */; };
+		ECE752C21DE6FA78005D34C7 /* TaskModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A9E0B19E69DB000919345 /* TaskModel.m */; };
+		ECE752C31DE6FA78005D34C7 /* TaskGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A9B0F19E69B5200919345 /* TaskGenerator.m */; };
+		ECE752C41DE6FA78005D34C7 /* TaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA22119E6D50E00919345 /* TaskManager.m */; };
 		FD09E1131D4A088A00972C95 /* ZXAztecDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */; };
 		FD09E1141D4A088A00972C95 /* ZXAztecDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF301D4A088800972C95 /* ZXAztecDetector.m */; };
 		FD09E1151D4A088A00972C95 /* ZXAztecBinaryShiftToken.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF331D4A088800972C95 /* ZXAztecBinaryShiftToken.m */; };
@@ -4343,6 +4349,7 @@
 		ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfileServiceLayer.m; sourceTree = "<group>"; };
 		ECAFEF051DD99C710065AB96 /* SyncProfilingRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProfilingRequest.h; sourceTree = "<group>"; };
 		ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfilingRequest.m; sourceTree = "<group>"; };
+		ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncManagerTests.m; sourceTree = "<group>"; };
 		FD09DF2C1D4A088800972C95 /* ZXAztecDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDecoder.h; sourceTree = "<group>"; };
 		FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZXAztecDecoder.m; sourceTree = "<group>"; };
 		FD09DF2F1D4A088800972C95 /* ZXAztecDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDetector.h; sourceTree = "<group>"; };
@@ -7417,6 +7424,7 @@
 				C3216E141B27E18B006A0515 /* UTStringUtil.m */,
 				C3216E181B27EDB9006A0515 /* UTUtility.m */,
 				18A2174219E57C5A00F22EA6 /* Supporting Files */,
+				ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */,
 			);
 			path = ServiceMaxiPadTests;
 			sourceTree = "<group>";
@@ -10829,8 +10837,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECE752C21DE6FA78005D34C7 /* TaskModel.m in Sources */,
+				ECE752C31DE6FA78005D34C7 /* TaskGenerator.m in Sources */,
+				ECE752C41DE6FA78005D34C7 /* TaskManager.m in Sources */,
+				ECE752C11DE6FA6C005D34C7 /* SNetworkReachabilityManager.m in Sources */,
+				ECE752C01DE6FA66005D34C7 /* DateUtil.m in Sources */,
 				C3216E161B27E4F7006A0515 /* StringUtil.m in Sources */,
 				C3216E151B27E18B006A0515 /* UTStringUtil.m in Sources */,
+				ECE752BD1DE6F465005D34C7 /* SyncManagerTests.m in Sources */,
 				C3216E1B1B27EE5D006A0515 /* SVMXSystemConstant.m in Sources */,
 				C3216E1A1B27EE52006A0515 /* Utility.m in Sources */,
 				C3216E191B27EDB9006A0515 /* UTUtility.m in Sources */,
@@ -11807,6 +11821,7 @@
 		18A2174F19E57C5A00F22EA6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -11829,6 +11844,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ServiceMax.app/ServiceMax";
 				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -11837,6 +11853,7 @@
 		18A2175019E57C5A00F22EA6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -11854,6 +11871,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ServiceMax.app/ServiceMax";
 				VALID_ARCHS = "armv7 armv7s arm64";
 				WRAPPER_EXTENSION = xctest;
 			};

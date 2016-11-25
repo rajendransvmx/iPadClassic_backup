@@ -421,3 +421,9 @@ extern NSString *const kOBJdefList;
 
 extern NSString *const kMobileSettingsGetPrice;
 
+/** Validate Profile **/
+extern NSString *const kValidateProfileSFProfileId;
+extern NSString *const kValidateProfileOrgName;
+extern NSString *const kValidateProfileOrgId;
+extern NSString *const kValidateProfileSyncProfiling;
+extern NSString *const kValidateProfileGroupProfileName;
