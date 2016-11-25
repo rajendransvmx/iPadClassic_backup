@@ -77,22 +77,24 @@
 				}
 				
 				function $FORMAT(){
-                     if(arguments.length == 0 ) return "";
+                     var argumentLength = arguments.length;
+                     
+                     if(argumentLength == 0 ) return "";
                      
                      // first parameter is the string to be formatted
                      var toBeFormatted = arguments[0];
                      
                      // loop thru the arguments and create regular expression
-                     for (var count = 1; count < arguments.length; count++) {
+                     for (var count = 1; count < argumentLength; count++) {
                      
-                     //build regular expression
-                     var regularExp = new RegExp('\\{'+ (count - 1) +'\\}', 'gi');
-                     
-                     //replace argument with the regular expression
-                     toBeFormatted = toBeFormatted.replace(regularExp, arguments[count]);
+                         //build regular expression
+                         var regularExpression = new RegExp('\\{'+ (count - 1) +'\\}', 'gi');
+                         
+                         //replace argument with the regular expression
+                         var formattedResult = toBeFormatted.replace(regularExpression, arguments[count]);
                      }
                      
-                     return toBeFormatted;
+                     return formattedResult;
 
 				}
 				
