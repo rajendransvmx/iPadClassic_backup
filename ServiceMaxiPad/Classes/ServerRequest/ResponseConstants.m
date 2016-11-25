@@ -442,6 +442,12 @@ NSInteger const kOBJdefnLimit = 20;
 NSString *const kOBJdefList                 = @"ObjectsDefinitionList";
 NSString *const kMobileSettingsGetPrice   = @"IPAD018_SET022";
 
+/** Validate Profile **/
+NSString *const kValidateProfileSFProfileId = @"PROFILEID";
+NSString *const kValidateProfileOrgName = @"ORGNAME";
+NSString *const kValidateProfileOrgId = @"ORGID";
+NSString *const kValidateProfileSyncProfiling = @"SYNC_PROFILING";
+NSString *const kValidateProfileGroupProfileName = @"PROFILENAME";
 
 
 

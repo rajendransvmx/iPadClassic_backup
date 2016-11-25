@@ -143,6 +143,19 @@ static NSUInteger const kRefreshTokenSplitIndex      = 10;        /** Refresh to
 static NSString * const kConfigurationKey = @"com.apple.configuration.managed";
 static NSString * const kConfigurationServerURLKey = @"serverURL";
 
+/** Sync Profiling **/
+NSString *const kSalesForceProfileId = @"SalesForceProfileId";
+NSString *const kSalesForceOrgName = @"SalesForceOrgName";
+NSString *const kSalesForceOrgId = @"SalesForceOrgId";
+NSString *const kSyncProfileEnabled = @"SyncProfileEnabled";
+NSString *const kGroupProfileId = @"ServiceMaxGroupProfileId";
+NSString *const kSyncProfileType = @"SyncProfileType";
+NSString *const kSPTypeStart = @"SPTypeStart";
+NSString *const kSPTypeEnd = @"SPTypeEnd";
+NSString *const kGroupProfileName = @"ServiceMaxGroupProfileName";
+NSString *const kSPSyncTime = @"SPSyncTime";
+NSString *const kSPReqTimedOut = @"SPReqTimedOut";
+
 @implementation PlistManager
 
 + (void)registerDefaultAppSettings

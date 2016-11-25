@@ -627,10 +627,13 @@
     RequestType nextRequestType = 0;
     
     if (currentRequest == nil) {
-        nextRequestType = RequestMasterSyncTimeLog;
+        nextRequestType = RequestValidateProfile;
     }
     
     switch (currentRequest.requestType) {
+        case RequestValidateProfile:
+            nextRequestType = RequestMasterSyncTimeLog;
+            break;
         case RequestMasterSyncTimeLog:
             nextRequestType = RequestMobileDeviceTags;
             break;

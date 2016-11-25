@@ -19,7 +19,7 @@
 }
 
 - (ResponseCallback*)processResponseWithRequestParam:(RequestParamModel*)requestParamModel responseData:(id)responseData {
-    NSLog(@"Sync profiling responseData: %@", responseData);
+//    NSLog(@"Sync profiling responseData: %@", responseData);
     return nil;
 }
 

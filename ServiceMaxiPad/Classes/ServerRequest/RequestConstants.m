@@ -199,3 +199,21 @@ NSString *const kProductIQSyncData = @"SYNC_PRODUCTIQ_DATA";
 NSString *const kProdIQLastSyncTime = @"PRODUCTIQ_LAST_SYNC";
 NSString *const kProdIQGetDeleteData = @"GET_DELETE_PRODUCTIQ_DATA";
 
+/** Sync Profiling **/
+
+NSString *const kSyncProfileFromKey = @"From";
+NSString *const kSyncProfileAppName = @"ServiceMaxNow";
+NSString *const kSyncProfileClientIdKey = @"clientId";
+NSString *const kSyncProfileClientNameKey = @"clientName";
+NSString *const kSyncProfileRequestIdKey = @"srid";
+NSString *const kSyncprofileStartReqId = @"syncprofileStartTaskId";
+NSString *const kSyncprofileEndReqId = @"syncprofileEndTaskId";
+NSString *const kSyncProfileStartTimeKey = @"syncstartime";
+NSString *const kSyncProfileSFProfileIdKey = @"classicprofileid";
+NSString *const kSyncProfileIdKey = @"id";
+NSString *const kSyncProfileNameKey = @"name";
+NSString *const kSyncProfileUserIdKey = @"classicuserid";
+NSString *const kSyncProfileGroupProfileKey = @"svmxprofile";
+NSString *const kSyncProfileDeviceNameKey = @"devicename";
+NSString *const kSyncProfileEndTimeKey = @"syncendtime";
+NSString *const kSyncProfileRequestTimeOutKey = @"requesttimeout";

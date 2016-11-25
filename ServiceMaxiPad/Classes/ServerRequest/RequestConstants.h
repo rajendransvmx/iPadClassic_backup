@@ -340,3 +340,23 @@ extern NSString *const kProductIQObjectDescribeUrl;
 extern NSString *const kProductIQSyncData;
 extern NSString *const kProdIQLastSyncTime;
 extern NSString *const kProdIQGetDeleteData;
+
+
+/** Sync Profiling **/
+
+extern NSString *const kSyncProfileFromKey;
+extern NSString *const kSyncProfileAppName;
+extern NSString *const kSyncProfileClientIdKey;
+extern NSString *const kSyncProfileClientNameKey;
+extern NSString *const kSyncProfileRequestIdKey;
+extern NSString *const kSyncprofileStartReqId;
+extern NSString *const kSyncprofileEndReqId;
+extern NSString *const kSyncProfileStartTimeKey;
+extern NSString *const kSyncProfileSFProfileIdKey;
+extern NSString *const kSyncProfileIdKey;
+extern NSString *const kSyncProfileNameKey;
+extern NSString *const kSyncProfileUserIdKey;
+extern NSString *const kSyncProfileGroupProfileKey;
+extern NSString *const kSyncProfileDeviceNameKey;
+extern NSString *const kSyncProfileEndTimeKey;
+extern NSString *const kSyncProfileRequestTimeOutKey;
