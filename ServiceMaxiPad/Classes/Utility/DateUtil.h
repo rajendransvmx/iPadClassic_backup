@@ -213,6 +213,10 @@ static NSString *kFormulaDateUserReadable = @"MMMM dd yyyy";
 static NSString *kFormulaDateTimeForModule = @"yyyy-MM-dd HH:mm:ss";
 static NSString *kFormulaDateForModule = @"yyyy-MM-dd";
 
+/** Sync Profiling **/
+
+static NSString *kSyncProfileDateFormat = @"YYYY-MM-dd HH:mm:ss.SSS";
+
 @interface DateUtil : NSObject
 
 + (NSDateFormatter *)dateFormatter;
@@ -551,6 +555,10 @@ static NSString *kFormulaDateForModule = @"yyyy-MM-dd";
 +(NSString *)getGMTDateFromFormulaDate:(NSString *)formulaDate isDateWithTime:(BOOL)isDateWithTime;
 
 #pragma mark - end
+
+#pragma mark - Sync Profiling
+
++(NSString *)getCurrentDateForSyncProfiling;
 
 @end
 

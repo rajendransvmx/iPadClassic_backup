@@ -72,11 +72,12 @@
 
 - (void)makeActionAccordingToNetworkChangeNotification:(NSNotification *)notification
 {
-    double delayInSeconds = 1.0;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-    
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        //code to be executed on the main queue after delay
+    // PCRD-73 #82
+    // update 'Purge Data' button status when there is change in network connectivity status.
+    double updateWithDelayTime = 1.0;
+    dispatch_time_t updateWithDelayDispatchTime = dispatch_time(DISPATCH_TIME_NOW, updateWithDelayTime * NSEC_PER_SEC);
+    dispatch_after(updateWithDelayDispatchTime, dispatch_get_main_queue(), ^(void){
+        // call method update the button status
         [self loadPurgeButton];
     });
 }

@@ -33,6 +33,7 @@
 #import "CustomActionWebServiceLayer.h"
 #import "SFMOnlineLookUpServiceLayer.h"
 #import "ProdIQDataServiceLayer.h"
+#import "SyncProfileServiceLayer.h"
 
 @implementation ServiceFactory
 
@@ -269,6 +270,10 @@
                 break;
             case CategoryTypeProductIQData: {
                 baseServiceLayer = [[ProdIQDataServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
+            }
+                break;
+            case CategoryTypeSyncProfiling: {
+                baseServiceLayer = [[SyncProfileServiceLayer alloc] initWithCategoryType:categoryType requestType:requestType];
             }
                 break;
             default:

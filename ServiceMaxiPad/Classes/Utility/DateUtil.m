@@ -941,6 +941,16 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     return dateComponents;
 }
 
+#pragma mark - Sync Profiling
+
++(NSString *)getCurrentDateForSyncProfiling {
+    NSDateFormatter *dateformatter = [[NSDateFormatter alloc] init];
+    [dateformatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    [dateformatter setDateFormat:kSyncProfileDateFormat];
+    [dateformatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]];
+    NSString *currentDate = [dateformatter stringFromDate:[NSDate date]];
+    return currentDate;
+}
 
 @end
 

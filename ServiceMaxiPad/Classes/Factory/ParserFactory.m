@@ -44,6 +44,7 @@
 #import "ProdIQDataParser.h"
 #import "ProdIQDeleteDataParser.h"
 #import "MobileDataUsageParser.h"
+#import "ValidateProfileParser.h"
 
 @implementation ParserFactory
 
@@ -56,7 +57,7 @@
         switch (requestType) {
                 
             case RequestValidateProfile:
-                
+                parser = [[ValidateProfileParser alloc] init];
                 break;
                 
             case RequestServicemaxVersion:

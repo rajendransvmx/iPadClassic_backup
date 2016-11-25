@@ -153,54 +153,7 @@
     return [rightPart substringToIndex:to-from];
 }
 
-/* Preconditions:
- * s, old and new are valid non-NULL pointers
- * strlen(old) >= 1
- */
-char *custReplace(const char *s, const char *old, const char *new)
-{
-    char *ret, *sr;
-    size_t i, count = 0;
-    size_t newlen = strlen(new);
-    size_t oldlen = strlen(old);
-    
-    if (newlen != oldlen) {
-        for (i = 0; s[i] != '\0'; ) {
-            if (memcmp(&s[i], old, oldlen) == 0)
-                count++, i += oldlen;
-            else
-                i++;
-        }
-    } else
-        i = strlen(s);
-    
-    ret = malloc(i + 1 + count * (newlen - oldlen));
-    if (ret == NULL)
-        return NULL;
-    
-    sr = ret;
-    while (*s) {
-        if (memcmp(s, old, oldlen) == 0) {
-            memcpy(sr, new, newlen);
-            sr += newlen;
-            s += oldlen;
-        } else
-            *sr++ = *s++;
-    }
-    *sr = '\0';
-    return ret;
-}
-
-- (NSString *)custStringWithReplacingOccurrencesOfString:(NSString *)target withString:(NSString *)with
-{
-    NSAssert((target != nil) && (with != nil), @"custStringWithReplacingOccurrencesOfString:withString: nil argument");
-    NSString *result;
-    char *newstr = NULL;
-    newstr = custReplace([self UTF8String], [target UTF8String], [with UTF8String]);
-    result = [NSString stringWithCString:newstr encoding:NSUTF8StringEncoding];
-    free(newstr);
-    return result;
-}
+// PCRD-90 #279
 
 - (BOOL)custContainsString:(NSString*)other; {
     NSRange range = [self rangeOfString:other];
