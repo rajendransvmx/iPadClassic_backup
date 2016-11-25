@@ -3,7 +3,7 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.60.001
+Version = 16.99.001
 ===========================================
 
 Defect:
@@ -11,12 +11,11 @@ Defect:
 
 Feature:
 ==================
-n/a
-	
+SYNC PROFILING	
 ——————
 
 NOTE:
 
-1. NameSpace: SVMXC
+1. NameSpace: SVMXDEV
 
 
