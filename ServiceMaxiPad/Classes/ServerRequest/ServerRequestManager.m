@@ -721,7 +721,7 @@
             break;
         // Anoop: Sync enhancement changes for onecalldatasync
         // JIRA : IPAD-1591
-        // Doc : https://docs.google.com/a/servicemax.com/document/d/1mEZ2mqfuFIXaL0ib4udCQH66poTXDX3fmFuTeIgPpg8/edit?usp=sharing
+        // PCRD-220
         /*
         case RequestGetPriceDataTypeZero:
             nextRequestType = RequestGetPriceDataTypeOne;

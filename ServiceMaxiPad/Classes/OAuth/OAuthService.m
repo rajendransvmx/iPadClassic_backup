@@ -58,7 +58,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
  * @brief  Generate url string for make OAuth Authorization service call
  *
  * \par
- *  https://test.salesforce.com/services/oauth2/authorize?redirect_uri=sfdc://success&client_id=3MVG9VmVOCGHKYBRKMhA_p09I9xzela3emYDXjFy8a9UOXbcwI2nGsrOGc3RGGA08q4Q8X94lyZ.tIn.WWW71&response_type=token&state=mystate
+ * // PCRD-220
  *
  * @return String value
  *
@@ -130,8 +130,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
     if (orgURL == nil)
     {
         orgURL =  [NSString stringWithFormat:@"%@%@", [PlistManager baseURLString], serviceURI];
-        //orgURL = @"https://onlineteam.force.com/CustomerCommunity/services/oauth2/token";
-        
+        // PCRD-220
         // orgURL =  [NSString stringWithFormat:@"%@/%@", [PlistManager baseURLString], serviceURI]; removing slash from url  :chinna
     }
     
@@ -338,7 +337,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
  *
  * Rest of the error code/message will inform user with response error message.
  * More details about error code:
- *   http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#CSHID=errorcodes.htm|StartTopic=Content%2Ferrorcodes.htm|SkinName=webhelp
+ * // PCRD-220
  *
  * @return bool value
  *
@@ -548,54 +547,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
 
 + (void)verifyAuthorization
 {
-    /**
-     
-     Sample Authorisation response data
-     
-     {"id":"https://test.salesforce.com/id/00DJ0000003KhyyMAC/005J0000001gwIyIAI",
-     "asserted_user":true,
-     "user_id":"005J0000001gwIyIAI",
-     "organization_id":"00DJ0000003KhyyMAC",
-     "username":"himanshi@qa11.com.cfg1",
-     "nick_name":"himanshi.sharma",
-     "display_name":"QA11 Cfg1 Himanshi",
-     "email":"himanshi.sharma@servicemax.com",
-     "email_verified":true,
-     "first_name":"QA11 Cfg1",
-     "last_name":"Himanshi",
-     "timezone":"Asia/Kolkata",
-     "photos":{"picture":"https://c.cs10.content.force.com/profilephoto/005/F",
-     "thumbnail":"https://c.cs10.content.force.com/profilephoto/005T"},
-     "addr_street":null,
-     "addr_city":null,
-     "addr_state":null,
-     "addr_country":null,
-     "addr_zip":null,
-     "mobile_phone":null,
-     "mobile_phone_verified":false,
-     "status":{"created_date":null,"body":null},
-     "urls":{"enterprise":"https://cs10.salesforce.com/services/Soap/c/{version}/00DJ0000003Khyy",
-     "metadata":"https://cs10.salesforce.com/services/Soap/m/{version}/00DJ0000003Khyy",
-     "partner":"https://cs10.salesforce.com/services/Soap/u/{version}/00DJ0000003Khyy",
-     "rest":"https://cs10.salesforce.com/services/data/v{version}/",
-     "sobjects":"https://cs10.salesforce.com/services/data/v{version}/sobjects/",
-     "search":"https://cs10.salesforce.com/services/data/v{version}/search/",
-     "query":"https://cs10.salesforce.com/services/data/v{version}/query/",
-     "recent":"https://cs10.salesforce.com/services/data/v{version}/recent/",
-     "profile":"https://cs10.salesforce.com/005J0000001gwIyIAI",
-     "feeds":"https://cs10.salesforce.com/services/data/v{version}/chatter/feeds",
-     "groups":"https://cs10.salesforce.com/services/data/v{version}/chatter/groups",
-     "users":"https://cs10.salesforce.com/services/data/v{version}/chatter/users",
-     "feed_items":"https://cs10.salesforce.com/services/data/v{version}/chatter/feed-items"},
-     "active":true,
-     "user_type":"STANDARD",
-     "language":"en_US",
-     "locale":"en_US",
-     "utcOffset":19800000,
-     "last_modified_date":"2014-07-18T09:25:01.000+0000",
-     "is_app_installed":true}
-
-     **/
+    // PCRD-220
     
 	NSError *error = nil;
 	NSURLResponse *response = nil;
@@ -671,21 +623,7 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
 	}
 	else
 	{
-        /*
-          Sample callback url Parameter array
-         ---------------------------------
-         
-         "sfdc://success#access_token=00De0000001JIxe%21AQcAQAiueMAgzihv1Ybl_sKlIsu1rHMYPHhd3mN022Etf4O1eLCcwZmR7Z1pUU_wuM24Mr2cUxtq3x.POlgOoxKZFvfB5SPV",
-         "refresh_token=5Aep861i3pidIObecE0.CywcjNt80JnmXnx_voOFptq400pynqBU9YC0ZczbY1jWV5.Tu9lDsuXaqnIUogWlgvd",
-         "instance_url=https%3A%2F%2Fcs15.salesforce.com",
-         "id=https%3A%2F%2Ftest.salesforce.com%2Fid%2F00De0000001JIxeEAG%2F005e00000013J6EAAU",
-         "issued_at=1398495345039",
-         "signature=or5oqm5FFH9AE5JWqsumgJzGryObLdyg9Z9cbzHKWGU%3D",
-         "state=mystate",
-         "scope=id+api+web+chatter_api+refresh_token",
-         "token_type=Bearer"
-        
-         */
+    // PCRD-220
         
 		if ( callBackURLString != nil)
 		{

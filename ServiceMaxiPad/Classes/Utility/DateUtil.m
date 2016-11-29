@@ -41,10 +41,11 @@ static NSString *kDateFormatForDatabase = @"%Y-%m-%dT%H:%M:%S.000%z";
 @implementation DateUtil
 
 /**
- As Apple said [NSDateFormatter init] is very expensive (https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/DataFormatting/Articles/dfDateFormatting10_4.html#//apple_ref/doc/uid/TP40002369-SW10)
+  // PCRD-220
  In Apple's code is used a static const, but since NSDateFormatter
- isn't thread safe a better approach is to use Thread local store (http://developer.apple.com/library/ios/#documentation/Cocoa/Conceptual/Multithreading/CreatingThreads/CreatingThreads.html#//apple_ref/doc/uid/10000057i-CH15-SW4)
+ isn't thread safe a better approach is to use Thread local store
  to cache the NSDateFormatter instance
+  // PCRD-220
  */
 NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 

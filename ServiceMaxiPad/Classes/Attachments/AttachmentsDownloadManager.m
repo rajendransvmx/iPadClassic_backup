@@ -170,7 +170,8 @@ static AttachmentsDownloadManager *attachmentDownloadManager = nil;
                                                            andDelegate:nil];
         return;
     }
-   // NSURL *url = [NSURL URLWithString:@"http://www.mountainguides.com/photos/everest-south/c2_2011b.jpg"];
+
+    // PCRD-220
     AttachmentRequestBuilder *requestObj = [[AttachmentRequestBuilder alloc] initWithType:RequestTypeSFMAttachmentsDownload];
     NSURLRequest *attachmentDownloadRequest = [requestObj getRequestForAttachmentDownload:attachmentModel];
     NSURLSessionDownloadTask *downloadTask = [sessionManager downloadTaskWithRequest:attachmentDownloadRequest];

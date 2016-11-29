@@ -132,10 +132,8 @@ typedef int(^DBExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary);
 
 @property (atomic, strong) NSString *query;
 
-/** SQLite sqlite3_stmt
- 
- @see [`sqlite3_stmt`](http://www.sqlite.org/c3ref/stmt.html)
- */
+/** SQLite sqlite3_stmt */
+ // PCRD-220
 
 @property (atomic, assign) sqlite3_stmt *statement;
 
