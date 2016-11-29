@@ -568,13 +568,11 @@
 		184A9CB419E7D591006DA6BE /* Section_down_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98D219E7D58F006DA6BE /* Section_down_arrow@2x.png */; };
 		184A9CB519E7D591006DA6BE /* Section_right_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98D319E7D58F006DA6BE /* Section_right_arrow@2x.png */; };
 		184A9CB619E7D591006DA6BE /* summary-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98D419E7D58F006DA6BE /* summary-icon.png */; };
-		184A9CBB19E7D591006DA6BE /* calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98DB19E7D58F006DA6BE /* calendar.png */; };
 		184A9CBC19E7D591006DA6BE /* explore.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98DC19E7D58F006DA6BE /* explore.png */; };
 		184A9CBD19E7D591006DA6BE /* homeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98DD19E7D58F006DA6BE /* homeIcon.png */; };
 		184A9CBE19E7D591006DA6BE /* leftPanelBG@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98DE19E7D58F006DA6BE /* leftPanelBG@2x.png */; };
 		184A9CBF19E7D591006DA6BE /* newItem.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98DF19E7D58F006DA6BE /* newItem.png */; };
 		184A9CC019E7D591006DA6BE /* recentlyCreated.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E019E7D58F006DA6BE /* recentlyCreated.png */; };
-		184A9CC119E7D591006DA6BE /* calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E219E7D58F006DA6BE /* calendar@2x.png */; };
 		184A9CC219E7D591006DA6BE /* explore@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E319E7D58F006DA6BE /* explore@2x.png */; };
 		184A9CC319E7D591006DA6BE /* homeIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E419E7D58F006DA6BE /* homeIcon@2x.png */; };
 		184A9CC419E7D591006DA6BE /* newItem@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E519E7D58F006DA6BE /* newItem@2x.png */; };
@@ -768,8 +766,6 @@
 		4083C3FB1A011EBC0029188D /* OPDocSignatureService.m in Sources */ = {isa = PBXBuildFile; fileRef = 4083C3FA1A011EBC0029188D /* OPDocSignatureService.m */; };
 		40A06F0C1B05D41500218162 /* BadgeStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 40A06F091B05D41500218162 /* BadgeStyle.m */; };
 		40A06F0D1B05D41500218162 /* CustomBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = 40A06F0B1B05D41500218162 /* CustomBadge.m */; };
-		40A06F1A1B06033100218162 /* NavBarCal@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F0E1B06033100218162 /* NavBarCal@1x.png */; };
-		40A06F1B1B06033100218162 /* NavBarCal@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F0F1B06033100218162 /* NavBarCal@3x.png */; };
 		40A06F1C1B06033100218162 /* NavBarExplore@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F101B06033100218162 /* NavBarExplore@1x.png */; };
 		40A06F1D1B06033100218162 /* NavBarExplore@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F111B06033100218162 /* NavBarExplore@3x.png */; };
 		40A06F1E1B06033100218162 /* NavBarNew@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F121B06033100218162 /* NavBarNew@1x.png */; };
@@ -780,8 +776,6 @@
 		40A06F231B06033100218162 /* NavBarTasks@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F171B06033100218162 /* NavBarTasks@3x.png */; };
 		40A06F241B06033100218162 /* NavBarTools@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F181B06033100218162 /* NavBarTools@1x.png */; };
 		40A06F251B06033100218162 /* NavBarTools@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F191B06033100218162 /* NavBarTools@3x.png */; };
-		40A06F321B06041400218162 /* SCalendar@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F261B06041400218162 /* SCalendar@1x.png */; };
-		40A06F331B06041400218162 /* SCalendar@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F271B06041400218162 /* SCalendar@3x.png */; };
 		40A06F341B06041400218162 /* SExplore@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F281B06041400218162 /* SExplore@1x.png */; };
 		40A06F351B06041400218162 /* SExplore@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F291B06041400218162 /* SExplore@3x.png */; };
 		40A06F361B06041400218162 /* SNewItem@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F2A1B06041400218162 /* SNewItem@1x.png */; };
@@ -830,14 +824,12 @@
 		5753E0541A0766D100B82FAC /* DataPurgeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5753E0531A0766D100B82FAC /* DataPurgeParser.m */; };
 		577003F81A1B50A2002537FB /* ActionDisplayTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 577003F61A1B50A2002537FB /* ActionDisplayTableViewController.m */; };
 		577003F91A1B50A2002537FB /* ActionDisplayTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 577003F71A1B50A2002537FB /* ActionDisplayTableViewController.xib */; };
-		57A320E81AB7178C00A172E0 /* NavBarCal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E21AB7178C00A172E0 /* NavBarCal@2x.png */; };
 		57A320E91AB7178C00A172E0 /* NavBarExplore@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E31AB7178C00A172E0 /* NavBarExplore@2x.png */; };
 		57A320EA1AB7178C00A172E0 /* NavBarNew@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E41AB7178C00A172E0 /* NavBarNew@2x.png */; };
 		57A320EB1AB7178C00A172E0 /* NavBarRecents@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E51AB7178C00A172E0 /* NavBarRecents@2x.png */; };
 		57A320EC1AB7178C00A172E0 /* NavBarTasks@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E61AB7178C00A172E0 /* NavBarTasks@2x.png */; };
 		57A320ED1AB7178C00A172E0 /* NavBarTools@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E71AB7178C00A172E0 /* NavBarTools@2x.png */; };
 		57A320FA1AB7182800A172E0 /* SNewItem@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320F91AB7182800A172E0 /* SNewItem@2x.png */; };
-		57A321001AB7196A00A172E0 /* SCalendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320FB1AB7196A00A172E0 /* SCalendar@2x.png */; };
 		57A321011AB7196A00A172E0 /* SExplore@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320FC1AB7196A00A172E0 /* SExplore@2x.png */; };
 		57A321021AB7196A00A172E0 /* SRecents@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320FD1AB7196A00A172E0 /* SRecents@2x.png */; };
 		57A321031AB7196A00A172E0 /* STasks@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320FE1AB7196A00A172E0 /* STasks@2x.png */; };
@@ -1826,10 +1818,8 @@
 		A64AB0E31CF2F9E5008839FB /* sync_Error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9819FA157800350B56 /* sync_Error@2x.png */; };
 		A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3EF97801A036CAE00476293 /* DocumentsViewController.xib */; };
 		A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A981E19E7D58F006DA6BE /* iOS-Email-Retina-Orange@2x.png */; };
-		A64AB0E61CF2F9E5008839FB /* SCalendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320FB1AB7196A00A172E0 /* SCalendar@2x.png */; };
 		A64AB0E71CF2F9E5008839FB /* HitachiStudio in Resources */ = {isa = PBXBuildFile; fileRef = A64AAD961CEDCB61008839FB /* HitachiStudio */; };
 		A64AB0E81CF2F9E5008839FB /* ProductIQCustomActionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1195544B1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib */; };
-		A64AB0E91CF2F9E5008839FB /* NavBarCal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E21AB7178C00A172E0 /* NavBarCal@2x.png */; };
 		A64AB0EA1CF2F9E5008839FB /* recentlyCreated@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E619E7D58F006DA6BE /* recentlyCreated@2x.png */; };
 		A64AB0EB1CF2F9E5008839FB /* OPDoc.html in Resources */ = {isa = PBXBuildFile; fileRef = 40CA19F419FE4B340097F5A1 /* OPDoc.html */; };
 		A64AB0EC1CF2F9E5008839FB /* iOS-Trash-Can-Blue@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C3AE0B9E1A0795AC00490009 /* iOS-Trash-Can-Blue@2x.png */; };
@@ -1874,13 +1864,11 @@
 		A64AB1151CF2F9E5008839FB /* OPDocBackArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4048CDC21A026CD200B1FD58 /* OPDocBackArrow@2x.png */; };
 		A64AB1161CF2F9E5008839FB /* triangledown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98C119E7D58F006DA6BE /* triangledown@2x.png */; };
 		A64AB1171CF2F9E5008839FB /* NavBarTools@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F181B06033100218162 /* NavBarTools@1x.png */; };
-		A64AB1181CF2F9E5008839FB /* NavBarCal@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F0F1B06033100218162 /* NavBarCal@3x.png */; };
 		A64AB1191CF2F9E5008839FB /* task@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E719E7D58F006DA6BE /* task@2x.png */; };
 		A64AB11A1CF2F9E5008839FB /* bizInfo.png in Resources */ = {isa = PBXBuildFile; fileRef = 184F1C3E1A136A1000A2B985 /* bizInfo.png */; };
 		A64AB11B1CF2F9E5008839FB /* iOSChat-Retina-Orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A981F19E7D58F006DA6BE /* iOSChat-Retina-Orange@2x.png */; };
 		A64AB11C1CF2F9E5008839FB /* root.cer in Resources */ = {isa = PBXBuildFile; fileRef = 18B49AAC1C0D82C300599ACD /* root.cer */; };
 		A64AB11D1CF2F9E5008839FB /* SFMLookUpFilterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9E565ED31A068B4B003D194A /* SFMLookUpFilterViewController.xib */; };
-		A64AB11E1CF2F9E5008839FB /* SCalendar@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F271B06041400218162 /* SCalendar@3x.png */; };
 		A64AB11F1CF2F9E5008839FB /* STools@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F301B06041400218162 /* STools@1x.png */; };
 		A64AB1201CF2F9E5008839FB /* com.servicemax.client.sfmconsole.zip in Resources */ = {isa = PBXBuildFile; fileRef = 4072530619FF6C2900ACA729 /* com.servicemax.client.sfmconsole.zip */; };
 		A64AB1211CF2F9E5008839FB /* login-servicemax-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A986419E7D58F006DA6BE /* login-servicemax-logo.png */; };
@@ -1964,8 +1952,6 @@
 		A64AB1711CF2F9E5008839FB /* map_email@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A9A3919E7D590006DA6BE /* map_email@2x.png */; };
 		A64AB1721CF2F9E5008839FB /* Section_right_arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98D319E7D58F006DA6BE /* Section_right_arrow@2x.png */; };
 		A64AB1731CF2F9E5008839FB /* newItem@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E519E7D58F006DA6BE /* newItem@2x.png */; };
-		A64AB1741CF2F9E5008839FB /* NavBarCal@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F0E1B06033100218162 /* NavBarCal@1x.png */; };
-		A64AB1751CF2F9E5008839FB /* calendar.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98DB19E7D58F006DA6BE /* calendar.png */; };
 		A64AB1761CF2F9E5008839FB /* mobile-fieldupdaterules-app.html in Resources */ = {isa = PBXBuildFile; fileRef = 186F7E031B3D705200EDFB2D /* mobile-fieldupdaterules-app.html */; };
 		A64AB1771CF2F9E5008839FB /* cal-right-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BF7BB1E19EE7CAA00D1CED7 /* cal-right-arrow.png */; };
 		A64AB1781CF2F9E5008839FB /* triangledown.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A8E0A19E7A0BE006DA6BE /* triangledown.png */; };
@@ -1978,7 +1964,6 @@
 		A64AB17F1CF2F9E5008839FB /* ResetAppDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 18800CCB1A08D14400930FF9 /* ResetAppDetailViewController.xib */; };
 		A64AB1801CF2F9E5008839FB /* NavBarTasks@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E61AB7178C00A172E0 /* NavBarTasks@2x.png */; };
 		A64AB1811CF2F9E5008839FB /* selectEmpty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 117656D51B3928A200BA0B63 /* selectEmpty@2x.png */; };
-		A64AB1821CF2F9E5008839FB /* SCalendar@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F261B06041400218162 /* SCalendar@1x.png */; };
 		A64AB1831CF2F9E5008839FB /* FormCheckBoxFilled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A99B819E7D590006DA6BE /* FormCheckBoxFilled@2x.png */; };
 		A64AB1841CF2F9E5008839FB /* STasks@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320FE1AB7196A00A172E0 /* STasks@2x.png */; };
 		A64AB1851CF2F9E5008839FB /* checkbox-unselected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 841015391BA94CCA007DFAC8 /* checkbox-unselected@2x.png */; };
@@ -2049,7 +2034,6 @@
 		A64AB1C61CF2F9E5008839FB /* Attachment-plus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8B932E651A1098960002BBB2 /* Attachment-plus@2x.png */; };
 		A64AB1C71CF2F9E5008839FB /* LaunchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA37719E6DAFE00919345 /* LaunchViewController.xib */; };
 		A64AB1C81CF2F9E5008839FB /* SFMPageShowAllViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA19219E6D26400919345 /* SFMPageShowAllViewController.xib */; };
-		A64AB1C91CF2F9E5008839FB /* calendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E219E7D58F006DA6BE /* calendar@2x.png */; };
 		A64AB1CA1CF2F9E5008839FB /* PageEditMasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 183AA15019E6D26400919345 /* PageEditMasterViewController.xib */; };
 		A64AB1CB1CF2F9E5008839FB /* MobileDataUsageFiles.zip in Resources */ = {isa = PBXBuildFile; fileRef = 434162931CA277D800004900 /* MobileDataUsageFiles.zip */; };
 		A64AB1CC1CF2F9E5008839FB /* NavBarExplore@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 40A06F111B06033100218162 /* NavBarExplore@3x.png */; };
@@ -3533,13 +3517,11 @@
 		184A98D219E7D58F006DA6BE /* Section_down_arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Section_down_arrow@2x.png"; sourceTree = "<group>"; };
 		184A98D319E7D58F006DA6BE /* Section_right_arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Section_right_arrow@2x.png"; sourceTree = "<group>"; };
 		184A98D419E7D58F006DA6BE /* summary-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "summary-icon.png"; sourceTree = "<group>"; };
-		184A98DB19E7D58F006DA6BE /* calendar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = calendar.png; sourceTree = "<group>"; };
 		184A98DC19E7D58F006DA6BE /* explore.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = explore.png; sourceTree = "<group>"; };
 		184A98DD19E7D58F006DA6BE /* homeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = homeIcon.png; sourceTree = "<group>"; };
 		184A98DE19E7D58F006DA6BE /* leftPanelBG@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "leftPanelBG@2x.png"; sourceTree = "<group>"; };
 		184A98DF19E7D58F006DA6BE /* newItem.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = newItem.png; sourceTree = "<group>"; };
 		184A98E019E7D58F006DA6BE /* recentlyCreated.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = recentlyCreated.png; sourceTree = "<group>"; };
-		184A98E219E7D58F006DA6BE /* calendar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "calendar@2x.png"; sourceTree = "<group>"; };
 		184A98E319E7D58F006DA6BE /* explore@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "explore@2x.png"; sourceTree = "<group>"; };
 		184A98E419E7D58F006DA6BE /* homeIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "homeIcon@2x.png"; sourceTree = "<group>"; };
 		184A98E519E7D58F006DA6BE /* newItem@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "newItem@2x.png"; sourceTree = "<group>"; };
@@ -3826,8 +3808,6 @@
 		40A06F091B05D41500218162 /* BadgeStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BadgeStyle.m; sourceTree = "<group>"; };
 		40A06F0A1B05D41500218162 /* CustomBadge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomBadge.h; sourceTree = "<group>"; };
 		40A06F0B1B05D41500218162 /* CustomBadge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomBadge.m; sourceTree = "<group>"; };
-		40A06F0E1B06033100218162 /* NavBarCal@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarCal@1x.png"; sourceTree = "<group>"; };
-		40A06F0F1B06033100218162 /* NavBarCal@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarCal@3x.png"; sourceTree = "<group>"; };
 		40A06F101B06033100218162 /* NavBarExplore@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarExplore@1x.png"; sourceTree = "<group>"; };
 		40A06F111B06033100218162 /* NavBarExplore@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarExplore@3x.png"; sourceTree = "<group>"; };
 		40A06F121B06033100218162 /* NavBarNew@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarNew@1x.png"; sourceTree = "<group>"; };
@@ -3838,8 +3818,6 @@
 		40A06F171B06033100218162 /* NavBarTasks@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTasks@3x.png"; sourceTree = "<group>"; };
 		40A06F181B06033100218162 /* NavBarTools@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTools@1x.png"; sourceTree = "<group>"; };
 		40A06F191B06033100218162 /* NavBarTools@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTools@3x.png"; sourceTree = "<group>"; };
-		40A06F261B06041400218162 /* SCalendar@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SCalendar@1x.png"; sourceTree = "<group>"; };
-		40A06F271B06041400218162 /* SCalendar@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SCalendar@3x.png"; sourceTree = "<group>"; };
 		40A06F281B06041400218162 /* SExplore@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SExplore@1x.png"; sourceTree = "<group>"; };
 		40A06F291B06041400218162 /* SExplore@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SExplore@3x.png"; sourceTree = "<group>"; };
 		40A06F2A1B06041400218162 /* SNewItem@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SNewItem@1x.png"; sourceTree = "<group>"; };
@@ -3915,14 +3893,12 @@
 		577003F51A1B50A2002537FB /* ActionDisplayTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionDisplayTableViewController.h; sourceTree = "<group>"; };
 		577003F61A1B50A2002537FB /* ActionDisplayTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionDisplayTableViewController.m; sourceTree = "<group>"; };
 		577003F71A1B50A2002537FB /* ActionDisplayTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActionDisplayTableViewController.xib; sourceTree = "<group>"; };
-		57A320E21AB7178C00A172E0 /* NavBarCal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarCal@2x.png"; sourceTree = "<group>"; };
 		57A320E31AB7178C00A172E0 /* NavBarExplore@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarExplore@2x.png"; sourceTree = "<group>"; };
 		57A320E41AB7178C00A172E0 /* NavBarNew@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarNew@2x.png"; sourceTree = "<group>"; };
 		57A320E51AB7178C00A172E0 /* NavBarRecents@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarRecents@2x.png"; sourceTree = "<group>"; };
 		57A320E61AB7178C00A172E0 /* NavBarTasks@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTasks@2x.png"; sourceTree = "<group>"; };
 		57A320E71AB7178C00A172E0 /* NavBarTools@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBarTools@2x.png"; sourceTree = "<group>"; };
 		57A320F91AB7182800A172E0 /* SNewItem@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SNewItem@2x.png"; sourceTree = "<group>"; };
-		57A320FB1AB7196A00A172E0 /* SCalendar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SCalendar@2x.png"; sourceTree = "<group>"; };
 		57A320FC1AB7196A00A172E0 /* SExplore@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SExplore@2x.png"; sourceTree = "<group>"; };
 		57A320FD1AB7196A00A172E0 /* SRecents@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SRecents@2x.png"; sourceTree = "<group>"; };
 		57A320FE1AB7196A00A172E0 /* STasks@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "STasks@2x.png"; sourceTree = "<group>"; };
@@ -7103,7 +7079,6 @@
 			isa = PBXGroup;
 			children = (
 				57A320E11AB7178C00A172E0 /* TabBarNormalImages */,
-				184A98DB19E7D58F006DA6BE /* calendar.png */,
 				184A98DC19E7D58F006DA6BE /* explore.png */,
 				184A98DD19E7D58F006DA6BE /* homeIcon.png */,
 				184A98DE19E7D58F006DA6BE /* leftPanelBG@2x.png */,
@@ -7119,7 +7094,6 @@
 		184A98E119E7D58F006DA6BE /* retina */ = {
 			isa = PBXGroup;
 			children = (
-				184A98E219E7D58F006DA6BE /* calendar@2x.png */,
 				184A98E319E7D58F006DA6BE /* explore@2x.png */,
 				184A98E419E7D58F006DA6BE /* homeIcon@2x.png */,
 				184A98E519E7D58F006DA6BE /* newItem@2x.png */,
@@ -7828,8 +7802,6 @@
 		57A320E11AB7178C00A172E0 /* TabBarNormalImages */ = {
 			isa = PBXGroup;
 			children = (
-				40A06F0E1B06033100218162 /* NavBarCal@1x.png */,
-				40A06F0F1B06033100218162 /* NavBarCal@3x.png */,
 				40A06F101B06033100218162 /* NavBarExplore@1x.png */,
 				40A06F111B06033100218162 /* NavBarExplore@3x.png */,
 				40A06F121B06033100218162 /* NavBarNew@1x.png */,
@@ -7840,7 +7812,6 @@
 				40A06F171B06033100218162 /* NavBarTasks@3x.png */,
 				40A06F181B06033100218162 /* NavBarTools@1x.png */,
 				40A06F191B06033100218162 /* NavBarTools@3x.png */,
-				57A320E21AB7178C00A172E0 /* NavBarCal@2x.png */,
 				57A320E31AB7178C00A172E0 /* NavBarExplore@2x.png */,
 				57A320E41AB7178C00A172E0 /* NavBarNew@2x.png */,
 				57A320E51AB7178C00A172E0 /* NavBarRecents@2x.png */,
@@ -7853,8 +7824,6 @@
 		57A320EE1AB717FD00A172E0 /* SelectedTabBarImages */ = {
 			isa = PBXGroup;
 			children = (
-				40A06F261B06041400218162 /* SCalendar@1x.png */,
-				40A06F271B06041400218162 /* SCalendar@3x.png */,
 				40A06F281B06041400218162 /* SExplore@1x.png */,
 				40A06F291B06041400218162 /* SExplore@3x.png */,
 				40A06F2A1B06041400218162 /* SNewItem@1x.png */,
@@ -7865,7 +7834,6 @@
 				40A06F2F1B06041400218162 /* STasks@3x.png */,
 				40A06F301B06041400218162 /* STools@1x.png */,
 				40A06F311B06041400218162 /* STools@3x.png */,
-				57A320FB1AB7196A00A172E0 /* SCalendar@2x.png */,
 				57A320FC1AB7196A00A172E0 /* SExplore@2x.png */,
 				57A320FD1AB7196A00A172E0 /* SRecents@2x.png */,
 				57A320FE1AB7196A00A172E0 /* STasks@2x.png */,
@@ -9255,9 +9223,7 @@
 				84BEDC9B19FA157800350B56 /* sync_Error@2x.png in Resources */,
 				C3EF97891A036CAE00476293 /* DocumentsViewController.xib in Resources */,
 				184A9C0C19E7D591006DA6BE /* iOS-Email-Retina-Orange@2x.png in Resources */,
-				57A321001AB7196A00A172E0 /* SCalendar@2x.png in Resources */,
 				1195544D1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib in Resources */,
-				57A320E81AB7178C00A172E0 /* NavBarCal@2x.png in Resources */,
 				184A9CC519E7D591006DA6BE /* recentlyCreated@2x.png in Resources */,
 				40CA19FE19FE4B340097F5A1 /* OPDoc.html in Resources */,
 				C3AE0BA21A0795AC00490009 /* iOS-Trash-Can-Blue@2x.png in Resources */,
@@ -9304,13 +9270,11 @@
 				4048CDC31A026CD200B1FD58 /* OPDocBackArrow@2x.png in Resources */,
 				184A9CA519E7D591006DA6BE /* triangledown@2x.png in Resources */,
 				40A06F241B06033100218162 /* NavBarTools@1x.png in Resources */,
-				40A06F1B1B06033100218162 /* NavBarCal@3x.png in Resources */,
 				184A9CC619E7D591006DA6BE /* task@2x.png in Resources */,
 				184F1C421A136A1000A2B985 /* bizInfo.png in Resources */,
 				184A9C0D19E7D591006DA6BE /* iOSChat-Retina-Orange@2x.png in Resources */,
 				18B49AAE1C0D82C300599ACD /* root.cer in Resources */,
 				9E565ED51A068B4B003D194A /* SFMLookUpFilterViewController.xib in Resources */,
-				40A06F331B06041400218162 /* SCalendar@3x.png in Resources */,
 				40A06F3C1B06041400218162 /* STools@1x.png in Resources */,
 				4072531119FF6C2900ACA729 /* com.servicemax.client.sfmconsole.zip in Resources */,
 				184A9C4E19E7D591006DA6BE /* login-servicemax-logo.png in Resources */,
@@ -9394,8 +9358,6 @@
 				184A9E1119E7D592006DA6BE /* map_email@2x.png in Resources */,
 				184A9CB519E7D591006DA6BE /* Section_right_arrow@2x.png in Resources */,
 				184A9CC419E7D591006DA6BE /* newItem@2x.png in Resources */,
-				40A06F1A1B06033100218162 /* NavBarCal@1x.png in Resources */,
-				184A9CBB19E7D591006DA6BE /* calendar.png in Resources */,
 				186F7E041B3D705200EDFB2D /* mobile-fieldupdaterules-app.html in Resources */,
 				8BF7BB2019EE7CAA00D1CED7 /* cal-right-arrow.png in Resources */,
 				184A8E9819E7A0BE006DA6BE /* triangledown.png in Resources */,
@@ -9408,7 +9370,6 @@
 				18800CEB1A08D14400930FF9 /* ResetAppDetailViewController.xib in Resources */,
 				57A320EC1AB7178C00A172E0 /* NavBarTasks@2x.png in Resources */,
 				117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */,
-				40A06F321B06041400218162 /* SCalendar@1x.png in Resources */,
 				184A9D9119E7D592006DA6BE /* FormCheckBoxFilled@2x.png in Resources */,
 				57A321031AB7196A00A172E0 /* STasks@2x.png in Resources */,
 				8410153D1BA94CCA007DFAC8 /* checkbox-unselected@2x.png in Resources */,
@@ -9479,7 +9440,6 @@
 				8B932E691A1098960002BBB2 /* Attachment-plus@2x.png in Resources */,
 				183AA37919E6DAFE00919345 /* LaunchViewController.xib in Resources */,
 				183AA1D719E6D26400919345 /* SFMPageShowAllViewController.xib in Resources */,
-				184A9CC119E7D591006DA6BE /* calendar@2x.png in Resources */,
 				183AA1B219E6D26400919345 /* PageEditMasterViewController.xib in Resources */,
 				434162941CA277D800004900 /* MobileDataUsageFiles.zip in Resources */,
 				40A06F1D1B06033100218162 /* NavBarExplore@3x.png in Resources */,
@@ -9549,10 +9509,8 @@
 				A64AB0E31CF2F9E5008839FB /* sync_Error@2x.png in Resources */,
 				A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */,
 				A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */,
-				A64AB0E61CF2F9E5008839FB /* SCalendar@2x.png in Resources */,
 				A64AB0E71CF2F9E5008839FB /* HitachiStudio in Resources */,
 				A64AB0E81CF2F9E5008839FB /* ProductIQCustomActionViewController.xib in Resources */,
-				A64AB0E91CF2F9E5008839FB /* NavBarCal@2x.png in Resources */,
 				A64AB0EA1CF2F9E5008839FB /* recentlyCreated@2x.png in Resources */,
 				A64AB0EB1CF2F9E5008839FB /* OPDoc.html in Resources */,
 				A64AB0EC1CF2F9E5008839FB /* iOS-Trash-Can-Blue@2x.png in Resources */,
@@ -9597,13 +9555,11 @@
 				A64AB1151CF2F9E5008839FB /* OPDocBackArrow@2x.png in Resources */,
 				A64AB1161CF2F9E5008839FB /* triangledown@2x.png in Resources */,
 				A64AB1171CF2F9E5008839FB /* NavBarTools@1x.png in Resources */,
-				A64AB1181CF2F9E5008839FB /* NavBarCal@3x.png in Resources */,
 				A64AB1191CF2F9E5008839FB /* task@2x.png in Resources */,
 				A64AB11A1CF2F9E5008839FB /* bizInfo.png in Resources */,
 				A64AB11B1CF2F9E5008839FB /* iOSChat-Retina-Orange@2x.png in Resources */,
 				A64AB11C1CF2F9E5008839FB /* root.cer in Resources */,
 				A64AB11D1CF2F9E5008839FB /* SFMLookUpFilterViewController.xib in Resources */,
-				A64AB11E1CF2F9E5008839FB /* SCalendar@3x.png in Resources */,
 				A64AB11F1CF2F9E5008839FB /* STools@1x.png in Resources */,
 				A64AB1201CF2F9E5008839FB /* com.servicemax.client.sfmconsole.zip in Resources */,
 				A64AB1211CF2F9E5008839FB /* login-servicemax-logo.png in Resources */,
@@ -9687,8 +9643,6 @@
 				A64AB1711CF2F9E5008839FB /* map_email@2x.png in Resources */,
 				A64AB1721CF2F9E5008839FB /* Section_right_arrow@2x.png in Resources */,
 				A64AB1731CF2F9E5008839FB /* newItem@2x.png in Resources */,
-				A64AB1741CF2F9E5008839FB /* NavBarCal@1x.png in Resources */,
-				A64AB1751CF2F9E5008839FB /* calendar.png in Resources */,
 				A64AB1761CF2F9E5008839FB /* mobile-fieldupdaterules-app.html in Resources */,
 				A64AB1771CF2F9E5008839FB /* cal-right-arrow.png in Resources */,
 				A64AB1781CF2F9E5008839FB /* triangledown.png in Resources */,
@@ -9701,7 +9655,6 @@
 				A64AB17F1CF2F9E5008839FB /* ResetAppDetailViewController.xib in Resources */,
 				A64AB1801CF2F9E5008839FB /* NavBarTasks@2x.png in Resources */,
 				A64AB1811CF2F9E5008839FB /* selectEmpty@2x.png in Resources */,
-				A64AB1821CF2F9E5008839FB /* SCalendar@1x.png in Resources */,
 				A64AB1831CF2F9E5008839FB /* FormCheckBoxFilled@2x.png in Resources */,
 				A64AB1841CF2F9E5008839FB /* STasks@2x.png in Resources */,
 				A64AB1851CF2F9E5008839FB /* checkbox-unselected@2x.png in Resources */,
@@ -9772,7 +9725,6 @@
 				A64AB1C61CF2F9E5008839FB /* Attachment-plus@2x.png in Resources */,
 				A64AB1C71CF2F9E5008839FB /* LaunchViewController.xib in Resources */,
 				A64AB1C81CF2F9E5008839FB /* SFMPageShowAllViewController.xib in Resources */,
-				A64AB1C91CF2F9E5008839FB /* calendar@2x.png in Resources */,
 				A64AB1CA1CF2F9E5008839FB /* PageEditMasterViewController.xib in Resources */,
 				A64AB1CB1CF2F9E5008839FB /* MobileDataUsageFiles.zip in Resources */,
 				A64AB1CC1CF2F9E5008839FB /* NavBarExplore@3x.png in Resources */,
