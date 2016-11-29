@@ -501,6 +501,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeOneCallRestInitialSync
                                              requestParam:nil
                                            callerDelegate:self];
+    [self setUpRequestIdForSyncProfiling:taskModel.taskId];
     [[TaskManager sharedInstance] addTask:taskModel];
 }
 
@@ -529,6 +530,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeIncrementalOneCallMetaSync
                                              requestParam:nil
                                            callerDelegate:self];
+    [self setUpRequestIdForSyncProfiling:taskModel.taskId];
     [[TaskManager sharedInstance] addTask:taskModel];
 }
 
@@ -712,6 +714,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                 {
                     shouldNotify = NO;
                 }
+                [self checkStatusForSyncProfiling:wsResponseStatus];
             }
                 break;
                 
@@ -750,6 +753,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                 {
                     shouldNotify = NO;
                 }
+                [self checkStatusForSyncProfiling:wsResponseStatus];
             }
                 break;
             case CategoryTypeCustomWebServiceCall: //call for webservice
@@ -849,6 +853,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             [PlistManager storeLastDataSyncStartGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
             [PlistManager storeLastDataSyncStatus:kInProgress];
             [self performSelectorInBackground:@selector(initiateSyncInBackGround) withObject:nil];
+            [self performSelector:@selector(initiateSyncProfiling:) withObject:kSPTypeStart afterDelay:0.1];
         }
         return YES;
     }
@@ -884,6 +889,8 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             //[self updatePlistWithLastDataSyncTimeAndStatus:kSuccess];
             /* Send data sync Success notification */
             [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
+            
+            [self initiateSyncProfiling:kSPTypeEnd];
             
             if (conflictsResolved) {
                 /* Clear user deafults utility */
@@ -935,6 +942,9 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
         /* Send data sync Failure notification */
         [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
         
+        [self checkIfRequestTimedOutForSyncProfiling:error];
+        [self initiateSyncProfiling:kSPTypeEnd];
+        
         if (error != nil) {
             [[AlertMessageHandler sharedInstance] showCustomMessage:[error errorEndUserMessage]
                                                        withDelegate:nil
@@ -952,6 +962,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     /* If conflict count is 0, then continue with Sync */
     
     TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeOneCallDataSync requestParam:nil callerDelegate:self];
+    [self setUpRequestIdForSyncProfiling:taskModel.taskId];
     [[TaskManager sharedInstance] addTask:taskModel];
 }
 
@@ -2453,6 +2464,113 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 - (dispatch_queue_t)getSyncErrorReportQueue
 {
     return _queue;
+}
+
+
+
+
+#pragma mark - Sync Profiling
+
+-(void)initiateSyncProfiling:(NSString *)profileType {
+    
+    if ([self isSyncProfilingEnabled])
+    {
+        [self pushSyncProfileInfoToUserDefaultsWithValue:profileType forKey:kSyncProfileType];
+        
+        if ([profileType isEqualToString:kSPTypeStart])
+        {
+            if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
+            {
+                [self performSyncProfiling];
+            }
+        }
+        else if ([profileType isEqualToString:kSPTypeEnd])
+        {
+            NSString *startReqId = [[NSUserDefaults standardUserDefaults] valueForKey:kSyncprofileStartReqId];
+            [self pushSyncProfileInfoToUserDefaultsWithValue:startReqId forKey:kSyncprofileEndReqId];
+            
+            if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
+            {
+                [self performSyncProfiling];
+            }
+            else
+            {
+                NSString *currentDate = [DateUtil getCurrentDateForSyncProfiling];
+                [self pushSyncProfileInfoToUserDefaultsWithValue:currentDate forKey:kSPSyncTime];
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkConnectivityChanged) name:kNetworkConnectionChanged object:nil];
+            }
+        }
+    }
+}
+
+
+-(void)performSyncProfiling {
+    TaskModel *taskModel = [TaskGenerator generateTaskFor:CategoryTypeSyncProfiling requestParam:nil callerDelegate:self];
+    [[TaskManager sharedInstance] addTask:taskModel];
+}
+
+-(void)checkStatusForSyncProfiling:(WebserviceResponseStatus *)response {
+    if ([self isSyncProfilingEnabled]) {
+        switch (response.syncStatus) {
+            case SyncStatusInProgress:
+            {
+                if (response.requestType == RequestValidateProfile) {
+                    [self initiateSyncProfiling:kSPTypeStart];
+                }
+            }
+                break;
+            case SyncStatusSuccess:
+            case SyncStatusFailed:
+            {
+                if (response.requestType != RequestValidateProfile) {
+                    if (response.syncStatus == SyncStatusFailed) {
+                        [self checkIfRequestTimedOutForSyncProfiling:response.syncError];
+                    }
+                    [self initiateSyncProfiling:kSPTypeEnd];
+                }
+            }
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+
+-(void)networkConnectivityChanged {
+    if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable]) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:kNetworkConnectionChanged object:nil];
+        [self performSyncProfiling];
+    }
+}
+
+-(void)pushSyncProfileInfoToUserDefaultsWithValue:(NSString *)value forKey:(NSString *)key {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setValue:value forKey:key];
+    [userDefaults synchronize];
+}
+
+-(BOOL)isSyncProfilingEnabled {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    BOOL isSyncProfileEnabled = [[userDefaults valueForKey:kSyncProfileEnabled] boolValue];
+    return isSyncProfileEnabled;
+}
+
+-(void)checkIfRequestTimedOutForSyncProfiling:(NSError *)error {
+    if ([self isSyncProfilingEnabled]) {
+        if (error != nil) {
+            if ([[error description] containsString:@"-1001"]) {
+                [self pushSyncProfileInfoToUserDefaultsWithValue:@"Yes" forKey:kSPReqTimedOut];
+            }
+        }
+    }
+}
+
+-(void)setUpRequestIdForSyncProfiling:(NSString *)requestId {
+    if([self isSyncProfilingEnabled]) {
+        [self pushSyncProfileInfoToUserDefaultsWithValue:@"No" forKey:kSPReqTimedOut];
+        [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileStartReqId];
+    }
 }
 
 @end
