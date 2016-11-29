@@ -44,7 +44,7 @@
  * @author Shubha S
  *
  * @brief this rebuilds the entire database
- * @reference http://www.sqlite.org/lang_vacuum.html
+ // PCRD-220
  *
  *
  * @param

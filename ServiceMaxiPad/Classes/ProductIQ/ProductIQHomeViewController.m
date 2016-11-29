@@ -53,8 +53,7 @@ static  ProductIQHomeViewController *instance;
     
     /*
     NSString *url = [NSString stringWithFormat:loginUrl, clientId, callbackUrl];
-    //NSString *url=@"https://www.google.com";
-    
+    // PCRD-220
     
      NSURL *nsurl=[NSURL URLWithString:url];
      NSURLRequest *nsrequest=[NSURLRequest requestWithURL:nsurl];

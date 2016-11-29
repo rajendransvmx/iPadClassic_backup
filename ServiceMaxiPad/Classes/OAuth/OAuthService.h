@@ -42,7 +42,7 @@ extern NSString *const kRedirectURL;
  *
  * Rest of the error code/message will inform user with response error message.
  * More details about error code:
- *   http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#CSHID=errorcodes.htm|StartTopic=Content%2Ferrorcodes.htm|SkinName=webhelp
+ *  // PCRD-220
  *
  * @return bool
  *
