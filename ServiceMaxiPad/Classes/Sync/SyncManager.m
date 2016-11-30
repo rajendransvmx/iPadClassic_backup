@@ -2567,10 +2567,9 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 }
 
 -(void)setUpRequestIdForSyncProfiling:(NSString *)requestId {
-    if([self isSyncProfilingEnabled]) {
-        [self pushSyncProfileInfoToUserDefaultsWithValue:@"No" forKey:kSPReqTimedOut];
-        [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileStartReqId];
-    }
+    // IPAD-4355
+    [self pushSyncProfileInfoToUserDefaultsWithValue:@"No" forKey:kSPReqTimedOut];
+    [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileStartReqId];
 }
 
 @end

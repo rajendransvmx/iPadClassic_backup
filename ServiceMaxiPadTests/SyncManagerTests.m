@@ -128,10 +128,9 @@
 }
 
 -(void)setUpRequestIdForSyncProfiling:(NSString *)requestId {
-    if([self testIsSyncProfilingEnabled]) {
+    // IPAD-4355
         [self pushSyncProfileInfoToUserDefaultsWithValue:@"No" forKey:kSPReqTimedOut];
         [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileStartReqId];
-    }
 }
 
 @end
