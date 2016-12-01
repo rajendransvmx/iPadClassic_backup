@@ -167,7 +167,7 @@
  %GW%V%uT%H%M%z   => 2007W471T0837-0600        Week date and local time and difference from UTC (basic)
  *       %G-W%V-%uT%R%:z  => 2007-W47-1T08:37-06:00    Week date and local time and difference from UTC (extended)
  *
- *  @see  http://www.timeanddate.com/library/abbreviations/timezones/
+  // PCRD-220
  *
  *
  *  @author  Vipindas Palli

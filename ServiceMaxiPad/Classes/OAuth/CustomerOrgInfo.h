@@ -91,7 +91,7 @@
  * Used for ZKS calls.
  * This will obtained as part of user identity verification calls in OAuth session.
  *
- *  eg:- https://cs15.salesforce.com/services/Soap/u/20/00De0000001JIxe
+  // PCRD-220
  */
 
 @property (nonatomic, copy) NSString *apiURL;
@@ -102,7 +102,7 @@
  * Used for web service calls.
  * This will obtained as part of user identity verification calls in OAuth session
  *
- *  eg:- https://cs15.salesforce.com
+  // PCRD-220
  */
 
 @property (nonatomic, copy) NSString *instanceURL;
@@ -112,7 +112,7 @@
  * Used to get logged in user details.
  * This will be obtained as part of Callback url in OAuth session.
  *
- *  eg:-  https://test.salesforce.com/id/00De0000001JIxeEAG/005e00000013J6EAAU
+  // PCRD-220
  */
 
 @property (nonatomic, copy) NSString *identityURL;

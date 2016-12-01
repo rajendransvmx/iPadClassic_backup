@@ -1079,6 +1079,12 @@
                             if (!doesExist) {
                                 [modifiedRecordService saveRecordModel:syncRecord];
                             }
+                            else {
+                                // 037457
+                                if (![StringUtil isStringEmpty:modifiedFieldAsJsonString]) {
+                                    [modifiedRecordService updateFieldsModifed:syncRecord];;
+                                }
+                            }
                         }
                         else{
                             [modifiedRecordService saveRecordModel:syncRecord];
