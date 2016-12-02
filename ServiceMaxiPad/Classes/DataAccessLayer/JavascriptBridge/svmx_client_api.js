@@ -82,7 +82,7 @@
                      if(argumentLength == 0 ) return "";
                      
                      // first parameter is the string to be formatted
-                     var toBeFormatted = arguments[0];
+                     var formattedResult = arguments[0];
                      
                      // loop thru the arguments and create regular expression
                      for (var count = 1; count < argumentLength; count++) {
@@ -91,7 +91,7 @@
                          var regularExpression = new RegExp('\\{'+ (count - 1) +'\\}', 'gi');
                          
                          //replace argument with the regular expression
-                         var formattedResult = toBeFormatted.replace(regularExpression, arguments[count]);
+                         formattedResult = formattedResult.replace(regularExpression, arguments[count]);
                      }
                      
                      return formattedResult;
