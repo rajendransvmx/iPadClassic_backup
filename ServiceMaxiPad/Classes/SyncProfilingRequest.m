@@ -37,28 +37,28 @@
         
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        NSString *syncProfileType = [userDefaults valueForKey:kSyncProfileType];
+        NSString *syncProfileType = [userDefaults objectForKey:kSyncProfileType];
         
         // datetime read from user defaults which is saved at the time of sync end request when there's no network
-        NSString *currentDate = [userDefaults valueForKey:kSPSyncTime];
+        NSString *currentDate = [userDefaults objectForKey:kSPSyncTime];
         if (currentDate == nil)
         {
             currentDate = [DateUtil getCurrentDateForSyncProfiling];
         }
         else
         {
-            [userDefaults setValue:nil forKey:kSPSyncTime];
+            [userDefaults setObject:nil forKey:kSPSyncTime];
             [userDefaults synchronize];
         }
         
         if ([syncProfileType isEqualToString:kSPTypeStart])
         {
-            NSString *salesforceProfileId = [userDefaults valueForKey:kSalesForceProfileId];
+            NSString *salesforceProfileId = [userDefaults objectForKey:kSalesForceProfileId];
             [[AppMetaData sharedInstance] loadApplicationMetaData];
             NSString *deviceName = [[AppMetaData sharedInstance] getCurrentDeviceVersion];
-            NSString *groupProfileId = [userDefaults valueForKey:kGroupProfileId];
-            NSString *groupProfileName = [userDefaults valueForKey:kGroupProfileName];
-            NSString *requestId = [userDefaults valueForKey:kSyncprofileStartReqId];
+            NSString *groupProfileId = [userDefaults objectForKey:kGroupProfileId];
+            NSString *groupProfileName = [userDefaults objectForKey:kGroupProfileName];
+            NSString *requestId = [userDefaults objectForKey:kSyncprofileStartReqId];
             NSDictionary *profileDictionary = [NSDictionary
                                                dictionaryWithObjects:@[groupProfileId, groupProfileName]
                                                forKeys:@[kSyncProfileIdKey, kSyncProfileNameKey]];
@@ -76,8 +76,8 @@
         }
         else if ([syncProfileType isEqualToString:kSPTypeEnd])
         {
-            NSString *requestId = [userDefaults valueForKey:kSyncprofileEndReqId];
-            NSString *requestTimeOut = [userDefaults valueForKey:kSPReqTimedOut];
+            NSString *requestId = [userDefaults objectForKey:kSyncprofileEndReqId];
+            NSString *requestTimeOut = [userDefaults objectForKey:kSPReqTimedOut];
             [params setObject:requestId forKey:kSyncProfileRequestIdKey]; // request id
             [params setObject:currentDate forKey:kSyncProfileEndTimeKey]; // end time
             [params setObject:requestTimeOut forKey:kSyncProfileRequestTimeOutKey]; // request timeout
