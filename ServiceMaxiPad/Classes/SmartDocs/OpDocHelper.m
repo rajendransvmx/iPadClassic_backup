@@ -802,20 +802,39 @@
     {
         id OPDocObject = [cSingleHtmlAndAssociatedSignatureListArray objectAtIndex:0];
         NSString *fileName;
+        
+        // 028365
+        NSString *objectName = nil;
+        NSString *recordId = nil;
+        
         if([OPDocObject isKindOfClass:[OPDocHTML class]])
         {
             OPDocHTML *lOPDocHTML = (OPDocHTML *)OPDocObject;
             fileName = lOPDocHTML.Name;
+            objectName = lOPDocHTML.objectName;
+            recordId = lOPDocHTML.record_id;
         }
         else
         {
             OPDocSignature *lOPDocSignature= (OPDocSignature *)OPDocObject;
             fileName = lOPDocSignature.Name;
-            
-            
+            objectName = lOPDocSignature.objectName;
+            recordId = lOPDocSignature.record_id;
         }
         
-        NSString *query = [NSString stringWithFormat:@"select id from Attachment where Name = '%@'", fileName];
+        OPDocServices *lOPDocHTMLService = [[OPDocServices alloc] init];
+        
+        NSString *parentSfid = [lOPDocHTMLService getParentRecordSfId:objectName withRecordId:recordId];
+        
+        NSString *query = nil;
+        
+        if(parentSfid != nil) {
+            query = [NSString stringWithFormat:@"select id from Attachment where Name = '%@' and ParentId = '%@'", fileName, parentSfid];
+        }
+        else {
+            query = [NSString stringWithFormat:@"select id from Attachment where Name = '%@'", fileName];
+        }
+        
         SXLogDebug(@"query to check opdoc file uploaded before: %@", query);
         return query;
     }
