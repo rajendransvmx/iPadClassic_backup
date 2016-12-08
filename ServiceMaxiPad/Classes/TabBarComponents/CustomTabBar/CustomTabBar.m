@@ -301,7 +301,7 @@ typedef enum {
         [btn2 setTag:TabBarItemIDCalendar];
         [btn2 setSelected:YES];
         btn2.backgroundColor = [UIColor clearColor];
-        [btn2 setImage:[UIImage imageNamed:@"NavBarCal"] forState:UIControlStateNormal];
+        [btn2 setImage:[UIImage imageNamed:@"Calendar"] forState:UIControlStateNormal];
         [btn2 setImage:[UIImage imageNamed:@"SCalendar"] forState:UIControlStateSelected];
     }
     
