@@ -2546,13 +2546,13 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 
 -(void)pushSyncProfileInfoToUserDefaultsWithValue:(NSString *)value forKey:(NSString *)key {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults setValue:value forKey:key];
+    [userDefaults setObject:value forKey:key];
     [userDefaults synchronize];
 }
 
 -(BOOL)isSyncProfilingEnabled {
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    BOOL isSyncProfileEnabled = [[userDefaults valueForKey:kSyncProfileEnabled] boolValue];
+    BOOL isSyncProfileEnabled = [[userDefaults objectForKey:kSyncProfileEnabled] boolValue];
     return isSyncProfileEnabled;
 }
 

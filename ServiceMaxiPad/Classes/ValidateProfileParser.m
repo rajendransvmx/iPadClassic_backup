@@ -15,6 +15,9 @@
     
     @autoreleasepool {
         if ([responseData isKindOfClass:[NSDictionary class]]) {
+            
+            [self resetDataForSyncProfiling];
+            
             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 
             NSArray *valueMaps = [responseData objectForKey:kSVMXRequestSVMXMap];
@@ -24,19 +27,19 @@
                     NSString *value = [dict objectForKey:kSVMXRequestValue];
                     
                     if([key isEqualToString:kValidateProfileSFProfileId]) {
-                        [userDefaults setValue:value forKey:kSalesForceProfileId];
+                        [userDefaults setObject:value forKey:kSalesForceProfileId];
                     }
                     if([key isEqualToString:kValidateProfileOrgName]) {
-                        [userDefaults setValue:value forKey:kSalesForceOrgName];
+                        [userDefaults setObject:value forKey:kSalesForceOrgName];
                     }
                     if ([key isEqualToString:kValidateProfileOrgId]) {
-                        [userDefaults setValue:value forKey:kSalesForceOrgId];
+                        [userDefaults setObject:value forKey:kSalesForceOrgId];
                     }
                     if ([key isEqualToString:kValidateProfileSyncProfiling]) {
-                        [userDefaults setValue:value forKey:kSyncProfileEnabled];
+                        [userDefaults setObject:value forKey:kSyncProfileEnabled];
                     }
                     if ([key isEqualToString:kValidateProfileGroupProfileName]) {
-                        [userDefaults setValue:value forKey:kGroupProfileName];
+                        [userDefaults setObject:value forKey:kGroupProfileName];
                     }
                 }
             }
@@ -51,6 +54,21 @@
     }
     
     return nil;
+}
+
+-(void)resetDataForSyncProfiling {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults removeObjectForKey:kSalesForceProfileId];
+    [userDefaults removeObjectForKey:kSalesForceOrgName];
+    [userDefaults removeObjectForKey:kSalesForceOrgId];
+    [userDefaults removeObjectForKey:kSyncProfileEnabled];
+    [userDefaults removeObjectForKey:kGroupProfileName];
+    [userDefaults removeObjectForKey:kGroupProfileId];
+    [userDefaults removeObjectForKey:kSyncProfileType];
+    [userDefaults removeObjectForKey:kGroupProfileName];
+    [userDefaults removeObjectForKey:kSPSyncTime];
+    [userDefaults removeObjectForKey:kSPReqTimedOut];
+    [userDefaults synchronize];
 }
 
 @end
