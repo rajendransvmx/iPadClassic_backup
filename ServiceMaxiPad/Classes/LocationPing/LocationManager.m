@@ -151,6 +151,11 @@
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
+    if ([error code]==kCLErrorLocationUnknown) {
+        //Do Nothing as this error code has to be ignored and await for another CLLocation event.
+        //Defect Fix 037429
+        return;
+    }
     if (shouldUseNotifications) {
     // notify failed location update
     [[NSNotificationCenter defaultCenter] postNotificationName:kLocationManagerNotificationFailedName
