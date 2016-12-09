@@ -1584,7 +1584,7 @@
     
     NSInteger count = 0;
     if (isCircularRefEnabled) {
-        count = 1;
+        count = 2; // 037576
         if (includeOfflineRecords) {
             count = 2;
         }
