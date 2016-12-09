@@ -531,4 +531,58 @@
     return status;
 }
 
+// 028365
+-(NSString *)getParentRecordSfId:(NSString*)objectName withRecordId:(NSString *)recordId {
+    
+    __block NSString *parentSfId = nil;
+    NSString *columnName = kWorkOrderName;
+    
+    BOOL isWorkOrerNameExits = [self isColumn:kWorkOrderName existInTable:objectName];
+    
+    if (isWorkOrerNameExits == YES) {
+        columnName = kWorkOrderName;
+    } else {
+        
+        BOOL isCaseNumberColumnExits = [self isColumn:kCaseNameField existInTable:objectName];
+        
+        if (isCaseNumberColumnExits == YES) {
+            columnName = kCaseNameField;
+        } else {
+            columnName = nil;
+        }
+    }
+    
+    if (columnName == nil) {
+        return parentSfId;
+    }
+    
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:recordId];
+    DBRequestSelect *requestSelect = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:[NSArray arrayWithObjects:kId, nil] whereCriteria:criteria];
+    
+    @autoreleasepool {
+        
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                
+                NSString *indexString = [resultSet stringForColumnIndex:0];
+                
+                if(![StringUtil isStringEmpty:indexString])
+                {
+                    parentSfId = indexString;
+                }
+            }
+            [resultSet close];
+        }];
+    }
+    
+    return parentSfId;
+}
+
 @end
