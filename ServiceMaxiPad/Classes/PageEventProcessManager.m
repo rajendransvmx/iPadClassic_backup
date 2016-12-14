@@ -226,7 +226,6 @@
         if ([eventName isEqualToString:@"console"]) {
             NSDictionary *paramDict =  [Utility getTheParameterFromUrlParameterString:jsonParameterString];
             NSString *message =  [paramDict objectForKey:@"msg"];
-            [self printLog:message];
             BOOL shouldDisplay = [self shouldDisplayMessage:message];
             if (shouldDisplay) {
                 /* Ask delegate to show the message*/
