@@ -226,7 +226,14 @@
         if ([eventName isEqualToString:@"console"]) {
             NSDictionary *paramDict =  [Utility getTheParameterFromUrlParameterString:jsonParameterString];
             NSString *message =  [paramDict objectForKey:@"msg"];
-            [self printLog:message];
+            BOOL shouldDisplay = [self shouldDisplayMessage:message];
+            if (shouldDisplay) {
+                /* Ask delegate to show the message*/
+                [self.managerDelegate shouldStopIndicatorForPageEventProcess:message];
+            }
+            else{
+                [self printLog:message];
+            }
         }
         else  if ([eventName isEqualToString:@"pricebook"])  {
             NSString *responseRecieved =  [self.jsExecuter response:self.jsonRepresantation forEventName:eventName];
@@ -246,12 +253,12 @@
 }
 
 - (BOOL)shouldDisplayMessage:(NSString *)message {
-    /*
+    
     message = [message lowercaseString];
     if ([StringUtil containsString:@" not " inString:message] || [StringUtil containsString:@" no " inString:message] || [StringUtil containsString:@" error " inString:message]) {
         return YES;
     }
-     */
+    
     return NO;
 }
 

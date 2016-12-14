@@ -1414,6 +1414,35 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
 }
 
+-(void)shouldStopIndicatorForPageEventProcess:(NSString *)message {
+    
+    [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+    [self performSelectorOnMainThread:@selector(enableUI) withObject:self waitUntilDone:NO];
+    
+    if (SYSTEM_VERSION < 8.0) {
+        
+        if (![self.alertViewBiz isVisible]) {
+            if (self.alertViewBiz == nil)
+                self.alertViewBiz = [[UIAlertView alloc] initWithTitle:nil
+                                                               message:message
+                                                              delegate:self
+                                                     cancelButtonTitle:[[TagManager sharedInstance] tagByName:kTagAlertErrorOk]
+                                                     otherButtonTitles:nil];
+            [self.alertViewBiz performSelectorOnMainThread:@selector(show) withObject:nil waitUntilDone:YES];
+        }
+    }
+    
+    else {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:(UIAlertControllerStyleAlert)];
+        
+        UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[[TagManager sharedInstance] tagByName:kTagAlertErrorOk] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
+        }];
+        
+        [alertController addAction:alertAction];
+        [self presentViewController:alertController animated:YES completion:^{}];
+    }
+}
+
 -(void)refreshSFMPageWithFieldUpdateRuleResults:(NSString *)responseString forEvent:(NSString *)event {
     
     [self performSelectorOnMainThread:@selector(updateTheSFMPage:) withObject:responseString waitUntilDone:YES];
