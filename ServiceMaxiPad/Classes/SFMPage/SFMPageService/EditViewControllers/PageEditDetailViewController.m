@@ -14,6 +14,8 @@
 #import "Utility.h"
 #import "TagManager.h"
 
+#define kBarcodeScannerButtonHeight 46
+
 //static NSInteger kKeyBoardHeight = 360.0;
 
 @interface PageEditDetailViewController (){
@@ -315,7 +317,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
 }
 - (CGFloat)getTableViewFrameOnkeyboard {
     
-    CGFloat visibleKeyboarHeight = self.view.frame.size.height - self.keyBoardFrame.origin.y;
+    CGFloat visibleKeyboarHeight = self.view.frame.size.height - self.keyBoardFrame.origin.y + self.navigationController.navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height;
     
     CGFloat bizRuleButtonHeight = 0;
     if (!self.bizRuleButton.hidden) {
@@ -335,7 +337,7 @@ static NSString *cellIdentifier = @"cellIdentifier";
             return  self.view.frame.size.height - visibleKeyboarHeight - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - bizRuleButtonHeight ;
         }
         else{
-            return  self.view.frame.size.height - self.keyBoardHeight - bizRuleButtonHeight ;
+            return  self.view.frame.size.height - self.keyBoardHeight - bizRuleButtonHeight + kBarcodeScannerButtonHeight;
         }
     }
     
