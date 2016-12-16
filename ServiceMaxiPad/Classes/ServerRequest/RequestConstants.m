@@ -136,6 +136,7 @@ NSString *const kTXFetch            = @"TX_FETCH";
 NSString *const kServiceLibrary     = @"SVMX_LIBRARY";
 NSString *const kSubmitDocument     = @"SUBMIT_DOCUMENT";
 NSString *const kGeneratePDF        = @"GENERATE_PDF";
+NSString *const kPurgeRecords       = @"PURGE_RECORDS";
 
 NSString *const kLastSync           = @"LAST_SYNC";
 

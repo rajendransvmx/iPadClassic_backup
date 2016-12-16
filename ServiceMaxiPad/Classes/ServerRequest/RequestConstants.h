@@ -141,7 +141,10 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestProductIQDeleteData,
     
     /** Sync Profiling **/
-    RequestTypeSyncProfiling
+    RequestTypeSyncProfiling,
+    
+    /**Purge event related records**/
+    RequestTypePurgeRecords
 };
 
 extern NSString *const kContentType;
@@ -253,6 +256,7 @@ extern NSString *const kTXFetchOptimised;
 extern NSString *const kDataOnDemand;
 extern NSString *const kPushNotification;
 extern NSString *const kUserTrunk;
+extern NSString *const kPurgeRecords;
 extern NSString *const kDependantPickList;
 extern NSString *const kObjectDefinition;
 extern NSString *const kCodeSnippet;
