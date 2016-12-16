@@ -492,7 +492,7 @@
             eventType = kSync;
             break;
         case RequestTypePurgeRecords:
-            eventType = @"PURGING";
+            eventType = kPurging;
             break;
         case RequestSFMMetaDataInitialSync:
             eventType = kInitialSync;

@@ -112,7 +112,7 @@ NSString *const kInitialSync = @"INITIAL_SYNC";
 NSString *const kSearchResult = @"SEARCH_RESULTS";
 NSString *const kOnDemandGetData = @"GET_DATA";
 NSString *const kOnDemandGetPriceInfo = @"GET_PRICE_INFO";
-
+NSString *const kPurging = @"PURGING";
 
 NSString *const kClientInfo = @"clientInfo";
 NSString *const kEventName = @"eventName";

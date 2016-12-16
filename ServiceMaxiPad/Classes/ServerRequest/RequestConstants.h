@@ -241,6 +241,7 @@ extern NSString *const kInitialSync;
 extern NSString *const kSearchResult;
 extern NSString *const kOnDemandGetData ;
 extern NSString *const kOnDemandGetPriceInfo;
+extern NSString *const kPurging;
 extern NSString *const kClientInfo;
 
 extern NSString *const kEventName;
