@@ -2121,6 +2121,8 @@
 		C8E0D03D1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C8E0D03C1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.m */; };
 		CD0CE9081DDC759A005BA93C /* InitialSyncContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0CE9061DDC759A005BA93C /* InitialSyncContentViewController.m */; };
 		CD0CE9091DDC759A005BA93C /* InitialSyncContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0CE9071DDC759A005BA93C /* InitialSyncContentViewController.xib */; };
+		CDD7F38A1E02AA3900A4AA79 /* PurgeRecordsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD7F3891E02AA3900A4AA79 /* PurgeRecordsParser.m */; };
+		CDD7F38F1E03DE5D00A4AA79 /* PurgeRecordsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD7F38E1E03DE5D00A4AA79 /* PurgeRecordsTests.m */; };
 		D713615F19ED1D51008BCACE /* TextFieldHelperDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D713615E19ED1D51008BCACE /* TextFieldHelperDelegate.m */; };
 		D74A3D0A1A0381E000357474 /* PriceBookDataHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D74A3D031A0381E000357474 /* PriceBookDataHandler.m */; };
 		D74A3D0B1A0381E000357474 /* PriceBookTargetHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D74A3D051A0381E000357474 /* PriceBookTargetHandler.m */; };
@@ -4272,6 +4274,9 @@
 		CD0CE9051DDC759A005BA93C /* InitialSyncContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitialSyncContentViewController.h; sourceTree = "<group>"; };
 		CD0CE9061DDC759A005BA93C /* InitialSyncContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InitialSyncContentViewController.m; sourceTree = "<group>"; };
 		CD0CE9071DDC759A005BA93C /* InitialSyncContentViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InitialSyncContentViewController.xib; sourceTree = "<group>"; };
+		CDD7F3881E02AA3900A4AA79 /* PurgeRecordsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeRecordsParser.h; sourceTree = "<group>"; };
+		CDD7F3891E02AA3900A4AA79 /* PurgeRecordsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PurgeRecordsParser.m; sourceTree = "<group>"; };
+		CDD7F38E1E03DE5D00A4AA79 /* PurgeRecordsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PurgeRecordsTests.m; sourceTree = "<group>"; };
 		D713615D19ED1D51008BCACE /* TextFieldHelperDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldHelperDelegate.h; sourceTree = "<group>"; };
 		D713615E19ED1D51008BCACE /* TextFieldHelperDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldHelperDelegate.m; sourceTree = "<group>"; };
 		D74A3D021A0381E000357474 /* PriceBookDataHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriceBookDataHandler.h; sourceTree = "<group>"; };
@@ -6014,6 +6019,8 @@
 				18FB610E1B3982810011AF75 /* CustomWebServiceParser.m */,
 				840E2B7A1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.h */,
 				840E2B7B1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m */,
+				CDD7F3881E02AA3900A4AA79 /* PurgeRecordsParser.h */,
+				CDD7F3891E02AA3900A4AA79 /* PurgeRecordsParser.m */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -7399,6 +7406,7 @@
 				C3216E181B27EDB9006A0515 /* UTUtility.m */,
 				18A2174219E57C5A00F22EA6 /* Supporting Files */,
 				ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */,
+				CDD7F38E1E03DE5D00A4AA79 /* PurgeRecordsTests.m */,
 			);
 			path = ServiceMaxiPadTests;
 			sourceTree = "<group>";
@@ -9996,6 +10004,7 @@
 				FD09E18E1D4A088A00972C95 /* ZXRSSExpandedBlockParsedResult.m in Sources */,
 				FD09E1C51D4A088A00972C95 /* ZXPDF417DetectionResultRowIndicatorColumn.m in Sources */,
 				FD09E12A1D4A088A00972C95 /* ZXExpandedProductResultParser.m in Sources */,
+				CDD7F38A1E02AA3900A4AA79 /* PurgeRecordsParser.m in Sources */,
 				FD09E1311D4A088A00972C95 /* ZXProductResultParser.m in Sources */,
 				434408931C90041900628FFB /* MobileDataUsageExecuter.m in Sources */,
 				184A8E5D19E7A0BE006DA6BE /* SMXAddEventPopoverController.m in Sources */,
@@ -10796,6 +10805,7 @@
 				ECE752C01DE6FA66005D34C7 /* DateUtil.m in Sources */,
 				C3216E161B27E4F7006A0515 /* StringUtil.m in Sources */,
 				C3216E151B27E18B006A0515 /* UTStringUtil.m in Sources */,
+				CDD7F38F1E03DE5D00A4AA79 /* PurgeRecordsTests.m in Sources */,
 				ECE752BD1DE6F465005D34C7 /* SyncManagerTests.m in Sources */,
 				C3216E1B1B27EE5D006A0515 /* SVMXSystemConstant.m in Sources */,
 				C3216E1A1B27EE52006A0515 /* Utility.m in Sources */,
