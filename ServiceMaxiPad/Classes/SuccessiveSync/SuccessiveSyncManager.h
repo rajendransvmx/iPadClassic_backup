@@ -56,5 +56,6 @@
 
 - (ModifiedRecordModel *)getSyncRecordModelFromSuccessiveSyncRecords:(NSString *)localId;
 
+@property (nonatomic,strong) NSMutableDictionary *whatIdsToDelete;
 
 @end

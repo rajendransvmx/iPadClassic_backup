@@ -13,6 +13,7 @@
 
 -(void)pageEventProcessCalculationFinishedSuccessFully:(SFMPage *)sfPage;
 -(void)shouldShowAlertMessageForPageEventProcess:(NSString *)message;
+-(void)shouldStopIndicatorForPageEventProcess:(NSString *)message;
 
 @end
 

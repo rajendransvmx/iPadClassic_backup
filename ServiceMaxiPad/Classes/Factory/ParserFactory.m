@@ -45,6 +45,7 @@
 #import "ProdIQDeleteDataParser.h"
 #import "MobileDataUsageParser.h"
 #import "ValidateProfileParser.h"
+#import "PurgeRecordsParser.h"
 
 @implementation ParserFactory
 
@@ -302,6 +303,10 @@
                 
             case RequestOneCallDataSync:
                 parser = [[OneCallDataSyncResponseParser alloc] init];
+                break;
+                
+            case RequestTypePurgeRecords:
+                parser = [[PurgeRecordsParser alloc] init];
                 break;
                 
             case RequestDependantPickListRest:
