@@ -169,8 +169,9 @@
                     andAdvancedExpression:(NSString *)advancedExpression {
     
     DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:objectName aggregateFunction:SQLAggregateFunctionCount whereCriterias:criterias andAdvanceExpression:advancedExpression];
-    __block NSInteger count = -1;
-    @autoreleasepool {
+    //__block NSInteger count = -1;
+    //Forward port Fix:033408 An Error of "-1" is Displayed On the Tech's Ipad (Similar to Sync Conflict)
+    __block NSInteger count = 0;    @autoreleasepool {
     DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
     
     [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
