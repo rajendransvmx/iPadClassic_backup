@@ -329,7 +329,8 @@
     NSMutableArray *allwhatIds = [[NSMutableArray alloc] init];
     NSString *fieldName = @"";
     if ([objectName isEqualToString:kSVMXTableName]) {
-        fieldName = [NSString stringWithFormat:@"%@__WhatId__c", ORG_NAME_SPACE];
+        //using objectSfId for the 18 digit what id 
+        fieldName = @"objectSfId"; //[NSString stringWithFormat:@"%@__WhatId__c", ORG_NAME_SPACE];
     }
     else {
         fieldName = @"WhatId";
@@ -427,7 +428,7 @@
                     
                     [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:[childValuesArray arrayByAddingObjectsFromArray:tempChildWhatIds] forKey:serviceOrderLineTableName];
                 }
-                else {
+                else if (tempChildWhatIds.count > 0) {
                     [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:tempChildWhatIds forKey:serviceOrderLineTableName];
                 }
             }

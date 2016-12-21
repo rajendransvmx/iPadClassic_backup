@@ -3,7 +3,7 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.99.010
+Version = 16.99.011
 ===========================================
 
 Defect:
@@ -11,7 +11,7 @@ Defect:
 
 Feature:
 ==================
-Get Price - PS Entitlements
+
 ——————
 
 NOTE:
