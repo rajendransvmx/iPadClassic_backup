@@ -495,7 +495,7 @@
             break;
         case RequestTXFetch: {
             BOOL permissionFailed = [[NSUserDefaults standardUserDefaults] boolForKey:@"kProdIQDataPermissionFailed"];
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable] && !permissionFailed)?RequestProductIQTxFetch:RequestCleanUp;
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable] && !permissionFailed)?RequestProductIQTxFetch:RequestSyncTimeLogs;
         }
             break;
         case RequestCleanUp:
