@@ -2479,6 +2479,9 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
         
         if ([profileType isEqualToString:kSPTypeStart])
         {
+            // IPAD-4480
+            [self pushSyncProfileInfoToUserDefaultsWithValue:@"No" forKey:kSPReqTimedOut];
+            
             if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
             {
                 [self performSyncProfiling];
@@ -2568,7 +2571,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 
 -(void)setUpRequestIdForSyncProfiling:(NSString *)requestId {
     // IPAD-4355
-    [self pushSyncProfileInfoToUserDefaultsWithValue:@"No" forKey:kSPReqTimedOut];
     [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileStartReqId];
 }
 
