@@ -494,12 +494,13 @@
 }
 - (BOOL)deleteAllEventsOfTheLoggedInUserFromObject:(NSString*)objectName {
     NSString *ownerId = [ self getUserIdForLoggedInUser];
+    NSString *technicianId = [ self getTechnicianIdForLoggedInUser];
     if (ownerId != nil) {
         
         NSArray *whatIds = [self getWhatIdsForAllEvent:objectName];
         [self getChildLinesAndFormAllWhatIdsToDelete:whatIds];
 
-        DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:kEventOwnerId   operatorType:SQLOperatorEqual andFieldValue:ownerId];
+        DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:[objectName isEqualToString:kEventObject]?kEventOwnerId:kSVMXTechnicianId   operatorType:SQLOperatorEqual andFieldValue:[objectName isEqualToString:kEventObject]?ownerId:technicianId];
         DBCriteria *aCriteria2 = [[DBCriteria alloc] initWithFieldName:kId         operatorType:SQLOperatorIsNotNull andFieldValue:nil];
         
         DBRequestDelete *deleteRequest = [[DBRequestDelete alloc] initWithTableName:objectName whereCriteria:@[aCriteria1,aCriteria2] andAdvanceExpression:nil];
@@ -513,10 +514,11 @@
     NSMutableArray *allwhatIds = [[NSMutableArray alloc] init];
 
     NSString *ownerId = [ self getUserIdForLoggedInUser];
+    NSString *technicianId = [ self getTechnicianIdForLoggedInUser];
 
     if (ownerId != nil) {
 
-        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kEventOwnerId operatorType:SQLOperatorEqual andFieldValue:ownerId];
+        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:[objectName isEqualToString:kEventObject]?kEventOwnerId:kSVMXTechnicianId operatorType:SQLOperatorEqual andFieldValue:[objectName isEqualToString:kEventObject]?ownerId:technicianId];
         DBCriteria *aCriteria2 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIsNotNull andFieldValue:nil];
 
         NSString *fieldName = @"WhatId";
@@ -552,6 +554,11 @@
 - (NSString *)getUserIdForLoggedInUser {
       NSString *ownerId = [[CustomerOrgInfo sharedInstance] userId];
     return ownerId;
+}
+
+- (NSString *)getTechnicianIdForLoggedInUser {
+    NSString *techId = [PlistManager getTechnicianId];
+    return techId;
 }
 
 - (void)deleteRecordWithIds:(NSArray *)recordIds
