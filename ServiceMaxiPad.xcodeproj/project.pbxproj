@@ -2162,6 +2162,7 @@
 		D9F7EEF61A1083270098F8AF /* BizRulesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F7EEF41A1083270098F8AF /* BizRulesViewController.xib */; };
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
+		EC8003621E126F9700AEF75C /* PriceCalculationManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EC8003611E126F9700AEF75C /* PriceCalculationManagerTests.m */; };
 		FD09E1131D4A088A00972C95 /* ZXAztecDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */; };
 		FD09E1141D4A088A00972C95 /* ZXAztecDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF301D4A088800972C95 /* ZXAztecDetector.m */; };
 		FD09E1151D4A088A00972C95 /* ZXAztecBinaryShiftToken.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF331D4A088800972C95 /* ZXAztecBinaryShiftToken.m */; };
@@ -4336,6 +4337,7 @@
 		DE9E10CC1AA9A28C00A87768 /* PushNotificationWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceHelper.h; sourceTree = "<group>"; };
 		DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationWebServiceHelper.m; sourceTree = "<group>"; };
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
+		EC8003611E126F9700AEF75C /* PriceCalculationManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriceCalculationManagerTests.m; sourceTree = "<group>"; };
 		FD09DF2C1D4A088800972C95 /* ZXAztecDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDecoder.h; sourceTree = "<group>"; };
 		FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZXAztecDecoder.m; sourceTree = "<group>"; };
 		FD09DF2F1D4A088800972C95 /* ZXAztecDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDetector.h; sourceTree = "<group>"; };
@@ -7410,6 +7412,7 @@
 				C3216E141B27E18B006A0515 /* UTStringUtil.m */,
 				C3216E181B27EDB9006A0515 /* UTUtility.m */,
 				18A2174219E57C5A00F22EA6 /* Supporting Files */,
+				EC8003611E126F9700AEF75C /* PriceCalculationManagerTests.m */,
 			);
 			path = ServiceMaxiPadTests;
 			sourceTree = "<group>";
@@ -10810,6 +10813,7 @@
 				C3216E151B27E18B006A0515 /* UTStringUtil.m in Sources */,
 				C3216E1B1B27EE5D006A0515 /* SVMXSystemConstant.m in Sources */,
 				C3216E1A1B27EE52006A0515 /* Utility.m in Sources */,
+				EC8003621E126F9700AEF75C /* PriceCalculationManagerTests.m in Sources */,
 				C3216E191B27EDB9006A0515 /* UTUtility.m in Sources */,
 				C3216E171B27E561006A0515 /* DatabaseConstant.m in Sources */,
 			);
