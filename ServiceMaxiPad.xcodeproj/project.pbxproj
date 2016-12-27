@@ -2149,6 +2149,7 @@
 		EC42EC2B1DDAEA2200419D7D /* ValidateProfileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */; };
 		ECAFEF041DD994C60065AB96 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
 		ECAFEF071DD99C710065AB96 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
+		ECBCF4091E113DE000AD1814 /* PriceCalculationManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */; };
 		ECE752BD1DE6F465005D34C7 /* SyncManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */; };
 		ECE752C01DE6FA66005D34C7 /* DateUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A2179919E585D700F22EA6 /* DateUtil.m */; };
 		ECE752C11DE6FA6C005D34C7 /* SNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A99EE19E6890C00919345 /* SNetworkReachabilityManager.m */; };
@@ -4330,6 +4331,7 @@
 		ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfileServiceLayer.m; sourceTree = "<group>"; };
 		ECAFEF051DD99C710065AB96 /* SyncProfilingRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProfilingRequest.h; sourceTree = "<group>"; };
 		ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfilingRequest.m; sourceTree = "<group>"; };
+		ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriceCalculationManagerTests.m; sourceTree = "<group>"; };
 		ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncManagerTests.m; sourceTree = "<group>"; };
 		FD09DF2C1D4A088800972C95 /* ZXAztecDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDecoder.h; sourceTree = "<group>"; };
 		FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZXAztecDecoder.m; sourceTree = "<group>"; };
@@ -7407,6 +7409,7 @@
 				18A2174219E57C5A00F22EA6 /* Supporting Files */,
 				ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */,
 				CDD7F38E1E03DE5D00A4AA79 /* PurgeRecordsTests.m */,
+				ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */,
 			);
 			path = ServiceMaxiPadTests;
 			sourceTree = "<group>";
@@ -10809,6 +10812,7 @@
 				ECE752BD1DE6F465005D34C7 /* SyncManagerTests.m in Sources */,
 				C3216E1B1B27EE5D006A0515 /* SVMXSystemConstant.m in Sources */,
 				C3216E1A1B27EE52006A0515 /* Utility.m in Sources */,
+				ECBCF4091E113DE000AD1814 /* PriceCalculationManagerTests.m in Sources */,
 				C3216E191B27EDB9006A0515 /* UTUtility.m in Sources */,
 				C3216E171B27E561006A0515 /* DatabaseConstant.m in Sources */,
 			);
