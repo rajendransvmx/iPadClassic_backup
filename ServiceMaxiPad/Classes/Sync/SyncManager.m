@@ -853,7 +853,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             [PlistManager storeLastDataSyncStartGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
             [PlistManager storeLastDataSyncStatus:kInProgress];
             [self performSelectorInBackground:@selector(initiateSyncInBackGround) withObject:nil];
-            [self performSelector:@selector(initiateSyncProfiling:) withObject:kSPTypeStart afterDelay:0.1];
+            [self performSelectorInBackground:@selector(initiateSyncProfiling:) withObject:kSPTypeStart];
         }
         return YES;
     }
