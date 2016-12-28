@@ -361,7 +361,7 @@
 }
 
 -(void)getChildLinesAndFormAllWhatIdsToDelete:(NSArray *)whatIds {
-
+    
     NSMutableArray *childWhatIds = [[NSMutableArray alloc] init];
     NSMutableArray *parentWhatIds = [[NSMutableArray alloc] initWithArray:whatIds];
     
@@ -370,14 +370,14 @@
     }
     
     for (NSString *whatId in whatIds) {
-
+        
         id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
         NSString *objectName =  [serviceRequest getObjectName:whatId];
         
-        NSArray *valuesArray = [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName];
+        NSArray *valuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName]];
         
         //filter out duplicate what ids
-        NSArray *finalArray = [valuesArray arrayByAddingObjectsFromArray:parentWhatIds];
+        NSArray *finalArray = [NSArray arrayWithArray:[valuesArray arrayByAddingObjectsFromArray:parentWhatIds]];
         NSArray *filteredArray = [[NSSet setWithArray:finalArray] allObjects];
         
         [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:filteredArray forKey:objectName];
@@ -387,12 +387,12 @@
         
         id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
         NSString *objectName =  [serviceRequest getObjectName:whatId];
-
+        
         if ([objectName isEqualToString:kWorkOrderTableName]) {
             
             DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:[NSString stringWithFormat:@"%@__Service_Order__c", ORG_NAME_SPACE] operatorType:SQLOperatorEqual andFieldValue:whatId];
             DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:[NSString stringWithFormat:@"%@__Service_Order_Line__c", ORG_NAME_SPACE] andFieldNames:@[@"Id"] whereCriteria:aCriteria1];
-
+            
             @autoreleasepool {
                 DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
                 
@@ -411,7 +411,7 @@
                 }];
                 
                 NSString *serviceOrderLineTableName = [NSString stringWithFormat:@"%@__Service_Order_Line__c", ORG_NAME_SPACE];
-                NSArray *childValuesArray = [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:serviceOrderLineTableName];
+                NSArray *childValuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:serviceOrderLineTableName]];
                 NSArray *finalChildWhatIds = [NSArray arrayWithArray:childWhatIds];
                 
                 if (childValuesArray.count > 0) {
