@@ -95,6 +95,7 @@
             case RequestTypeChatterFeedCommnetInsert:
             case RequestTypeCustomActionWebService:
             case RequestTypeCustomActionWebServiceAfterBefore:
+            case RequestTypePurgeRecords:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
             case RequestMasterSyncTimeLog:

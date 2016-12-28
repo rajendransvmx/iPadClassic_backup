@@ -12,6 +12,7 @@
 #import "ResolveConflictsHelper.h"
 #import "SyncHeapService.h"
 #import "CalenderHelper.h"
+#import "SuccessiveSyncManager.h"
 
 @implementation OneCallDataSyncServiceLayer
 
@@ -86,6 +87,12 @@
             return @[model];
         }
         break;
+        case RequestTypePurgeRecords:
+        {
+            RequestParamModel *model = [self getRequestParamModelForPurgeEventRecords];
+            return @[model];
+        }
+            break;
         case RequestTXFetch:
         {
             OneCallDataSyncHelper *helper = [[OneCallDataSyncHelper alloc] init];
@@ -119,6 +126,31 @@
     paramObj.requestInformation = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:self.categoryType] forKey:@"categoryType"];
     paramObj.valueMap = @[lastSyncTime];
     return @[paramObj];
+}
+
+- (RequestParamModel *)getRequestParamModelForPurgeEventRecords {
+    
+    RequestParamModel *model = [[RequestParamModel alloc] init];
+    
+    model.value = self.requestIdentifier;
+    
+    NSMutableArray *valueMapArray = [[NSMutableArray alloc] init];
+    
+    for (NSString *objectName in [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] allKeys]) {
+        
+        NSArray *valusArray = [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName];
+        
+        NSMutableDictionary *valueMapDictToSend = [[NSMutableDictionary alloc] init];
+        [valueMapDictToSend setObject:@"Object_Name" forKey:@"key"];
+        [valueMapDictToSend setObject:objectName forKey:@"value"];
+        [valueMapDictToSend setObject:valusArray forKey:@"values"];
+        
+        [valueMapArray addObject:valueMapDictToSend];
+    }
+    
+    model.valueMap = valueMapArray;
+    
+    return model;
 }
 
 - (void)updateSfIdForSVMXEvent

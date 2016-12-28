@@ -492,6 +492,11 @@
         case RequestStaticResourceLibrary:
             eventType = kSync;
             break;
+            
+        case RequestTypePurgeRecords:
+            eventType = kPurging;
+            break;
+            
         case RequestSFMMetaDataInitialSync:
             eventType = kInitialSync;
             break;
@@ -636,6 +641,7 @@
         case RequestSFMSearch:
         case RequestTypeUserTrunk:
         case RequestMasterSyncTimeLog:
+        case RequestTypePurgeRecords:
             url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
         case RequestDocumentInfoFetch:
@@ -894,6 +900,9 @@
             break;
         case RequestTypeUserTrunk:
             self.eventName = kUserTrunk;
+            break;
+        case RequestTypePurgeRecords:
+            self.eventName = kPurgeRecords;
             break;
         case RequestDependantPickListRest:
             self.eventName = kDependantPickList;
