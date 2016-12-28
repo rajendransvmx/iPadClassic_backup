@@ -97,4 +97,17 @@
 - (NSDictionary *)getAllSfidsForLocalIds:(NSArray *)allLocalIds ;
 - (NSMutableDictionary *)getAllRecordForSfIds:(NSArray *)allIds andTableName:(NSString *)tableName ;
 
+#pragma mark - PS Lines Entitlement
+
+-(NSArray *)getPSLineRecordsForHeaderRecord:(NSString *)sfId andObjectname:(NSString*)objectname;
+-(NSDictionary *)getEntitlementHistoryForPSLine:(NSString *)psLineId;
+-(NSDictionary *)getPSLineSconRecordForId:(NSString *)sconId;
+-(NSArray *)getPSLinePartsPricingForId:(NSString *)sconId;
+-(NSArray *)getPSLinePartsDiscountForId:(NSString *)sconId;
+-(NSArray *)getPSLineLaborPricingForId:(NSString *)sconId;
+-(NSArray *)getPSLineExpensePricingForId:(NSString *)sconId;
+-(NSArray *)getPSLinePartsPBForId:(NSString *)sconId;
+-(NSArray *)getRelatedDetailRecordsForPSline:(NSString *)psLineId;
+-(NSDictionary *)getPSLineWarrantyRecordForId:(NSString *)warrantyId;
+
 @end

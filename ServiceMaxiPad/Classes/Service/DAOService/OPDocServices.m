@@ -29,7 +29,7 @@
     BOOL isSaved = [self saveRecordModel:model];
     if (isSaved) {
         dispatch_async(dispatch_get_main_queue(), ^{
-           [[NSNotificationCenter defaultCenter] postNotificationName:OPDocSavedNotification object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:OPDocSavedNotification object:nil];
         });
     }
 }
@@ -46,7 +46,7 @@
     DBRequestUpdate * updatequery = [[DBRequestUpdate alloc] initWithTableName:[self tableName] andFieldNames:@[@"sfid"] whereCriteria:@[criteria] andAdvanceExpression:nil];
     
     BOOL status = [self updateEachRecord:model withQuery:[updatequery query]];
-
+    
     SXLogInfo(@"Update %d HTML file %@ :: %@",status, model.Name, model.sfid);
 }
 
@@ -59,24 +59,24 @@
     
     __block OPDocHTML * model;
     @autoreleasepool {
-    DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-    
-    [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
         
-        NSString * query = [requestSelect query];
-        
-        SQLResultSet * resultSet = [db executeQuery:query];
-        
-        model = [[OPDocHTML alloc] init];
-        
-        if ([resultSet next]) {
-            [resultSet kvcMagic:model];
-        }
-        [resultSet close];
-    }];
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            model = [[OPDocHTML alloc] init];
+            
+            if ([resultSet next]) {
+                [resultSet kvcMagic:model];
+            }
+            [resultSet close];
+        }];
     }
     return model;
-
+    
 }
 
 -(NSMutableArray *)getHTMLModelListForFileUpload
@@ -168,7 +168,7 @@
         }];
     }
     return lTheDataArray;
-
+    
 }
 
 
@@ -277,7 +277,7 @@
     
     
     NSString *columnName = kWorkOrderName;
-
+    
     BOOL isWorkOrerNameExits = [self isColumn:kWorkOrderName existInTable:tableName];
     if (isWorkOrerNameExits == YES) {
         columnName = kWorkOrderName;
@@ -318,18 +318,18 @@
                 if(![StringUtil isStringEmpty:indexString])
                 {
                     [columnDictionary setObject:indexString forKey:kWorkOrderName];
-
+                    
                 }
                 indexString = [resultSet stringForColumnIndex:1];
                 if(![StringUtil isStringEmpty:indexString])
                 {
                     [columnDictionary setObject:indexString forKey:kLocalId];
-
+                    
                 }
                 if([columnDictionary count] > 0)
                 {
                     [workOrderNamesArray addObject:columnDictionary];
-
+                    
                 }
             }
             [resultSet close];
@@ -365,10 +365,10 @@
 {
     
     DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kOPDocFileName operatorType:SQLOperatorEqual andFieldValue:model.Name];
-   
+    
     //Clarify sudhguru.
     //DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:kOPDocFileName operatorType:SQLOperatorEqual andFieldValue:model.Name];
-
+    
     //Update query modified : krishna
     model.Name = lNewFileName;
     DBRequestUpdate * updatequery = [[DBRequestUpdate alloc] initWithTableName:[self tableName] andFieldNames:@[@"Name"] whereCriteria:@[criteria1] andAdvanceExpression:nil];
@@ -381,43 +381,43 @@
 }
 
 /*
--(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted
-{
-    // The entry should have sf_id assigned. So criteria is those entries whose sf_id is not null.
-    DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocSFID operatorType:SQLOperatorIsNotNull andFieldValues:nil];
-    
-    DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriteria:criteriaOne];
-    
-    NSMutableArray *lTheDataArray = [[NSMutableArray alloc] init];
-    
-    @autoreleasepool {
-        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-        
-        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-            
-            NSString * query = [requestSelect query];
-            
-            SQLResultSet * resultSet = [db executeQuery:query];
-            
-            while ([resultSet next]) {
-                
-                OPDocHTML * model = [[OPDocHTML alloc] init];
-                [resultSet kvcMagic:model];
-                [lTheDataArray addObject:model];
-            }
-            [resultSet close];
-        }];
-    }
-    return lTheDataArray;
-}
-
-*/
+ -(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted
+ {
+ // The entry should have sf_id assigned. So criteria is those entries whose sf_id is not null.
+ DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocSFID operatorType:SQLOperatorIsNotNull andFieldValues:nil];
+ 
+ DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriteria:criteriaOne];
+ 
+ NSMutableArray *lTheDataArray = [[NSMutableArray alloc] init];
+ 
+ @autoreleasepool {
+ DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+ 
+ [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+ 
+ NSString * query = [requestSelect query];
+ 
+ SQLResultSet * resultSet = [db executeQuery:query];
+ 
+ while ([resultSet next]) {
+ 
+ OPDocHTML * model = [[OPDocHTML alloc] init];
+ [resultSet kvcMagic:model];
+ [lTheDataArray addObject:model];
+ }
+ [resultSet close];
+ }];
+ }
+ return lTheDataArray;
+ }
+ 
+ */
 -(NSArray *)getAllFilesPresentInTableForWhichNeedsToBeDeleted:(NSString *)theHTMLSFIDOrHTMLFileName
 {
     // The entry should have sf_id assigned. So criteria is those entries whose sf_id is not null.
     DBCriteria *criteriaOne = [[DBCriteria alloc]initWithFieldName:kOPDocSFID operatorType:SQLOperatorEqual andFieldValue:theHTMLSFIDOrHTMLFileName];
     DBCriteria *criteriaTwo = [[DBCriteria alloc]initWithFieldName:kOPDocFileName operatorType:SQLOperatorEqual andFieldValue:theHTMLSFIDOrHTMLFileName];
-
+    
     DBRequestSelect * requestSelect = [[DBRequestSelect alloc] initWithTableName:[self tableName] andFieldNames:nil whereCriterias:@[criteriaOne, criteriaTwo] andAdvanceExpression:@"(1 or 2)"];
     
     NSMutableArray *lTheDataArray = [[NSMutableArray alloc] init];
@@ -529,6 +529,60 @@
     
     
     return status;
+}
+
+// 028365
+-(NSString *)getParentRecordSfId:(NSString*)objectName withRecordId:(NSString *)recordId {
+    
+    __block NSString *parentSfId = nil;
+    NSString *columnName = kWorkOrderName;
+    
+    BOOL isWorkOrerNameExits = [self isColumn:kWorkOrderName existInTable:objectName];
+    
+    if (isWorkOrerNameExits == YES) {
+        columnName = kWorkOrderName;
+    } else {
+        
+        BOOL isCaseNumberColumnExits = [self isColumn:kCaseNameField existInTable:objectName];
+        
+        if (isCaseNumberColumnExits == YES) {
+            columnName = kCaseNameField;
+        } else {
+            columnName = nil;
+        }
+    }
+    
+    if (columnName == nil) {
+        return parentSfId;
+    }
+    
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:recordId];
+    DBRequestSelect *requestSelect = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:[NSArray arrayWithObjects:kId, nil] whereCriteria:criteria];
+    
+    @autoreleasepool {
+        
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            
+            NSString * query = [requestSelect query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                
+                NSString *indexString = [resultSet stringForColumnIndex:0];
+                
+                if(![StringUtil isStringEmpty:indexString])
+                {
+                    parentSfId = indexString;
+                }
+            }
+            [resultSet close];
+        }];
+    }
+    
+    return parentSfId;
 }
 
 @end

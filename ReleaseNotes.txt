@@ -3,15 +3,16 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.60.002
+Version = 16.60.005
 ===========================================
 
 Defect:
 
+16.60_IPAD-4195
 
 Feature:
 ==================
-n/a
+Work Order pricing using PS entitlements
 	
 ——————
 

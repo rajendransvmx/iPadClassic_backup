@@ -496,7 +496,7 @@
             break;
         case RequestTXFetch: {
             BOOL permissionFailed = [[NSUserDefaults standardUserDefaults] boolForKey:@"kProdIQDataPermissionFailed"];
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable] && !permissionFailed)?RequestProductIQTxFetch:RequestCleanUp;
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable] && !permissionFailed)?RequestProductIQTxFetch:RequestSyncTimeLogs;
         }
             break;
         case RequestCleanUp:
@@ -512,7 +512,9 @@
             nextRequestType = RequestGetPriceObjects;
             break;
         case RequestProductIQTxFetch:
-            nextRequestType = RequestCleanUp;
+//            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestSyncTimeLogs;
+
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
@@ -740,7 +742,9 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
+          //  nextRequestType = RequestCleanUp;
+            nextRequestType = RequestSyncTimeLogs;
+
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
@@ -834,7 +838,9 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
+//            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestSyncTimeLogs;
+
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
@@ -1316,7 +1322,9 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
+//            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestTypeNone;
+
             break;
         case RequestCleanUp:
             nextRequestType = RequestTypeNone;
