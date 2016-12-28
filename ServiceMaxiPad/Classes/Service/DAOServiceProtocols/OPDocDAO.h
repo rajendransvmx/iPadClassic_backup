@@ -68,4 +68,7 @@
 //To get the workorder name with OpDocHTML table's recordID.
 - (NSMutableArray*)getWorkOrderNameWithTableName:(NSString*)tableName withRecordIdArray:(NSMutableArray*)recordIdArray;
 
+// 028365
+-(NSString *)getParentRecordSfId:(NSString*)objectName withRecordId:(NSString *)recordId;
+
 @end
