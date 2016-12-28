@@ -836,5 +836,201 @@
     return allRecordsDictionary;
 }
 
+#pragma mark - PS Lines Entitlement
+
+
+-(NSArray *)getPSLineRecordsForHeaderRecord:(NSString *)sfId andObjectname:(NSString*)objectname {
+    NSString *tableName = ORG_NAME_SPACE@"__Service_Order_Line__c";
+    NSString *columname = ORG_NAME_SPACE@"__Service_Order__c";
+    NSArray *fields = @[kId, kSfDTRecordTypeId];
+    
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:columname operatorType:SQLOperatorEqual andFieldValue:sfId];
+    NSArray *transArray =  [self getObjectsObjectName:tableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    
+    NSMutableArray *psLinesArray = [[NSMutableArray alloc] init];
+    
+    NSArray *recordTypes = [NSArray arrayWithObjects:@"Products Serviced",nil];
+    NSDictionary *recordTypeIds =  [self getRecordTypeIdsForRecordType:recordTypes];
+    NSString *serviceRecordTypeId = [recordTypeIds objectForKey:@"Products Serviced"];
+    
+    for (TransactionObjectModel *model in transArray) {
+        NSDictionary *recordDict = model.getFieldValueDictionary;
+        NSString *recordType = [recordDict objectForKey:kSfDTRecordTypeId];
+        if (recordType && [recordType isEqualToString:serviceRecordTypeId]) {
+            [psLinesArray addObject:recordDict];
+        }
+    }
+    
+    return psLinesArray;
+}
+
+
+- (NSDictionary *)getEntitlementHistoryForPSLine:(NSString *)psLineId {
+    
+    NSString *entitlementHistorytableName = ORG_NAME_SPACE@"__Entitlement_History__c";
+    NSString *workDetailColumnName = ORG_NAME_SPACE@"__Work_Detail__c";
+    
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:workDetailColumnName operatorType:SQLOperatorEqual andFieldValue:psLineId];
+    DBCriteria *criteria2 = [[DBCriteria alloc] initWithFieldName:ORG_NAME_SPACE@"__Inactive_Date__c" operatorType:SQLOperatorIsNull andFieldValue:nil];
+    
+    
+    NSArray *transArray =  [self getObjectsObjectName:entitlementHistorytableName withDBCriterias:@[criteria1,criteria2] withExpression:nil andFields:nil];
+    
+    if ([transArray count] > 0  ) {
+        TransactionObjectModel *model = [transArray objectAtIndex:0];
+        NSDictionary *valueDictionary =  [model getFieldValueDictionary];
+        return  valueDictionary;
+    }
+    
+    return nil;
+}
+
+
+-(NSDictionary *)getPSLineSconRecordForId:(NSString *)sconId {
+    
+    NSString *sconTableName = ORG_NAME_SPACE@"__Service_Contract__c";
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sconId];
+    
+    NSArray *fields = @[ORG_NAME_SPACE@"__Default_Travel_Price__c", ORG_NAME_SPACE@"__Default_Travel_Unit__c", ORG_NAME_SPACE@"__Service_Pricebook__c", ORG_NAME_SPACE@"__Default_Parts_Price_Book__c", ORG_NAME_SPACE@"__Labor_Rounding_Type__c", ORG_NAME_SPACE@"__Travel_Rounding_Type__c", @"Id"];
+    
+    NSArray *transArray =  [self getObjectsObjectName:sconTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    
+    if ([transArray count] > 0  ) {
+        TransactionObjectModel *model = [transArray objectAtIndex:0];
+        NSDictionary *valueDictionary =  [model getFieldValueDictionary];
+        
+        NSDictionary *attributeDict = [NSDictionary dictionaryWithObjects:@[sconTableName, @""] forKeys:@[@"type", @"url"]];
+        NSMutableDictionary *finalDict = [NSMutableDictionary dictionaryWithDictionary:valueDictionary];
+        [finalDict setObject:attributeDict forKey:@"attributes"];
+        return  finalDict;
+    }
+    
+    return nil;
+}
+
+-(NSArray *)getPSLinePartsPricingForId:(NSString *)sconId {
+    NSString *partsPricingTableName = ORG_NAME_SPACE@"__Parts_Pricing__c";
+    NSString *sconColumnName = ORG_NAME_SPACE@"__Service_Contract__c";
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:sconColumnName operatorType:SQLOperatorEqual andFieldValue:sconId];
+    
+    NSArray *fields = @[ORG_NAME_SPACE@"__Product__c", ORG_NAME_SPACE@"__Service_Contract__c", ORG_NAME_SPACE@"__Price_Per_Unit__c", @"Id"];
+    NSArray *transArray =  [self getObjectsObjectName:partsPricingTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    return transArray;
+}
+
+-(NSArray *)getPSLinePartsDiscountForId:(NSString *)sconId {
+    NSString *partsDiscountTableName = ORG_NAME_SPACE@"__Parts_Discount__c";
+    NSString *sconColumnName = ORG_NAME_SPACE@"__Service_Contract__c";
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:sconColumnName operatorType:SQLOperatorEqual andFieldValue:sconId];
+    
+    NSArray *fields = @[ORG_NAME_SPACE@"__Discount_Percentage__c", ORG_NAME_SPACE@"__Product__c", ORG_NAME_SPACE@"__Service_Contract__c", @"Id"];
+    NSArray *transArray =  [self getObjectsObjectName:partsDiscountTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    return transArray;
+}
+
+-(NSArray *)getPSLineLaborPricingForId:(NSString *)sconId {
+    NSString *laborPricingTableName = ORG_NAME_SPACE@"__Labor_Pricing__c";
+    NSString *sconColumnName = ORG_NAME_SPACE@"__Service_Contract__c";
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:sconColumnName operatorType:SQLOperatorEqual andFieldValue:sconId];
+    
+    NSArray *fields = @[ORG_NAME_SPACE@"__Activity_Type__c", ORG_NAME_SPACE@"__Service_Contract__c", ORG_NAME_SPACE@"__Unit__c", ORG_NAME_SPACE@"__Regular_Rate__c", ORG_NAME_SPACE@"__Activity__c", ORG_NAME_SPACE@"__Minimum_Labor__c", @"Id"];
+    NSArray *transArray =  [self getObjectsObjectName:laborPricingTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    return transArray;
+}
+
+-(NSArray *)getPSLineExpensePricingForId:(NSString *)sconId {
+    NSString *expensePricingTableName = ORG_NAME_SPACE@"__Expense_Pricing__c";
+    NSString *sconColumnName = ORG_NAME_SPACE@"__Service_Contract__c";
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:sconColumnName operatorType:SQLOperatorEqual andFieldValue:sconId];
+    
+    NSArray *fields = @[ORG_NAME_SPACE@"__Rate__c", ORG_NAME_SPACE@"__Rate_Type__c", ORG_NAME_SPACE@"__Service_Contract__c", ORG_NAME_SPACE@"__Expense_Type__c", @"Id"];
+    NSArray *transArray =  [self getObjectsObjectName:expensePricingTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    return transArray;
+}
+
+
+
+-(NSArray *)getPSLinePartsPBForId:(NSString *)sconId {
+    
+    NSString *sconTableName = ORG_NAME_SPACE@"__Service_Contract__c";
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sconId];
+    NSArray *fields = @[ORG_NAME_SPACE@"__Default_Parts_Price_Book__c"];
+    NSArray *transArray =  [self getObjectsObjectName:sconTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    
+    if ([transArray count] > 0  ) {
+        TransactionObjectModel *model = [transArray objectAtIndex:0];
+        NSDictionary *valueDictionary =  [model getFieldValueDictionary];
+        NSString *partsPriceBookId = [valueDictionary objectForKey:ORG_NAME_SPACE@"__Default_Parts_Price_Book__c"];
+        
+        
+        NSString *priceBookTableName = @"Pricebook2";
+        NSString *idColumn = kId;
+        DBCriteria *pbCriteria = [[DBCriteria alloc] initWithFieldName:idColumn operatorType:SQLOperatorEqual andFieldValue:partsPriceBookId];
+        NSArray *pbfields = @[@"Id", @"Name"];
+        NSArray *pbResults =  [self getObjectsObjectName:priceBookTableName withDBCriterias:@[pbCriteria] withExpression:nil andFields:pbfields];
+        
+        if ([pbResults count] > 0) {
+            TransactionObjectModel *model = [pbResults objectAtIndex:0];
+            NSDictionary *pbDictionary =  [model getFieldValueDictionary];
+            
+            NSString *pbEntryTableName = @"PricebookEntry";
+            NSString *priceBook2Column = @"Pricebook2Id";
+            DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:priceBook2Column operatorType:SQLOperatorEqual andFieldValue:partsPriceBookId];
+            
+            NSArray *fields = @[@"Name", @"UnitPrice", @"UseStandardPrice", @"Product2Id", @"Pricebook2Id", @"Id"];
+            NSArray *transArray =  [self getObjectsObjectName:pbEntryTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+            
+            for (TransactionObjectModel *model in transArray) {
+                [model.getFieldValueMutableDictionary setObject:pbDictionary forKey:@"Pricebook2"];
+            }
+            return transArray;
+        }
+    }
+    return nil;
+}
+
+-(NSArray *)getRelatedDetailRecordsForPSline:(NSString *)psLineId {
+    NSString *tableName = ORG_NAME_SPACE@"__Service_Order_Line__c";
+    NSString *workDetailColumnName = ORG_NAME_SPACE@"__Work_Detail__c";
+    NSArray *fields = @[kId];
+    
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:workDetailColumnName operatorType:SQLOperatorEqual andFieldValue:psLineId];
+    NSArray *transArray =  [self getObjectsObjectName:tableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    
+    NSMutableArray *relatedRecords = [[NSMutableArray alloc] init];
+    
+    for (TransactionObjectModel *model in transArray) {
+        NSDictionary *recordDict = model.getFieldValueDictionary;
+        NSString *sfId = [recordDict objectForKey:kId];
+        [relatedRecords addObject:sfId];
+    }
+    
+    return relatedRecords;
+}
+
+
+-(NSDictionary *)getPSLineWarrantyRecordForId:(NSString *)warrantyId {
+    
+    NSString *warrantyTableName = ORG_NAME_SPACE@"__Warranty__c";
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:warrantyId];
+    
+    NSArray *fields = @[ORG_NAME_SPACE@"__Time_Covered__c", ORG_NAME_SPACE@"__Material_Covered__c", ORG_NAME_SPACE@"__Expenses_Covered__c", @"Id"];
+    
+    NSArray *transArray =  [self getObjectsObjectName:warrantyTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    
+    if ([transArray count] > 0  ) {
+        TransactionObjectModel *model = [transArray objectAtIndex:0];
+        NSDictionary *valueDictionary =  [model getFieldValueDictionary];
+        
+        NSDictionary *attributeDict = [NSDictionary dictionaryWithObjects:@[warrantyTableName, @""] forKeys:@[@"type", @"url"]];
+        NSMutableDictionary *finalDict = [NSMutableDictionary dictionaryWithDictionary:valueDictionary];
+        [finalDict setObject:attributeDict forKey:@"attributes"];
+        return  finalDict;
+    }
+    
+    return nil;
+}
+
+
 #pragma mark End
 @end

@@ -8,6 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+// PS Entitlements
+
+NSString * const kLineWarrantyEntitled;
+NSString * const kLineContractEntitled;
+NSString * const kLineContractDefinition;
+NSString * const kLinePartsPricing;
+NSString * const kLinePartsDiscount;
+NSString * const kLineLaborPricing;
+NSString * const kLineExpensePricing;
+NSString * const kLinePartPriceBook;
+NSString * const kLineLaborPriceBook;
+NSString * const kLineIBWarranty;
 
 /**
  This is a  data controller  Class which handles "Price book" data containing pricebooks, pricebook entries,contract, warranties,pricing rules, policies .

@@ -24,7 +24,10 @@
 
 static NSString *appendedZeroes = @".000+0000";
 
-@interface PriceBookTargetHandler()
+@interface PriceBookTargetHandler() {
+    
+    NSMutableArray *psLines;
+}
 
 @property(nonatomic,strong) NSMutableDictionary *fieldDictionaryObjects;
 @property(nonatomic,strong) id <TransactionObjectDAO> transactionObjectService;
@@ -50,6 +53,7 @@ static NSString *appendedZeroes = @".000+0000";
 - (void)createTargetDictionaryFromPage:(SFMPage *)page {
     [self createHeaderTargetFromPage:page];
     [self createDetailTargetRecordsFromPage:page];
+    [self getPSLinesRecords:page];
 }
 
 
@@ -515,4 +519,41 @@ static NSString *appendedZeroes = @".000+0000";
     }
     return maybeNumber;
 }
+
+
+#pragma mark - PS Lines Entitlement
+
+
+-(void)getPSLinesRecords:(SFMPage *)page {
+    SFMRecordFieldData *headerSfIDField = [page.headerRecord objectForKey:kId];
+    if (headerSfIDField) {
+        NSString *sfID = headerSfIDField.internalValue;
+        NSString *objectName = page.objectName;
+        PriceCalculationDBService *dbService = [[PriceCalculationDBService alloc] init];
+        NSArray *psLineRecords = [dbService getPSLineRecordsForHeaderRecord:sfID andObjectname:objectName];
+        for (NSDictionary *record in psLineRecords) {
+            [self checkIfRecordIsPSLineIsEntitled:record];
+        }
+        if (psLines) {
+            [self.targetDictionary setObject:psLines forKey:@"pslines"];
+        }
+    }
+}
+
+-(void)checkIfRecordIsPSLineIsEntitled:(NSDictionary *)recordDictionary {
+    NSString *sfId = [recordDictionary objectForKey:kId];
+    PriceCalculationDBService *dbService = [[PriceCalculationDBService alloc] init];
+    NSDictionary *entitlementDict = [dbService getEntitlementHistoryForPSLine:sfId];
+    if(entitlementDict != nil) {
+        NSMutableDictionary *psInfoDict = [NSMutableDictionary dictionary];
+        [psInfoDict setObject:sfId forKey:kId];
+        [psInfoDict setObject:entitlementDict forKey:@"PSEntitlement"];
+        if (psLines == nil) {
+            psLines = [NSMutableArray array];
+        }
+        [psLines addObject:psInfoDict];
+    }
+}
+
+
 @end

@@ -8,11 +8,11 @@ Version = 16.60.005
 
 Defect:
 
-028365
+16.60_IPAD-4195
 
 Feature:
 ==================
-n/a
+Work Order pricing using PS entitlements
 	
 ——————
 
