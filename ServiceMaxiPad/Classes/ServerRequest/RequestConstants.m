@@ -112,7 +112,7 @@ NSString *const kInitialSync = @"INITIAL_SYNC";
 NSString *const kSearchResult = @"SEARCH_RESULTS";
 NSString *const kOnDemandGetData = @"GET_DATA";
 NSString *const kOnDemandGetPriceInfo = @"GET_PRICE_INFO";
-
+NSString *const kPurging = @"PURGING";
 
 NSString *const kClientInfo = @"clientInfo";
 NSString *const kEventName = @"eventName";
@@ -136,6 +136,7 @@ NSString *const kTXFetch            = @"TX_FETCH";
 NSString *const kServiceLibrary     = @"SVMX_LIBRARY";
 NSString *const kSubmitDocument     = @"SUBMIT_DOCUMENT";
 NSString *const kGeneratePDF        = @"GENERATE_PDF";
+NSString *const kPurgeRecords       = @"PURGE_RECORDS";
 
 NSString *const kLastSync           = @"LAST_SYNC";
 
