@@ -2148,6 +2148,7 @@
 		C3EF97A91A036D7300476293 /* Attachment-Word@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C3EF979E1A036D7300476293 /* Attachment-Word@2x.png */; };
 		C8DB64F31B2ED88000886A02 /* EditMenuLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = C8DB64F21B2ED88000886A02 /* EditMenuLabel.m */; };
 		C8E0D03D1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C8E0D03C1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.m */; };
+		CDF4D1951E13E14D00323BFA /* PurgeRecordsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDF4D1941E13E14D00323BFA /* PurgeRecordsParser.m */; };
 		D713615F19ED1D51008BCACE /* TextFieldHelperDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D713615E19ED1D51008BCACE /* TextFieldHelperDelegate.m */; };
 		D74A3D0A1A0381E000357474 /* PriceBookDataHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D74A3D031A0381E000357474 /* PriceBookDataHandler.m */; };
 		D74A3D0B1A0381E000357474 /* PriceBookTargetHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D74A3D051A0381E000357474 /* PriceBookTargetHandler.m */; };
@@ -4097,6 +4098,8 @@
 		C8DB64F21B2ED88000886A02 /* EditMenuLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditMenuLabel.m; sourceTree = "<group>"; };
 		C8E0D03B1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoDynamicTypeTableViewCell.h; sourceTree = "<group>"; };
 		C8E0D03C1B4E8A7B008C4AB8 /* NoDynamicTypeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoDynamicTypeTableViewCell.m; sourceTree = "<group>"; };
+		CDF4D1931E13E14D00323BFA /* PurgeRecordsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PurgeRecordsParser.h; sourceTree = "<group>"; };
+		CDF4D1941E13E14D00323BFA /* PurgeRecordsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PurgeRecordsParser.m; sourceTree = "<group>"; };
 		D713615D19ED1D51008BCACE /* TextFieldHelperDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextFieldHelperDelegate.h; sourceTree = "<group>"; };
 		D713615E19ED1D51008BCACE /* TextFieldHelperDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextFieldHelperDelegate.m; sourceTree = "<group>"; };
 		D74A3D021A0381E000357474 /* PriceBookDataHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PriceBookDataHandler.h; sourceTree = "<group>"; };
@@ -5370,6 +5373,8 @@
 				18FB610E1B3982810011AF75 /* CustomWebServiceParser.m */,
 				840E2B7A1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.h */,
 				840E2B7B1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m */,
+				CDF4D1931E13E14D00323BFA /* PurgeRecordsParser.h */,
+				CDF4D1941E13E14D00323BFA /* PurgeRecordsParser.m */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -8994,6 +8999,7 @@
 				183A9E4B19E69DB000919345 /* SFProcessComponentModel.m in Sources */,
 				18897C8A1A00B004007F326B /* DataTypeUtility.m in Sources */,
 				18800CEA1A08D14400930FF9 /* ResetAppDetailViewController.m in Sources */,
+				CDF4D1951E13E14D00323BFA /* PurgeRecordsParser.m in Sources */,
 				184A8E6319E7A0BE006DA6BE /* SMXDayHeaderCollectionView.m in Sources */,
 				C3E31B9B1A0AB50500B6F338 /* DocumentsErrorTableViewCell.m in Sources */,
 				184ED1431B28724B004C4D85 /* PageEventProcessManager.m in Sources */,
