@@ -26,6 +26,7 @@
 #import "RequestFactory.h"
 #import "RequestConstants.h"
 #import "ProductIQManager.h"
+#import "SuccessiveSyncManager.h"
 
 @interface ServerRequestManager()
 
@@ -707,6 +708,9 @@
             nextRequestType = RequestOneCallDataSync;
             break;
         case RequestOneCallDataSync:
+            nextRequestType = RequestTypePurgeRecords;
+            break;
+        case RequestTypePurgeRecords:
             nextRequestType = RequestTypeUserTrunk;
             break;
         case RequestTypeUserTrunk:

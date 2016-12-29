@@ -19,6 +19,8 @@
 #import "CustomerOrgInfo.h"
 #import "FactoryDAO.h"
 #import "SuccessiveSyncManager.h"
+#import "EventTransactionObjectModel.h"
+#import "CalenderDAO.h"
 
 @interface OneCallDataSyncHelper()
 @property(nonatomic,strong)CommonServices *commonServices;
@@ -311,10 +313,136 @@
                 continue;
             }
             
+            NSArray *whatIds = [self getAllWhatIdsOfEventsToBePurged:idsArray fromObject:objectName];
+            [self getChildLinesAndFormAllWhatIdsToDelete:whatIds];
+
             [self deleteAllExceptRecordIds:idsArray fromObject:objectName];
         }
     }
     return YES;
+}
+
+- (NSArray *)getAllWhatIdsOfEventsToBePurged:(NSArray *)idsArray fromObject:(NSString *)objectName {
+    
+    //since we have to purge all events except the ones in idsArray, we apply the same logic for getting the whatIds to be purged as well
+    NSMutableArray *allwhatIds = [[NSMutableArray alloc] init];
+    NSString *fieldName = @"";
+    if ([objectName isEqualToString:kSVMXTableName]) {
+        //using objectSfId for the 18 digit what id
+        fieldName = @"objectSfId"; //[NSString stringWithFormat:@"%@__WhatId__c", ORG_NAME_SPACE];
+    }
+    else {
+        fieldName = @"WhatId";
+    }
+    
+    DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorNotIn andFieldValues:idsArray];
+    DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:@[fieldName] whereCriteria:aCriteria1];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectRequest query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                if ([dict valueForKey:fieldName]) {
+                    [allwhatIds addObject:[dict valueForKey:fieldName]];
+                }
+            }
+            [resultSet close];
+        }];
+    }
+    
+    return allwhatIds;
+}
+
+-(void)getChildLinesAndFormAllWhatIdsToDelete:(NSArray *)whatIds {
+    
+    NSMutableArray *childWhatIds = [[NSMutableArray alloc] init];
+    NSMutableArray *parentWhatIds = [[NSMutableArray alloc] initWithArray:whatIds];
+    
+    if ([[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] == nil) {
+        [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:[[NSMutableDictionary alloc] init]];
+    }
+    
+    for (NSString *whatId in whatIds) {
+        
+        id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
+        NSString *objectName =  [serviceRequest getObjectName:whatId];
+        
+        NSArray *valuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName]];
+        
+        //filter out duplicate what ids
+        NSArray *finalArray = [NSArray arrayWithArray:[valuesArray arrayByAddingObjectsFromArray:parentWhatIds]];
+        NSArray *filteredArray = [[NSSet setWithArray:finalArray] allObjects];
+        
+        [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:filteredArray forKey:objectName];
+    }
+    
+    for (NSString *whatId in whatIds) {
+        
+        id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
+        NSString *objectName =  [serviceRequest getObjectName:whatId];
+        
+        if ([objectName isEqualToString:kWorkOrderTableName]) {
+            
+            DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:[NSString stringWithFormat:@"%@__Service_Order__c", ORG_NAME_SPACE] operatorType:SQLOperatorEqual andFieldValue:whatId];
+            DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:[NSString stringWithFormat:@"%@__Service_Order_Line__c", ORG_NAME_SPACE] andFieldNames:@[@"Id"] whereCriteria:aCriteria1];
+            
+            @autoreleasepool {
+                DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+                
+                [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+                    NSString * query = [selectRequest query];
+                    
+                    SQLResultSet * resultSet = [db executeQuery:query];
+                    
+                    while ([resultSet next]) {
+                        NSDictionary * dict = [resultSet resultDictionary];
+                        if ([dict valueForKey:@"Id"]) {
+                            [childWhatIds addObject:[dict valueForKey:@"Id"]];
+                        }
+                    }
+                    [resultSet close];
+                }];
+                
+                NSString *serviceOrderLineTableName = [NSString stringWithFormat:@"%@__Service_Order_Line__c", ORG_NAME_SPACE];
+                NSArray *childValuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:serviceOrderLineTableName]];
+                NSArray *finalChildWhatIds = [NSArray arrayWithArray:childWhatIds];
+                
+                //add to whatidstodelete
+                if (childValuesArray.count > 0) {
+                    
+                    [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:[childValuesArray arrayByAddingObjectsFromArray:finalChildWhatIds] forKey:serviceOrderLineTableName];
+                }
+                else {
+                    [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:finalChildWhatIds forKey:serviceOrderLineTableName];
+                }
+                [childWhatIds removeAllObjects];
+            }
+        }
+    }
+}
+
+- (NSString *)getWhatIdsForEvent: (NSString *)sfId isSVMXEvent:(BOOL)isSVMXEvent
+{
+    DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:kSVMXID operatorType:SQLOperatorEqual andFieldValue:sfId];
+    
+    id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    
+    NSArray * eventArray = [transObjectService fetchEventDataForObject:isSVMXEvent?kSVMXTableName:kEventObject fields:@[kSVMXWhatId] expression:@"1 and 2" criteria:@[criteria1]];
+    
+    for (EventTransactionObjectModel *model in eventArray) {
+        
+        NSString *whatId = [model getWhatId];
+        
+        return whatId;
+    }
+    
+    return @"";
 }
 
 - (NSArray *)getIdsFromSyncHeapTableForObjectName:(NSString *)objectName andEventType:(NSString *)eventType {
@@ -357,9 +485,13 @@
 }
 - (BOOL)deleteAllEventsOfTheLoggedInUserFromObject:(NSString*)objectName {
     NSString *ownerId = [ self getUserIdForLoggedInUser];
+    NSString *technicianId = [ self getTechnicianIdForLoggedInUser];
     if (ownerId != nil) {
         
-        DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:kEventOwnerId   operatorType:SQLOperatorEqual andFieldValue:ownerId];
+        NSArray *whatIds = [self getWhatIdsForAllEvent:objectName];
+        [self getChildLinesAndFormAllWhatIdsToDelete:whatIds];
+        
+        DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:[objectName isEqualToString:kEventObject]?kEventOwnerId:kSVMXTechnicianId   operatorType:SQLOperatorEqual andFieldValue:[objectName isEqualToString:kEventObject]?ownerId:technicianId];
         DBCriteria *aCriteria2 = [[DBCriteria alloc] initWithFieldName:kId         operatorType:SQLOperatorIsNotNull andFieldValue:nil];
         
         DBRequestDelete *deleteRequest = [[DBRequestDelete alloc] initWithTableName:objectName whereCriteria:@[aCriteria1,aCriteria2] andAdvanceExpression:nil];
@@ -368,9 +500,56 @@
     return NO;
 }
 
+- (NSArray *)getWhatIdsForAllEvent:(NSString *)objectName
+{
+    NSMutableArray *allwhatIds = [[NSMutableArray alloc] init];
+    
+    NSString *ownerId = [ self getUserIdForLoggedInUser];
+    NSString *technicianId = [ self getTechnicianIdForLoggedInUser];
+    
+    if (ownerId != nil) {
+        
+        DBCriteria *criteria1 = [[DBCriteria alloc] initWithFieldName:[objectName isEqualToString:kEventObject]?kEventOwnerId:kSVMXTechnicianId operatorType:SQLOperatorEqual andFieldValue:[objectName isEqualToString:kEventObject]?ownerId:technicianId];
+        DBCriteria *aCriteria2 = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorIsNotNull andFieldValue:nil];
+        
+        NSString *fieldName = @"WhatId";
+        if ([objectName isEqualToString:kSVMXTableName]) {
+            fieldName = [NSString stringWithFormat:@"%@__WhatId__c", ORG_NAME_SPACE];
+        }
+        
+        DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:@[fieldName] whereCriterias:@[criteria1, aCriteria2] andAdvanceExpression:@"(1 AND 2)"];
+        
+        @autoreleasepool {
+            DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+            
+            [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+                NSString * query = [selectRequest query];
+                
+                SQLResultSet * resultSet = [db executeQuery:query];
+                
+                while ([resultSet next]) {
+                    NSDictionary * dict = [resultSet resultDictionary];
+                    if ([dict valueForKey:fieldName]) {
+                        [allwhatIds addObject:[dict valueForKey:fieldName]];
+                    }
+                }
+                [resultSet close];
+            }];
+        }
+    }
+    
+    
+    return allwhatIds;
+}
+
 - (NSString *)getUserIdForLoggedInUser {
       NSString *ownerId = [[CustomerOrgInfo sharedInstance] userId];
     return ownerId;
+}
+
+- (NSString *)getTechnicianIdForLoggedInUser {
+    NSString *techId = [PlistManager getTechnicianId];
+    return techId;
 }
 
 - (void)deleteRecordWithIds:(NSArray *)recordIds

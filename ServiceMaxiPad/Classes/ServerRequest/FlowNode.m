@@ -34,6 +34,7 @@
 #import "CacheManager.h"
 #import "PushNotificationManager.h"
 #import "PushNotificationUtility.h"
+#import "SuccessiveSyncManager.h"
 
 #define MAX_RETRY_COUNT 3
 NSString *cocoaErrorString = @"3840";
@@ -211,6 +212,19 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
                           firstCall:(BOOL)isFirstCall
 {
     RequestType  nextRequestType = [self nextRequestTypeWithPreviousRequest:previousRequest];
+    
+    if (previousRequest.requestType == RequestOneCallDataSync) {
+        if ([[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete].count > 0) {
+            nextRequestType = RequestTypePurgeRecords;
+        }
+        else {
+            nextRequestType = RequestTypeUserTrunk;
+        }
+    }
+    
+    if (nextRequestType == RequestTypeUserTrunk) {
+        [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:nil];
+    }
     
     if(nextRequestType == RequestTypeNone)
     {
