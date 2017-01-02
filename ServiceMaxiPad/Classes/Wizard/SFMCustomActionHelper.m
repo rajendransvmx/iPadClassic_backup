@@ -12,6 +12,7 @@
 #import "StringUtil.h"
 #import "SFCustomActionURLService.h"
 #import "RequestConstants.h"
+#import "TransactionObjectService.h"
 
 @implementation SFMCustomActionHelper
 
@@ -71,7 +72,8 @@
             }
             else
             {
-                value=@"";
+                // 036705
+                value  = [self getFieldValueForField:customModel.ParameterValue forRecord:self.sfmPageModel.recordId andObject:self.sfmPageModel.objectName];
             }
             param = [param stringByAppendingFormat:@"&%@=%@",customModel.ParameterName,value];
             
@@ -93,5 +95,23 @@
     return paramList;
 }
 
+// 036705
+-(NSString *)getFieldValueForField:(NSString *)fieldName forRecord:(NSString *)recordId andObject:(NSString *)objectName
+{
+    NSString *fieldValue;
+    if (![StringUtil isStringEmpty:fieldName]) {
+        TransactionObjectService *service = [[TransactionObjectService alloc] init];
+        TransactionObjectModel *model = [service getDataForObject:objectName fields:@[fieldName] recordId:recordId];
+        if (model) {
+            NSDictionary *fieldValues = model.getFieldValueDictionary;
+            fieldValue = [fieldValues objectForKey:fieldName];
+        }
+    }
+    
+    if (fieldValue == nil) {
+        fieldValue = @"";
+    }
+    return fieldValue;
+}
 
 @end
