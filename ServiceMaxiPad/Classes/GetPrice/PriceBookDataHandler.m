@@ -879,6 +879,9 @@ NSString * const kLineIBWarranty = @"IBWARRANTY";
     /* LINEPARTPRICEBOOK */
     NSMutableDictionary *partsPBDict = [[NSMutableDictionary alloc] init];
     
+    /* LINELABORPRICEBOOK */
+    NSMutableDictionary *laborPBDict = [[NSMutableDictionary alloc] init];
+    
     /* IBWARRANTY */
     NSMutableDictionary *linesIBWarrantyDict = [[NSMutableDictionary alloc] init];
     
@@ -892,6 +895,7 @@ NSString * const kLineIBWarranty = @"IBWARRANTY";
         [self fillUpLinesLaborPricing:laborPricingDict from:psLineData];
         [self fillUpLinesExpensePricing:expensePricingDict from:psLineData];
         [self fillUpLinesPartsPriceBook:partsPBDict from:psLineData];
+        [self fillUpLinesLaborPriceBook:laborPBDict from:psLineData];
         [self fillUpLinesIBWarranty:linesIBWarrantyDict from:psLineData];
     }
     
@@ -903,6 +907,7 @@ NSString * const kLineIBWarranty = @"IBWARRANTY";
     [psLinesPriceInfoDict setObject:[laborPricingDict allValues] forKey:kLineLaborPricing];
     [psLinesPriceInfoDict setObject:[expensePricingDict allValues] forKey:kLineExpensePricing];
     [psLinesPriceInfoDict setObject:[partsPBDict allValues] forKey:kLinePartPriceBook];
+    [psLinesPriceInfoDict setObject:[laborPBDict allValues] forKey:kLineLaborPriceBook];
     [psLinesPriceInfoDict setObject:[linesIBWarrantyDict allValues] forKey:kLineIBWarranty];
 }
 
@@ -1131,6 +1136,42 @@ NSString * const kLineIBWarranty = @"IBWARRANTY";
         }
     }
 }
+
+
+// IPAD-4493
+-(void)fillUpLinesLaborPriceBook:(NSMutableDictionary *)laborPBDict from:(NSDictionary *)psLineData {
+    PriceCalculationDBService *dbService = [[PriceCalculationDBService alloc] init];
+    NSString *psLineId = [psLineData objectForKey:kId];
+    NSDictionary *entitlement = [psLineData objectForKey:@"PSEntitlement"];
+    NSString *sconId = [entitlement objectForKey:kEntitlementHistoryContract];
+    NSArray *relatedDetailRecords = [dbService getRelatedDetailRecordsForPSline:psLineId];
+    
+    if (![StringUtil isStringEmpty:sconId]) {
+        NSArray *laborPBArray = [dbService getPSLineLaborPBForId:sconId];
+        for (TransactionObjectModel *laborPBModel in laborPBArray) {
+            
+            NSMutableDictionary *laborPB = laborPBModel.getFieldValueMutableDictionary;
+            
+            NSString *recordId = [laborPB objectForKey:kId];
+            NSMutableDictionary *laborPBTemp = [laborPBDict objectForKey:recordId];
+            
+            if (laborPBTemp == nil) {
+                laborPBTemp = [[NSMutableDictionary alloc] init];
+            }
+            [laborPBTemp setObject:laborPB forKey:@"record"];
+            
+            NSMutableArray *mappedPSlines = [laborPBTemp objectForKey:@"values"];
+            if (mappedPSlines == nil) {
+                mappedPSlines = [[NSMutableArray alloc] init];
+            }
+            [mappedPSlines addObjectsFromArray:relatedDetailRecords];
+            [laborPBTemp setObject:mappedPSlines forKey:@"values"];
+            
+            [laborPBDict setObject:laborPBTemp forKey:recordId];
+        }
+    }
+}
+
 
 -(void)fillUpLinesIBWarranty:(NSMutableDictionary *)linesIBWarrantyDict from:(NSDictionary *)psLineData {
     PriceCalculationDBService *dbService = [[PriceCalculationDBService alloc] init];

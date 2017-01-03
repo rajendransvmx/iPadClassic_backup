@@ -107,6 +107,7 @@
 -(NSArray *)getPSLineLaborPricingForId:(NSString *)sconId;
 -(NSArray *)getPSLineExpensePricingForId:(NSString *)sconId;
 -(NSArray *)getPSLinePartsPBForId:(NSString *)sconId;
+-(NSArray *)getPSLineLaborPBForId:(NSString *)sconId;
 -(NSArray *)getRelatedDetailRecordsForPSline:(NSString *)psLineId;
 -(NSDictionary *)getPSLineWarrantyRecordForId:(NSString *)warrantyId;
 
