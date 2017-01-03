@@ -118,7 +118,6 @@
 - (void)startLocationPing {
     
     [self stopLocationPing];
-    [self configureLocationPingTimer];
     /**
      * Check whether location ping feature is enabled on server side.
      */
@@ -128,6 +127,8 @@
          * Lets start the location service using the shared instance. For time being we'll use delegate instead
          * of notification, as notification is heavy.
          */
+        
+        [self configureLocationPingTimer]; // IPAD-4492
         [LocationManager sharedInstance].delegate = [LocationPingManager sharedInstance];
         [[LocationManager sharedInstance] startLocationUpdates:kLocationManagerModeStandard
                                                 distanceFilter:kCLDistanceFilterNone
