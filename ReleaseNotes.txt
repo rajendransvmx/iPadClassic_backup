@@ -3,16 +3,14 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.60.006
+Version = 16.60.007
 ===========================================
 
 Defect:
 
-16.60_IPAD-4359
 
 Feature:
 ==================
-Data Sync Changes for WO assign to Other Technician
 	
 ——————
 
