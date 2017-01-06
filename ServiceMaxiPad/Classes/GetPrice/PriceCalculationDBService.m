@@ -989,6 +989,49 @@
     return nil;
 }
 
+
+// IPAD-4493
+-(NSArray *)getPSLineLaborPBForId:(NSString *)sconId {
+    
+    NSString *sconTableName = ORG_NAME_SPACE@"__Service_Contract__c";
+    DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kId operatorType:SQLOperatorEqual andFieldValue:sconId];
+    NSArray *fields = @[ORG_NAME_SPACE@"__Service_Pricebook__c"];
+    NSArray *transArray =  [self getObjectsObjectName:sconTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+    
+    if ([transArray count] > 0  ) {
+        TransactionObjectModel *model = [transArray objectAtIndex:0];
+        NSDictionary *valueDictionary =  [model getFieldValueDictionary];
+        NSString *laborPriceBookId = [valueDictionary objectForKey:ORG_NAME_SPACE@"__Service_Pricebook__c"];
+        
+        
+        NSString *servicePriceBookTableName = ORG_NAME_SPACE@"__Service_Pricebook__c";
+        NSString *idColumn = kId;
+        DBCriteria *pbCriteria = [[DBCriteria alloc] initWithFieldName:idColumn operatorType:SQLOperatorEqual andFieldValue:laborPriceBookId];
+        NSArray *pbfields = @[@"Id", @"Name"];
+        NSArray *pbResults =  [self getObjectsObjectName:servicePriceBookTableName withDBCriterias:@[pbCriteria] withExpression:nil andFields:pbfields];
+        
+        if ([pbResults count] > 0) {
+            TransactionObjectModel *model = [pbResults objectAtIndex:0];
+            NSDictionary *pbDictionary =  [model getFieldValueDictionary];
+            
+            NSString *pbEntryTableName = ORG_NAME_SPACE@"__Service_Pricebook_Entry__c";
+            NSString *priceBookColumn = ORG_NAME_SPACE@"__Price_Book__c";
+            DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:priceBookColumn operatorType:SQLOperatorEqual andFieldValue:laborPriceBookId];
+            
+            NSArray *fields = @[@"Name", ORG_NAME_SPACE@"__Unit__c", ORG_NAME_SPACE@"__Product__c", ORG_NAME_SPACE@"__Activity_Product__c",priceBookColumn, @"Id", ORG_NAME_SPACE@"__Activity_Type__c", ORG_NAME_SPACE@"__Activity__c", ORG_NAME_SPACE@"__Entry_Type__c",  ORG_NAME_SPACE@"__Product_Family__c", ORG_NAME_SPACE@"__Product_Line__c", ORG_NAME_SPACE@"__Regular_Rate__c"];
+            NSArray *transArray =  [self getObjectsObjectName:pbEntryTableName withDBCriterias:@[criteria] withExpression:nil andFields:fields];
+            
+            for (TransactionObjectModel *model in transArray) {
+                [model.getFieldValueMutableDictionary setObject:pbDictionary forKey:servicePriceBookTableName];
+            }
+            return transArray;
+        }
+    }
+    return nil;
+}
+
+
+
 -(NSArray *)getRelatedDetailRecordsForPSline:(NSString *)psLineId {
     NSString *tableName = ORG_NAME_SPACE@"__Service_Order_Line__c";
     NSString *workDetailColumnName = ORG_NAME_SPACE@"__Work_Detail__c";
