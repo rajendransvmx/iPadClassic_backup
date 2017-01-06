@@ -213,16 +213,16 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
 {
     RequestType  nextRequestType = [self nextRequestTypeWithPreviousRequest:previousRequest];
     
-    if (previousRequest.requestType == RequestOneCallDataSync) {
+    if (previousRequest.requestType == RequestTXFetch) {
         if ([[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete].count > 0) {
             nextRequestType = RequestTypePurgeRecords;
         }
         else {
-            nextRequestType = RequestTypeUserTrunk;
+            nextRequestType = RequestCleanUp;
         }
     }
     
-    if (nextRequestType == RequestTypeUserTrunk) {
+    if (nextRequestType == RequestCleanUp) {
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:nil];
     }
     
