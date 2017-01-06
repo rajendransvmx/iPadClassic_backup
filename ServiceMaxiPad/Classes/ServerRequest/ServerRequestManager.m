@@ -715,11 +715,7 @@
             nextRequestType = RequestOneCallDataSync;
             break;
         case RequestOneCallDataSync:
-            nextRequestType = RequestTypePurgeRecords;
-            break;
-        case RequestTypePurgeRecords:
             nextRequestType = RequestTypeUserTrunk;
-            break;
         case RequestTypeUserTrunk:
             nextRequestType = RequestAdvancedDownLoadCriteria;//RequestGetPriceDataTypeZero;
             break;
@@ -747,7 +743,10 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestSyncTimeLogs;
+            nextRequestType = RequestTypePurgeRecords;
+            break;
+        case RequestTypePurgeRecords:
+            nextRequestType = RequestCleanUp;
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
