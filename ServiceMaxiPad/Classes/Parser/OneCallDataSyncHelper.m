@@ -195,6 +195,13 @@
         if ([idsArray count] <= 0) {
             continue;
         }
+        
+        if ([objectName isEqualToString:kEventObject] || [objectName isEqualToString:kServicemaxEventObject]) {
+            
+            NSArray *whatIds = [self getAllWhatIdsOfEventsToBePurged:idsArray fromObject:objectName];
+            [self getChildLinesAndFormAllWhatIdsToDelete:whatIds];
+        }
+
         /*Prepare ids query*/
         [self deleteRecordIds:idsArray fromObject:objectName];;
     }
@@ -314,7 +321,7 @@
                 continue;
             }
             
-            NSArray *whatIds = [self getAllWhatIdsOfEventsToBePurged:idsArray fromObject:objectName];
+            NSArray *whatIds = [self getAllWhatIdsOfEventsToBePurgedExcept:idsArray fromObject:objectName];
             [self getChildLinesAndFormAllWhatIdsToDelete:whatIds];
             
             [self deleteAllExceptRecordIds:idsArray fromObject:objectName];
@@ -324,6 +331,43 @@
 }
 
 - (NSArray *)getAllWhatIdsOfEventsToBePurged:(NSArray *)idsArray fromObject:(NSString *)objectName {
+    
+    //since we have to purge all events except the ones in idsArray, we apply the same logic for getting the whatIds to be purged as well
+    NSMutableArray *allwhatIds = [[NSMutableArray alloc] init];
+    NSString *fieldName = @"";
+    if ([objectName isEqualToString:kSVMXTableName]) {
+        //using objectSfId for the 18 digit what id
+        fieldName = @"objectSfId"; //[NSString stringWithFormat:@"%@__WhatId__c", ORG_NAME_SPACE];
+    }
+    else {
+        fieldName = @"WhatId";
+    }
+    
+    DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorIn andFieldValues:idsArray];
+    DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:@[fieldName] whereCriteria:aCriteria1];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectRequest query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                if ([dict valueForKey:fieldName]) {
+                    [allwhatIds addObject:[dict valueForKey:fieldName]];
+                }
+            }
+            [resultSet close];
+        }];
+    }
+    
+    return allwhatIds;
+}
+
+- (NSArray *)getAllWhatIdsOfEventsToBePurgedExcept:(NSArray *)idsArray fromObject:(NSString *)objectName {
     
     //since we have to purge all events except the ones in idsArray, we apply the same logic for getting the whatIds to be purged as well
     NSMutableArray *allwhatIds = [[NSMutableArray alloc] init];
