@@ -1540,6 +1540,7 @@
             detailParam.parentLocalId = sfpage.sourceRecordId;
             detailParam.parentSfID = headerSfId;
             detailParam.sourceToTargetType = sfpage.process.processInfo.processType;
+            detailParam.sortingData = soureceComponent.sortingOrder?soureceComponent.sortingOrder:component.sortingOrder;
 
             if (![StringUtil isStringEmpty:component.expressionId]) {
                 SFExpressionParser *expressionParser = [[SFExpressionParser alloc] initWithExpressionId:component.expressionId objectName:detailParam.objectName];
