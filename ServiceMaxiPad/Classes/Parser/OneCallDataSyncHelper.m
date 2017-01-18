@@ -21,6 +21,8 @@
 #import "SuccessiveSyncManager.h"
 #import "EventTransactionObjectModel.h"
 #import "CalenderDAO.h"
+#import "CalenderEventObjectService.h"
+#import "CalenderEventObjectModel.h"
 
 @interface OneCallDataSyncHelper()
 @property(nonatomic,strong)CommonServices *commonServices;
@@ -330,6 +332,39 @@
     return YES;
 }
 
+- (BOOL)checkIfWhatIdIsAssociatedWithAnyOtherEvent:(NSString *)whatId fieldName:(NSString *)fieldName objectName:(NSString *)objectName idsArray:(NSArray *)idsArray {
+    
+    BOOL isAssociated = NO;
+    
+    NSMutableArray *allWhatIds = [[NSMutableArray alloc] init];
+    
+    DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:SQLOperatorNotIn andFieldValues:idsArray];
+    DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:@[fieldName] whereCriteria:aCriteria1];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectRequest query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                if ([dict valueForKey:fieldName]) {
+                    [allWhatIds addObject:[dict valueForKey:fieldName]];
+                }
+            }
+        }];
+    }
+    
+    if ([allWhatIds containsObject:whatId]) {
+        isAssociated = YES;
+    }
+    
+    return isAssociated;
+}
+
 - (NSArray *)getAllWhatIdsOfEventsToBePurged:(NSArray *)idsArray fromObject:(NSString *)objectName {
     
     //since we have to purge all events except the ones in idsArray, we apply the same logic for getting the whatIds to be purged as well
@@ -362,6 +397,13 @@
             }
             [resultSet close];
         }];
+    }
+    
+    NSMutableArray *originalAllWhatIds = [NSMutableArray arrayWithArray:allwhatIds];
+    for (NSString *whatId in originalAllWhatIds) {
+        if ([self checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:fieldName objectName:objectName idsArray:idsArray]) {
+            [allwhatIds removeObject:whatId];
+        }
     }
     
     return allwhatIds;
@@ -401,6 +443,13 @@
         }];
     }
 
+    NSMutableArray *originalAllWhatIds = [NSMutableArray arrayWithArray:allwhatIds];
+    for (NSString *whatId in originalAllWhatIds) {
+        if ([self checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:fieldName objectName:objectName idsArray:idsArray]) {
+            [allwhatIds removeObject:whatId];
+        }
+    }
+
     return allwhatIds;
 }
 
@@ -412,10 +461,11 @@
     if ([[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] == nil) {
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:[[NSMutableDictionary alloc] init]];
     }
-    
+
+    id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
+
     for (NSString *whatId in whatIds) {
         
-        id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
         NSString *objectName =  [serviceRequest getObjectName:whatId];
         
         NSArray *valuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName]];
@@ -429,7 +479,6 @@
     
     for (NSString *whatId in whatIds) {
         
-        id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
         NSString *objectName =  [serviceRequest getObjectName:whatId];
         
         if ([objectName isEqualToString:kWorkOrderTableName]) {
@@ -579,9 +628,15 @@
                 [resultSet close];
             }];
         }
+        
+        NSMutableArray *originalAllWhatIds = [NSMutableArray arrayWithArray:allwhatIds];
+        for (NSString *whatId in originalAllWhatIds) {
+            if ([self checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:fieldName objectName:objectName idsArray:@[]]) {
+                [allwhatIds removeObject:whatId];
+            }
+        }
     }
 
-    
     return allwhatIds;
 }
 
