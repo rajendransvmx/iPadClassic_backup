@@ -147,7 +147,10 @@
         
         for (NSString *whatId in valusArray) {
             
-            if ([helper checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId]) {
+            BOOL isWhatIdAssociatedWithEvent = [helper checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:@"WhatId" objectName:kEventObject idsArray:nil sqlOperator:SQLOperatorNone];
+            BOOL isWhatIdAssociatedWithSVMXEvent = [helper checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:@"objectSfId" objectName:kSVMXTableName idsArray:nil sqlOperator:SQLOperatorNone];
+            
+            if (isWhatIdAssociatedWithEvent || isWhatIdAssociatedWithSVMXEvent) {
                 
                 [originalValuesArray removeObject:whatId];
                 

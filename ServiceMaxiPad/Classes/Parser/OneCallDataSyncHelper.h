@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DBRequestConstant.h"
 
 @interface OneCallDataSyncHelper : NSObject
 
@@ -34,7 +35,7 @@
 - (void)deleteConflictRecordsFromSuccessiveSyncEntry:(NSDictionary *)deletedIdsDict
                                 withModificationType:(NSString *)modificationType;
 
-- (BOOL)checkIfWhatIdIsAssociatedWithAnyOtherEvent:(NSString *)whatId;
+- (BOOL)checkIfWhatIdIsAssociatedWithAnyOtherEvent:(NSString *)whatId fieldName:(NSString *)fieldName objectName:(NSString *)objectName idsArray:(NSArray *)idsArray sqlOperator:(SQLOperator)sqlOperator;
 - (NSArray *)getChildLineIdsForWO:(NSString *)woSfId;
 
 @end

@@ -337,8 +337,11 @@
     BOOL isAssociated = NO;
     
     NSMutableArray *allWhatIds = [[NSMutableArray alloc] init];
-    
-    DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:sqlOperator andFieldValues:idsArray];
+
+    DBCriteria *aCriteria1 = nil;
+    if (sqlOperator == SQLOperatorNotIn || sqlOperator == SQLOperatorIn) {
+        aCriteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:sqlOperator andFieldValues:idsArray];
+    }
     DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:@[fieldName] whereCriteria:aCriteria1];
     
     @autoreleasepool {
@@ -362,56 +365,6 @@
         isAssociated = YES;
     }
     
-    return isAssociated;
-}
-
-- (BOOL)checkIfWhatIdIsAssociatedWithAnyOtherEvent:(NSString *)whatId {
-    
-    BOOL isAssociated = NO;
-    
-    NSMutableArray *allWhatIds = [[NSMutableArray alloc] init];
-
-    DBRequestSelect *selectRequestForEvent = [[DBRequestSelect alloc] initWithTableName:kEventObject andFieldNames:@[@"WhatId"] whereCriteria:nil];
-    
-    @autoreleasepool {
-        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-        
-        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-            NSString * query = [selectRequestForEvent query];
-            
-            SQLResultSet * resultSet = [db executeQuery:query];
-            
-            while ([resultSet next]) {
-                NSDictionary * dict = [resultSet resultDictionary];
-                if ([dict valueForKey:@"WhatId"]) {
-                    [allWhatIds addObject:[dict valueForKey:@"WhatId"]];
-                }
-            }
-        }];
-    }
-    
-    DBRequestSelect *selectRequestForSVMXEvent = [[DBRequestSelect alloc] initWithTableName:kSVMXTableName andFieldNames:@[@"objectSfId"] whereCriteria:nil];
-    @autoreleasepool {
-        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-        
-        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-            NSString * query = [selectRequestForSVMXEvent query];
-            
-            SQLResultSet * resultSet = [db executeQuery:query];
-            
-            while ([resultSet next]) {
-                NSDictionary * dict = [resultSet resultDictionary];
-                if ([dict valueForKey:@"objectSfId"]) {
-                    [allWhatIds addObject:[dict valueForKey:@"objectSfId"]];
-                }
-            }
-        }];
-    }
-
-    if ([allWhatIds containsObject:whatId]) {
-        isAssociated = YES;
-    }
-
     return isAssociated;
 }
 
