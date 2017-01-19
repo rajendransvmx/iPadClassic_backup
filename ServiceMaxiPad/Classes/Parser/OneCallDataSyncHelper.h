@@ -34,4 +34,7 @@
 - (void)deleteConflictRecordsFromSuccessiveSyncEntry:(NSDictionary *)deletedIdsDict
                                 withModificationType:(NSString *)modificationType;
 
+- (BOOL)checkIfWhatIdIsAssociatedWithAnyOtherEvent:(NSString *)whatId;
+- (NSArray *)getChildLineIdsForWO:(NSString *)woSfId;
+
 @end

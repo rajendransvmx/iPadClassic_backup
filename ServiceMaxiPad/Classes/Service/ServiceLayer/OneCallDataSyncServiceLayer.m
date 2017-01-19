@@ -135,11 +135,40 @@
     model.value = self.requestIdentifier;
     
     NSMutableArray *valueMapArray = [[NSMutableArray alloc] init];
-    
+ 
+    OneCallDataSyncHelper *helper = [[OneCallDataSyncHelper alloc] init];
+
+    //check whether any what id is associated with another event, if yes, remove the what id from request parameters
     for (NSString *objectName in [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] allKeys]) {
         
         NSArray *valusArray = [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName];
         
+        NSMutableArray *originalValuesArray = [NSMutableArray arrayWithArray:valusArray];
+        
+        for (NSString *whatId in valusArray) {
+            
+            if ([helper checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId]) {
+                
+                [originalValuesArray removeObject:whatId];
+                
+                //remove child lines also if parent wo is removed
+                if ([objectName isEqualToString:kWorkOrderTableName]) {
+                    
+                    NSArray *childLines = [helper getChildLineIdsForWO:whatId];
+                    NSMutableArray *childValuesArray = [NSMutableArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:kWorkOrderDetailTableName]];
+                    [childValuesArray removeObjectsInArray:childLines];
+                    [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setValue:childValuesArray forKey:kWorkOrderDetailTableName];
+                }
+            }
+        }
+        valusArray = [NSArray arrayWithArray:originalValuesArray];
+        [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setValue:valusArray forKey:objectName];
+    }
+    
+    for (NSString *objectName in [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] allKeys]) {
+
+        NSArray *valusArray = [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName];
+
         NSMutableDictionary *valueMapDictToSend = [[NSMutableDictionary alloc] init];
         [valueMapDictToSend setObject:@"Object_Name" forKey:@"key"];
         [valueMapDictToSend setObject:objectName forKey:@"value"];
