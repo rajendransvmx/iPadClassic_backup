@@ -402,13 +402,6 @@
         }];
     }
     
-    NSMutableArray *originalAllWhatIds = [NSMutableArray arrayWithArray:allwhatIds];
-    for (NSString *whatId in originalAllWhatIds) {
-        if ([self checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:fieldName objectName:objectName idsArray:idsArray sqlOperator:SQLOperatorNotIn]) {
-            [allwhatIds removeObject:whatId];
-        }
-    }
-    
     return allwhatIds;
 }
 
@@ -444,13 +437,6 @@
             }
             [resultSet close];
         }];
-    }
-
-    NSMutableArray *originalAllWhatIds = [NSMutableArray arrayWithArray:allwhatIds];
-    for (NSString *whatId in originalAllWhatIds) {
-        if ([self checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:fieldName objectName:objectName idsArray:idsArray sqlOperator:SQLOperatorIn]) {
-            [allwhatIds removeObject:whatId];
-        }
     }
 
     return allwhatIds;
@@ -638,13 +624,6 @@
                 }
                 [resultSet close];
             }];
-        }
-        
-        NSMutableArray *originalAllWhatIds = [NSMutableArray arrayWithArray:allwhatIds];
-        for (NSString *whatId in originalAllWhatIds) {
-            if ([self checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:fieldName objectName:objectName idsArray:@[] sqlOperator:SQLOperatorNone]) {
-                [allwhatIds removeObject:whatId];
-            }
         }
     }
 
