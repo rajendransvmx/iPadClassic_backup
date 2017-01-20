@@ -831,9 +831,12 @@
 - (void)dataSyncFinished
 {
     [self refreshPageData];
-    if (self.mySideBar.hasShownSideBar) {
+    
+    // IPAD-4505
+    if(self.tempViewController != nil) {
         [self.tempViewController reloadTableView];
     }
+    
    // [self.mySideBar showInViewController:self animated:YES];
 }
 
