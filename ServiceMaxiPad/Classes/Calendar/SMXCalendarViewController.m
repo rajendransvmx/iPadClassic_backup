@@ -410,8 +410,13 @@
 //        [self performSelectorInBackground:@selector(loadWizardData) withObject:nil];
         [self changeSegementControlText];
     }
-
+    
+    // IPAD-4505
+    if(self.tempViewController != nil) {
+        [self.tempViewController reloadTableView];
+    }
 }
+
 -(void)reloadCalendar:(NSNotification*)notification{
     if (cSegmentedControl.selectedSegmentIndex == 1)
     {
