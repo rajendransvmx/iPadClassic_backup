@@ -16,6 +16,8 @@
 
 //- (NSArray *)fetchDataForObject:(NSString *)objectName  fields:(NSArray *)fieldNames expression:(NSString *)advancaeExpression criteria:(NSArray *)criteria;
 
+- (NSArray*)getRecordsFromTheQuery:(DBRequestSelect *)selectQuery;
+
 -(BOOL)updateEachRecord:(NSDictionary *)dictionary  withFields:(NSArray *)fieldsArray withCriteria:(NSArray *)criteriaArray withTableName:(NSString *)tableName;
 
 @end
