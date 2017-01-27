@@ -136,6 +136,38 @@
     
     NSMutableArray *valueMapArray = [[NSMutableArray alloc] init];
     
+    OneCallDataSyncHelper *helper = [[OneCallDataSyncHelper alloc] init];
+    
+    //check whether any what id is associated with another event, if yes, remove the what id from request parameters
+    for (NSString *objectName in [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] allKeys]) {
+        
+        NSArray *valusArray = [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName];
+        
+        NSMutableArray *originalValuesArray = [NSMutableArray arrayWithArray:valusArray];
+        
+        for (NSString *whatId in valusArray) {
+            
+            BOOL isWhatIdAssociatedWithEvent = [helper checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:@"WhatId" objectName:kEventObject idsArray:nil sqlOperator:SQLOperatorNone];
+            BOOL isWhatIdAssociatedWithSVMXEvent = [helper checkIfWhatIdIsAssociatedWithAnyOtherEvent:whatId fieldName:@"objectSfId" objectName:kSVMXTableName idsArray:nil sqlOperator:SQLOperatorNone];
+            
+            if (isWhatIdAssociatedWithEvent || isWhatIdAssociatedWithSVMXEvent) {
+                
+                [originalValuesArray removeObject:whatId];
+                
+                //remove child lines also if parent wo is removed
+                if ([objectName isEqualToString:kWorkOrderTableName]) {
+                    
+                    NSArray *childLines = [helper getChildLineIdsForWO:whatId];
+                    NSMutableArray *childValuesArray = [NSMutableArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:kWorkOrderDetailTableName]];
+                    [childValuesArray removeObjectsInArray:childLines];
+                    [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setValue:childValuesArray forKey:kWorkOrderDetailTableName];
+                }
+            }
+        }
+        valusArray = [NSArray arrayWithArray:originalValuesArray];
+        [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setValue:valusArray forKey:objectName];
+    }
+    
     for (NSString *objectName in [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] allKeys]) {
         
         NSArray *valusArray = [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName];

@@ -21,6 +21,7 @@
 @property(nonatomic, copy) NSDate *endDateTime;
 @property(nonatomic, copy) NSString *ownerId;
 @property(nonatomic, copy) NSString *WhatId;
+@property(nonatomic, copy) NSString *objectSfId;
 @property(nonatomic, copy) NSString *localId;
 @property(nonatomic, assign) BOOL priority;
 @property(nonatomic, assign) BOOL conflict;
