@@ -496,7 +496,7 @@
             break;
         case RequestTXFetch: {
             BOOL permissionFailed = [[NSUserDefaults standardUserDefaults] boolForKey:@"kProdIQDataPermissionFailed"];
-            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable] && !permissionFailed)?RequestProductIQTxFetch:RequestCleanUp;
+            nextRequestType = ([[ProductIQManager sharedInstance] isProductIQSettingEnable] && !permissionFailed)?RequestProductIQTxFetch:RequestSyncTimeLogs; //Defect fix 038715
         }
             break;
         case RequestCleanUp:
@@ -512,7 +512,7 @@
             nextRequestType = RequestGetPriceObjects;
             break;
         case RequestProductIQTxFetch:
-            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestSyncTimeLogs;//Defect fix 038715
             break;
         case RequestSyncTimeLogs:
             nextRequestType = RequestTypeNone;
@@ -740,7 +740,7 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestSyncTimeLogs;//Defect fix 038715
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
@@ -834,7 +834,7 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestSyncTimeLogs;//Defect fix 038715
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
@@ -1316,7 +1316,7 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestTypeNone;//Defect fix 038715
             break;
         case RequestCleanUp:
             nextRequestType = RequestTypeNone;
