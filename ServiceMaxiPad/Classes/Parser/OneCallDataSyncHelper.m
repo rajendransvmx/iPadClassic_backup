@@ -21,6 +21,8 @@
 #import "SuccessiveSyncManager.h"
 #import "EventTransactionObjectModel.h"
 #import "CalenderDAO.h"
+#import "CalenderEventObjectService.h"
+#import "CalenderEventObjectModel.h"
 
 @interface OneCallDataSyncHelper()
 @property(nonatomic,strong)CommonServices *commonServices;
@@ -329,6 +331,42 @@
     return YES;
 }
 
+- (BOOL)checkIfWhatIdIsAssociatedWithAnyOtherEvent:(NSString *)whatId fieldName:(NSString *)fieldName objectName:(NSString *)objectName idsArray:(NSArray *)idsArray sqlOperator:(SQLOperator)sqlOperator {
+    
+    BOOL isAssociated = NO;
+    
+    NSMutableArray *allWhatIds = [[NSMutableArray alloc] init];
+    
+    DBCriteria *aCriteria1 = nil;
+    if (sqlOperator == SQLOperatorNotIn || sqlOperator == SQLOperatorIn) {
+        aCriteria1 = [[DBCriteria alloc] initWithFieldName:@"Id" operatorType:sqlOperator andFieldValues:idsArray];
+    }
+    DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:objectName andFieldNames:@[fieldName] whereCriteria:aCriteria1];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectRequest query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                if ([dict valueForKey:fieldName]) {
+                    [allWhatIds addObject:[dict valueForKey:fieldName]];
+                }
+            }
+        }];
+    }
+    
+    if ([allWhatIds containsObject:whatId]) {
+        isAssociated = YES;
+    }
+    
+    return isAssociated;
+}
+
 - (NSArray *)getAllWhatIdsOfEventsToBePurged:(NSArray *)idsArray fromObject:(NSString *)objectName {
 
     //since we have to purge all events in idsArray, we apply the same logic for getting the whatIds to be purged as well
@@ -412,9 +450,10 @@
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:[[NSMutableDictionary alloc] init]];
     }
     
+    id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
+    
     for (NSString *whatId in whatIds) {
         
-        id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
         NSString *objectName =  [serviceRequest getObjectName:whatId];
         
         NSArray *valuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName]];
@@ -428,47 +467,52 @@
     
     for (NSString *whatId in whatIds) {
         
-        id <CalenderDAO> serviceRequest = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
         NSString *objectName =  [serviceRequest getObjectName:whatId];
         
         if ([objectName isEqualToString:kWorkOrderTableName]) {
             
-            DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:[NSString stringWithFormat:@"%@__Service_Order__c", ORG_NAME_SPACE] operatorType:SQLOperatorEqual andFieldValue:whatId];
-            DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:[NSString stringWithFormat:@"%@__Service_Order_Line__c", ORG_NAME_SPACE] andFieldNames:@[@"Id"] whereCriteria:aCriteria1];
+            childWhatIds = [NSMutableArray arrayWithArray:[self getChildLineIdsForWO:whatId]];
             
-            @autoreleasepool {
-                DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
-                
-                [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
-                    NSString * query = [selectRequest query];
-                    
-                    SQLResultSet * resultSet = [db executeQuery:query];
-                    
-                    while ([resultSet next]) {
-                        NSDictionary * dict = [resultSet resultDictionary];
-                        if ([dict valueForKey:@"Id"]) {
-                            [childWhatIds addObject:[dict valueForKey:@"Id"]];
-                        }
-                    }
-                    [resultSet close];
-                }];
-                
-                NSString *serviceOrderLineTableName = [NSString stringWithFormat:@"%@__Service_Order_Line__c", ORG_NAME_SPACE];
-                NSArray *childValuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:serviceOrderLineTableName]];
-                NSArray *finalChildWhatIds = [NSArray arrayWithArray:childWhatIds];
-                
-                //add to whatidstodelete
-                if (childValuesArray.count > 0) {
-                    
-                    [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:[childValuesArray arrayByAddingObjectsFromArray:finalChildWhatIds] forKey:serviceOrderLineTableName];
-                }
-                else {
-                    [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:finalChildWhatIds forKey:serviceOrderLineTableName];
-                }
-                [childWhatIds removeAllObjects];
+            NSArray *childValuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:kWorkOrderDetailTableName]];
+            NSArray *finalChildWhatIds = [NSArray arrayWithArray:childWhatIds];
+            
+            if (childValuesArray.count > 0) {
+                [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:[childValuesArray arrayByAddingObjectsFromArray:finalChildWhatIds] forKey:kWorkOrderDetailTableName];
             }
+            else {
+                [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:finalChildWhatIds forKey:kWorkOrderDetailTableName];
+            }
+            [childWhatIds removeAllObjects];
         }
     }
+}
+
+- (NSArray *)getChildLineIdsForWO:(NSString *)woSfId {
+    
+    NSMutableArray *childWhatIds = [[NSMutableArray alloc] init];
+    
+    DBCriteria *aCriteria1 = [[DBCriteria alloc] initWithFieldName:[NSString stringWithFormat:@"%@__Service_Order__c", ORG_NAME_SPACE] operatorType:SQLOperatorEqual andFieldValue:woSfId];
+    DBRequestSelect *selectRequest = [[DBRequestSelect alloc] initWithTableName:[NSString stringWithFormat:@"%@__Service_Order_Line__c", ORG_NAME_SPACE] andFieldNames:@[@"Id"] whereCriteria:aCriteria1];
+    
+    @autoreleasepool {
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            NSString * query = [selectRequest query];
+            
+            SQLResultSet * resultSet = [db executeQuery:query];
+            
+            while ([resultSet next]) {
+                NSDictionary * dict = [resultSet resultDictionary];
+                if ([dict valueForKey:@"Id"]) {
+                    [childWhatIds addObject:[dict valueForKey:@"Id"]];
+                }
+            }
+            [resultSet close];
+        }];
+    }
+    
+    return childWhatIds;
 }
 
 - (NSString *)getWhatIdsForEvent: (NSString *)sfId isSVMXEvent:(BOOL)isSVMXEvent
@@ -581,7 +625,6 @@
             }];
         }
     }
-    
     
     return allwhatIds;
 }
