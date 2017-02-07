@@ -213,7 +213,8 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
 {
     RequestType  nextRequestType = [self nextRequestTypeWithPreviousRequest:previousRequest];
     
-    if (previousRequest.requestType == RequestTXFetch) {
+    // IPAD-4510
+    if (previousRequest.categoryType == CategoryTypeDataSync && previousRequest.requestType == RequestTXFetch) {
         if ([[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete].count > 0) {
             nextRequestType = RequestTypePurgeRecords;
         }
