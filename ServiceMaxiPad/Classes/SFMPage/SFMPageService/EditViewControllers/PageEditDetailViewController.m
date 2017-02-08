@@ -86,7 +86,6 @@ static NSString *cellIdentifier = @"cellIdentifier";
                                                object:nil];
     
     
-    self.keyBoardHeight = 360.0;
     //[self initiateBuissRules];
     [self setUpBizRuleLabelUI];
 }
@@ -313,7 +312,9 @@ static NSString *cellIdentifier = @"cellIdentifier";
 - (void)reduceTableViewByHalf {
     CGRect tableViewFrame = self.tableView.frame;
     tableViewFrame.size.height = [self getTableViewFrameOnkeyboard];
-    self.tableView.frame = tableViewFrame;
+    [UIView animateWithDuration:1.0 animations:^{
+        self.tableView.frame = tableViewFrame;
+    }];
 }
 - (CGFloat)getTableViewFrameOnkeyboard {
     
@@ -382,11 +383,6 @@ static NSString *cellIdentifier = @"cellIdentifier";
     else{
         self.keyBoardHeight = self.keyBoardFrame.size.width;
     }
-    //SXLogInfo(@"Key Board will be shown %f",self.keyBoardHeight);
-    if (self.keyBoardHeight) {
-        
-    }
-    [self resizeViewForKeyboardOfIndexpath:selectedIndexpath];
 }
 
 

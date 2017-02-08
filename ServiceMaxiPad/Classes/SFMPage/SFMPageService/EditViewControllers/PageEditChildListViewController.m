@@ -832,7 +832,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         }
         for(int rowIndex=0; rowIndex<numberOfRows; rowIndex++){
             if (rowIndex == 0) {
-                tableViewHeight += kChildListTableViewRowHeight;
+                tableViewHeight += kChildListTableViewRowHeight/numberOfRows;
             }
             else{
                 tableViewHeight += [self heightOfChildViewControllerForIndexPath:[NSIndexPath indexPathForRow:rowIndex inSection:sectionIndex]];
@@ -841,7 +841,7 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
         }
     }
     
-    return tableViewHeight  + numberOfSections+20 ;
+    return tableViewHeight  + numberOfSections + 20 ;
 }
 
 - (void)keyboardShownInSelectedIndexPath:(NSIndexPath *)indexPath;
@@ -851,27 +851,32 @@ NSString *const kChildListFooterIdentifier = @"FooterIdentifier";
 
 - (CGFloat)internalOffsetToSelectedIndex
 {
-    CGFloat internalOffset = 40;
+    CGFloat internalOffset = 50;
     
     NSMutableDictionary * detailDict =  self.sfmPage.detailsRecord;
     NSArray * detailRecords = [detailDict objectForKey:self.detailLayout.processComponentId];
     NSInteger recordCount = [detailRecords count];
-    
+    internalOffset+=kChildListTableViewRowHeight;
     for(int recordIndex = 0; recordIndex<recordCount; recordIndex++)
     {
-        internalOffset+=kChildListTableViewRowHeight;
-
         if ([self isSectionExpanded:recordIndex] ) {
             PageEditChildLayoutViewController *childViewController = [self.expandedSectionsDict objectForKey:[NSNumber numberWithInt:recordIndex]];
             if (childViewController.tappedCellIndex!= nil && childViewController.tappedCellIndex.section == recordIndex) {
                 internalOffset += [childViewController internalOffsetToSelectedIndex];
+                internalOffset+=((kChildListTableViewHeaderHeight+kChildListTableViewFooterHeight)/2)*recordIndex;
                 break;
             }
             else{
+                internalOffset-=kChildListTableViewSectionFooterHeight;
                 internalOffset +=[childViewController heightOfTheView];
 
             }
             
+        }
+        else{
+            if (recordIndex>0) {
+                internalOffset+=(kChildListTableViewHeaderHeight+kChildListTableViewFooterHeight+kChildListTableViewSectionFooterHeight)/recordIndex;
+            }
         }
     }
     return internalOffset;
