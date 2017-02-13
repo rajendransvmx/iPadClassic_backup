@@ -257,26 +257,13 @@
                            ],\"app-config\" : {\"application-id\" : \"application\",\"enable-cache\" : true,\"enable-log\" : true,\"org-name-space\" : \"%@\"},\"platform-config\" : {} };",ORG_NAME_SPACE];
     
     NSString *bizRuleValidator = [NSString stringWithFormat:@"var __SVMX_LOAD_VERSION__ = \"debug\";\
-                                  __SVMX_LOAD_APPLICATION__({appParams : {},\
-                                  configType : \"local\",\
-                                  loadVersion : __SVMX_LOAD_VERSION__,\
-                                  configData : appConfig,handler : function(){var bizrules = SVMX.create(\"com.servicemax.client.sfmbizrules.impl.BusinessRuleValidator\");"];
-    
-    //HS 29June
-    //Defect Fix:032530
-    //Adding Field for taking TimeZone
-    
-    NSTimeZone* localTimeZone = [NSTimeZone localTimeZone];
-    NSString *timeZoneIdentifier = [localTimeZone name];
-    
-    
-    NSLog(@"Identifier: %@", timeZoneIdentifier);
-    
-    NSString *timeZoneStr = [NSString stringWithFormat:@"com.servicemax.client.lib.datetimeutils.DatetimeUtil.setTimezone(\"%@\");",timeZoneIdentifier];
-    
-    NSString *htmlString = [NSString stringWithFormat:@"<html><script type=\"text/javascript\" src=\"%@\"></script><script type=\"text/javascript\" src=\"%@\"></script><script type=\"text/javascript\" src=\"CommunicationBridgeJS.js\"></script><script type=\"text/javascript\" src=\"bizRules-index.js\"></script><script>jQuery(document).ready(function(){ var pathToModule=\"%@\"; var __SVMX_CLIENT_LIB_PATH__ = \"%@\"; %@  %@ %@ var fields = %@; var dataToValidate = %@; var rules = %@;",bsLibraryPath,clientLibraryPath,coreLibararyPath,clientLibraryPath,appConfig,bizRuleValidator,timeZoneStr,fieldsStr,dataStr,metaDataStr];
-    
-    //NSLog(@"html string is %@",htmlString);
+                      __SVMX_LOAD_APPLICATION__({appParams : {},\
+                      configType : \"local\",\
+                      loadVersion : __SVMX_LOAD_VERSION__,\
+                      configData : appConfig,handler : function(){var bizrules = SVMX.create(\"com.servicemax.client.sfmbizrules.impl.BusinessRuleValidator\");"];
+
+    NSString *htmlString = [NSString stringWithFormat:@"<html><script type=\"text/javascript\" src=\"%@\"></script><script type=\"text/javascript\" src=\"%@\"></script><script type=\"text/javascript\" src=\"CommunicationBridgeJS.js\"></script><script type=\"text/javascript\" src=\"bizRules-index.js\"></script><script>jQuery(document).ready(function(){ var pathToModule=\"%@\"; var __SVMX_CLIENT_LIB_PATH__ = \"%@\"; %@  %@ var fields = %@; var dataToValidate = %@; var rules = %@;",bsLibraryPath,clientLibraryPath,coreLibararyPath,clientLibraryPath,appConfig,bizRuleValidator,fieldsStr,dataStr,metaDataStr];
+
     
     return htmlString;
     

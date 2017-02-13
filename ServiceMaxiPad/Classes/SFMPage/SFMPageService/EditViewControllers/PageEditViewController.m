@@ -51,6 +51,9 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 @interface PageEditViewController ()<PageEventProcessManagerDelegate> {
     
+    // app freeze workaround
+    int jsExeCount;
+    BOOL jsExecuted;
 }
 
 @property(nonatomic,strong)SFMPageEditManager   *sfmEditPageManager;
@@ -1007,6 +1010,12 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         
         [self startBizRule];
     }
+    else {
+        // app freeze workaround
+        jsExeCount = 1;
+        jsExecuted = NO;
+        [self performSelector:@selector(reloadFormula:) withObject:@"onSave" afterDelay:3.0];
+    }
 }
 
 
@@ -1016,6 +1025,9 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     if (formulaExists) {
         [self disableUI];
         [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
+        jsExeCount = 1;
+        jsExecuted = NO;
+        [self performSelector:@selector(reloadFormula:) withObject:@"onLoad" afterDelay:3.0];
     }
 }
 
@@ -1033,8 +1045,40 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     if (!shouldExecuteBizRule) {
         [self saveRecordData];
     }
+    else {
+        // app freeze workaround
+        jsExecuted = NO;
+        jsExeCount = 1;
+        [self performSelector:@selector(reloadBizRule) withObject:nil afterDelay:3.0];
+    }
 }
 
+-(void)reloadBizRule {
+    if(jsExecuted == NO && jsExeCount < 3) {
+        NSLog(@"Biz rule hanged count: %d", jsExeCount);
+        [self.ruleManager executeBusinessRules];
+        jsExeCount++;
+        [self performSelector:@selector(reloadBizRule) withObject:nil afterDelay:3.0];
+    }
+    else {
+        [self enableUI];
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+        [self performSelectorOnMainThread:@selector(showBizRuleAlertMessage) withObject:nil waitUntilDone:YES];
+    }
+}
+
+-(void)reloadFormula:(NSString *)event {
+    if (jsExecuted == NO && jsExeCount < 3) {
+        NSLog(@"Formula %@ hanged count : %d", event, jsExeCount);
+        [self.sfmEditPageManager executeFieldUpdateRulesOnload:self.sfmPage andView:self.view andDelegate:self forEvent:event];
+        jsExeCount++;
+    }
+    else {
+        [self enableUI];
+        [self performSelectorOnMainThread:@selector(stopActivityIndicator) withObject:nil waitUntilDone:YES];
+        [self performSelectorOnMainThread:@selector(showBizRuleAlertMessage) withObject:nil waitUntilDone:YES];
+    }
+}
 
 -(void)showBizRuleAlertMessage {
     NSString *title = @"Data Validation Rule Execution Failed";
@@ -1115,6 +1159,11 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 - (void)businessRuleFinishedWithResults:(NSMutableArray *)resultArray
 {
+    // app freeze workaround
+    jsExecuted = YES;
+    jsExeCount = 0;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadBizRule) object:nil];
+    
     [(PageEditDetailViewController *)self.detailViewController  initiateBuissRulesData:resultArray];
     
     if (([resultArray count]== 0) || (resultArray == nil) || ([self.ruleManager allWarningsAreConfirmed] && ([self.ruleManager numberOfErrorsInResult] == 0))) {
@@ -1495,6 +1544,11 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 -(void)refreshSFMPageWithFieldUpdateRuleResults:(NSString *)responseString forEvent:(NSString *)event {
     
+    // app freeze workaround
+    jsExecuted = YES;
+    jsExeCount = 0;
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(reloadFormula:) object:event];
+    
     [self performSelectorOnMainThread:@selector(updateTheSFMPage:) withObject:responseString waitUntilDone:YES];
     
     
@@ -1513,6 +1567,23 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 -(void)updateTheSFMPage:(NSString *)responseString
 {
     [self.sfmEditPageManager updateSFMPageWithFieldUpdateResponse:responseString andSFMPage:self.sfmPage];
+    
+}
+
+- (void)bizRuleExecute {
+    if (nil == self.ruleManager) {
+        PageEditMasterViewController *detailViewController = [self.childViewControllers objectAtIndex:0];
+        
+        self.ruleManager = [[BusinessRuleManager alloc] initWithProcessId:self.processId sfmPage:self.sfmPage];
+        self.ruleManager.parentView = detailViewController.view;
+        self.ruleManager.delegate = self;
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BOOL shouldExecuteBizRule = [self.ruleManager executeBusinessRules];
+        if (!shouldExecuteBizRule) {
+            [self saveRecordData];
+        }
+    });
     
 }
 

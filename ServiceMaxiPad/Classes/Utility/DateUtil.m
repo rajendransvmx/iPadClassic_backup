@@ -98,31 +98,6 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     return [NSDate dateWithTimeIntervalSince1970:timeInterval];
 }
 
-//Defect Fix:032530
-+ (NSDate *)dateFromStringForDaylightTimeZone:(NSString *)gmtDate
-{
-    NSDate *gmtDateTime = nil;
-    
-    if ([gmtDate length] > 19)
-    {
-        gmtDate = [gmtDate substringToIndex:19];
-        gmtDate = [NSString stringWithFormat:@"%@Z", gmtDate];
-    }
-    
-    NSDateFormatter * dateFormatter = [[NSDateFormatter alloc] init];
-    
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    
-    NSString * tmpDate = [gmtDate substringToIndex:[gmtDate length]-0];
-    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"T" withString:@" "];
-    tmpDate = [tmpDate stringByReplacingOccurrencesOfString:@"Z" withString:@""];
-    tmpDate = [tmpDate stringByDeletingPathExtension];
-    
-    gmtDateTime = [dateFormatter dateFromString:tmpDate];
-    return gmtDateTime;
-    
-}
-
 /**
  * @name   stringFromDate:(NSDate *)date inFormat:(NSString *)format
  *
@@ -728,27 +703,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 + (NSString *)getLocalTimeFromGMT:(NSString *)gmtDate
 {
     
-    //NSDate *gmtDateTime = [self dateFromString:gmtDate inFormat:kDateFormatDefault]; // only for nonDaylight//Previous code before Fix
-    
-    //Defect Fix:032530
-    NSDate *gmtDateTime;
-    NSTimeZone *localTimeZone = [NSTimeZone localTimeZone];
-    BOOL isDayLightTimeZone = [localTimeZone isDaylightSavingTime];
-    if(isDayLightTimeZone)
-    {
-        if ((gmtDate != NULL) || (gmtDate != nil))
-        {
-            gmtDateTime = [self dateFromStringForDaylightTimeZone:gmtDate];
-            
-        }
-    }
-    else{
-        gmtDateTime = [self dateFromString:gmtDate inFormat:kDateFormatDefault]; // only for nonDaylight
-        
-    }
-    
-    
-    
+    NSDate *gmtDateTime = [self dateFromString:gmtDate inFormat:kDateFormatDefault];
     NSDate *localDateTime = [self localDateForGMTDate:gmtDateTime];
     NSString *localDateTimeStr = [self stringFromDate:localDateTime inFormat:kDateFormatDefault];
     return localDateTimeStr;
