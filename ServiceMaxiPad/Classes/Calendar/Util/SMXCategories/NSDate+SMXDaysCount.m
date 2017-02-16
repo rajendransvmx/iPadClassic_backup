@@ -189,11 +189,10 @@
 
 +(NSString *)localDateTimeStringFromDate:(NSDate *)date inFormat:(NSString*)format
 {
-    format=[NSDateFormatter dateFormatFromTemplate:format options:0 locale:[NSLocale currentLocale]];
     NSString *lTime = nil;
     NSDateFormatter *dateFormater = [NSDateFormatter new];
     [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]];
-    [dateFormater setDateFormat:format];
+    [dateFormater setDateFormat:[NSDateFormatter dateFormatFromTemplate:format options:0 locale:[NSLocale currentLocale]]];
     lTime = [dateFormater stringFromDate:date];
     
     return lTime;
