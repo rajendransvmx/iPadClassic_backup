@@ -3,7 +3,7 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.19.003
+Version = 17.19.004
 
 ===========================================
 
@@ -18,6 +18,6 @@ IPAD-4217
 
 NOTE:
 
-1. NameSpace: SVMXC
+1. NameSpace: SVMXDEV
 
 
