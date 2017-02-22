@@ -18,6 +18,7 @@
 #import "ZXModulusGF.h"
 #import "ZXModulusPoly.h"
 #import "ZXPDF417Common.h"
+#import "ZXingObjC.h"
 
 @interface ZXModulusGF ()
 
@@ -43,8 +44,8 @@
 - (id)initWithModulus:(int)modulus generator:(int)generator {
   if (self = [super init]) {
     _modulus = modulus;
-    _expTable = (int32_t *)calloc(self.modulus, sizeof(int32_t));
-    _logTable = (int32_t *)calloc(self.modulus, sizeof(int32_t));
+    _expTable = (int32_t *)calloc(self.modulus, BUFFER_SIZE_INT_32BIT);
+    _logTable = (int32_t *)calloc(self.modulus, BUFFER_SIZE_INT_32BIT);
     int32_t x = 1;
     for (int i = 0; i < modulus; i++) {
       _expTable[i] = x;
