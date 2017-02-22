@@ -15,12 +15,13 @@
  */
 
 #import "ZXBoolArray.h"
+#import "ZXingObjC.h"
 
 @implementation ZXBoolArray
 
 - (id)initWithLength:(unsigned int)length {
   if (self = [super init]) {
-    _array = (BOOL *)calloc(length, sizeof(BOOL));
+    _array = (BOOL *)calloc(length, BUFFER_SIZE_BOOL);
     _length = length;
   }
 
