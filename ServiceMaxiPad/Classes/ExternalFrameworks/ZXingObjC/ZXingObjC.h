@@ -45,3 +45,10 @@
 #import "ZXMultiFormatWriter.h"
 
 #endif
+
+#define BUFFER_SIZE_INT_32BIT 4 // 32-bit int byte size
+#define BUFFER_SIZE_BOOL 1 // bool byte size
+#define BUFFER_SIZE_INT_8BIT 1 // 8 bit byte size
+#define BUFFER_SIZE_INT 4
+#define BUFFER_SIZE_FLOAT 4
+#define BUFFER_SIZE_UNICHAR 2

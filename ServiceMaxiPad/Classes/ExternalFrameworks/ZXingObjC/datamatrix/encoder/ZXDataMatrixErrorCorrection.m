@@ -16,6 +16,7 @@
 
 #import "ZXDataMatrixErrorCorrection.h"
 #import "ZXDataMatrixSymbolInfo.h"
+#import "ZXingObjC.h"
 
 /**
  * Lookup table which factors to use for which number of error correction codewords.
@@ -101,9 +102,14 @@ static int ZX_LOG[256], ZX_ALOG[256];
     while (sb.length < capacity) {
       [sb appendFormat:@"%C", (unichar)0];
     }
-    int dataSizes[blockCount];
-    int errorSizes[blockCount];
-    int startPos[blockCount];
+//    int dataSizes[blockCount];
+//    int errorSizes[blockCount];
+//    int startPos[blockCount];
+      
+    int *dataSizes = (int *)calloc(blockCount, BUFFER_SIZE_INT);
+    int *errorSizes = (int *)calloc(blockCount, BUFFER_SIZE_INT);
+    int *startPos = (int *)calloc(blockCount, BUFFER_SIZE_INT);
+      
     for (int i = 0; i < blockCount; i++) {
       dataSizes[i] = [symbolInfo dataLengthForInterleavedBlock:i + 1];
       errorSizes[i] = [symbolInfo errorLengthForInterleavedBlock:i + 1];
@@ -144,7 +150,8 @@ static int ZX_LOG[256], ZX_ALOG[256];
     [NSException raise:NSInvalidArgumentException format:@"Illegal number of error correction codewords specified: %d", numECWords];
   }
   int *poly = (int *)ZX_FACTORS[table];
-  unichar ecc[numECWords];
+  //unichar ecc[numECWords];
+    unichar *ecc = (unichar *)calloc(numECWords, BUFFER_SIZE_UNICHAR);
   memset(ecc, 0, numECWords * sizeof(unichar));
   for (int i = start; i < start + len; i++) {
     int m = ecc[numECWords - 1] ^ [codewords characterAtIndex:i];
@@ -161,7 +168,11 @@ static int ZX_LOG[256], ZX_ALOG[256];
       ecc[0] = 0;
     }
   }
-  unichar eccReversed[numECWords];
+  
+    
+//  unichar eccReversed[numECWords];
+    unichar *eccReversed = (unichar *)calloc(numECWords, BUFFER_SIZE_UNICHAR);
+
   for (int i = 0; i < numECWords; i++) {
     eccReversed[i] = ecc[numECWords - i - 1];
   }
