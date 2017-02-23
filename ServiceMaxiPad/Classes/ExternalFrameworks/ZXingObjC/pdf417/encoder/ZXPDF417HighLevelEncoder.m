@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-#define CHARSLEN_CONST 5
-#define ZX_PDF417_PUNCTUATION_LEN_CONST 128
-#define ZX_PDF417_MIXED_TABLE_LEN_CONST 128
-
 #import "ZXByteArray.h"
 #import "ZXCharacterSetECI.h"
 #import "ZXErrors.h"
@@ -112,11 +108,11 @@ const int8_t ZX_PDF417_TEXT_PUNCTUATION_RAW[] = {
   59, 60, 62, 64, 91, 92, 93, 95, 96, 126, 33, 13, 9, 44, 58,
   10, 45, 46, 36, 47, 34, 124, 42, 40, 41, 63, 123, 125, 39, 0};
 
-const int ZX_PDF417_MIXED_TABLE_LEN = ZX_PDF417_MIXED_TABLE_LEN_CONST;
-unichar ZX_PDF417_MIXED_TABLE[ZX_PDF417_MIXED_TABLE_LEN_CONST];
+const int ZX_PDF417_MIXED_TABLE_LEN = 128;
+unichar ZX_PDF417_MIXED_TABLE[ZX_PDF417_MIXED_TABLE_LEN];
 
-const int ZX_PDF417_PUNCTUATION_LEN = ZX_PDF417_PUNCTUATION_LEN_CONST;
-unichar ZX_PDF417_PUNCTUATION[ZX_PDF417_PUNCTUATION_LEN_CONST];
+const int ZX_PDF417_PUNCTUATION_LEN = 128;
+unichar ZX_PDF417_PUNCTUATION[ZX_PDF417_PUNCTUATION_LEN];
 
 const NSStringEncoding ZX_PDF417_DEFAULT_ENCODING = NSISOLatin1StringEncoding;
 
@@ -369,7 +365,7 @@ const NSStringEncoding ZX_PDF417_DEFAULT_ENCODING = NSISOLatin1StringEncoding;
   int idx = startpos;
   // Encode sixpacks
   if (count >= 6) {
-    const int charsLen = CHARSLEN_CONST;
+    const int charsLen = 5;
     unichar chars[charsLen];
     memset(chars, 0, charsLen * sizeof(unichar));
     while ((startpos + count - idx) >= 6) {

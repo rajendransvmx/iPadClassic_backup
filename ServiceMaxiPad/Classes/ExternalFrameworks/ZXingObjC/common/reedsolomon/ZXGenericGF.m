@@ -17,7 +17,6 @@
 #import "ZXGenericGF.h"
 #import "ZXGenericGFPoly.h"
 #import "ZXIntArray.h"
-#import "ZXingObjC.h"
 
 @interface ZXGenericGF ()
 
@@ -38,8 +37,8 @@
     _size = size;
     _generatorBase = b;
 
-    _expTable = (int32_t *)calloc(self.size, BUFFER_SIZE_INT_32BIT);
-    _logTable = (int32_t *)calloc(self.size, BUFFER_SIZE_INT_32BIT);
+    _expTable = (int32_t *)calloc(self.size, sizeof(int32_t));
+    _logTable = (int32_t *)calloc(self.size, sizeof(int32_t));
     int32_t x = 1;
     for (int i = 0; i < self.size; i++) {
       _expTable[i] = x;

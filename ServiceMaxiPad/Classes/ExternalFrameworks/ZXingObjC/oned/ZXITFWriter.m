@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#define ENCODING_LENGTH 18
-
 #import "ZXBoolArray.h"
 #import "ZXITFReader.h"
 #import "ZXITFWriter.h"
@@ -47,7 +45,7 @@ const int ZX_ITF_WRITER_END_PATTERN[] = {3, 1, 1};
   for (int i = 0; i < length; i += 2) {
     int one = [[contents substringWithRange:NSMakeRange(i, 1)] intValue];
     int two = [[contents substringWithRange:NSMakeRange(i + 1, 1)] intValue];
-    const int encodingLen = ENCODING_LENGTH;
+    const int encodingLen = 18;
     int encoding[encodingLen];
     memset(encoding, 0, encodingLen * sizeof(int));
     for (int j = 0; j < 5; j++) {
