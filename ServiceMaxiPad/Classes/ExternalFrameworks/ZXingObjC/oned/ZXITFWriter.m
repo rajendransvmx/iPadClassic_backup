@@ -19,6 +19,7 @@
 #import "ZXBoolArray.h"
 #import "ZXITFReader.h"
 #import "ZXITFWriter.h"
+#import "ZXingObjC.h"
 
 const int ZX_ITF_WRITER_START_PATTERN[] = {1, 1, 1, 1};
 const int ZX_ITF_WRITER_END_PATTERN[] = {3, 1, 1};
@@ -48,13 +49,19 @@ const int ZX_ITF_WRITER_END_PATTERN[] = {3, 1, 1};
     int one = [[contents substringWithRange:NSMakeRange(i, 1)] intValue];
     int two = [[contents substringWithRange:NSMakeRange(i + 1, 1)] intValue];
     const int encodingLen = ENCODING_LENGTH;
-    int encoding[encodingLen];
+      
+//    int encoding[encodingLen];
+    int *encoding = (int *)calloc(encodingLen, BUFFER_SIZE_INT);
+      
     memset(encoding, 0, encodingLen * sizeof(int));
     for (int j = 0; j < 5; j++) {
       encoding[2 * j] = ZX_ITF_PATTERNS[one][j];
       encoding[2 * j + 1] = ZX_ITF_PATTERNS[two][j];
     }
     pos += [super appendPattern:result pos:pos pattern:encoding patternLen:encodingLen startColor:YES];
+      
+      free(encoding);
+      
   }
   [self appendPattern:result pos:pos pattern:ZX_ITF_WRITER_END_PATTERN patternLen:sizeof(ZX_ITF_WRITER_END_PATTERN)/sizeof(int) startColor:YES];
 
