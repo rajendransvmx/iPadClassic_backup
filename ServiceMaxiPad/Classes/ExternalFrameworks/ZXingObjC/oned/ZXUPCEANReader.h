@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-#define CONST_ZX_UPC_EAN_L_PATTERNS 4
-#define CONST_ZX_UPC_EAN_L_AND_G_PATTERNS 4
-
 #import "ZXBarcodeFormat.h"
 #import "ZXOneDReader.h"
 
@@ -31,10 +28,10 @@ extern const int ZX_UPC_EAN_MIDDLE_PATTERN_LEN;
 extern const int ZX_UPC_EAN_MIDDLE_PATTERN[];
 extern const int ZX_UPC_EAN_L_PATTERNS_LEN;
 extern const int ZX_UPC_EAN_L_PATTERNS_SUB_LEN;
-extern const int ZX_UPC_EAN_L_PATTERNS[][CONST_ZX_UPC_EAN_L_PATTERNS];
+extern const int ZX_UPC_EAN_L_PATTERNS[][4];
 extern const int ZX_UPC_EAN_L_AND_G_PATTERNS_LEN;
 extern const int ZX_UPC_EAN_L_AND_G_PATTERNS_SUB_LEN;
-extern const int ZX_UPC_EAN_L_AND_G_PATTERNS[][CONST_ZX_UPC_EAN_L_AND_G_PATTERNS];
+extern const int ZX_UPC_EAN_L_AND_G_PATTERNS[][4];
 
 @class ZXDecodeHints, ZXEANManufacturerOrgSupport, ZXIntArray, ZXResult, ZXUPCEANExtensionSupport;
 

@@ -19,6 +19,7 @@
  *
  **/
 
+#define BUFFER_SIZE_CHAR 1
 
 #import "NSString+StringUtility.h"
 #import <stdarg.h>
@@ -50,11 +51,17 @@
     va_start(vl, fmt);
     len += vsnprintf(0, 0, fmt, vl);
     va_end(vl);
-    char buf[len];
+    
+    //    char buf[len];
+    char *buf = (char *)calloc(len, BUFFER_SIZE_CHAR);
+    
     va_start(vl, fmt);
     vsnprintf(buf,len+1, fmt, vl);
     va_end(vl);
     NSString *s = [NSString stringWithCString:buf encoding:NSUTF8StringEncoding];
+    
+    free(buf);
+    
     return s;
 }
 

@@ -18,6 +18,7 @@
 #import "ZXCharacterSetECI.h"
 #import "ZXErrors.h"
 #import "ZXPDF417HighLevelEncoder.h"
+#import "ZXingObjC.h"
 
 /**
  * code for Text compaction
@@ -365,8 +366,12 @@ const NSStringEncoding ZX_PDF417_DEFAULT_ENCODING = NSISOLatin1StringEncoding;
   int idx = startpos;
   // Encode sixpacks
   if (count >= 6) {
-    const int charsLen = 5;
-    unichar chars[charsLen];
+
+      const int charsLen = CHARSLEN_CONST;
+      
+//    unichar chars[charsLen];
+      unichar *chars = (unichar *)calloc(charsLen, BUFFER_SIZE_UNICHAR);
+     
     memset(chars, 0, charsLen * sizeof(unichar));
     while ((startpos + count - idx) >= 6) {
       long long t = 0;
@@ -383,6 +388,8 @@ const NSStringEncoding ZX_PDF417_DEFAULT_ENCODING = NSISOLatin1StringEncoding;
       }
       idx += 6;
     }
+      
+      free(chars);
   }
   //Encode rest (remaining n<5 bytes if any)
   for (int i = idx; i < startpos + count; i++) {
