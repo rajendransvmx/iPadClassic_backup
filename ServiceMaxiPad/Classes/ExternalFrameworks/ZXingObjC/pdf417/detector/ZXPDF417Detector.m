@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#define CONST_PATTERNLEN 8 // sizeof(ZX_PDF417_DETECTOR_START_PATTERN) / sizeof(int), i.e, 32/4 (ZXPDF417Detector.m. line 157)
-
 #import "ZXBitArray.h"
 #import "ZXBitMatrix.h"
 #import "ZXBinaryBitmap.h"
@@ -27,7 +25,6 @@
 #import "ZXPDF417DetectorResult.h"
 #import "ZXPerspectiveTransform.h"
 #import "ZXResultPoint.h"
-#import "ZXingObjC.h"
 
 const int ZX_PDF417_INDEXES_START_PATTERN[] = {0, 4, 1, 5};
 const int ZX_PDF417_INDEXES_STOP_PATTERN[] = {6, 2, 7, 3};
@@ -186,13 +183,12 @@ const int ZX_PDF417_BARCODE_MIN_HEIGHT = 10;
 
 + (NSMutableArray *)findRowsWithPattern:(ZXBitMatrix *)matrix height:(int)height width:(int)width startRow:(int)startRow
                             startColumn:(int)startColumn pattern:(const int[])pattern patternLen:(int)patternLen {
-    patternLen = CONST_PATTERNLEN;
   NSMutableArray *result = [NSMutableArray array];
   for (int i = 0; i < 4; i++) {
     [result addObject:[NSNull null]];
   }
   BOOL found = NO;
-  int counters[CONST_PATTERNLEN];
+  int counters[patternLen];
   memset(counters, 0, patternLen * sizeof(int));
   for (; startRow < height; startRow += ZX_PDF417_ROW_STEP) {
     NSRange loc = [self findGuardPattern:matrix column:startColumn row:startRow width:width whiteFirst:false pattern:pattern patternLen:patternLen counters:counters];

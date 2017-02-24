@@ -23,7 +23,6 @@
 #import "ZXGenericGF.h"
 #import "ZXIntArray.h"
 #import "ZXReedSolomonEncoder.h"
-#import "ZXingObjC.h"
 
 const int ZX_AZTEC_DEFAULT_EC_PERCENT = 33; // default minimal percentage of error check words
 const int ZX_AZTEC_DEFAULT_LAYERS = 0;
@@ -116,9 +115,8 @@ const int ZX_AZTEC_WORD_SIZE[] = {
 
   // allocate symbol
   int baseMatrixSize = compact ? 11 + layers * 4 : 14 + layers * 4; // not including alignment lines
-//  int alignmentMap[baseMatrixSize];
-    int *alignmentMap = (int *)calloc(baseMatrixSize, BUFFER_SIZE_INT);
-  memset(alignmentMap, 0, baseMatrixSize * BUFFER_SIZE_INT);
+  int alignmentMap[baseMatrixSize];
+  memset(alignmentMap, 0, baseMatrixSize * sizeof(int));
   int matrixSize;
   if (compact) {
     // no alignment marks in compact mode, alignmentMap is a no-op
@@ -185,9 +183,6 @@ const int ZX_AZTEC_WORD_SIZE[] = {
   aztec.layers = layers;
   aztec.codeWords = messageSizeInWords;
   aztec.matrix = matrix;
-    
-free(alignmentMap);
-    
   return aztec;
 }
 
