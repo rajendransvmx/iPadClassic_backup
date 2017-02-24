@@ -55,54 +55,5 @@
     return nil;
 }
 
-- (void)performActivity
-{
-    
-//    if ([_thirdPartyApp.urlParameters containsString:_thirdPartyApp.schemeName]) {
-    if ([StringUtil containsString:_thirdPartyApp.schemeName inString:_thirdPartyApp.urlParameters]) {
-
-        _thirdPartyApp.urlParameters = [_thirdPartyApp.urlParameters stringByReplacingOccurrencesOfString:_thirdPartyApp.schemeName withString:@""];
-    }
-    
-//    if ([_thirdPartyApp.schemeName containsString:@"://"]) {
-    if ([StringUtil containsString:@"://" inString:_thirdPartyApp.schemeName]) {
-
-        _thirdPartyApp.schemeName =[_thirdPartyApp.schemeName stringByReplacingOccurrencesOfString:@"://" withString:@""];
-    }
-    
-    NSData *pdfData = [NSData dataWithContentsOfFile:_thirdPartyApp.urlParameters];
-    NSString *pdfString = [pdfData base64EncodedStringWithOptions:0];
-    NSString *URLEncodedText = [pdfString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    NSString *string = [NSString stringWithFormat:@"%@://pdf?%@",_thirdPartyApp.schemeName,URLEncodedText];
-    
-    for (NSString *key in [_thirdPartyApp.parameterValueDict allKeys]) {
-        
-        
-        string = [string stringByReplacingOccurrencesOfString:key withString:_thirdPartyApp.parameterValueDict[key]];
-        
-    }
-    
-    
-    if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:string]])
-    {
-
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:string]];
-
-        [self activityDidFinish:YES];
-    }
-    else
-    {
-        NSString *message = [NSString stringWithFormat:@"Please download %@ application to perform the task",_thirdPartyApp.appDisplayName];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Application found"
-                                                        message:message
-                                                       delegate:nil
-                                              cancelButtonTitle:@"Ok"
-                                              otherButtonTitles:nil];
-        [alert show];
-    }
-    
-    [self activityDidFinish:YES];
-}
 
 @end
