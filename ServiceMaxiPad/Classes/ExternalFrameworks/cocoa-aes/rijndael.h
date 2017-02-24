@@ -19,9 +19,6 @@ void rijndaelDecrypt(const unsigned long *rk, int nrounds,
 #define RKLENGTH(keybits)  ((keybits)/8+28)
 #define NROUNDS(keybits)   ((keybits)/32+6)
 
-#define BUFFER_SIZE_UNSIGNED_LONG 8
-#define BUFFER_SIZE_UNSIGNED_CHAR 1
-
 // If this line is commented out, it will use loops to iterate through chunks. If this
 // is uncommented, it will use unrolled loops, which will perform better, but the binary
 // will be larger.
