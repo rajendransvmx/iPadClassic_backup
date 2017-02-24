@@ -312,8 +312,6 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     
     if ((dateString != NULL)||(dateString != nil))
     {
-        NSString *format = [NSDateFormatter dateFormatFromTemplate:kDateFormatForDatabase options:0 locale:[NSLocale currentLocale]];
-
         return [self dateFromString:dateString inFormat:kDateFormatForDatabase];
 
     }

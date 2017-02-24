@@ -12,12 +12,8 @@
 @implementation NSFileManager(AES)
 -(BOOL)AESEncryptFile:(NSString *)inPath toFile:(NSString *)outPath usingPassphrase:(NSString *)pass error:(NSError **)error
 {
-//	unsigned long rk[RKLENGTH(KEYBITS)];
-//	unsigned char key[KEYLENGTH(KEYBITS)];
-    
-    unsigned long *rk = (unsigned long *)calloc(RKLENGTH(KEYBITS), BUFFER_SIZE_UNSIGNED_LONG);
-    unsigned char *key = (unsigned char *)calloc(KEYLENGTH(KEYBITS), BUFFER_SIZE_UNSIGNED_CHAR);
-    
+	unsigned long rk[RKLENGTH(KEYBITS)];
+	unsigned char key[KEYLENGTH(KEYBITS)];
 	const char *password = [pass UTF8String];
 	
 	for (int i = 0; i < sizeof(key); i++)
@@ -55,22 +51,14 @@
 			return NO;
 		}
     }
-    
-    free(rk);
-    free(key);
-    
 	fclose(output);
 	fclose(fp);
 	return YES;
 }
 -(BOOL)AESDecryptFile:(NSString *)inPath toFile:(NSString *)outPath usingPassphrase:(NSString *)pass error:(NSError **)error
 {
-//	unsigned long rk[RKLENGTH(KEYBITS)];
-//	unsigned char key[KEYLENGTH(KEYBITS)];
-    
-    unsigned long *rk = (unsigned long *)calloc(RKLENGTH(KEYBITS), BUFFER_SIZE_UNSIGNED_LONG);
-    unsigned char *key = (unsigned char *)calloc(KEYLENGTH(KEYBITS), BUFFER_SIZE_UNSIGNED_CHAR);
-    
+	unsigned long rk[RKLENGTH(KEYBITS)];
+	unsigned char key[KEYLENGTH(KEYBITS)];
 	const char *password = [pass UTF8String];
 	for (int i = 0; i < sizeof(key); i++)
 		key[i] = password != 0 ? *password++ : 0;
@@ -98,10 +86,6 @@
 			return NO;
 		}
 	}
-    
-    free(rk);
-    free(key);
-    
 	fclose(output);
 	fclose(fp);
 	return YES;

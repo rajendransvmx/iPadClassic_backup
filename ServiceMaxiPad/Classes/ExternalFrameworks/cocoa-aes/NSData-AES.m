@@ -13,13 +13,8 @@
 - (NSData *)AESEncryptWithPassphrase:(NSString *)pass
 {
 	NSMutableData *ret = [NSMutableData dataWithCapacity:[self length]];
-    
-//	unsigned long rk[RKLENGTH(KEYBITS)];
-//	unsigned char key[KEYLENGTH(KEYBITS)];
-    
-    unsigned long *rk = (unsigned long *)calloc(RKLENGTH(KEYBITS), BUFFER_SIZE_UNSIGNED_LONG);
-    unsigned char *key = (unsigned char *)calloc(KEYLENGTH(KEYBITS), BUFFER_SIZE_UNSIGNED_CHAR);
-    
+	unsigned long rk[RKLENGTH(KEYBITS)];
+	unsigned char key[KEYLENGTH(KEYBITS)];
 	const char *password = [pass UTF8String];
 	
 	for (int i = 0; i < sizeof(key); i++)
@@ -50,22 +45,13 @@
 		rijndaelEncrypt(rk, nrounds, plaintext, ciphertext);
 		[ret appendBytes:ciphertext length:sizeof(ciphertext)];
 	}
-    
-    free(rk);
-    free(key);
-    
 	return ret;
 }
 - (NSData *)AESDecryptWithPassphrase:(NSString *)pass
 {
 	NSMutableData *ret = [NSMutableData dataWithCapacity:[self length]];
-    
-//	unsigned long rk[RKLENGTH(KEYBITS)];
-//	unsigned char key[KEYLENGTH(KEYBITS)];
-    
-    unsigned long *rk = (unsigned long *)calloc(RKLENGTH(KEYBITS), BUFFER_SIZE_UNSIGNED_LONG);
-    unsigned char *key = (unsigned char *)calloc(KEYLENGTH(KEYBITS), BUFFER_SIZE_UNSIGNED_CHAR);
-    
+	unsigned long rk[RKLENGTH(KEYBITS)];
+	unsigned char key[KEYLENGTH(KEYBITS)];
 	const char *password = [pass UTF8String];
 	for (int i = 0; i < sizeof(key); i++)
 		key[i] = password != 0 ? *password++ : 0;
@@ -89,10 +75,6 @@
 		[ret appendBytes:plaintext length:sizeof(plaintext)];
 		
 	}
-    
-    free(rk);
-    free(key);
-    
 	return ret;
 }
 @end

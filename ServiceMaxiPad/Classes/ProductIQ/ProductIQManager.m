@@ -90,17 +90,12 @@
 }
 
 - (BOOL)isProductIQSettingEnable {
-    
-    return NO; // IPAD-4506
-    
-    /*
     BOOL settingEnabled = NO;
     MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
     MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"PRODIQ002_SET001"];
     settingEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
     
     return settingEnabled;
-     */
 }
 - (BOOL)isProductIQRelatedFieldsAvailableOnSFMPageView:(SFMPageViewModel*)sfmPageView {
     BOOL productIQFieldsAvailable = NO;
