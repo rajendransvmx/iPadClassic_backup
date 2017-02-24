@@ -3,7 +3,7 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.19.004
+Version = 17.19.005
 
 ===========================================
 
@@ -12,8 +12,8 @@ Defect:
 
 Feature:
 ==================
-IPAD-4217
-(iPad/iPhone) Date/Time format in SFM does not respect language setting.
+IPAD-4528
+Source Object Update SFM does not work from iPad but does from browser.
 ——————
 
 NOTE:
