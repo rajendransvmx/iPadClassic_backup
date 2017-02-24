@@ -162,12 +162,12 @@
         NSDateFormatter *dateFormater = [NSDateFormatter new];
         [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]];
         if ([DateUtil iSDeviceTime24HourFormat]) {
-            [dateFormater setDateFormat:@"EEE MMM dd, yyyy HH:mm"];
+            [dateFormater setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"EEE MMM dd, yyyy HH:mm" options:0 locale:[NSLocale currentLocale]]];
             lTime = [dateFormater stringFromDate:date];
         }
         else
         {
-            [dateFormater setDateFormat:@"EEE MMM dd, yyyy hh:mm a"];
+            [dateFormater setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"EEE MMM dd, yyyy hh:mm a" options:0 locale:[NSLocale currentLocale]]];
             lTime = [dateFormater stringFromDate:date];
         }
     }
@@ -192,7 +192,7 @@
     NSString *lTime = nil;
     NSDateFormatter *dateFormater = [NSDateFormatter new];
     [dateFormater setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]];
-    [dateFormater setDateFormat:format];
+    [dateFormater setDateFormat:[NSDateFormatter dateFormatFromTemplate:format options:0 locale:[NSLocale currentLocale]]];
     lTime = [dateFormater stringFromDate:date];
     
     return lTime;
