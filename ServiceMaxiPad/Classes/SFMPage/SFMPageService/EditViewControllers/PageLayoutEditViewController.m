@@ -345,6 +345,9 @@ static NSString *collectionViewHeaderIdentifier = @"headerIdentifier";
                     }
                    
                     fieldCounter++;
+                    if (indexPath != nil && (fieldCounter - 1) >= indexPath.item) {
+                        break;
+                    }
                     
                 }
                 innerCounter--;
