@@ -2130,6 +2130,15 @@
                 SFMRecordFieldData * recordField = [eachTargetDict objectForKey:model.targetFieldName];
                 
                 finalValue = recordField.internalValue;
+                
+                //defect #038717
+                if ([model.targetFieldName isEqualToString:@"Id"] && (finalValue == nil)) {
+                    
+                    recordField = [eachTargetDict objectForKey:@"localId"];
+                    
+                    finalValue = recordField.internalValue;
+                }
+                
             }
             else{
                 finalValue = model.displayValue;
