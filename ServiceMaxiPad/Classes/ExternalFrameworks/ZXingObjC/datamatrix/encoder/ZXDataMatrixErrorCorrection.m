@@ -130,6 +130,11 @@ static int ZX_LOG[256], ZX_ALOG[256];
                           withString:[ecc substringWithRange:NSMakeRange(pos++, 1)]];
       }
     }
+      
+      free(dataSizes);
+      free(errorSizes);
+      free(startPos);
+      
   }
   return [NSString stringWithString:sb];
 }
@@ -176,6 +181,10 @@ static int ZX_LOG[256], ZX_ALOG[256];
   for (int i = 0; i < numECWords; i++) {
     eccReversed[i] = ecc[numECWords - i - 1];
   }
+    
+    free(ecc);
+    free(eccReversed);
+    
   return [NSString stringWithCharacters:eccReversed length:numECWords];
 }
 
