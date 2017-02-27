@@ -17,6 +17,7 @@
 #import "ZXBitArray.h"
 #import "ZXByteArray.h"
 #import "ZXIntArray.h"
+#import "ZXingObjC.h"
 
 @interface ZXBitArray ()
 
@@ -31,7 +32,7 @@
 - (id)init {
   if (self = [super init]) {
     _size = 0;
-    _bits = (int32_t *)calloc(1, sizeof(int32_t));
+    _bits = (int32_t *)calloc(1, BUFFER_SIZE_INT_32BIT);
     _bitsLength = 1;
   }
 
@@ -54,7 +55,7 @@
   if (self = [super init]) {
     _size = size;
     _bitsLength = (size + 31) / 32;
-    _bits = (int32_t *)calloc(_bitsLength, sizeof(int32_t));
+    _bits = (int32_t *)calloc(_bitsLength, BUFFER_SIZE_INT_32BIT);
   }
 
   return self;
@@ -277,7 +278,7 @@
 }
 
 - (void)reverse {
-  int32_t *newBits = (int32_t *)calloc(self.bitsLength, sizeof(int32_t));
+  int32_t *newBits = (int32_t *)calloc(self.bitsLength, BUFFER_SIZE_INT_32BIT);
   int size = self.size;
 
   // reverse all int's first
