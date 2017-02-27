@@ -28,5 +28,6 @@
 -(NSArray*)getRequestParamModelForGetPriceData:(RequestType)getPriceDataType;
 - (NSArray *)getTxFetcRequestParamsForRequestCount:(NSInteger )requestCount;
 - (NSDictionary *)getLastSyncTimeForRecords;
-
+-(NSArray*)getValuesArrayForLabour;
+-(NSArray*)getValuesArrayForCurrencyISO;
 @end
