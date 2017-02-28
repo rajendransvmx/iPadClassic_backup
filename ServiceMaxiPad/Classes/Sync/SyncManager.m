@@ -633,7 +633,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     {
         SXLogDebug(@"Data Sync Finished");
         [self executeSyncErrorReporting];
-        [self PerformSYncBasedOnFlags];
+//        [self PerformSYncBasedOnFlags]; // IPAD-4540
         
         //[self currentDataSyncfinished];
     }
