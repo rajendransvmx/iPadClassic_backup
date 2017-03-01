@@ -10,6 +10,7 @@
 #import "StyleManager.h"
 #import "StyleGuideConstants.h"
 #import <CoreText/CTStringAttributes.h>
+#import "StringUtil.h"
 
 static NSString *asterik = @"*";
 
@@ -62,7 +63,11 @@ static NSString *asterik = @"*";
 
 - (void)setFieldNameForeText:(NSString *)fieldName
 {
-    
+    // IPAD-4541 - Verifaya
+    if (![StringUtil isStringEmpty:fieldName])
+    {
+        [self.valueField setAccessibilityLabel:fieldName];
+    }
 }
 
 - (void)loadCell:(CellType)type

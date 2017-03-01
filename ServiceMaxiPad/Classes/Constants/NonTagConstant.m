@@ -188,3 +188,16 @@ NSString *const kProHistory        = @"SFMPageProHistory";
 /*Chatter*/
 NSString *const kChatterAttachmentId    = @"ChatterAttachmentId";
 NSString *const kChatterUserData        = @"ChatterUserData";
+
+// IPAD-4541 - Verifaya
+NSString *const kVToggleTabBar = @"ToggleTabBar";
+NSString *const kVEventStartDateTime = @"kVAEventStartDateTime";
+NSString *const kVEventEndDateTime = @"kVAEventEndDateTime";
+NSString *const kVDataSyncLastTimeLbl = @"kVADataSyncLastTimeLabel";
+NSString *const kVDataSyncLastTimeVal = @"kVADataSyncLastTimeValue";
+NSString *const kVDataSyncNextTimeLbl = @"kVADataSyncNextTimeLabel";
+NSString *const kVDataSyncNextTimeVal = @"kVADataSyncNextTimeValue";
+NSString *const kVConfigSyncLastTimeLbl = @"kVAConfigSyncLastTimeLabel";
+NSString *const kVConfigSyncLastTimeVal = @"kVAConfigSyncLastTimeValue";
+NSString *const kVConfigSyncNextTimeLbl = @"kVAConfigSyncNextTimeLabel";
+NSString *const kVConfigSyncNextTimeVal = @"kVAConfigSyncNextTimeValue";

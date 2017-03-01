@@ -27,6 +27,7 @@
 
 #import "CustomBadge.h"
 #import "ResolveConflictsHelper.h"
+#import "NonTagConstant.h"
 
 typedef enum {
     TabBarItemIDCalendar = 1,
@@ -79,6 +80,10 @@ typedef enum {
     btn1.layer.cornerRadius = 4.f;
     btn1.layer.shadowOffset = CGSizeMake(4.0f,4.5f);
     btn1.layer.shadowRadius = 1.5f;
+    
+    // IPAD-4541 - Verifaya
+    btn1.accessibilityLabel = kVToggleTabBar;
+    
     [self addBadgeToHomeButton];
     
     CalendarHomeViewController *calendarVCDefault = [ViewControllerFactory createViewControllerByContext:ViewControllerCalendar];
