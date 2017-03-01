@@ -7,6 +7,7 @@
 //
 
 #import "SMXReschedulePopup.h"
+#import "NonTagConstant.h"
 
 @implementation SMXReschedulePopup
 @synthesize event;
@@ -127,6 +128,10 @@
     cStartDateTimeButton.imageEdgeInsets = UIEdgeInsetsMake(0, cStartDateTimeButton.frame.size.width - lImage.size.width - 5, 0, 0);
 
     [cPopOverView addSubview:cStartDateTimeButton];
+    
+    // IPAD-4541 - Verifaya
+    cStartDateTimeButton.accessibilityLabel = kVEventStartDateTime;
+    cEndDateTimeButton.accessibilityLabel = kVEventEndDateTime;
     
     UILabel *lEndTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(lStartTitleLabel.frame.origin.x, cStartDateTimeButton.frame.origin.y + cStartDateTimeButton.frame.size.height + 15, cPopOverView.frame.size.width, 30)];
     
