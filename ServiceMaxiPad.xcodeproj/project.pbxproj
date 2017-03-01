@@ -1766,7 +1766,6 @@
 		A64AB0AE1CF2F9E5008839FB /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA21CEDCC37008839FB /* libiconv.tbd */; };
 		A64AB0AF1CF2F9E5008839FB /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AADA01CEDCC27008839FB /* libicucore.tbd */; };
 		A64AB0B01CF2F9E5008839FB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD981CEDCBF3008839FB /* IOKit.framework */; };
-		A64AB0B11CF2F9E5008839FB /* libHitachiStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */; };
 		A64AB0B21CF2F9E5008839FB /* Resource.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = A64AAD9B1CEDCBF3008839FB /* Resource.bundle */; };
 		A64AB0B31CF2F9E5008839FB /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BBFB76619F67565002070BC /* libsqlite3.0.dylib */; };
 		A64AB0B41CF2F9E5008839FB /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2175B19E57CDE00F22EA6 /* libsqlite3.dylib */; };
@@ -1794,7 +1793,6 @@
 		A64AB0CA1CF2F9E5008839FB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2171E19E57C5A00F22EA6 /* CoreGraphics.framework */; };
 		A64AB0CB1CF2F9E5008839FB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2172019E57C5A00F22EA6 /* UIKit.framework */; };
 		A64AB0CC1CF2F9E5008839FB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A2171C19E57C5A00F22EA6 /* Foundation.framework */; };
-		A64AB0CE1CF2F9E5008839FB /* Resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A64AADAB1CEDCD40008839FB /* Resource.bundle */; };
 		A64AB0CF1CF2F9E5008839FB /* com.servicemax.client.native.laptop.zip in Resources */ = {isa = PBXBuildFile; fileRef = 434408991C9035B600628FFB /* com.servicemax.client.native.laptop.zip */; };
 		A64AB0D01CF2F9E5008839FB /* json2.js in Resources */ = {isa = PBXBuildFile; fileRef = 184A8EC719E7A535006DA6BE /* json2.js */; };
 		A64AB0D11CF2F9E5008839FB /* bizRules-index.js in Resources */ = {isa = PBXBuildFile; fileRef = 427305201A10BD46005F41E1 /* bizRules-index.js */; };
@@ -1818,7 +1816,6 @@
 		A64AB0E31CF2F9E5008839FB /* sync_Error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84BEDC9819FA157800350B56 /* sync_Error@2x.png */; };
 		A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3EF97801A036CAE00476293 /* DocumentsViewController.xib */; };
 		A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A981E19E7D58F006DA6BE /* iOS-Email-Retina-Orange@2x.png */; };
-		A64AB0E71CF2F9E5008839FB /* HitachiStudio in Resources */ = {isa = PBXBuildFile; fileRef = A64AAD961CEDCB61008839FB /* HitachiStudio */; };
 		A64AB0E81CF2F9E5008839FB /* ProductIQCustomActionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1195544B1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib */; };
 		A64AB0EA1CF2F9E5008839FB /* recentlyCreated@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E619E7D58F006DA6BE /* recentlyCreated@2x.png */; };
 		A64AB0EB1CF2F9E5008839FB /* OPDoc.html in Resources */ = {isa = PBXBuildFile; fileRef = 40CA19F419FE4B340097F5A1 /* OPDoc.html */; };
@@ -2147,6 +2144,238 @@
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
 		EC42EC2B1DDAEA2200419D7D /* ValidateProfileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */; };
+		EC9E39AE1E66E7FE002663D6 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
+		EC9E39AF1E66E7FE002663D6 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
+		EC9E39B01E66E7FE002663D6 /* ValidateProfileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */; };
+		EC9E39B11E66E7FE002663D6 /* ZXAztecDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */; };
+		EC9E39B21E66E7FE002663D6 /* ZXAztecDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF301D4A088800972C95 /* ZXAztecDetector.m */; };
+		EC9E39B31E66E7FE002663D6 /* ZXAztecBinaryShiftToken.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF331D4A088800972C95 /* ZXAztecBinaryShiftToken.m */; };
+		EC9E39B41E66E7FE002663D6 /* ZXAztecCode.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF351D4A088800972C95 /* ZXAztecCode.m */; };
+		EC9E39B51E66E7FE002663D6 /* ZXAztecEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF371D4A088800972C95 /* ZXAztecEncoder.m */; };
+		EC9E39B61E66E7FE002663D6 /* ZXAztecHighLevelEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF391D4A088800972C95 /* ZXAztecHighLevelEncoder.m */; };
+		EC9E39B71E66E7FE002663D6 /* ZXAztecSimpleToken.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF3B1D4A088800972C95 /* ZXAztecSimpleToken.m */; };
+		EC9E39B81E66E7FE002663D6 /* ZXAztecState.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF3D1D4A088800972C95 /* ZXAztecState.m */; };
+		EC9E39B91E66E7FE002663D6 /* ZXAztecToken.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF3F1D4A088800972C95 /* ZXAztecToken.m */; };
+		EC9E39BA1E66E7FE002663D6 /* ZXAztecDetectorResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF411D4A088800972C95 /* ZXAztecDetectorResult.m */; };
+		EC9E39BB1E66E7FE002663D6 /* ZXAztecReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF431D4A088800972C95 /* ZXAztecReader.m */; };
+		EC9E39BC1E66E7FE002663D6 /* ZXAztecWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF451D4A088800972C95 /* ZXAztecWriter.m */; };
+		EC9E39BD1E66E7FE002663D6 /* ZXAbstractDoCoMoResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF4A1D4A088800972C95 /* ZXAbstractDoCoMoResultParser.m */; };
+		EC9E39BE1E66E7FE002663D6 /* ZXAddressBookAUResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF4C1D4A088800972C95 /* ZXAddressBookAUResultParser.m */; };
+		EC9E39BF1E66E7FE002663D6 /* ZXAddressBookDoCoMoResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF4E1D4A088800972C95 /* ZXAddressBookDoCoMoResultParser.m */; };
+		EC9E39C01E66E7FE002663D6 /* ZXAddressBookParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF501D4A088900972C95 /* ZXAddressBookParsedResult.m */; };
+		EC9E39C11E66E7FE002663D6 /* ZXBizcardResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF521D4A088900972C95 /* ZXBizcardResultParser.m */; };
+		EC9E39C21E66E7FE002663D6 /* ZXBookmarkDoCoMoResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF541D4A088900972C95 /* ZXBookmarkDoCoMoResultParser.m */; };
+		EC9E39C31E66E7FE002663D6 /* ZXCalendarParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF561D4A088900972C95 /* ZXCalendarParsedResult.m */; };
+		EC9E39C41E66E7FE002663D6 /* ZXEmailAddressParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF581D4A088900972C95 /* ZXEmailAddressParsedResult.m */; };
+		EC9E39C51E66E7FE002663D6 /* ZXEmailAddressResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF5A1D4A088900972C95 /* ZXEmailAddressResultParser.m */; };
+		EC9E39C61E66E7FE002663D6 /* ZXEmailDoCoMoResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF5C1D4A088900972C95 /* ZXEmailDoCoMoResultParser.m */; };
+		EC9E39C71E66E7FE002663D6 /* ZXExpandedProductParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF5E1D4A088900972C95 /* ZXExpandedProductParsedResult.m */; };
+		EC9E39C81E66E7FE002663D6 /* ZXExpandedProductResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF601D4A088900972C95 /* ZXExpandedProductResultParser.m */; };
+		EC9E39C91E66E7FE002663D6 /* ZXGeoParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF621D4A088900972C95 /* ZXGeoParsedResult.m */; };
+		EC9E39CA1E66E7FE002663D6 /* ZXGeoResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF641D4A088900972C95 /* ZXGeoResultParser.m */; };
+		EC9E39CB1E66E7FE002663D6 /* ZXISBNParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF661D4A088900972C95 /* ZXISBNParsedResult.m */; };
+		EC9E39CC1E66E7FE002663D6 /* ZXISBNResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF681D4A088900972C95 /* ZXISBNResultParser.m */; };
+		EC9E39CD1E66E7FE002663D6 /* ZXParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF6A1D4A088900972C95 /* ZXParsedResult.m */; };
+		EC9E39CE1E66E7FE002663D6 /* ZXProductParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF6D1D4A088900972C95 /* ZXProductParsedResult.m */; };
+		EC9E39CF1E66E7FE002663D6 /* ZXProductResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF6F1D4A088900972C95 /* ZXProductResultParser.m */; };
+		EC9E39D01E66E7FE002663D6 /* ZXResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF711D4A088900972C95 /* ZXResultParser.m */; };
+		EC9E39D11E66E7FE002663D6 /* ZXSMSMMSResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF731D4A088900972C95 /* ZXSMSMMSResultParser.m */; };
+		EC9E39D21E66E7FE002663D6 /* ZXSMSParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF751D4A088900972C95 /* ZXSMSParsedResult.m */; };
+		EC9E39D31E66E7FE002663D6 /* ZXSMSTOMMSTOResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF771D4A088900972C95 /* ZXSMSTOMMSTOResultParser.m */; };
+		EC9E39D41E66E7FE002663D6 /* ZXSMTPResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF791D4A088900972C95 /* ZXSMTPResultParser.m */; };
+		EC9E39D51E66E7FE002663D6 /* ZXTelParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF7B1D4A088900972C95 /* ZXTelParsedResult.m */; };
+		EC9E39D61E66E7FE002663D6 /* ZXTelResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF7D1D4A088900972C95 /* ZXTelResultParser.m */; };
+		EC9E39D71E66E7FF002663D6 /* ZXTextParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF7F1D4A088900972C95 /* ZXTextParsedResult.m */; };
+		EC9E39D81E66E7FF002663D6 /* ZXURIParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF811D4A088900972C95 /* ZXURIParsedResult.m */; };
+		EC9E39D91E66E7FF002663D6 /* ZXURIResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF831D4A088900972C95 /* ZXURIResultParser.m */; };
+		EC9E39DA1E66E7FF002663D6 /* ZXURLTOResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF851D4A088900972C95 /* ZXURLTOResultParser.m */; };
+		EC9E39DB1E66E7FF002663D6 /* ZXVCardResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF871D4A088900972C95 /* ZXVCardResultParser.m */; };
+		EC9E39DC1E66E7FF002663D6 /* ZXVEventResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF891D4A088900972C95 /* ZXVEventResultParser.m */; };
+		EC9E39DD1E66E7FF002663D6 /* ZXVINParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF8B1D4A088900972C95 /* ZXVINParsedResult.m */; };
+		EC9E39DE1E66E7FF002663D6 /* ZXVINResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF8D1D4A088900972C95 /* ZXVINResultParser.m */; };
+		EC9E39DF1E66E7FF002663D6 /* ZXWifiParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF8F1D4A088900972C95 /* ZXWifiParsedResult.m */; };
+		EC9E39E01E66E7FF002663D6 /* ZXWifiResultParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF911D4A088900972C95 /* ZXWifiResultParser.m */; };
+		EC9E39E11E66E7FF002663D6 /* ZXCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF931D4A088900972C95 /* ZXCapture.m */; };
+		EC9E39E21E66E7FF002663D6 /* ZXCGImageLuminanceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF961D4A088900972C95 /* ZXCGImageLuminanceSource.m */; };
+		EC9E39E31E66E7FF002663D6 /* ZXImage.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF981D4A088900972C95 /* ZXImage.m */; };
+		EC9E39E41E66E7FF002663D6 /* ZXMathUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF9C1D4A088900972C95 /* ZXMathUtils.m */; };
+		EC9E39E51E66E7FF002663D6 /* ZXMonochromeRectangleDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF9E1D4A088900972C95 /* ZXMonochromeRectangleDetector.m */; };
+		EC9E39E61E66E7FF002663D6 /* ZXWhiteRectangleDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFA01D4A088900972C95 /* ZXWhiteRectangleDetector.m */; };
+		EC9E39E71E66E7FF002663D6 /* ZXGenericGF.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFA31D4A088900972C95 /* ZXGenericGF.m */; };
+		EC9E39E81E66E7FF002663D6 /* ZXGenericGFPoly.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFA51D4A088900972C95 /* ZXGenericGFPoly.m */; };
+		EC9E39E91E66E7FF002663D6 /* ZXReedSolomonDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFA71D4A088900972C95 /* ZXReedSolomonDecoder.m */; };
+		EC9E39EA1E66E7FF002663D6 /* ZXReedSolomonEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFA91D4A088900972C95 /* ZXReedSolomonEncoder.m */; };
+		EC9E39EB1E66E7FF002663D6 /* ZXBitArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFAB1D4A088900972C95 /* ZXBitArray.m */; };
+		EC9E39EC1E66E7FF002663D6 /* ZXBitMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFAD1D4A088900972C95 /* ZXBitMatrix.m */; };
+		EC9E39ED1E66E7FF002663D6 /* ZXBitSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFAF1D4A088900972C95 /* ZXBitSource.m */; };
+		EC9E39EE1E66E7FF002663D6 /* ZXBoolArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFB11D4A088900972C95 /* ZXBoolArray.m */; };
+		EC9E39EF1E66E7FF002663D6 /* ZXByteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFB31D4A088900972C95 /* ZXByteArray.m */; };
+		EC9E39F01E66E7FF002663D6 /* ZXCharacterSetECI.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFB51D4A088900972C95 /* ZXCharacterSetECI.m */; };
+		EC9E39F11E66E7FF002663D6 /* ZXDecoderResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFB71D4A088900972C95 /* ZXDecoderResult.m */; };
+		EC9E39F21E66E7FF002663D6 /* ZXDefaultGridSampler.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFB91D4A088900972C95 /* ZXDefaultGridSampler.m */; };
+		EC9E39F31E66E7FF002663D6 /* ZXDetectorResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFBB1D4A088900972C95 /* ZXDetectorResult.m */; };
+		EC9E39F41E66E7FF002663D6 /* ZXGlobalHistogramBinarizer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFBD1D4A088900972C95 /* ZXGlobalHistogramBinarizer.m */; };
+		EC9E39F51E66E7FF002663D6 /* ZXGridSampler.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFBF1D4A088900972C95 /* ZXGridSampler.m */; };
+		EC9E39F61E66E7FF002663D6 /* ZXHybridBinarizer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFC11D4A088900972C95 /* ZXHybridBinarizer.m */; };
+		EC9E39F71E66E7FF002663D6 /* ZXIntArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFC31D4A088900972C95 /* ZXIntArray.m */; };
+		EC9E39F81E66E7FF002663D6 /* ZXPerspectiveTransform.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFC51D4A088900972C95 /* ZXPerspectiveTransform.m */; };
+		EC9E39F91E66E7FF002663D6 /* ZXStringUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFC71D4A088900972C95 /* ZXStringUtils.m */; };
+		EC9E39FA1E66E7FF002663D6 /* ZXBinarizer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFCB1D4A088900972C95 /* ZXBinarizer.m */; };
+		EC9E39FB1E66E7FF002663D6 /* ZXBinaryBitmap.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFCD1D4A088900972C95 /* ZXBinaryBitmap.m */; };
+		EC9E39FC1E66E7FF002663D6 /* ZXByteMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFCF1D4A088900972C95 /* ZXByteMatrix.m */; };
+		EC9E39FD1E66E7FF002663D6 /* ZXDecodeHints.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFD11D4A088900972C95 /* ZXDecodeHints.m */; };
+		EC9E39FE1E66E7FF002663D6 /* ZXDimension.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFD31D4A088900972C95 /* ZXDimension.m */; };
+		EC9E39FF1E66E7FF002663D6 /* ZXEncodeHints.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFD51D4A088900972C95 /* ZXEncodeHints.m */; };
+		EC9E3A001E66E7FF002663D6 /* ZXErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFD71D4A088900972C95 /* ZXErrors.m */; };
+		EC9E3A011E66E7FF002663D6 /* ZXInvertedLuminanceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFDA1D4A088900972C95 /* ZXInvertedLuminanceSource.m */; };
+		EC9E3A021E66E7FF002663D6 /* ZXLuminanceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFDC1D4A088900972C95 /* ZXLuminanceSource.m */; };
+		EC9E3A031E66E7FF002663D6 /* ZXPlanarYUVLuminanceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFDE1D4A088900972C95 /* ZXPlanarYUVLuminanceSource.m */; };
+		EC9E3A041E66E7FF002663D6 /* ZXResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFE11D4A088900972C95 /* ZXResult.m */; };
+		EC9E3A051E66E7FF002663D6 /* ZXResultPoint.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFE41D4A088900972C95 /* ZXResultPoint.m */; };
+		EC9E3A061E66E7FF002663D6 /* ZXRGBLuminanceSource.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFE71D4A088900972C95 /* ZXRGBLuminanceSource.m */; };
+		EC9E3A071E66E7FF002663D6 /* ZXDataMatrixBitMatrixParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFEC1D4A088900972C95 /* ZXDataMatrixBitMatrixParser.m */; };
+		EC9E3A081E66E7FF002663D6 /* ZXDataMatrixDataBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFEE1D4A088900972C95 /* ZXDataMatrixDataBlock.m */; };
+		EC9E3A091E66E7FF002663D6 /* ZXDataMatrixDecodedBitStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFF01D4A088900972C95 /* ZXDataMatrixDecodedBitStreamParser.m */; };
+		EC9E3A0A1E66E7FF002663D6 /* ZXDataMatrixDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFF21D4A088900972C95 /* ZXDataMatrixDecoder.m */; };
+		EC9E3A0B1E66E7FF002663D6 /* ZXDataMatrixVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFF41D4A088900972C95 /* ZXDataMatrixVersion.m */; };
+		EC9E3A0C1E66E7FF002663D6 /* ZXDataMatrixDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFF71D4A088900972C95 /* ZXDataMatrixDetector.m */; };
+		EC9E3A0D1E66E7FF002663D6 /* ZXDataMatrixASCIIEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFFA1D4A088900972C95 /* ZXDataMatrixASCIIEncoder.m */; };
+		EC9E3A0E1E66E7FF002663D6 /* ZXDataMatrixBase256Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFFC1D4A088900972C95 /* ZXDataMatrixBase256Encoder.m */; };
+		EC9E3A0F1E66E7FF002663D6 /* ZXDataMatrixC40Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DFFE1D4A088900972C95 /* ZXDataMatrixC40Encoder.m */; };
+		EC9E3A101E66E7FF002663D6 /* ZXDataMatrixDefaultPlacement.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0001D4A088900972C95 /* ZXDataMatrixDefaultPlacement.m */; };
+		EC9E3A111E66E7FF002663D6 /* ZXDataMatrixEdifactEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0021D4A088900972C95 /* ZXDataMatrixEdifactEncoder.m */; };
+		EC9E3A121E66E7FF002663D6 /* ZXDataMatrixEncoderContext.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0051D4A088900972C95 /* ZXDataMatrixEncoderContext.m */; };
+		EC9E3A131E66E7FF002663D6 /* ZXDataMatrixErrorCorrection.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0071D4A088900972C95 /* ZXDataMatrixErrorCorrection.m */; };
+		EC9E3A141E66E7FF002663D6 /* ZXDataMatrixHighLevelEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0091D4A088900972C95 /* ZXDataMatrixHighLevelEncoder.m */; };
+		EC9E3A151E66E7FF002663D6 /* ZXDataMatrixSymbolInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E00B1D4A088900972C95 /* ZXDataMatrixSymbolInfo.m */; };
+		EC9E3A161E66E7FF002663D6 /* ZXDataMatrixSymbolInfo144.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E00D1D4A088900972C95 /* ZXDataMatrixSymbolInfo144.m */; };
+		EC9E3A171E66E7FF002663D6 /* ZXDataMatrixTextEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E00F1D4A088900972C95 /* ZXDataMatrixTextEncoder.m */; };
+		EC9E3A181E66E7FF002663D6 /* ZXDataMatrixX12Encoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0111D4A088900972C95 /* ZXDataMatrixX12Encoder.m */; };
+		EC9E3A191E66E7FF002663D6 /* ZXDataMatrixReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0131D4A088900972C95 /* ZXDataMatrixReader.m */; };
+		EC9E3A1A1E66E7FF002663D6 /* ZXDataMatrixWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0151D4A088900972C95 /* ZXDataMatrixWriter.m */; };
+		EC9E3A1B1E66E7FF002663D6 /* ZXMaxiCodeBitMatrixParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E01A1D4A088900972C95 /* ZXMaxiCodeBitMatrixParser.m */; };
+		EC9E3A1C1E66E7FF002663D6 /* ZXMaxiCodeDecodedBitStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E01C1D4A088900972C95 /* ZXMaxiCodeDecodedBitStreamParser.m */; };
+		EC9E3A1D1E66E7FF002663D6 /* ZXMaxiCodeDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E01E1D4A088900972C95 /* ZXMaxiCodeDecoder.m */; };
+		EC9E3A1E1E66E7FF002663D6 /* ZXMaxiCodeReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0211D4A088900972C95 /* ZXMaxiCodeReader.m */; };
+		EC9E3A1F1E66E7FF002663D6 /* ZXByQuadrantReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0241D4A088900972C95 /* ZXByQuadrantReader.m */; };
+		EC9E3A201E66E7FF002663D6 /* ZXGenericMultipleBarcodeReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0261D4A088900972C95 /* ZXGenericMultipleBarcodeReader.m */; };
+		EC9E3A211E66E7FF002663D6 /* ZXAbstractExpandedDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E02D1D4A088900972C95 /* ZXAbstractExpandedDecoder.m */; };
+		EC9E3A221E66E7FF002663D6 /* ZXAI013103decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E02F1D4A088900972C95 /* ZXAI013103decoder.m */; };
+		EC9E3A231E66E7FF002663D6 /* ZXAI01320xDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0311D4A088900972C95 /* ZXAI01320xDecoder.m */; };
+		EC9E3A241E66E7FF002663D6 /* ZXAI01392xDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0331D4A088900972C95 /* ZXAI01392xDecoder.m */; };
+		EC9E3A251E66E7FF002663D6 /* ZXAI01393xDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0351D4A088900972C95 /* ZXAI01393xDecoder.m */; };
+		EC9E3A261E66E7FF002663D6 /* ZXAI013x0x1xDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0371D4A088900972C95 /* ZXAI013x0x1xDecoder.m */; };
+		EC9E3A271E66E7FF002663D6 /* ZXAI013x0xDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0391D4A088900972C95 /* ZXAI013x0xDecoder.m */; };
+		EC9E3A281E66E7FF002663D6 /* ZXAI01AndOtherAIs.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E03B1D4A088900972C95 /* ZXAI01AndOtherAIs.m */; };
+		EC9E3A291E66E7FF002663D6 /* ZXAI01decoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E03D1D4A088900972C95 /* ZXAI01decoder.m */; };
+		EC9E3A2A1E66E7FF002663D6 /* ZXAI01weightDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E03F1D4A088900972C95 /* ZXAI01weightDecoder.m */; };
+		EC9E3A2B1E66E7FF002663D6 /* ZXAnyAIDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0411D4A088900972C95 /* ZXAnyAIDecoder.m */; };
+		EC9E3A2C1E66E7FF002663D6 /* ZXRSSExpandedBlockParsedResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0431D4A088900972C95 /* ZXRSSExpandedBlockParsedResult.m */; };
+		EC9E3A2D1E66E7FF002663D6 /* ZXRSSExpandedCurrentParsingState.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0451D4A088900972C95 /* ZXRSSExpandedCurrentParsingState.m */; };
+		EC9E3A2E1E66E7FF002663D6 /* ZXRSSExpandedDecodedChar.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0471D4A088900972C95 /* ZXRSSExpandedDecodedChar.m */; };
+		EC9E3A2F1E66E7FF002663D6 /* ZXRSSExpandedDecodedInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0491D4A088900972C95 /* ZXRSSExpandedDecodedInformation.m */; };
+		EC9E3A301E66E7FF002663D6 /* ZXRSSExpandedDecodedNumeric.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E04B1D4A088900972C95 /* ZXRSSExpandedDecodedNumeric.m */; };
+		EC9E3A311E66E7FF002663D6 /* ZXRSSExpandedDecodedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E04D1D4A088900972C95 /* ZXRSSExpandedDecodedObject.m */; };
+		EC9E3A321E66E7FF002663D6 /* ZXRSSExpandedFieldParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E04F1D4A088900972C95 /* ZXRSSExpandedFieldParser.m */; };
+		EC9E3A331E66E7FF002663D6 /* ZXRSSExpandedGeneralAppIdDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0511D4A088900972C95 /* ZXRSSExpandedGeneralAppIdDecoder.m */; };
+		EC9E3A341E66E7FF002663D6 /* ZXBitArrayBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0531D4A088900972C95 /* ZXBitArrayBuilder.m */; };
+		EC9E3A351E66E7FF002663D6 /* ZXRSSExpandedPair.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0551D4A088900972C95 /* ZXRSSExpandedPair.m */; };
+		EC9E3A361E66E7FF002663D6 /* ZXRSSExpandedReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0571D4A088900972C95 /* ZXRSSExpandedReader.m */; };
+		EC9E3A371E66E7FF002663D6 /* ZXRSSExpandedRow.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0591D4A088900972C95 /* ZXRSSExpandedRow.m */; };
+		EC9E3A381E66E7FF002663D6 /* ZXAbstractRSSReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E05B1D4A088900972C95 /* ZXAbstractRSSReader.m */; };
+		EC9E3A391E66E7FF002663D6 /* ZXRSS14Reader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E05D1D4A088900972C95 /* ZXRSS14Reader.m */; };
+		EC9E3A3A1E66E7FF002663D6 /* ZXRSSDataCharacter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E05F1D4A088900972C95 /* ZXRSSDataCharacter.m */; };
+		EC9E3A3B1E66E7FF002663D6 /* ZXRSSFinderPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0611D4A088900972C95 /* ZXRSSFinderPattern.m */; };
+		EC9E3A3C1E66E7FF002663D6 /* ZXRSSPair.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0631D4A088900972C95 /* ZXRSSPair.m */; };
+		EC9E3A3D1E66E7FF002663D6 /* ZXRSSUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0651D4A088900972C95 /* ZXRSSUtils.m */; };
+		EC9E3A3E1E66E7FF002663D6 /* ZXCodaBarReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0671D4A088900972C95 /* ZXCodaBarReader.m */; };
+		EC9E3A3F1E66E7FF002663D6 /* ZXCodaBarWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0691D4A088900972C95 /* ZXCodaBarWriter.m */; };
+		EC9E3A401E66E7FF002663D6 /* ZXCode128Reader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E06B1D4A088900972C95 /* ZXCode128Reader.m */; };
+		EC9E3A411E66E7FF002663D6 /* ZXCode128Writer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E06D1D4A088900972C95 /* ZXCode128Writer.m */; };
+		EC9E3A421E66E7FF002663D6 /* ZXCode39Reader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E06F1D4A088900972C95 /* ZXCode39Reader.m */; };
+		EC9E3A431E66E7FF002663D6 /* ZXCode39Writer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0711D4A088900972C95 /* ZXCode39Writer.m */; };
+		EC9E3A441E66E7FF002663D6 /* ZXCode93Reader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0731D4A088900972C95 /* ZXCode93Reader.m */; };
+		EC9E3A451E66E7FF002663D6 /* ZXEAN13Reader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0751D4A088900972C95 /* ZXEAN13Reader.m */; };
+		EC9E3A461E66E7FF002663D6 /* ZXEAN13Writer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0771D4A088900972C95 /* ZXEAN13Writer.m */; };
+		EC9E3A471E66E7FF002663D6 /* ZXEAN8Reader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0791D4A088900972C95 /* ZXEAN8Reader.m */; };
+		EC9E3A481E66E7FF002663D6 /* ZXEAN8Writer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E07B1D4A088900972C95 /* ZXEAN8Writer.m */; };
+		EC9E3A491E66E7FF002663D6 /* ZXEANManufacturerOrgSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E07D1D4A088900972C95 /* ZXEANManufacturerOrgSupport.m */; };
+		EC9E3A4A1E66E7FF002663D6 /* ZXITFReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0801D4A088900972C95 /* ZXITFReader.m */; };
+		EC9E3A4B1E66E7FF002663D6 /* ZXITFWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0821D4A088900972C95 /* ZXITFWriter.m */; };
+		EC9E3A4C1E66E7FF002663D6 /* ZXMultiFormatOneDReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0841D4A088900972C95 /* ZXMultiFormatOneDReader.m */; };
+		EC9E3A4D1E66E7FF002663D6 /* ZXMultiFormatUPCEANReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0861D4A088900972C95 /* ZXMultiFormatUPCEANReader.m */; };
+		EC9E3A4E1E66E7FF002663D6 /* ZXOneDimensionalCodeWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0881D4A088900972C95 /* ZXOneDimensionalCodeWriter.m */; };
+		EC9E3A4F1E66E7FF002663D6 /* ZXOneDReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E08A1D4A088900972C95 /* ZXOneDReader.m */; };
+		EC9E3A501E66E7FF002663D6 /* ZXUPCAReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E08C1D4A088900972C95 /* ZXUPCAReader.m */; };
+		EC9E3A511E66E7FF002663D6 /* ZXUPCAWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E08E1D4A088900972C95 /* ZXUPCAWriter.m */; };
+		EC9E3A521E66E7FF002663D6 /* ZXUPCEANExtension2Support.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0901D4A088900972C95 /* ZXUPCEANExtension2Support.m */; };
+		EC9E3A531E66E7FF002663D6 /* ZXUPCEANExtension5Support.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0921D4A088900972C95 /* ZXUPCEANExtension5Support.m */; };
+		EC9E3A541E66E7FF002663D6 /* ZXUPCEANExtensionSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0941D4A088900972C95 /* ZXUPCEANExtensionSupport.m */; };
+		EC9E3A551E66E7FF002663D6 /* ZXUPCEANReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0961D4A088900972C95 /* ZXUPCEANReader.m */; };
+		EC9E3A561E66E7FF002663D6 /* ZXUPCEANWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0981D4A088900972C95 /* ZXUPCEANWriter.m */; };
+		EC9E3A571E66E7FF002663D6 /* ZXUPCEReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E09A1D4A088900972C95 /* ZXUPCEReader.m */; };
+		EC9E3A581E66E7FF002663D6 /* ZXModulusGF.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E09F1D4A088900972C95 /* ZXModulusGF.m */; };
+		EC9E3A591E66E7FF002663D6 /* ZXModulusPoly.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0A11D4A088900972C95 /* ZXModulusPoly.m */; };
+		EC9E3A5A1E66E7FF002663D6 /* ZXPDF417ECErrorCorrection.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0A31D4A088900972C95 /* ZXPDF417ECErrorCorrection.m */; };
+		EC9E3A5B1E66E7FF002663D6 /* ZXPDF417BarcodeMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0A51D4A088900972C95 /* ZXPDF417BarcodeMetadata.m */; };
+		EC9E3A5C1E66E7FF002663D6 /* ZXPDF417BarcodeValue.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0A71D4A088900972C95 /* ZXPDF417BarcodeValue.m */; };
+		EC9E3A5D1E66E7FF002663D6 /* ZXPDF417BoundingBox.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0A91D4A088900972C95 /* ZXPDF417BoundingBox.m */; };
+		EC9E3A5E1E66E7FF002663D6 /* ZXPDF417Codeword.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0AB1D4A088900972C95 /* ZXPDF417Codeword.m */; };
+		EC9E3A5F1E66E7FF002663D6 /* ZXPDF417CodewordDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0AD1D4A088900972C95 /* ZXPDF417CodewordDecoder.m */; };
+		EC9E3A601E66E7FF002663D6 /* ZXPDF417DecodedBitStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0AF1D4A088900972C95 /* ZXPDF417DecodedBitStreamParser.m */; };
+		EC9E3A611E66E7FF002663D6 /* ZXPDF417DetectionResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0B11D4A088900972C95 /* ZXPDF417DetectionResult.m */; };
+		EC9E3A621E66E7FF002663D6 /* ZXPDF417DetectionResultColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0B31D4A088900972C95 /* ZXPDF417DetectionResultColumn.m */; };
+		EC9E3A631E66E7FF002663D6 /* ZXPDF417DetectionResultRowIndicatorColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0B51D4A088900972C95 /* ZXPDF417DetectionResultRowIndicatorColumn.m */; };
+		EC9E3A641E66E7FF002663D6 /* ZXPDF417ScanningDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0B71D4A088900972C95 /* ZXPDF417ScanningDecoder.m */; };
+		EC9E3A651E66E7FF002663D6 /* ZXPDF417Detector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0BA1D4A088900972C95 /* ZXPDF417Detector.m */; };
+		EC9E3A661E66E7FF002663D6 /* ZXPDF417DetectorResult.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0BC1D4A088900972C95 /* ZXPDF417DetectorResult.m */; };
+		EC9E3A671E66E7FF002663D6 /* ZXPDF417.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0BF1D4A088900972C95 /* ZXPDF417.m */; };
+		EC9E3A681E66E7FF002663D6 /* ZXPDF417BarcodeMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0C11D4A088900972C95 /* ZXPDF417BarcodeMatrix.m */; };
+		EC9E3A691E66E7FF002663D6 /* ZXPDF417BarcodeRow.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0C31D4A088900972C95 /* ZXPDF417BarcodeRow.m */; };
+		EC9E3A6A1E66E7FF002663D6 /* ZXPDF417Dimensions.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0C51D4A088900972C95 /* ZXPDF417Dimensions.m */; };
+		EC9E3A6B1E66E7FF002663D6 /* ZXPDF417ErrorCorrection.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0C71D4A088900972C95 /* ZXPDF417ErrorCorrection.m */; };
+		EC9E3A6C1E66E7FF002663D6 /* ZXPDF417HighLevelEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0C91D4A088900972C95 /* ZXPDF417HighLevelEncoder.m */; };
+		EC9E3A6D1E66E7FF002663D6 /* ZXPDF417Common.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0CC1D4A088900972C95 /* ZXPDF417Common.m */; };
+		EC9E3A6E1E66E7FF002663D6 /* ZXPDF417Reader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0CE1D4A088900972C95 /* ZXPDF417Reader.m */; };
+		EC9E3A6F1E66E7FF002663D6 /* ZXPDF417ResultMetadata.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0D01D4A088900972C95 /* ZXPDF417ResultMetadata.m */; };
+		EC9E3A701E66E7FF002663D6 /* ZXPDF417Writer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0D21D4A088900972C95 /* ZXPDF417Writer.m */; };
+		EC9E3A711E66E7FF002663D6 /* ZXQRCodeBitMatrixParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0D61D4A088900972C95 /* ZXQRCodeBitMatrixParser.m */; };
+		EC9E3A721E66E7FF002663D6 /* ZXQRCodeDataBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0D81D4A088900972C95 /* ZXQRCodeDataBlock.m */; };
+		EC9E3A731E66E7FF002663D6 /* ZXQRCodeDataMask.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0DA1D4A088900972C95 /* ZXQRCodeDataMask.m */; };
+		EC9E3A741E66E7FF002663D6 /* ZXQRCodeDecodedBitStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0DC1D4A088900972C95 /* ZXQRCodeDecodedBitStreamParser.m */; };
+		EC9E3A751E66E7FF002663D6 /* ZXQRCodeDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0DE1D4A088900972C95 /* ZXQRCodeDecoder.m */; };
+		EC9E3A761E66E7FF002663D6 /* ZXQRCodeDecoderMetaData.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0E01D4A088900972C95 /* ZXQRCodeDecoderMetaData.m */; };
+		EC9E3A771E66E7FF002663D6 /* ZXQRCodeErrorCorrectionLevel.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0E21D4A088900972C95 /* ZXQRCodeErrorCorrectionLevel.m */; };
+		EC9E3A781E66E7FF002663D6 /* ZXQRCodeFormatInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0E41D4A088900972C95 /* ZXQRCodeFormatInformation.m */; };
+		EC9E3A791E66E7FF002663D6 /* ZXQRCodeMode.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0E61D4A088900972C95 /* ZXQRCodeMode.m */; };
+		EC9E3A7A1E66E7FF002663D6 /* ZXQRCodeVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0E81D4A088900972C95 /* ZXQRCodeVersion.m */; };
+		EC9E3A7B1E66E7FF002663D6 /* ZXQRCodeAlignmentPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0EB1D4A088900972C95 /* ZXQRCodeAlignmentPattern.m */; };
+		EC9E3A7C1E66E7FF002663D6 /* ZXQRCodeAlignmentPatternFinder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0ED1D4A088900972C95 /* ZXQRCodeAlignmentPatternFinder.m */; };
+		EC9E3A7D1E66E7FF002663D6 /* ZXQRCodeDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0EF1D4A088900972C95 /* ZXQRCodeDetector.m */; };
+		EC9E3A7E1E66E7FF002663D6 /* ZXQRCodeFinderPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0F11D4A088900972C95 /* ZXQRCodeFinderPattern.m */; };
+		EC9E3A7F1E66E7FF002663D6 /* ZXQRCodeFinderPatternFinder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0F31D4A088900972C95 /* ZXQRCodeFinderPatternFinder.m */; };
+		EC9E3A801E66E7FF002663D6 /* ZXQRCodeFinderPatternInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0F51D4A088900972C95 /* ZXQRCodeFinderPatternInfo.m */; };
+		EC9E3A811E66E7FF002663D6 /* ZXQRCode.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0F81D4A088900972C95 /* ZXQRCode.m */; };
+		EC9E3A821E66E7FF002663D6 /* ZXQRCodeBlockPair.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0FA1D4A088A00972C95 /* ZXQRCodeBlockPair.m */; };
+		EC9E3A831E66E7FF002663D6 /* ZXQRCodeEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0FC1D4A088A00972C95 /* ZXQRCodeEncoder.m */; };
+		EC9E3A841E66E7FF002663D6 /* ZXQRCodeMaskUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E0FE1D4A088A00972C95 /* ZXQRCodeMaskUtil.m */; };
+		EC9E3A851E66E7FF002663D6 /* ZXQRCodeMatrixUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E1001D4A088A00972C95 /* ZXQRCodeMatrixUtil.m */; };
+		EC9E3A861E66E7FF002663D6 /* ZXMultiDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E1041D4A088A00972C95 /* ZXMultiDetector.m */; };
+		EC9E3A871E66E7FF002663D6 /* ZXMultiFinderPatternFinder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E1061D4A088A00972C95 /* ZXMultiFinderPatternFinder.m */; };
+		EC9E3A881E66E7FF002663D6 /* ZXQRCodeMultiReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E1081D4A088A00972C95 /* ZXQRCodeMultiReader.m */; };
+		EC9E3A891E66E7FF002663D6 /* ZXQRCodeReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E10B1D4A088A00972C95 /* ZXQRCodeReader.m */; };
+		EC9E3A8A1E66E7FF002663D6 /* ZXQRCodeWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E10D1D4A088A00972C95 /* ZXQRCodeWriter.m */; };
+		EC9E3A8B1E66E7FF002663D6 /* ZXMultiFormatReader.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E1101D4A088A00972C95 /* ZXMultiFormatReader.m */; };
+		EC9E3A8C1E66E7FF002663D6 /* ZXMultiFormatWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E1121D4A088A00972C95 /* ZXMultiFormatWriter.m */; };
+		EC9E3A8D1E66E7FF002663D6 /* InitialSyncContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CD0CE9061DDC759A005BA93C /* InitialSyncContentViewController.m */; };
+		EC9E3A8E1E66E7FF002663D6 /* PurgeRecordsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = CDD7F3891E02AA3900A4AA79 /* PurgeRecordsParser.m */; };
+		EC9E3A8F1E66E7FF002663D6 /* AttachmentErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 67919D061D6D7A95005E0954 /* AttachmentErrorService.m */; };
+		EC9E3A901E66E7FF002663D6 /* BarCodeScannerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09E1F11D4A092300972C95 /* BarCodeScannerViewController.m */; };
+		EC9E3AC21E66EEEE002663D6 /* Resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EC9E3AC11E66EEEE002663D6 /* Resource.bundle */; };
+		EC9E3AC71E66EF1A002663D6 /* BindInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = EC9E3AC31E66EF1A002663D6 /* BindInfo.h */; };
+		EC9E3AC91E66EF1A002663D6 /* libVerifayaStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9E3AC51E66EF1A002663D6 /* libVerifayaStudio.a */; };
+		EC9E3ACA1E66EF1A002663D6 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9E3AC61E66EF1A002663D6 /* libzbar.a */; };
+		EC9E3ACC1E66EF2F002663D6 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9E3ACB1E66EF2F002663D6 /* IOKit.framework */; };
 		ECAFEF041DD994C60065AB96 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
 		ECAFEF071DD99C710065AB96 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
 		ECBCF4091E113DE000AD1814 /* PriceCalculationManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */; };
@@ -4184,7 +4413,6 @@
 		9EFE6DFD1A0F33EF0067F9CC /* LinkedProcessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LinkedProcessViewController.xib; sourceTree = "<group>"; };
 		A61A1B8E1B202B1200B1C9C8 /* AutoLockManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLockManager.h; sourceTree = "<group>"; };
 		A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLockManager.m; sourceTree = "<group>"; };
-		A64AAD961CEDCB61008839FB /* HitachiStudio */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HitachiStudio; sourceTree = "<group>"; };
 		A64AAD981CEDCBF3008839FB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = HitachiStudio/IOKit.framework; sourceTree = "<group>"; };
 		A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHitachiStudio.a; path = HitachiStudio/libHitachiStudio.a; sourceTree = "<group>"; };
 		A64AAD9A1CEDCBF3008839FB /* libzbar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzbar.a; path = HitachiStudio/libzbar.a; sourceTree = "<group>"; };
@@ -4194,7 +4422,6 @@
 		A64AADA41CEDCC4F008839FB /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		A64AADA61CEDCC89008839FB /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		A64AADA81CEDCCA7008839FB /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
-		A64AADAB1CEDCD40008839FB /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Resource.bundle; path = HitachiStudio/Resource.bundle; sourceTree = "<group>"; };
 		A64AB1EC1CF2F9E5008839FB /* ServiceMaxiPadAutomation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServiceMaxiPadAutomation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C31E66CF1AE65DBE00A8AE7E /* GetPriceDataServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetPriceDataServiceLayer.h; sourceTree = "<group>"; };
 		C31E66D01AE65DBE00A8AE7E /* GetPriceDataServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetPriceDataServiceLayer.m; sourceTree = "<group>"; };
@@ -4327,6 +4554,12 @@
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
 		EC42EC291DDAEA2200419D7D /* ValidateProfileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateProfileParser.h; sourceTree = "<group>"; };
 		EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ValidateProfileParser.m; sourceTree = "<group>"; };
+		EC9E3AC11E66EEEE002663D6 /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Resource.bundle; sourceTree = "<group>"; };
+		EC9E3AC31E66EF1A002663D6 /* BindInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindInfo.h; sourceTree = "<group>"; };
+		EC9E3AC41E66EF1A002663D6 /* libHitachiStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libHitachiStudio.a; sourceTree = "<group>"; };
+		EC9E3AC51E66EF1A002663D6 /* libVerifayaStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libVerifayaStudio.a; sourceTree = "<group>"; };
+		EC9E3AC61E66EF1A002663D6 /* libzbar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libzbar.a; sourceTree = "<group>"; };
+		EC9E3ACB1E66EF2F002663D6 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IOKit.framework; sourceTree = "<group>"; };
 		ECAFEF021DD994C60065AB96 /* SyncProfileServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProfileServiceLayer.h; sourceTree = "<group>"; };
 		ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfileServiceLayer.m; sourceTree = "<group>"; };
 		ECAFEF051DD99C710065AB96 /* SyncProfilingRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProfilingRequest.h; sourceTree = "<group>"; };
@@ -4851,14 +5084,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC9E3ACA1E66EF1A002663D6 /* libzbar.a in Frameworks */,
 				A64AB0AA1CF2F9E5008839FB /* libzbar.a in Frameworks */,
 				A64AB0AB1CF2F9E5008839FB /* AdSupport.framework in Frameworks */,
 				A64AB0AC1CF2F9E5008839FB /* CoreTelephony.framework in Frameworks */,
 				A64AB0AD1CF2F9E5008839FB /* CoreFoundation.framework in Frameworks */,
+				EC9E3AC91E66EF1A002663D6 /* libVerifayaStudio.a in Frameworks */,
 				A64AB0AE1CF2F9E5008839FB /* libiconv.tbd in Frameworks */,
 				A64AB0AF1CF2F9E5008839FB /* libicucore.tbd in Frameworks */,
 				A64AB0B01CF2F9E5008839FB /* IOKit.framework in Frameworks */,
-				A64AB0B11CF2F9E5008839FB /* libHitachiStudio.a in Frameworks */,
 				A64AB0B21CF2F9E5008839FB /* Resource.bundle in Frameworks */,
 				A64AB0B31CF2F9E5008839FB /* libsqlite3.0.dylib in Frameworks */,
 				A64AB0B41CF2F9E5008839FB /* libsqlite3.dylib in Frameworks */,
@@ -4873,6 +5107,7 @@
 				A64AB0BD1CF2F9E5008839FB /* CoreData.framework in Frameworks */,
 				A64AB0BE1CF2F9E5008839FB /* CoreAudio.framework in Frameworks */,
 				A64AB0BF1CF2F9E5008839FB /* QuartzCore.framework in Frameworks */,
+				EC9E3ACC1E66EF2F002663D6 /* IOKit.framework in Frameworks */,
 				A64AB0C01CF2F9E5008839FB /* MediaPlayer.framework in Frameworks */,
 				A64AB0C11CF2F9E5008839FB /* MapKit.framework in Frameworks */,
 				A64AB0C21CF2F9E5008839FB /* AVFoundation.framework in Frameworks */,
@@ -7313,8 +7548,7 @@
 		18A2171019E57C5A00F22EA6 = {
 			isa = PBXGroup;
 			children = (
-				A64AADAB1CEDCD40008839FB /* Resource.bundle */,
-				A64AAD961CEDCB61008839FB /* HitachiStudio */,
+				EC9E3AAA1E66EE51002663D6 /* HitachiStudio */,
 				18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */,
 				18A2174119E57C5A00F22EA6 /* ServiceMaxiPadTests */,
 				18A2171B19E57C5A00F22EA6 /* Frameworks */,
@@ -8379,6 +8613,19 @@
 			path = GetPrice;
 			sourceTree = "<group>";
 		};
+		EC9E3AAA1E66EE51002663D6 /* HitachiStudio */ = {
+			isa = PBXGroup;
+			children = (
+				EC9E3ACB1E66EF2F002663D6 /* IOKit.framework */,
+				EC9E3AC31E66EF1A002663D6 /* BindInfo.h */,
+				EC9E3AC41E66EF1A002663D6 /* libHitachiStudio.a */,
+				EC9E3AC51E66EF1A002663D6 /* libVerifayaStudio.a */,
+				EC9E3AC61E66EF1A002663D6 /* libzbar.a */,
+				EC9E3AC11E66EEEE002663D6 /* Resource.bundle */,
+			);
+			path = HitachiStudio;
+			sourceTree = "<group>";
+		};
 		ECAFEF011DD992FA0065AB96 /* SyncProfiling */ = {
 			isa = PBXGroup;
 			children = (
@@ -9114,6 +9361,17 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		EC9E3A971E66E9B3002663D6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC9E3AC71E66EF1A002663D6 /* BindInfo.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		18A2171819E57C5A00F22EA6 /* ServiceMaxiPad */ = {
 			isa = PBXNativeTarget;
@@ -9159,6 +9417,7 @@
 				A64AB0A91CF2F9E5008839FB /* Frameworks */,
 				A64AB0CD1CF2F9E5008839FB /* Resources */,
 				A64AB1E81CF2F9E5008839FB /* Run Script */,
+				EC9E3A971E66E9B3002663D6 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -9183,6 +9442,10 @@
 					};
 					18A2173919E57C5A00F22EA6 = {
 						DevelopmentTeam = 4B24F56ULW;
+					};
+					A64AADAD1CF2F9E5008839FB = {
+						DevelopmentTeam = 4B24F56ULW;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -9496,7 +9759,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A64AB0CE1CF2F9E5008839FB /* Resource.bundle in Resources */,
 				A64AB0CF1CF2F9E5008839FB /* com.servicemax.client.native.laptop.zip in Resources */,
 				A64AB0D01CF2F9E5008839FB /* json2.js in Resources */,
 				A64AB0D11CF2F9E5008839FB /* bizRules-index.js in Resources */,
@@ -9520,7 +9782,6 @@
 				A64AB0E31CF2F9E5008839FB /* sync_Error@2x.png in Resources */,
 				A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */,
 				A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */,
-				A64AB0E71CF2F9E5008839FB /* HitachiStudio in Resources */,
 				A64AB0E81CF2F9E5008839FB /* ProductIQCustomActionViewController.xib in Resources */,
 				A64AB0EA1CF2F9E5008839FB /* recentlyCreated@2x.png in Resources */,
 				A64AB0EB1CF2F9E5008839FB /* OPDoc.html in Resources */,
@@ -9573,6 +9834,7 @@
 				A64AB11D1CF2F9E5008839FB /* SFMLookUpFilterViewController.xib in Resources */,
 				A64AB11F1CF2F9E5008839FB /* STools@1x.png in Resources */,
 				A64AB1201CF2F9E5008839FB /* com.servicemax.client.sfmconsole.zip in Resources */,
+				EC9E3AC21E66EEEE002663D6 /* Resource.bundle in Resources */,
 				A64AB1211CF2F9E5008839FB /* login-servicemax-logo.png in Resources */,
 				A64AB1221CF2F9E5008839FB /* explore.png in Resources */,
 				A64AB1231CF2F9E5008839FB /* fadeout.png in Resources */,
@@ -10822,6 +11084,239 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC9E39AE1E66E7FE002663D6 /* SyncProfileServiceLayer.m in Sources */,
+				EC9E39AF1E66E7FE002663D6 /* SyncProfilingRequest.m in Sources */,
+				EC9E39B01E66E7FE002663D6 /* ValidateProfileParser.m in Sources */,
+				A64AAFE71CF2F9E5008839FB /* TroubleshootingDataLoader.m in Sources */,
+				A64AADEF1CF2F9E5008839FB /* TroubleshootingMasterViewController.m in Sources */,
+				EC9E39B11E66E7FE002663D6 /* ZXAztecDecoder.m in Sources */,
+				EC9E39B21E66E7FE002663D6 /* ZXAztecDetector.m in Sources */,
+				EC9E39B31E66E7FE002663D6 /* ZXAztecBinaryShiftToken.m in Sources */,
+				EC9E39B41E66E7FE002663D6 /* ZXAztecCode.m in Sources */,
+				EC9E39B51E66E7FE002663D6 /* ZXAztecEncoder.m in Sources */,
+				EC9E39B61E66E7FE002663D6 /* ZXAztecHighLevelEncoder.m in Sources */,
+				EC9E39B71E66E7FE002663D6 /* ZXAztecSimpleToken.m in Sources */,
+				EC9E39B81E66E7FE002663D6 /* ZXAztecState.m in Sources */,
+				EC9E39B91E66E7FE002663D6 /* ZXAztecToken.m in Sources */,
+				EC9E39BA1E66E7FE002663D6 /* ZXAztecDetectorResult.m in Sources */,
+				EC9E39BB1E66E7FE002663D6 /* ZXAztecReader.m in Sources */,
+				EC9E39BC1E66E7FE002663D6 /* ZXAztecWriter.m in Sources */,
+				EC9E39BD1E66E7FE002663D6 /* ZXAbstractDoCoMoResultParser.m in Sources */,
+				EC9E39BE1E66E7FE002663D6 /* ZXAddressBookAUResultParser.m in Sources */,
+				EC9E39BF1E66E7FE002663D6 /* ZXAddressBookDoCoMoResultParser.m in Sources */,
+				EC9E39C01E66E7FE002663D6 /* ZXAddressBookParsedResult.m in Sources */,
+				EC9E39C11E66E7FE002663D6 /* ZXBizcardResultParser.m in Sources */,
+				EC9E39C21E66E7FE002663D6 /* ZXBookmarkDoCoMoResultParser.m in Sources */,
+				EC9E39C31E66E7FE002663D6 /* ZXCalendarParsedResult.m in Sources */,
+				EC9E39C41E66E7FE002663D6 /* ZXEmailAddressParsedResult.m in Sources */,
+				EC9E39C51E66E7FE002663D6 /* ZXEmailAddressResultParser.m in Sources */,
+				EC9E39C61E66E7FE002663D6 /* ZXEmailDoCoMoResultParser.m in Sources */,
+				EC9E39C71E66E7FE002663D6 /* ZXExpandedProductParsedResult.m in Sources */,
+				EC9E39C81E66E7FE002663D6 /* ZXExpandedProductResultParser.m in Sources */,
+				EC9E39C91E66E7FE002663D6 /* ZXGeoParsedResult.m in Sources */,
+				EC9E39CA1E66E7FE002663D6 /* ZXGeoResultParser.m in Sources */,
+				EC9E39CB1E66E7FE002663D6 /* ZXISBNParsedResult.m in Sources */,
+				EC9E39CC1E66E7FE002663D6 /* ZXISBNResultParser.m in Sources */,
+				EC9E39CD1E66E7FE002663D6 /* ZXParsedResult.m in Sources */,
+				EC9E39CE1E66E7FE002663D6 /* ZXProductParsedResult.m in Sources */,
+				EC9E39CF1E66E7FE002663D6 /* ZXProductResultParser.m in Sources */,
+				EC9E39D01E66E7FE002663D6 /* ZXResultParser.m in Sources */,
+				EC9E39D11E66E7FE002663D6 /* ZXSMSMMSResultParser.m in Sources */,
+				EC9E39D21E66E7FE002663D6 /* ZXSMSParsedResult.m in Sources */,
+				EC9E39D31E66E7FE002663D6 /* ZXSMSTOMMSTOResultParser.m in Sources */,
+				EC9E39D41E66E7FE002663D6 /* ZXSMTPResultParser.m in Sources */,
+				EC9E39D51E66E7FE002663D6 /* ZXTelParsedResult.m in Sources */,
+				EC9E39D61E66E7FE002663D6 /* ZXTelResultParser.m in Sources */,
+				EC9E39D71E66E7FF002663D6 /* ZXTextParsedResult.m in Sources */,
+				EC9E39D81E66E7FF002663D6 /* ZXURIParsedResult.m in Sources */,
+				EC9E39D91E66E7FF002663D6 /* ZXURIResultParser.m in Sources */,
+				EC9E39DA1E66E7FF002663D6 /* ZXURLTOResultParser.m in Sources */,
+				EC9E39DB1E66E7FF002663D6 /* ZXVCardResultParser.m in Sources */,
+				EC9E39DC1E66E7FF002663D6 /* ZXVEventResultParser.m in Sources */,
+				EC9E39DD1E66E7FF002663D6 /* ZXVINParsedResult.m in Sources */,
+				EC9E39DE1E66E7FF002663D6 /* ZXVINResultParser.m in Sources */,
+				EC9E39DF1E66E7FF002663D6 /* ZXWifiParsedResult.m in Sources */,
+				EC9E39E01E66E7FF002663D6 /* ZXWifiResultParser.m in Sources */,
+				EC9E39E11E66E7FF002663D6 /* ZXCapture.m in Sources */,
+				EC9E39E21E66E7FF002663D6 /* ZXCGImageLuminanceSource.m in Sources */,
+				EC9E39E31E66E7FF002663D6 /* ZXImage.m in Sources */,
+				EC9E39E41E66E7FF002663D6 /* ZXMathUtils.m in Sources */,
+				EC9E39E51E66E7FF002663D6 /* ZXMonochromeRectangleDetector.m in Sources */,
+				EC9E39E61E66E7FF002663D6 /* ZXWhiteRectangleDetector.m in Sources */,
+				EC9E39E71E66E7FF002663D6 /* ZXGenericGF.m in Sources */,
+				EC9E39E81E66E7FF002663D6 /* ZXGenericGFPoly.m in Sources */,
+				EC9E39E91E66E7FF002663D6 /* ZXReedSolomonDecoder.m in Sources */,
+				EC9E39EA1E66E7FF002663D6 /* ZXReedSolomonEncoder.m in Sources */,
+				EC9E39EB1E66E7FF002663D6 /* ZXBitArray.m in Sources */,
+				EC9E39EC1E66E7FF002663D6 /* ZXBitMatrix.m in Sources */,
+				EC9E39ED1E66E7FF002663D6 /* ZXBitSource.m in Sources */,
+				EC9E39EE1E66E7FF002663D6 /* ZXBoolArray.m in Sources */,
+				EC9E39EF1E66E7FF002663D6 /* ZXByteArray.m in Sources */,
+				EC9E39F01E66E7FF002663D6 /* ZXCharacterSetECI.m in Sources */,
+				EC9E39F11E66E7FF002663D6 /* ZXDecoderResult.m in Sources */,
+				EC9E39F21E66E7FF002663D6 /* ZXDefaultGridSampler.m in Sources */,
+				EC9E39F31E66E7FF002663D6 /* ZXDetectorResult.m in Sources */,
+				EC9E39F41E66E7FF002663D6 /* ZXGlobalHistogramBinarizer.m in Sources */,
+				EC9E39F51E66E7FF002663D6 /* ZXGridSampler.m in Sources */,
+				EC9E39F61E66E7FF002663D6 /* ZXHybridBinarizer.m in Sources */,
+				EC9E39F71E66E7FF002663D6 /* ZXIntArray.m in Sources */,
+				EC9E39F81E66E7FF002663D6 /* ZXPerspectiveTransform.m in Sources */,
+				EC9E39F91E66E7FF002663D6 /* ZXStringUtils.m in Sources */,
+				EC9E39FA1E66E7FF002663D6 /* ZXBinarizer.m in Sources */,
+				EC9E39FB1E66E7FF002663D6 /* ZXBinaryBitmap.m in Sources */,
+				EC9E39FC1E66E7FF002663D6 /* ZXByteMatrix.m in Sources */,
+				EC9E39FD1E66E7FF002663D6 /* ZXDecodeHints.m in Sources */,
+				EC9E39FE1E66E7FF002663D6 /* ZXDimension.m in Sources */,
+				EC9E39FF1E66E7FF002663D6 /* ZXEncodeHints.m in Sources */,
+				EC9E3A001E66E7FF002663D6 /* ZXErrors.m in Sources */,
+				EC9E3A011E66E7FF002663D6 /* ZXInvertedLuminanceSource.m in Sources */,
+				EC9E3A021E66E7FF002663D6 /* ZXLuminanceSource.m in Sources */,
+				EC9E3A031E66E7FF002663D6 /* ZXPlanarYUVLuminanceSource.m in Sources */,
+				EC9E3A041E66E7FF002663D6 /* ZXResult.m in Sources */,
+				EC9E3A051E66E7FF002663D6 /* ZXResultPoint.m in Sources */,
+				EC9E3A061E66E7FF002663D6 /* ZXRGBLuminanceSource.m in Sources */,
+				EC9E3A071E66E7FF002663D6 /* ZXDataMatrixBitMatrixParser.m in Sources */,
+				EC9E3A081E66E7FF002663D6 /* ZXDataMatrixDataBlock.m in Sources */,
+				EC9E3A091E66E7FF002663D6 /* ZXDataMatrixDecodedBitStreamParser.m in Sources */,
+				EC9E3A0A1E66E7FF002663D6 /* ZXDataMatrixDecoder.m in Sources */,
+				EC9E3A0B1E66E7FF002663D6 /* ZXDataMatrixVersion.m in Sources */,
+				EC9E3A0C1E66E7FF002663D6 /* ZXDataMatrixDetector.m in Sources */,
+				EC9E3A0D1E66E7FF002663D6 /* ZXDataMatrixASCIIEncoder.m in Sources */,
+				EC9E3A0E1E66E7FF002663D6 /* ZXDataMatrixBase256Encoder.m in Sources */,
+				EC9E3A0F1E66E7FF002663D6 /* ZXDataMatrixC40Encoder.m in Sources */,
+				EC9E3A101E66E7FF002663D6 /* ZXDataMatrixDefaultPlacement.m in Sources */,
+				EC9E3A111E66E7FF002663D6 /* ZXDataMatrixEdifactEncoder.m in Sources */,
+				EC9E3A121E66E7FF002663D6 /* ZXDataMatrixEncoderContext.m in Sources */,
+				EC9E3A131E66E7FF002663D6 /* ZXDataMatrixErrorCorrection.m in Sources */,
+				EC9E3A141E66E7FF002663D6 /* ZXDataMatrixHighLevelEncoder.m in Sources */,
+				EC9E3A151E66E7FF002663D6 /* ZXDataMatrixSymbolInfo.m in Sources */,
+				EC9E3A161E66E7FF002663D6 /* ZXDataMatrixSymbolInfo144.m in Sources */,
+				EC9E3A171E66E7FF002663D6 /* ZXDataMatrixTextEncoder.m in Sources */,
+				EC9E3A181E66E7FF002663D6 /* ZXDataMatrixX12Encoder.m in Sources */,
+				EC9E3A191E66E7FF002663D6 /* ZXDataMatrixReader.m in Sources */,
+				EC9E3A1A1E66E7FF002663D6 /* ZXDataMatrixWriter.m in Sources */,
+				EC9E3A1B1E66E7FF002663D6 /* ZXMaxiCodeBitMatrixParser.m in Sources */,
+				EC9E3A1C1E66E7FF002663D6 /* ZXMaxiCodeDecodedBitStreamParser.m in Sources */,
+				EC9E3A1D1E66E7FF002663D6 /* ZXMaxiCodeDecoder.m in Sources */,
+				EC9E3A1E1E66E7FF002663D6 /* ZXMaxiCodeReader.m in Sources */,
+				EC9E3A1F1E66E7FF002663D6 /* ZXByQuadrantReader.m in Sources */,
+				EC9E3A201E66E7FF002663D6 /* ZXGenericMultipleBarcodeReader.m in Sources */,
+				EC9E3A211E66E7FF002663D6 /* ZXAbstractExpandedDecoder.m in Sources */,
+				EC9E3A221E66E7FF002663D6 /* ZXAI013103decoder.m in Sources */,
+				EC9E3A231E66E7FF002663D6 /* ZXAI01320xDecoder.m in Sources */,
+				EC9E3A241E66E7FF002663D6 /* ZXAI01392xDecoder.m in Sources */,
+				EC9E3A251E66E7FF002663D6 /* ZXAI01393xDecoder.m in Sources */,
+				EC9E3A261E66E7FF002663D6 /* ZXAI013x0x1xDecoder.m in Sources */,
+				EC9E3A271E66E7FF002663D6 /* ZXAI013x0xDecoder.m in Sources */,
+				EC9E3A281E66E7FF002663D6 /* ZXAI01AndOtherAIs.m in Sources */,
+				EC9E3A291E66E7FF002663D6 /* ZXAI01decoder.m in Sources */,
+				EC9E3A2A1E66E7FF002663D6 /* ZXAI01weightDecoder.m in Sources */,
+				EC9E3A2B1E66E7FF002663D6 /* ZXAnyAIDecoder.m in Sources */,
+				EC9E3A2C1E66E7FF002663D6 /* ZXRSSExpandedBlockParsedResult.m in Sources */,
+				EC9E3A2D1E66E7FF002663D6 /* ZXRSSExpandedCurrentParsingState.m in Sources */,
+				EC9E3A2E1E66E7FF002663D6 /* ZXRSSExpandedDecodedChar.m in Sources */,
+				EC9E3A2F1E66E7FF002663D6 /* ZXRSSExpandedDecodedInformation.m in Sources */,
+				EC9E3A301E66E7FF002663D6 /* ZXRSSExpandedDecodedNumeric.m in Sources */,
+				EC9E3A311E66E7FF002663D6 /* ZXRSSExpandedDecodedObject.m in Sources */,
+				EC9E3A321E66E7FF002663D6 /* ZXRSSExpandedFieldParser.m in Sources */,
+				EC9E3A331E66E7FF002663D6 /* ZXRSSExpandedGeneralAppIdDecoder.m in Sources */,
+				EC9E3A341E66E7FF002663D6 /* ZXBitArrayBuilder.m in Sources */,
+				EC9E3A351E66E7FF002663D6 /* ZXRSSExpandedPair.m in Sources */,
+				EC9E3A361E66E7FF002663D6 /* ZXRSSExpandedReader.m in Sources */,
+				EC9E3A371E66E7FF002663D6 /* ZXRSSExpandedRow.m in Sources */,
+				EC9E3A381E66E7FF002663D6 /* ZXAbstractRSSReader.m in Sources */,
+				EC9E3A391E66E7FF002663D6 /* ZXRSS14Reader.m in Sources */,
+				EC9E3A3A1E66E7FF002663D6 /* ZXRSSDataCharacter.m in Sources */,
+				EC9E3A3B1E66E7FF002663D6 /* ZXRSSFinderPattern.m in Sources */,
+				EC9E3A3C1E66E7FF002663D6 /* ZXRSSPair.m in Sources */,
+				EC9E3A3D1E66E7FF002663D6 /* ZXRSSUtils.m in Sources */,
+				EC9E3A3E1E66E7FF002663D6 /* ZXCodaBarReader.m in Sources */,
+				EC9E3A3F1E66E7FF002663D6 /* ZXCodaBarWriter.m in Sources */,
+				EC9E3A401E66E7FF002663D6 /* ZXCode128Reader.m in Sources */,
+				EC9E3A411E66E7FF002663D6 /* ZXCode128Writer.m in Sources */,
+				EC9E3A421E66E7FF002663D6 /* ZXCode39Reader.m in Sources */,
+				EC9E3A431E66E7FF002663D6 /* ZXCode39Writer.m in Sources */,
+				EC9E3A441E66E7FF002663D6 /* ZXCode93Reader.m in Sources */,
+				EC9E3A451E66E7FF002663D6 /* ZXEAN13Reader.m in Sources */,
+				EC9E3A461E66E7FF002663D6 /* ZXEAN13Writer.m in Sources */,
+				EC9E3A471E66E7FF002663D6 /* ZXEAN8Reader.m in Sources */,
+				EC9E3A481E66E7FF002663D6 /* ZXEAN8Writer.m in Sources */,
+				EC9E3A491E66E7FF002663D6 /* ZXEANManufacturerOrgSupport.m in Sources */,
+				EC9E3A4A1E66E7FF002663D6 /* ZXITFReader.m in Sources */,
+				EC9E3A4B1E66E7FF002663D6 /* ZXITFWriter.m in Sources */,
+				EC9E3A4C1E66E7FF002663D6 /* ZXMultiFormatOneDReader.m in Sources */,
+				EC9E3A4D1E66E7FF002663D6 /* ZXMultiFormatUPCEANReader.m in Sources */,
+				EC9E3A4E1E66E7FF002663D6 /* ZXOneDimensionalCodeWriter.m in Sources */,
+				EC9E3A4F1E66E7FF002663D6 /* ZXOneDReader.m in Sources */,
+				EC9E3A501E66E7FF002663D6 /* ZXUPCAReader.m in Sources */,
+				EC9E3A511E66E7FF002663D6 /* ZXUPCAWriter.m in Sources */,
+				EC9E3A521E66E7FF002663D6 /* ZXUPCEANExtension2Support.m in Sources */,
+				EC9E3A531E66E7FF002663D6 /* ZXUPCEANExtension5Support.m in Sources */,
+				EC9E3A541E66E7FF002663D6 /* ZXUPCEANExtensionSupport.m in Sources */,
+				EC9E3A551E66E7FF002663D6 /* ZXUPCEANReader.m in Sources */,
+				EC9E3A561E66E7FF002663D6 /* ZXUPCEANWriter.m in Sources */,
+				EC9E3A571E66E7FF002663D6 /* ZXUPCEReader.m in Sources */,
+				EC9E3A581E66E7FF002663D6 /* ZXModulusGF.m in Sources */,
+				EC9E3A591E66E7FF002663D6 /* ZXModulusPoly.m in Sources */,
+				EC9E3A5A1E66E7FF002663D6 /* ZXPDF417ECErrorCorrection.m in Sources */,
+				EC9E3A5B1E66E7FF002663D6 /* ZXPDF417BarcodeMetadata.m in Sources */,
+				EC9E3A5C1E66E7FF002663D6 /* ZXPDF417BarcodeValue.m in Sources */,
+				EC9E3A5D1E66E7FF002663D6 /* ZXPDF417BoundingBox.m in Sources */,
+				EC9E3A5E1E66E7FF002663D6 /* ZXPDF417Codeword.m in Sources */,
+				EC9E3A5F1E66E7FF002663D6 /* ZXPDF417CodewordDecoder.m in Sources */,
+				EC9E3A601E66E7FF002663D6 /* ZXPDF417DecodedBitStreamParser.m in Sources */,
+				EC9E3A611E66E7FF002663D6 /* ZXPDF417DetectionResult.m in Sources */,
+				EC9E3A621E66E7FF002663D6 /* ZXPDF417DetectionResultColumn.m in Sources */,
+				EC9E3A631E66E7FF002663D6 /* ZXPDF417DetectionResultRowIndicatorColumn.m in Sources */,
+				EC9E3A641E66E7FF002663D6 /* ZXPDF417ScanningDecoder.m in Sources */,
+				EC9E3A651E66E7FF002663D6 /* ZXPDF417Detector.m in Sources */,
+				EC9E3A661E66E7FF002663D6 /* ZXPDF417DetectorResult.m in Sources */,
+				EC9E3A671E66E7FF002663D6 /* ZXPDF417.m in Sources */,
+				EC9E3A681E66E7FF002663D6 /* ZXPDF417BarcodeMatrix.m in Sources */,
+				EC9E3A691E66E7FF002663D6 /* ZXPDF417BarcodeRow.m in Sources */,
+				EC9E3A6A1E66E7FF002663D6 /* ZXPDF417Dimensions.m in Sources */,
+				EC9E3A6B1E66E7FF002663D6 /* ZXPDF417ErrorCorrection.m in Sources */,
+				EC9E3A6C1E66E7FF002663D6 /* ZXPDF417HighLevelEncoder.m in Sources */,
+				EC9E3A6D1E66E7FF002663D6 /* ZXPDF417Common.m in Sources */,
+				EC9E3A6E1E66E7FF002663D6 /* ZXPDF417Reader.m in Sources */,
+				EC9E3A6F1E66E7FF002663D6 /* ZXPDF417ResultMetadata.m in Sources */,
+				EC9E3A701E66E7FF002663D6 /* ZXPDF417Writer.m in Sources */,
+				EC9E3A711E66E7FF002663D6 /* ZXQRCodeBitMatrixParser.m in Sources */,
+				EC9E3A721E66E7FF002663D6 /* ZXQRCodeDataBlock.m in Sources */,
+				EC9E3A731E66E7FF002663D6 /* ZXQRCodeDataMask.m in Sources */,
+				EC9E3A741E66E7FF002663D6 /* ZXQRCodeDecodedBitStreamParser.m in Sources */,
+				EC9E3A751E66E7FF002663D6 /* ZXQRCodeDecoder.m in Sources */,
+				EC9E3A761E66E7FF002663D6 /* ZXQRCodeDecoderMetaData.m in Sources */,
+				EC9E3A771E66E7FF002663D6 /* ZXQRCodeErrorCorrectionLevel.m in Sources */,
+				EC9E3A781E66E7FF002663D6 /* ZXQRCodeFormatInformation.m in Sources */,
+				EC9E3A791E66E7FF002663D6 /* ZXQRCodeMode.m in Sources */,
+				EC9E3A7A1E66E7FF002663D6 /* ZXQRCodeVersion.m in Sources */,
+				EC9E3A7B1E66E7FF002663D6 /* ZXQRCodeAlignmentPattern.m in Sources */,
+				EC9E3A7C1E66E7FF002663D6 /* ZXQRCodeAlignmentPatternFinder.m in Sources */,
+				EC9E3A7D1E66E7FF002663D6 /* ZXQRCodeDetector.m in Sources */,
+				EC9E3A7E1E66E7FF002663D6 /* ZXQRCodeFinderPattern.m in Sources */,
+				EC9E3A7F1E66E7FF002663D6 /* ZXQRCodeFinderPatternFinder.m in Sources */,
+				EC9E3A801E66E7FF002663D6 /* ZXQRCodeFinderPatternInfo.m in Sources */,
+				EC9E3A811E66E7FF002663D6 /* ZXQRCode.m in Sources */,
+				EC9E3A821E66E7FF002663D6 /* ZXQRCodeBlockPair.m in Sources */,
+				EC9E3A831E66E7FF002663D6 /* ZXQRCodeEncoder.m in Sources */,
+				EC9E3A841E66E7FF002663D6 /* ZXQRCodeMaskUtil.m in Sources */,
+				EC9E3A851E66E7FF002663D6 /* ZXQRCodeMatrixUtil.m in Sources */,
+				EC9E3A861E66E7FF002663D6 /* ZXMultiDetector.m in Sources */,
+				EC9E3A871E66E7FF002663D6 /* ZXMultiFinderPatternFinder.m in Sources */,
+				EC9E3A881E66E7FF002663D6 /* ZXQRCodeMultiReader.m in Sources */,
+				EC9E3A891E66E7FF002663D6 /* ZXQRCodeReader.m in Sources */,
+				EC9E3A8A1E66E7FF002663D6 /* ZXQRCodeWriter.m in Sources */,
+				EC9E3A8B1E66E7FF002663D6 /* ZXMultiFormatReader.m in Sources */,
+				EC9E3A8C1E66E7FF002663D6 /* ZXMultiFormatWriter.m in Sources */,
+				EC9E3A8D1E66E7FF002663D6 /* InitialSyncContentViewController.m in Sources */,
+				A64AAF751CF2F9E5008839FB /* EventTransactionObjectModel.m in Sources */,
+				EC9E3A8E1E66E7FF002663D6 /* PurgeRecordsParser.m in Sources */,
+				EC9E3A8F1E66E7FF002663D6 /* AttachmentErrorService.m in Sources */,
+				EC9E3A901E66E7FF002663D6 /* BarCodeScannerViewController.m in Sources */,
+				A64AB0621CF2F9E5008839FB /* TroubleshootingDataHelper.m in Sources */,
+				A64AAF321CF2F9E5008839FB /* TroubleshootingDetailViewController.m in Sources */,
+				A64AADFA1CF2F9E5008839FB /* TroubleshootingViewController.m in Sources */,
 				A64AADAF1CF2F9E5008839FB /* SMXHourAndMinLabel.m in Sources */,
 				A64AADB01CF2F9E5008839FB /* ZKOAuthViewController.m in Sources */,
 				A64AADB11CF2F9E5008839FB /* SSZipArchive.m in Sources */,
@@ -10886,7 +11381,6 @@
 				A64AADEC1CF2F9E5008839FB /* FieldUpdateRuleManager.m in Sources */,
 				A64AADED1CF2F9E5008839FB /* MapPopUpViewController.m in Sources */,
 				A64AADEE1CF2F9E5008839FB /* DocumentModel.m in Sources */,
-				A64AADEF1CF2F9E5008839FB /* TroubleshootingMasterViewController.m in Sources */,
 				A64AADF01CF2F9E5008839FB /* RecordTypeParser.m in Sources */,
 				A64AADF11CF2F9E5008839FB /* MessageHandler.m in Sources */,
 				A64AADF21CF2F9E5008839FB /* SFMOnlineLookUpParser.m in Sources */,
@@ -10897,7 +11391,6 @@
 				A64AADF71CF2F9E5008839FB /* SFRequiredPdfModel.m in Sources */,
 				A64AADF81CF2F9E5008839FB /* SFOutputDocHtmlaDataModel.m in Sources */,
 				A64AADF91CF2F9E5008839FB /* OpDocHelper.m in Sources */,
-				A64AADFA1CF2F9E5008839FB /* TroubleshootingViewController.m in Sources */,
 				A64AADFB1CF2F9E5008839FB /* SFMPageLookUpHelper.m in Sources */,
 				A64AADFC1CF2F9E5008839FB /* BizRulesViewController.m in Sources */,
 				A64AADFD1CF2F9E5008839FB /* ZKBaseClient.m in Sources */,
@@ -11209,7 +11702,6 @@
 				A64AAF2F1CF2F9E5008839FB /* LinkedSfmProcessModel.m in Sources */,
 				A64AAF301CF2F9E5008839FB /* AFURLConnectionOperation.m in Sources */,
 				A64AAF311CF2F9E5008839FB /* PageLayoutEditViewController.m in Sources */,
-				A64AAF321CF2F9E5008839FB /* TroubleshootingDetailViewController.m in Sources */,
 				A64AAF331CF2F9E5008839FB /* CustomActionURLHandler.m in Sources */,
 				A64AAF341CF2F9E5008839FB /* ProductManualService.m in Sources */,
 				A64AAF351CF2F9E5008839FB /* SourceUpdateService.m in Sources */,
@@ -11276,7 +11768,6 @@
 				A64AAF721CF2F9E5008839FB /* GetPriceDataServiceLayer.m in Sources */,
 				A64AAF731CF2F9E5008839FB /* ZKURLConnection.m in Sources */,
 				A64AAF741CF2F9E5008839FB /* ZKPicklistEntry.m in Sources */,
-				A64AAF751CF2F9E5008839FB /* EventTransactionObjectModel.m in Sources */,
 				A64AAF761CF2F9E5008839FB /* WizardViewController.m in Sources */,
 				A64AAF771CF2F9E5008839FB /* CheckBox.m in Sources */,
 				A64AAF781CF2F9E5008839FB /* TKCalendarDayViewController.m in Sources */,
@@ -11389,7 +11880,6 @@
 				A64AAFE41CF2F9E5008839FB /* PageDataCache.m in Sources */,
 				A64AAFE51CF2F9E5008839FB /* Reachability.m in Sources */,
 				A64AAFE61CF2F9E5008839FB /* SMLocalNotificationManager.m in Sources */,
-				A64AAFE71CF2F9E5008839FB /* TroubleshootingDataLoader.m in Sources */,
 				A64AAFE81CF2F9E5008839FB /* DCResponseParserV3.m in Sources */,
 				A64AAFE91CF2F9E5008839FB /* SFMPageField.m in Sources */,
 				A64AAFEA1CF2F9E5008839FB /* TKTableViewCell.m in Sources */,
@@ -11512,7 +12002,6 @@
 				A64AB05F1CF2F9E5008839FB /* SFExpressionComponentModel.m in Sources */,
 				A64AB0601CF2F9E5008839FB /* BitSet.m in Sources */,
 				A64AB0611CF2F9E5008839FB /* DatabaseSchemaConstant.m in Sources */,
-				A64AB0621CF2F9E5008839FB /* TroubleshootingDataHelper.m in Sources */,
 				A64AB0631CF2F9E5008839FB /* ObjectDefinitionParser.m in Sources */,
 				A64AB0641CF2F9E5008839FB /* PageEditCollectionViewFlowLayout.m in Sources */,
 				A64AB0651CF2F9E5008839FB /* XMLReader.m in Sources */,
