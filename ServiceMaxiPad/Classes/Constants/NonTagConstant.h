@@ -205,6 +205,7 @@ extern NSString *const kVConfigSyncLastTimeLbl;
 extern NSString *const kVConfigSyncLastTimeVal;
 extern NSString *const kVConfigSyncNextTimeLbl;
 extern NSString *const kVConfigSyncNextTimeVal;
+extern NSString *const kVSignInBtn;
 
 @interface NonTagConstant : NSObject
 @end
