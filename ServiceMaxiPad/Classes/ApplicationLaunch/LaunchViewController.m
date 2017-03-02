@@ -11,7 +11,7 @@
 #import "StyleGuideConstants.h"
 #import "StyleManager.h"
 #import "AppManager.h"
-
+#import "NonTagConstant.h"
 
 @interface LaunchViewController ()
 
@@ -47,6 +47,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // IPAD-4541 - Verifaya
+    [signInButton setAccessibilityLabel:kVSignInBtn];
     
     [signInButton addTarget:self action:@selector(signInButtonClicked) forControlEvents:UIControlEventTouchUpInside];
     if(UIDeviceOrientationIsPortrait(self.interfaceOrientation))
