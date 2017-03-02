@@ -1085,8 +1085,8 @@
     }
     self.addEventBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     CGRect theFrame = rightButton.frame;
-    theFrame.origin.x = theFrame.origin.x -theFrame.size.width +28;
-    theFrame.size.width = theFrame.size.width - 5;
+    theFrame.origin.x = theFrame.origin.x -theFrame.size.width + 5; // IPAD-4541 - Verifaya
+    theFrame.size.width = theFrame.size.width - 10;
     
     self.addEventBtn.frame = theFrame;
     NSString *title = [NSString stringWithFormat:@"+ %@",[[TagManager sharedInstance]tagByName:kTag_Add]];
@@ -1879,7 +1879,7 @@
         if (!rightButton) {
             
             rightButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            rightButton.frame = CGRectMake(0, 0, 100, 25);
+            rightButton.frame = CGRectMake(0, 0, 90, 25); // IPAD-4541 - Verifaya
             [rightButton setTitle:[[TagManager sharedInstance]tagByName:kTagActions] forState:UIControlStateNormal];
             [rightButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [rightButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
