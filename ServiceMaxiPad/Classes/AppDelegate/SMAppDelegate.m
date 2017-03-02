@@ -21,7 +21,6 @@
 #import "AttachmentsUploadManager.h"
 #import "PushNotificationUtility.h"
 #import "PushNotificationManager.h"
-#import "BindInfo.h"
 
 @implementation SMAppDelegate
 
@@ -112,9 +111,6 @@
          [UINavigationBar appearance].tintColor = [UIColor whiteColor];
      }
 */
-     
-     // IPAD-4541 - Verifaya
-     [self loadVerifayaLib];
      
      /** Setup Logger  */
      //HS 29Fev added one key
@@ -357,19 +353,6 @@ forLocalNotification:(UILocalNotification *)notification
         }
     }
     return YES;
-}
-
-
-#pragma mark - Verifaya
-// IPAD-4541 - Verifaya
--(void)loadVerifayaLib {
-    BindInfo *bindingObj = [[BindInfo alloc]init];
-    if ([bindingObj respondsToSelector:@selector(printLibraryVersion)]) {
-        [bindingObj printLibraryVersion];
-    }
-    else{
-        NSLog(@"Verifaya Binding Unsuccesful");
-    }
 }
 
 @end
