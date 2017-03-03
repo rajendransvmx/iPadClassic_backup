@@ -4,17 +4,12 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.19.005
+Version = 17.19.006
 
 ===========================================
 
 Defect:
 
-Feature:
-==================
-IPAD-4528
-Source Object Update SFM does not work from iPad but does from browser.
-——————
 
 NOTE:
 
