@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+#define CONST_ZX_CODE128_CODE_PATTERNS 7
 #import "ZXOneDReader.h"
 
-extern const int ZX_CODE128_CODE_PATTERNS[][7];
+extern const int ZX_CODE128_CODE_PATTERNS[][CONST_ZX_CODE128_CODE_PATTERNS];
 
 extern const int ZX_CODE128_CODE_START_B;
 extern const int ZX_CODE128_CODE_START_C;
