@@ -2385,6 +2385,7 @@
 		ECE752C21DE6FA78005D34C7 /* TaskModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A9E0B19E69DB000919345 /* TaskModel.m */; };
 		ECE752C31DE6FA78005D34C7 /* TaskGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A9B0F19E69B5200919345 /* TaskGenerator.m */; };
 		ECE752C41DE6FA78005D34C7 /* TaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 183AA22119E6D50E00919345 /* TaskManager.m */; };
+		ECF034CE1E6E8CAE007FCCB4 /* InitialSyncContentViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CD0CE9071DDC759A005BA93C /* InitialSyncContentViewController.xib */; };
 		FD09E1131D4A088A00972C95 /* ZXAztecDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */; };
 		FD09E1141D4A088A00972C95 /* ZXAztecDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF301D4A088800972C95 /* ZXAztecDetector.m */; };
 		FD09E1151D4A088A00972C95 /* ZXAztecBinaryShiftToken.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF331D4A088800972C95 /* ZXAztecBinaryShiftToken.m */; };
@@ -9759,6 +9760,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECF034CE1E6E8CAE007FCCB4 /* InitialSyncContentViewController.xib in Resources */,
 				A64AB0CF1CF2F9E5008839FB /* com.servicemax.client.native.laptop.zip in Resources */,
 				A64AB0D01CF2F9E5008839FB /* json2.js in Resources */,
 				A64AB0D11CF2F9E5008839FB /* bizRules-index.js in Resources */,
