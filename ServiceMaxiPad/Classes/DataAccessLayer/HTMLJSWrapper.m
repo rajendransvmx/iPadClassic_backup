@@ -25,11 +25,11 @@ const BOOL DEBUG_JAVASCRIPT = FALSE;
 
     NSString *bootstrapPath = [[FileManager getRootPath] stringByAppendingPathComponent:@"com.servicemax.client.lib/src/bootstrap.js"];
     
-    NSString *htmlFilePath = [[NSBundle mainBundle] pathForResource:@"OPDoc" ofType:@"html"];
+    NSString *htmlFileName =@"OPDoc" ;
     if(DEBUG_JAVASCRIPT)
-        htmlFilePath = [[NSBundle mainBundle] pathForResource:@"OPDoc_DEBUG" ofType:@"html"];
+        htmlFileName =@"OPDoc_DEBUG";
     
-    NSString *htmlContent = [NSString stringWithContentsOfFile:htmlFilePath encoding:NSUTF8StringEncoding error:nil];
+    NSString *htmlContent = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:htmlFileName ofType:@"html"] encoding:NSUTF8StringEncoding error:nil];
 
     NSString *htmlString = @"";
     

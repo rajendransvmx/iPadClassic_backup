@@ -36,8 +36,7 @@
 
 + (NSMutableDictionary*)getRecentsFromPlist
 {
-    NSString *plistPath = [FileManager getFilePathForPlist:OBJECT_HISTORY_PLIST];
-    NSMutableDictionary *recentDict = [NSMutableDictionary dictionaryWithContentsOfFile:plistPath];
+    NSMutableDictionary *recentDict = [NSMutableDictionary dictionaryWithContentsOfFile:[FileManager getFilePathForPlist:OBJECT_HISTORY_PLIST]];
     return recentDict;
 }
 

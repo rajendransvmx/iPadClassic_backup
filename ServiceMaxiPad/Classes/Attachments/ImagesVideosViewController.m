@@ -410,9 +410,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
         }
         
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString * filePath = [AttachmentUtility getFullPath:attachmentId];
-        filePath=[filePath stringByAppendingString:attachmentModel.extensionName];
-        NSString * fileContent=[[NSString alloc]initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+        NSString * fileContent=[[NSString alloc]initWithContentsOfFile:[[AttachmentUtility getFullPath:attachmentId] stringByAppendingString:attachmentModel.extensionName] encoding:NSUTF8StringEncoding error:nil];
         SXLogInfo(@"%@",fileContent);
         id <AttachmentErrorDAO> attachmentErrorService = [FactoryDAO serviceByServiceType:ServiceTypeAttachmentError];
 
@@ -428,7 +426,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
                         BOOL statusError=[attachmentErrorService updateAttachmentErrorTableWithModel:attachmentModel];
                         if(statusError){
                             NSError *fileManagerError;
-                            [fileManager removeItemAtPath:filePath error:&fileManagerError];
+                            [fileManager removeItemAtPath:[[AttachmentUtility getFullPath:attachmentId] stringByAppendingString:attachmentModel.extensionName] error:&fileManagerError];
                             if(fileManagerError){
                                 SXLogInfo(@"Error Deleting : %@",fileManagerError.description);
                             }
