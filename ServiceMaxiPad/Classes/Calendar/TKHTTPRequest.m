@@ -32,6 +32,7 @@
 #import "TKHTTPRequest.h"
 #import "TKNetworkQueue.h"
 
+#import "AppManager.h"
 
 typedef enum TKOperationState {
     TKOperationStateInited = 1, 
@@ -314,7 +315,7 @@ static inline NSString * TKKeyPathFromOperationState(TKOperationState state) {
 		if(!self.fileHandler){
 			
 			if(!self.temporaryFileDownloadPath){
-				NSString *tmp = [NSTemporaryDirectory() stringByAppendingPathComponent:[[NSProcessInfo processInfo] globallyUniqueString]];
+				NSString *tmp = [NSTemporaryDirectory() stringByAppendingPathComponent:[AppManager generateUniqueId]];
 				self.temporaryFileDownloadPath = tmp;
 			}
 			
