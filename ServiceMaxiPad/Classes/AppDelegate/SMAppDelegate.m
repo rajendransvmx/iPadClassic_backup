@@ -270,7 +270,17 @@
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-
+    NSString *splashImage;
+    if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+        splashImage = @"LaunchImagePortrait";
+    }
+    else {
+        splashImage = @"LaunchImageLandscape";
+    }
+    
+    splashImageView = [[UIImageView alloc]initWithFrame:[self.window frame]];
+    [splashImageView setImage:[UIImage imageNamed:splashImage]];
+    [self.window addSubview:splashImageView];
 }
 #pragma mark - Local Notification methods
 - (void)application:(UIApplication *)app didReceiveLocalNotification:(UILocalNotification *)notif {
@@ -321,6 +331,11 @@ forLocalNotification:(UILocalNotification *)notification
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    NSLog(@"  ------AapplicationDidBecomeActive -------");
+    if(splashImageView != nil) {
+        [splashImageView removeFromSuperview];
+        splashImageView = nil;
+    }
     [[SMLocalNotificationManager sharedInstance] clearBadgeCount];
     [[AttachmentsUploadManager sharedManager] modelUnderUploadProcess];
 }

@@ -12,7 +12,9 @@
 @class OAuthLoginViewController;
 @class AppManager;
 
-@interface SMAppDelegate : NSObject <UIApplicationDelegate, UIAlertViewDelegate>
+@interface SMAppDelegate : NSObject <UIApplicationDelegate, UIAlertViewDelegate>{
+    UIImageView *splashImageView;
+}
 
 @property (nonatomic, strong) NSString          * kRestoreLocationKey;
 @property (strong, nonatomic) UIWindow *window;
