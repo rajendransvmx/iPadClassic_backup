@@ -365,7 +365,7 @@
     NSString *title = @"";
     
     if (self.historyInfoType == HistoryTypeAccount) {
-        title = [[TagManager sharedInstance] tagByName:kTag_AccountHistoryAndRecords];//[[TagManager sharedInstance] tagByName:kTag_AccountHistory];
+        title = [[TagManager sharedInstance] tagByName:kTag_AcHistoryAndRecords];//[[TagManager sharedInstance] tagByName:kTag_AccountHistory];
     }
     else if (self.historyInfoType == HistoryTypeProduct){
         title = [[TagManager sharedInstance] tagByName:kTag_ProductHistoryAndRecords];//[[TagManager sharedInstance] tagByName:kTag_ProductHistory_Records];

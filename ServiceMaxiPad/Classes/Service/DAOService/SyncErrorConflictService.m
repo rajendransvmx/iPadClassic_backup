@@ -21,7 +21,7 @@
 
 - (NSArray *)fieldNamesToBeRemovedFromQuery
 {
-    return @[@"objectLabel", @"recordValue", @"isWorkOrder", @"accountValue",@"scLocalId"];
+    return @[@"objectLabel", @"recordValue", @"isWorkOrder", @"svmxAcValue",@"scLocalId"];
 }
 
 - (BOOL)removeLocalIdField {

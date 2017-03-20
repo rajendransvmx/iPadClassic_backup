@@ -128,7 +128,7 @@
     self.resolutionTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.objectLabel.text          = @"";
     self.objectNameLabel.text      = @"";
-    self.accountLabel.text         = [[TagManager sharedInstance]tagByName:kTag_account];
+    self.accountLabel.text         = [[TagManager sharedInstance]tagByName:kTag_acInfo];
     self.accountNameLabel.text     = @"";
     self.detailsTextView.text      = @"";
     self.detailsLabel.text         = [[TagManager sharedInstance]tagByName:kTag_details];
@@ -148,8 +148,8 @@
         
     } else {
         
-        self.accountNameLabel.text = self.conflictModel.accountValue;
-        if ([StringUtil isStringEmpty:self.conflictModel.accountValue]) {
+        self.accountNameLabel.text = self.conflictModel.svmxAcValue;
+        if ([StringUtil isStringEmpty:self.conflictModel.svmxAcValue]) {
             self.accountNameLabel.text = @"- - - -";
         }
     }
