@@ -226,7 +226,7 @@ static BOOL AFCertificateHostMatchesDomain(NSString *certificateHost, NSString *
     }
     
     //025428
-    self.validatesCertificateChain = NO;
+    //self.validatesCertificateChain = NO; //Default value of BOOL is NO
     
     return self;
 }
