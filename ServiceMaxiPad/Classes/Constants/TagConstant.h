@@ -245,7 +245,7 @@ extern NSString *const KTagSettingsTitle;
 #define kTag_Resolve @"IPAD018_TAG095"
 #define kTag_Resolution @"IPAD014_TAG041"
 #define kTag_details @"IPAD018_TAG096"
-#define kTag_account @"IPAD014_TAG050"
+#define kTag_acInfo @"IPAD014_TAG050"
 
 #define kTag_Update @"IPAD014_TAG075"
 #define kTag_Edit @"IPAD006_TAG124"
@@ -333,7 +333,7 @@ extern NSString *const KTagSettingsTitle;
 #define kTag_SFMSearchLimit   @"IPAD019_SET001"
 #define kTag_Documents @"IPAD024_TAG004"
 #define kTag_ImagesAndVideo @"IPAD024_TAG037"
-#define kTag_AccountHistoryAndRecords @"IPAD019_TAG015"
+#define kTag_AcHistoryAndRecords @"IPAD019_TAG015"
 
 #define kTag_ItemsFound @"IPAD019_TAG014"
 
