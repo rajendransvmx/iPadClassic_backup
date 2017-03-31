@@ -189,12 +189,12 @@
 + (NSData *)getEncodedDataForExistingAttachment:(AttachmentTXModel*)attachmentModel
 {
     NSData *fileContents = nil;
-    NSString *fullFilePath = [AttachmentUtility filePathForAttachment:attachmentModel];
+    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    if([fileManager fileExistsAtPath:fullFilePath])
+    if([fileManager fileExistsAtPath:[AttachmentUtility filePathForAttachment:attachmentModel]])
     {
-        fileContents = [NSData dataWithContentsOfFile:fullFilePath];
+        fileContents = [NSData dataWithContentsOfFile:[AttachmentUtility filePathForAttachment:attachmentModel]];
     }
     return fileContents;
 }
@@ -545,10 +545,9 @@
         return isSuccess;
     }
     
-    NSString *filePath = [rootPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@%@",attachmentModel.nameWithoutExtension, attachmentModel.localId, attachmentModel.extensionName]];
     NSError *error = nil;
-    [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
-    isSuccess = [attachmentData writeToFile:filePath atomically:YES];
+    [[NSFileManager defaultManager] removeItemAtPath:[rootPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@%@",attachmentModel.nameWithoutExtension, attachmentModel.localId, attachmentModel.extensionName]] error:&error];
+    isSuccess = [attachmentData writeToFile:[rootPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@%@",attachmentModel.nameWithoutExtension, attachmentModel.localId, attachmentModel.extensionName]] atomically:YES];
     return isSuccess;
 }
 

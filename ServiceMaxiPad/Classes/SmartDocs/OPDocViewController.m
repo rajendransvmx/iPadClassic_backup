@@ -273,7 +273,7 @@
     if([[NSFileManager defaultManager] fileExistsAtPath:htmlfilepath])
         [[NSFileManager defaultManager] removeItemAtPath:htmlfilepath error:NULL];
     
-    [codeSnippet writeToFile:htmlfilepath
+    [codeSnippet writeToFile:[corelibDir stringByAppendingPathComponent:@"OPDoc.html"]
                   atomically:NO
                     encoding:NSUTF8StringEncoding
                        error:NULL];
