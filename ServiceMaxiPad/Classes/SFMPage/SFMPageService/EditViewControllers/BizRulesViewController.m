@@ -11,6 +11,7 @@
 #import "StyleManager.h"
 #import "BizRuleBaseTableViewCell.h"
 #import "BusinessRuleResult.h"
+#import "NonTagConstant.h"
 
 @interface BizRulesViewController ()
 
@@ -41,6 +42,9 @@
     // This will remove extra separators from tableview
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, 10)];
+    
+    // Verifaya
+    [self.disclosureButton setAccessibilityLabel:kVBizRuleArrowUpBtn];
 
     
 }
