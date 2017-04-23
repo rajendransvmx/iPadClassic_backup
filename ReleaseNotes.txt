@@ -4,14 +4,13 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.19.008
+Version = 17.19.009
 
 ===========================================
 
 Defect:
-
-
-
+IPAD-4568
+iPad: Is Billable field is updated to 'true' during sync if SFM Formula exists
 NOTE:
 
 1. NameSpace: SVMXDEV
