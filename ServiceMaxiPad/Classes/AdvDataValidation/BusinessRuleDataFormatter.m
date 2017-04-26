@@ -385,7 +385,7 @@
     }
     else if([fieldType isEqualToString:kSfDTDateTime]){
         if (![StringUtil isStringEmpty:recordField.internalValue]) {
-            value = [DateUtil getLocalTimeFromGMT:recordField.internalValue];
+            value = recordField.internalValue; //[DateUtil getLocalTimeFromGMT:recordField.internalValue];
         }
     }
     else{
