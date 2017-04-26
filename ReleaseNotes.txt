@@ -4,7 +4,7 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.022
+Version = 16.20.023
  
 ===========================================
 
@@ -12,8 +12,7 @@ Version = 16.20.022
 Fixed Defects
 -------------
 
-039443
-
+IPAD-4512 iPad app gets stuck after running any SFM
 
 
 Namespace - SVMXC
