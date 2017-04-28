@@ -203,3 +203,4 @@ NSString *const kVConfigSyncNextTimeLbl = @"kVAConfigSyncNextTimeLabel";
 NSString *const kVConfigSyncNextTimeVal = @"kVAConfigSyncNextTimeValue";
 NSString *const kVSignInBtn = @"kVSignInBtnLbl";
 NSString *const kVBizRuleArrowUpBtn = @"kVBizRuleArrowUpLbl";
+NSString *const kVBizRuleCheckBoxBtn = @"kVBizRuleCheckBoxLbl";
