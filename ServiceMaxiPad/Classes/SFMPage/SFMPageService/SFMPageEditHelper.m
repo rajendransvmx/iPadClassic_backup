@@ -439,7 +439,7 @@
     
     for (NSString *fieldName in record) {
         SFMRecordFieldData *fieldValue = [record objectForKey:fieldName];
-        if (fieldValue.internalValue != nil) {
+        if (![StringUtil isStringEmpty:fieldValue.internalValue]) {
             [headerRecord setObject:fieldValue.internalValue forKey:fieldName];
         }
         
