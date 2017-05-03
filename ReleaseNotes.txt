@@ -3,11 +3,19 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.60.015
+Version = 16.60.016
 ===========================================
 
 Defect:
-PRIQ-3091
+IPAD-4563
+When using a custom host/login the app retains login information even after signing out.
+
+IPAD-4529
+Get price is not working as expected in the Spring 16 iPad application. Amount is set to 0 if Service PriceBook Entry is not in download criteria.
+
+IPAD-4567
+Sync Conflict happens when using 2 SFM Processes back to back
+
 
 Feature:
 ==================
