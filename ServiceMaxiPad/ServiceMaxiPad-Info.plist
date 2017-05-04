@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>17.19.010</string>
+	<string>17.19.011</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -26,16 +26,16 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.servicemaxinc.svmxmobile.pulse.win17</string>
+			<string>com.servicemaxinc.svmxmobile.pulse.sum17</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>svmxmobilepulsewin17</string>
+				<string>svmxmobilepulsesum17</string>
 				<string>svmxautomation</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>17.19.010</string>
+	<string>17.19.011</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fgcskysm</string>
