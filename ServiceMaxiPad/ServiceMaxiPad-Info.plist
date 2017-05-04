@@ -26,10 +26,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.servicemaxinc.svmxmobile.pulse.win17</string>
+			<string>com.servicemaxinc.svmxmobile.pulse.sum17</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>svmxmobilepulsewin17</string>
+				<string>svmxmobilepulsesum17</string>
 				<string>svmxautomation</string>
 			</array>
 		</dict>
