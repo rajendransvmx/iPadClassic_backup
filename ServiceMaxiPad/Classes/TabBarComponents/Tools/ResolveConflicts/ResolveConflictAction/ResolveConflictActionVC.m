@@ -26,9 +26,9 @@
 @property (weak, nonatomic) IBOutlet UITableView *resolutionTableView;      /* Used to display various resolution options */
 @property (weak, nonatomic) IBOutlet UILabel *objectLabel;                  /* object name:eg-Work Order */
 @property (weak, nonatomic) IBOutlet UILabel *objectNameLabel;              /* record value:eg:WO-234342 */
-@property (weak, nonatomic) IBOutlet UIView *accountView;                   /* Used to hold accound text and account number */
-@property (weak, nonatomic) IBOutlet UILabel *accountLabel;                 /* account text:eg-account */
-@property (weak, nonatomic) IBOutlet UILabel *accountNameLabel;             /* account value:eg-Servicemax developer */
+@property (weak, nonatomic) IBOutlet UIView *svmxAcView;                   /* Used to hold accound text and account number */
+@property (weak, nonatomic) IBOutlet UILabel *svmxAcLabel;                 /* account text:eg-account */
+@property (weak, nonatomic) IBOutlet UILabel *svmxAcNameLabel;             /* account value:eg-Servicemax developer */
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *accountViewHeightConstraint; /* Used to hide/unhide accountview */
 @property (weak, nonatomic) IBOutlet UILabel *detailsLabel;                 /* detail text */
 @property (weak, nonatomic) IBOutlet UITextView *detailsTextView;           /* conflict error message */
@@ -128,15 +128,15 @@
     self.resolutionTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.objectLabel.text          = @"";
     self.objectNameLabel.text      = @"";
-    self.accountLabel.text         = [[TagManager sharedInstance]tagByName:kTag_account];
-    self.accountNameLabel.text     = @"";
+    self.svmxAcLabel.text         = [[TagManager sharedInstance]tagByName:kTag_acInfo];
+    self.svmxAcNameLabel.text     = @"";
     self.detailsTextView.text      = @"";
     self.detailsLabel.text         = [[TagManager sharedInstance]tagByName:kTag_details];
     self.objectNameLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     self.objectLabel.textColor     = [UIColor grayColor];
     self.objectLabel.font          = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize14];
-    self.accountLabel.textColor    = [UIColor grayColor];
-    self.accountLabel.font         = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize14];
+    self.svmxAcLabel.textColor    = [UIColor grayColor];
+    self.svmxAcLabel.font         = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize14];
     self.detailsLabel.textColor    = [UIColor grayColor];
     self.detailsLabel.font         = [UIFont fontWithName:kHelveticaNeueLight size:kFontSize14];
     
@@ -148,9 +148,9 @@
         
     } else {
         
-        self.accountNameLabel.text = self.conflictModel.accountValue;
-        if ([StringUtil isStringEmpty:self.conflictModel.accountValue]) {
-            self.accountNameLabel.text = @"- - - -";
+        self.svmxAcNameLabel.text = self.conflictModel.svmxAcValue;
+        if ([StringUtil isStringEmpty:self.conflictModel.svmxAcValue]) {
+            self.svmxAcNameLabel.text = @"- - - -";
         }
     }
     

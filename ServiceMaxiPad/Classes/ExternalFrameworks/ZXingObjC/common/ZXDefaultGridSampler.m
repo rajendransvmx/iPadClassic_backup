@@ -18,6 +18,7 @@
 #import "ZXDefaultGridSampler.h"
 #import "ZXErrors.h"
 #import "ZXPerspectiveTransform.h"
+#import "ZXingObjC.h"
 
 @implementation ZXDefaultGridSampler
 
@@ -56,8 +57,9 @@
   }
   ZXBitMatrix *bits = [[ZXBitMatrix alloc] initWithWidth:dimensionX height:dimensionY];
   int pointsLen = 2 * dimensionX;
-  float pointsf[pointsLen];
-  memset(pointsf, 0, pointsLen * sizeof(float));
+//  float pointsf[pointsLen];
+    float *pointsf = (float *)calloc(pointsLen, BUFFER_SIZE_FLOAT);
+  memset(pointsf, 0, pointsLen * BUFFER_SIZE_FLOAT);
 
   for (int y = 0; y < dimensionY; y++) {
     int max = dimensionX << 1;
@@ -69,6 +71,7 @@
     [transform transformPoints:pointsf pointsLen:pointsLen];
 
     if (![ZXGridSampler checkAndNudgePoints:image points:pointsf pointsLen:pointsLen error:error]) {
+        free(pointsf);
       return nil;
     }
     for (int x = 0; x < max; x += 2) {
@@ -76,6 +79,7 @@
       int yy = (int)pointsf[x + 1];
       if (xx < 0 || yy < 0 || xx >= image.width || yy >= image.height) {
         if (error) *error = ZXNotFoundErrorInstance();
+           free(pointsf);
         return nil;
       }
 
@@ -85,6 +89,7 @@
     }
   }
 
+    free(pointsf);
   return bits;
 }
 

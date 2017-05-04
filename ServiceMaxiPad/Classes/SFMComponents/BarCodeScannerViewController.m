@@ -243,9 +243,7 @@
     helpWebView.frame = frame;
     helpWebView.delegate = self;
     
-    NSString *htmlFile = [[NSBundle mainBundle] pathForResource:@"BarCodeScannerHelp" ofType:@"html"];
-    NSString* htmlString = [NSString stringWithContentsOfFile:htmlFile encoding:NSUTF8StringEncoding error:nil];
-    [helpWebView loadHTMLString:htmlString baseURL: [[NSBundle mainBundle] bundleURL]];
+    [helpWebView loadHTMLString:[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"BarCodeScannerHelp" ofType:@"html"] encoding:NSUTF8StringEncoding error:nil] baseURL: [[NSBundle mainBundle] bundleURL]];
 
     [self.view addSubview:helpWebView];
      self.activityView.center = CGPointMake(helpWebView.bounds.size.width/2, helpWebView.bounds.size.height/2);

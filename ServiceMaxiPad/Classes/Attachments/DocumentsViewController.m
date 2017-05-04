@@ -422,9 +422,7 @@ static NSString *const kAttachmentErrorCode = @"errorCode";
     if ([AttachmentUtility doesFileExists:[AttachmentUtility fileNameForAttachment:attachmentModel]])
     {
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString * filePath = [AttachmentUtility getFullPath:attachmentId];
-        filePath=[filePath stringByAppendingString:attachmentModel.extensionName];
-        NSString * fileContent=[[NSString alloc]initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+        NSString * fileContent=[[NSString alloc]initWithContentsOfFile:[[AttachmentUtility getFullPath:attachmentId] stringByAppendingString:attachmentModel.extensionName] encoding:NSUTF8StringEncoding error:nil];
         SXLogInfo(@"%@",fileContent);
         NSData *fileData = [fileContent dataUsingEncoding:NSUTF8StringEncoding];
         if (fileData){
@@ -438,7 +436,7 @@ static NSString *const kAttachmentErrorCode = @"errorCode";
                         BOOL statusError=[attachmentErrorService updateAttachmentErrorTableWithModel:attachmentModel];
                         if(statusError){
                             NSError *fileManagerError;
-                            [fileManager removeItemAtPath:filePath error:&fileManagerError];
+                            [fileManager removeItemAtPath:[[AttachmentUtility getFullPath:attachmentId] stringByAppendingString:attachmentModel.extensionName] error:&fileManagerError];
                             if(fileManagerError){
                                 SXLogInfo(@"Error Deleting : %@",fileManagerError.description);
                             }

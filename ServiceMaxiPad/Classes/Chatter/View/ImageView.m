@@ -61,10 +61,8 @@
 - (UIImage *)getImageForChatterFilePath
 {
     UIImage* newImage = nil;
-    
-    NSString* imagePath = [FileManager getChatterRelatedFilePath:self.userId];
-    if( [[NSFileManager defaultManager] fileExistsAtPath:imagePath] ) {
-        newImage = [[UIImage alloc] initWithContentsOfFile:imagePath];
+    if( [[NSFileManager defaultManager] fileExistsAtPath:[FileManager getChatterRelatedFilePath:self.userId]] ) {
+        newImage = [[UIImage alloc] initWithContentsOfFile:[FileManager getChatterRelatedFilePath:self.userId]];
     }
     return newImage;
 }

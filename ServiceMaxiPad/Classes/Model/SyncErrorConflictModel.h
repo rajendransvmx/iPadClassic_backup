@@ -41,7 +41,7 @@
 @property(nonatomic, strong) NSString *objectLabel;
 @property(nonatomic, strong) NSString *recordValue;
 @property(nonatomic, readwrite) BOOL isWorkOrder;
-@property(nonatomic, strong) NSString *accountValue;
+@property(nonatomic, strong) NSString *svmxAcValue;
 @property(nonatomic, strong) NSString *fieldsModified;
 
 - (id)init;

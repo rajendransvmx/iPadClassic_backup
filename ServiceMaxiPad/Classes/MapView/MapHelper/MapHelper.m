@@ -346,7 +346,7 @@
 
 + (NSArray*)allTagValuesForWorkOrderPopup {
     
-    return [NSArray arrayWithObjects:[[TagManager sharedInstance] tagByName:kTag_number], [[TagManager sharedInstance] tagByName:kTag_account], [[TagManager sharedInstance] tagByName:kTag_service_location], [[TagManager sharedInstance] tagByName:kTag_appointment], [[TagManager sharedInstance] tagByName:kTag_contact], [[TagManager sharedInstance] tagByName:kTag_purposeofvisit], [[TagManager sharedInstance] tagByName:kTag_problemdescription], nil];
+    return [NSArray arrayWithObjects:[[TagManager sharedInstance] tagByName:kTag_number], [[TagManager sharedInstance] tagByName:kTag_acInfo], [[TagManager sharedInstance] tagByName:kTag_service_location], [[TagManager sharedInstance] tagByName:kTag_appointment], [[TagManager sharedInstance] tagByName:kTag_contact], [[TagManager sharedInstance] tagByName:kTag_purposeofvisit], [[TagManager sharedInstance] tagByName:kTag_problemdescription], nil];
 }
 
 + (NSMutableDictionary*)objectValueMapDictionary:(WorkOrderSummaryModel*)workOrder {
@@ -368,7 +368,7 @@
     }
     
     [objectValueMapDictionary setValue:![StringUtil isStringEmpty:workOrder.companyName] ? workOrder.companyName : @""
-                                 forKey:[[TagManager sharedInstance] tagByName:kTag_account]];
+                                 forKey:[[TagManager sharedInstance] tagByName:kTag_acInfo]];
     
     [objectValueMapDictionary setValue:workOrder.serviceLocationModel
                                  forKey:[[TagManager sharedInstance] tagByName:kTag_service_location]];

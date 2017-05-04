@@ -16,7 +16,7 @@
 #import "GetPriceManager.h"
 #import "SyncConstants.h"
 #import "PlistManager.h"
-
+#import "OneCallRestIntialSyncServiceLayer.h"
 static NSString *GetPriceDataZero = @"0";
 static NSString *GetPriceDataOne = @"1";
 static NSString *GetPriceDataTwo = @"2";
@@ -123,12 +123,27 @@ static NSString *GetPriceDataTwo = @"2";
                                 if(callBack.callBack)
                                 {
                                     NSDictionary *peo =[self getPartiallyExecutedObjectValueMap];
-                                    if([[peo allKeys] count]) {
-                                        callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap], peo, nil];
+                                    OneCallRestIntialSyncServiceLayer *syncServiceLayer=[[OneCallRestIntialSyncServiceLayer alloc]init];
+                                    
+                                    NSMutableArray *valueMapArray=[[NSMutableArray alloc]initWithObjects:lastIndexValueMap, [self getCallBackValueMap], peo, nil];
+                                    
+                                    /*Defect fix 039546*/
+                                    NSArray *valuesLabour = [syncServiceLayer getValuesArrayForLabour];
+                                    NSArray *valuesIsoCurrency = [syncServiceLayer getValuesArrayForCurrencyISO];
+
+                                    if ([valuesLabour count]) {
+                                        NSDictionary *laborDict = [NSDictionary dictionaryWithObjectsAndKeys:@"Labor",kSVMXRequestKey,valuesLabour,kSVMXRequestValues, nil];
+                                        [valueMapArray addObject:laborDict];
                                     }
-                                    else {
-                                        callBack.callBackData.valueMap = [NSArray arrayWithObjects:lastIndexValueMap, [self getCallBackValueMap], peo, nil];
+                                    if ([valuesIsoCurrency count]) {
+                                        NSDictionary *currencyDict = [NSDictionary dictionaryWithObjectsAndKeys:@"CurrencyISO",kSVMXRequestKey,valuesIsoCurrency,kSVMXRequestValues, nil];
+                                        [valueMapArray addObject:currencyDict];
                                     }
+                                    /*End of Defect fix 039546*/
+
+                                    callBack.callBackData.valueMap = [NSArray arrayWithArray:valueMapArray];
+
+
                                     callBack.callBackData.values = [NSArray arrayWithArray:self.objectNames];
                                 }
                                 SXLogDebug(@"Call Three");

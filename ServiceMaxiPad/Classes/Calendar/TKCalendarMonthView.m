@@ -1322,8 +1322,7 @@ static UIImage *imageCircleOrange;
 		_leftArrow.tag = 0;
         _leftArrow.accessibilityLabel = [[TagManager sharedInstance]tagByName:kTag_PreviousMonth];
 		[_leftArrow addTarget:self action:@selector(changeMonth:) forControlEvents:UIControlEventTouchUpInside];
-        NSString *thePath = [[NSBundle mainBundle] pathForResource:@"cal-left-arrow" ofType:@"png"];
-		[_leftArrow setImage:[[UIImage alloc] initWithContentsOfFile:thePath] forState:0];
+		[_leftArrow setImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"cal-left-arrow" ofType:@"png"]] forState:0];
         if (forIpad) {
             _leftArrow.frame = CGRectMake(24, 10, 47, 38);
         }
@@ -1350,8 +1349,7 @@ static UIImage *imageCircleOrange;
         {
             _rightArrow.frame = CGRectMake(320-45, 0, 48, 38);
         }
-        NSString *thePath = [[NSBundle mainBundle] pathForResource:@"cal-right-arrow" ofType:@"png"];
-		[_rightArrow setImage:[[UIImage alloc] initWithContentsOfFile:thePath] forState:0];
+		[_rightArrow setImage:[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"cal-right-arrow" ofType:@"png"]] forState:0];
 	}
     _rightArrow.backgroundColor=[UIColor clearColor];
     _rightArrow.imageEdgeInsets = UIEdgeInsetsMake(0, 10, 14, 20);

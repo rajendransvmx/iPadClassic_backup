@@ -19,6 +19,7 @@
 #import "ZXDataMatrixDecodedBitStreamParser.h"
 #import "ZXDecoderResult.h"
 #import "ZXErrors.h"
+#define CONST_TEXT_SHIFT2_SET_CHARS 40
 
 /**
  * See ISO 16022:2006, Annex C Table C.1
@@ -46,7 +47,7 @@ static const unichar TEXT_BASIC_SET_CHARS[40] = {
 };
 
 // Shift 2 for Text is the same encoding as C40
-static unichar TEXT_SHIFT2_SET_CHARS[40];
+static unichar TEXT_SHIFT2_SET_CHARS[CONST_TEXT_SHIFT2_SET_CHARS];
 
 static const unichar TEXT_SHIFT3_SET_CHARS[32] = {
   '`', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',

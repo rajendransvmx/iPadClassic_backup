@@ -3,18 +3,15 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.19.004
+
+Version = 17.19.010
 
 ===========================================
 
 Defect:
+IPAD-4529
+Get price is not working as expected in the Spring 16 iPad application. Amount is set to 0 if Service PriceBook Entry is not in download criteria.
 
-
-Feature:
-==================
-IPAD-4217
-(iPad/iPhone) Date/Time format in SFM does not respect language setting.
-——————
 
 NOTE:
 

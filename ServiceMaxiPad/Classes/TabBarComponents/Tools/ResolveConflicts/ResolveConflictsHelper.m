@@ -123,11 +123,11 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
             // if account info doesn't exist in account table, get value from ObjectNameFieldValue table ..
             NSDictionary *objectFieldValues = [SFMPageHelper getValuesFromReferenceTable:@[accountSfId]];
             if ([objectFieldValues count]) {
-                syncConflictModel.accountValue = [objectFieldValues valueForKey:accountSfId];
+                syncConflictModel.svmxAcValue = [objectFieldValues valueForKey:accountSfId];
             }
         }
         else {
-            syncConflictModel.accountValue = [SFMPageHelper getRefernceFieldValueForObject:kAccountTableName andId:accountLocalId];
+            syncConflictModel.svmxAcValue = [SFMPageHelper getRefernceFieldValueForObject:kAccountTableName andId:accountLocalId];
         }
     }
     else {

@@ -433,16 +433,14 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
      
         for (NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies])
         {
-            if ([StringUtil containsString:@".salesforce.com" inString:[cookie domain]])
-            {
+//            if ([StringUtil containsString:@".salesforce.com" inString:[cookie domain]]) // Defect fix for 039318 (Custom Host login)
+//            {
                 deleted = YES;
                 [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
-            }
+//            }
         }
+        [[NSUserDefaults standardUserDefaults] synchronize];
     }
-
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
     return deleted;
 }
 

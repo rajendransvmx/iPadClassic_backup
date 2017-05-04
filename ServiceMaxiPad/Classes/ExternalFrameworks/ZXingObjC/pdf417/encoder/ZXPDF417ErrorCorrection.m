@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+#define CONST_ERRORCORRECTIONLEVEL 8 // 1 << (errorCorrectionLevel + 1), errorCorrectionLevel = 2 (ZXPDF417Writer.m, line 76)
+
 #import "ZXErrors.h"
 #import "ZXPDF417ErrorCorrection.h"
-
+#import "ZXingObjC.h"
 /**
  * Tables of coefficients for calculating error correction words
  * (see annex F, ISO/IEC 15438:2001(E))
@@ -145,8 +147,8 @@ const int ZX_PDF417_EC_COEFFICIENTS[][512] = {
 }
 
 + (NSString *)generateErrorCorrection:(NSString *)dataCodewords errorCorrectionLevel:(int)errorCorrectionLevel {
-  int k = [self errorCorrectionCodewordCount:errorCorrectionLevel];
-  unichar e[k];
+    int k = CONST_ERRORCORRECTIONLEVEL; //[self errorCorrectionCodewordCount:errorCorrectionLevel];
+  unichar e[CONST_ERRORCORRECTIONLEVEL];
   memset(e, 0, k * sizeof(unichar));
 
   int sld = (int)dataCodewords.length;

@@ -106,8 +106,8 @@
     
     NSString *param = [NSString stringWithFormat:@"var params = %@", paramsStr];
     
-    NSString *htmlFilePath = [[NSBundle mainBundle] pathForResource:@"mobile-fieldupdaterules-app" ofType:@"html"];
-    NSString *htmlContent = [NSString stringWithFormat:[NSString stringWithContentsOfFile:htmlFilePath encoding:NSUTF8StringEncoding error:nil], param];
+    NSString *htmlFileString =[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mobile-fieldupdaterules-app" ofType:@"html"] encoding:NSUTF8StringEncoding error:nil];
+    NSString *htmlContent = [htmlFileString stringByAppendingString:param];
     NSString *finalString = [bizRuleHtmlStr stringByAppendingString:htmlContent];
     return finalString;
 }

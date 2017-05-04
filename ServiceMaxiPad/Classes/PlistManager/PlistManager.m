@@ -238,8 +238,7 @@ NSString *const kSPReqTimedOut = @"SPReqTimedOut";
 
 + (NSDictionary *)getDictionaryFromPlistWithName:(NSString *)plistFileName
 {
-    NSString *plistFilePath = [FileManager getFilePathForPlist:plistFileName];
-    NSDictionary *plistDictionary = [[NSDictionary alloc] initWithContentsOfFile:plistFilePath];
+    NSDictionary *plistDictionary = [[NSDictionary alloc] initWithContentsOfFile:[FileManager getFilePathForPlist:plistFileName]];
     return plistDictionary;
 }
 
@@ -1278,8 +1277,7 @@ NSString *const kSPReqTimedOut = @"SPReqTimedOut";
 
 + (void)writeIntoPlist:(NSString *)plistName data:(NSMutableDictionary *)dataInDict
 {
-    NSString * filepath = [FileManager getFilePathForPlist:plistName];
-    [dataInDict writeToFile:filepath atomically:YES];
+    [dataInDict writeToFile:[FileManager getFilePathForPlist:plistName] atomically:YES];
 }
 
 + (void)saveJobLogsEnabled:(BOOL)enabled

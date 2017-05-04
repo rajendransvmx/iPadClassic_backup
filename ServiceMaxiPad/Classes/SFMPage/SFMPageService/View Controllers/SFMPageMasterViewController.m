@@ -455,7 +455,7 @@ SFMPageMasterSectionType;
         case SFMPageMasterSectionTypeHistory:/*Additional Info*/
             if (headerLayout.enableProductHistory &&  headerLayout.enableAccountHistory) {
                 if (indexPath.row == 0) {
-                    title =  [[TagManager sharedInstance]tagByName:kTag_AccountHistoryAndRecords];//[tagManager tagByName:kTag_AccountHistory];
+                    title =  [[TagManager sharedInstance]tagByName:kTag_AcHistoryAndRecords];//[tagManager tagByName:kTag_AccountHistory];
                 }
                 else if (indexPath.row == 1) {
                     title = [[TagManager sharedInstance]tagByName:kTag_ProductHistoryAndRecords];
@@ -467,7 +467,7 @@ SFMPageMasterSectionType;
                 title = [[TagManager sharedInstance]tagByName:kTag_ProductHistoryAndRecords];//[tagManager tagByName:kTag_ProductHistory_Records];
             }
             else if(headerLayout.enableAccountHistory){
-                title = [[TagManager sharedInstance]tagByName:kTag_AccountHistoryAndRecords];//[tagManager tagByName:kTag_AccountHistory];
+                title = [[TagManager sharedInstance]tagByName:kTag_AcHistoryAndRecords];//[tagManager tagByName:kTag_AccountHistory];
                 
             }
             break;

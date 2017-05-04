@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#define ZX_AZTEC_CHAR_MAP_HEIGHT_CONST 5
+#define ZX_AZTEC_CHAR_MAP_WIDTH_CONST 256
+
 #import "ZXAztecHighLevelEncoder.h"
 #import "ZXAztecState.h"
 #import "ZXByteArray.h"
@@ -72,9 +75,9 @@ const int ZX_AZTEC_LATCH_TABLE[][5] = {
 
 // A reverse mapping from [mode][char] to the encoding for that character
 // in that mode.  An entry of 0 indicates no mapping exists.
-const int ZX_AZTEC_CHAR_MAP_HEIGHT = 5;
-const int ZX_AZTEC_CHAR_MAP_WIDTH = 256;
-static int ZX_AZTEC_CHAR_MAP[ZX_AZTEC_CHAR_MAP_HEIGHT][ZX_AZTEC_CHAR_MAP_WIDTH];
+const int ZX_AZTEC_CHAR_MAP_HEIGHT = ZX_AZTEC_CHAR_MAP_HEIGHT_CONST;
+const int ZX_AZTEC_CHAR_MAP_WIDTH = ZX_AZTEC_CHAR_MAP_WIDTH_CONST;
+static int ZX_AZTEC_CHAR_MAP[ZX_AZTEC_CHAR_MAP_HEIGHT_CONST][ZX_AZTEC_CHAR_MAP_WIDTH_CONST];
 
 // A map showing the available shift codes.  (The shifts to BINARY are not
 // shown

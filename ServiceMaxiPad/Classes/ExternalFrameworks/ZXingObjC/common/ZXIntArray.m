@@ -15,13 +15,14 @@
  */
 
 #import "ZXIntArray.h"
+#import "ZXingObjC.h"
 
 @implementation ZXIntArray
 
 - (id)initWithLength:(unsigned int)length {
   if (self = [super init]) {
     if (length > 0) {
-      _array = (int32_t *)calloc(length, sizeof(int32_t));
+      _array = (int32_t *)calloc(length, BUFFER_SIZE_INT_32BIT);
     } else {
       _array = NULL;
     }
