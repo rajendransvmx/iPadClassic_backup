@@ -4,13 +4,15 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.19.009
+Version = 17.19.010
 
 ===========================================
 
 Defect:
-IPAD-4568
-iPad: Is Billable field is updated to 'true' during sync if SFM Formula exists
+IPAD-4529
+Get price is not working as expected in the Spring 16 iPad application. Amount is set to 0 if Service PriceBook Entry is not in download criteria.
+
+
 NOTE:
 
 1. NameSpace: SVMXDEV
