@@ -4,7 +4,7 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.19.011
+Version = 17.19.012
 
 ===========================================
 
@@ -15,6 +15,6 @@ Updating URL scheme to SUM17 for pulse app
 
 NOTE:
 
-1. NameSpace: SVMXDEV
+1. NameSpace: SVMXC
 
 
