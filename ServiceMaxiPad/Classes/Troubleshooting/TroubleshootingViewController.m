@@ -326,7 +326,7 @@
         
         AlertViewHandler *alert = [[AlertViewHandler alloc] init];
         [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertTitleError]
-                              Message:kTagProductManualNotPresent
+                              Message:[[TagManager sharedInstance] tagByName:kTagProductManualNotPresent]
                              Delegate:self cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk ]
                        andOtherButton:nil];
         
