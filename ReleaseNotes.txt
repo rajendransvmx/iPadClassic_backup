@@ -4,14 +4,14 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.19.012
+Version = 17.19.013
 
 ===========================================
 
 Defect:
 
-Updating URL scheme to SUM17 for pulse app
-
+RS-7565
+PQT: IPad: Billable Qty not getting calculated after performing Get Price For Labor Lines
 
 NOTE:
 
