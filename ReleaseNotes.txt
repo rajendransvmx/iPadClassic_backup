@@ -4,17 +4,15 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.19.013
+Version = 17.19.014
 
 ===========================================
 
 Defect:
-
-RS-7565
-PQT: IPad: Billable Qty not getting calculated after performing Get Price For Labor Lines
+RS-7562
+PQT: SFM process having formulas configured cannot be invoked on ipad(classic)
 
 NOTE:
-
 1. NameSpace: SVMXC
 
 
