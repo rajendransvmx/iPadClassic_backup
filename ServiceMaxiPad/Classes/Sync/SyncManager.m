@@ -1465,30 +1465,33 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 - (void)performLoggout
 {
     [[SVMXSystemUtility sharedInstance] startNetworkActivity];
-
+    
     @synchronized([self class])
     {
-        BOOL isRevoked = [OAuthService revokeAccessToken];
-        
-        if (isRevoked)
-        {
-            [[CacheManager sharedInstance] clearCache];
-            [OAuthService clearOAuthErrorMessage];
-            [[AppManager sharedInstance] completedLogoutProcess];
-            [[AppManager sharedInstance] loadScreen];
-        }
-        else
-        {
-            // VIPIN : TODO
-            //Pushpak - for time being I am adding this so that it won't block the initial screen.
-            [[CacheManager sharedInstance] clearCache];
-            [OAuthService clearOAuthErrorMessage];
-            [[AppManager sharedInstance] completedLogoutProcess];
-            [[AppManager sharedInstance] loadScreen];
-        }
+        // // SECSCAN-260
+        OauthConnectionHandler *service = [[OauthConnectionHandler alloc] init];
+        [service revokeAccessTokenWithCompletion:^(BOOL isSuccess, NSError *error) {
+            if (isSuccess)
+            {
+                [[CacheManager sharedInstance] clearCache];
+                [OAuthService clearOAuthErrorMessage];
+                [[AppManager sharedInstance] completedLogoutProcess];
+                [[AppManager sharedInstance] loadScreen];
+            }
+            else
+            {
+                // VIPIN : TODO
+                //Pushpak - for time being I am adding this so that it won't block the initial screen.
+                [[CacheManager sharedInstance] clearCache];
+                [OAuthService clearOAuthErrorMessage];
+                [[AppManager sharedInstance] completedLogoutProcess];
+                [[AppManager sharedInstance] loadScreen];
+            }
+            [[SVMXSystemUtility sharedInstance] stopNetworkActivity];
+        }];
     }
+     
     
-    [[SVMXSystemUtility sharedInstance] stopNetworkActivity];
 }
 
 #pragma mark -End

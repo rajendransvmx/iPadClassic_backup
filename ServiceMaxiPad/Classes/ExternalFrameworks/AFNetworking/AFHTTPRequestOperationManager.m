@@ -31,7 +31,7 @@
 //025428
 #import "MobileDeviceSettingService.h"
 #import "StringUtil.h"
-
+#import "Utility.h"
 
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 #import <UIKit/UIKit.h>
@@ -64,10 +64,8 @@
     self.requestSerializer = [AFHTTPRequestSerializer serializer];
     self.responseSerializer = [AFJSONResponseSerializer serializer];
     
-    //025428
-    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
-    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET023"];
-    BOOL isPinningEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+    //025428 // SECSCAN-260
+    BOOL isPinningEnabled = [Utility isSSLPinningEnabled];
     
     if (isPinningEnabled) {
         self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];

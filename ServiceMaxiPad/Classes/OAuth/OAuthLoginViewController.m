@@ -31,6 +31,7 @@
 #import "AlertMessageHandler.h"
 #import "TagManager.h"
 #import "MBProgressHUD.h"
+#import "OauthConnectionHandler.h"
 
 @interface OAuthLoginViewController ()
 {
@@ -146,10 +147,24 @@ NSInteger webViewLoadCounter;
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
             [request setValue:@"gzip; deflate" forHTTPHeaderField:@"Accept-Encoding"];//Accept-Encoding: gzip, deflate
             
-            [self.webview loadRequest:request];
+            // SECSCAN-260
+            OauthConnectionHandler *service = [[OauthConnectionHandler alloc] init];
+            [service makeDummyCallForAuthenticationCheck:request andCompletion:^(BOOL isSuccess, NSString *errorMsg) {
+                if (isSuccess)
+                {
+                    [self.webview loadRequest:request];
+                    [self addActivityAndLoadingLabel];
+                }
+                else
+                {
+                    [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeInternetNotReachable
+                                                                       andDelegate:nil];
+                    [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInLaunchScreen];
+                    [[AppManager sharedInstance] loadScreen];
+                }
+            }];
+             
             
-            [self addActivityAndLoadingLabel];
-            request = nil;
         }
         else
         {

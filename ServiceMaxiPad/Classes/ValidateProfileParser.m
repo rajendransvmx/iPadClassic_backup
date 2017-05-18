@@ -41,6 +41,11 @@
                     if ([key isEqualToString:kValidateProfileGroupProfileName]) {
                         [userDefaults setObject:value forKey:kGroupProfileName];
                     }
+                    
+                    // SECSCAN-260
+                    if ([key isEqualToString:kValidateProfileSSLPinning]) {
+                        [userDefaults setObject:value forKey:kSSLPinningEnabled];
+                    }
                 }
             }
             
@@ -68,6 +73,10 @@
     [userDefaults removeObjectForKey:kGroupProfileName];
     [userDefaults removeObjectForKey:kSPSyncTime];
     [userDefaults removeObjectForKey:kSPReqTimedOut];
+    
+    // SECSCAN-260
+    [userDefaults removeObjectForKey:kSSLPinningEnabled];
+
     [userDefaults synchronize];
 }
 

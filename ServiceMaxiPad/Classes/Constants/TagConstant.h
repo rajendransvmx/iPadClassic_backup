@@ -888,5 +888,8 @@ extern NSString *const kPurgeDataLogs;
 extern NSString *const KWizardNameForProductIQ;
 extern NSString *const KStepNameForProductIQ;
 
+// SECSCAN-260
+extern NSString *const kValidateProfileSSLPinning;
+extern NSString *const kSSLPinningEnabled;
 
 //@end
