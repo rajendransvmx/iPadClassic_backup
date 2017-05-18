@@ -125,6 +125,11 @@
                  
              }
             
+            if ([self.eventName isEqualToString:@"MASTER_SYNC_LOG"]) {
+                // ssl pinning - to invoke authentication challenge after validate profile
+                urlString = [urlString stringByReplacingOccurrencesOfString:@".com" withString:@".com."];
+            }
+            
             NSURL *apiURL = [NSURL URLWithString:urlString];
             NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:apiURL];
             
