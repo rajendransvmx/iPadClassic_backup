@@ -57,5 +57,6 @@
 + (NSString *)jsonStringFromObject:(id)object;
 + (id)objectFromJsonString:(NSString *)jsonString;
 +(NSInteger)requestTimeOutValueFromSetting;
++(BOOL)isSSLPinningEnabled;
 
 @end

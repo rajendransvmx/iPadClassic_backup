@@ -9,6 +9,8 @@
 #import "Utility.h"
 #import "SVMXSystemConstant.h"
 #import "StringUtil.h"
+#import "TagConstant.h"
+#import "MobileDeviceSettingService.h"
 
 void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message);
 @implementation Utility
@@ -379,6 +381,27 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
         requestTimeOutInSec = requestTimeOut * 60;
     }
     return requestTimeOutInSec;
+}
+
+// SECSCAN-260
++(BOOL)isSSLPinningEnabled
+{
+    BOOL isPinningEnabled = NO;
+    
+    NSString *pinningEnabled = [[NSUserDefaults standardUserDefaults] objectForKey:kSSLPinningEnabled];
+    
+    if(pinningEnabled)
+    {
+        isPinningEnabled = [pinningEnabled boolValue];
+    }
+    else
+    {
+        MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+        MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET023"];
+        isPinningEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+    }
+    
+    return isPinningEnabled;
 }
 
 

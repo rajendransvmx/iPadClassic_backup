@@ -21,6 +21,7 @@
 // THE SOFTWARE.
 
 #import "AFURLConnectionOperation.h"
+#import "Utility.h"
 
 //025428
 #import "MobileDeviceSettingService.h"
@@ -192,10 +193,8 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
     
     self.state = AFOperationReadyState;
     
-    //025428
-    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
-    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET023"];
-    BOOL isPinningEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+    //025428 // SECSCAN-260
+    BOOL isPinningEnabled = [Utility isSSLPinningEnabled];
     
     if (isPinningEnabled) {
         self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];

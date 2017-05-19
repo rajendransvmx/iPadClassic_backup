@@ -26,6 +26,7 @@
 #import "NSData+DDData.h"
 #import "Utility.h"
 #import "TagManager.h"
+#import "OauthConnectionHandler.h"
 
 NSString *const kRedirectURL                        = @"sfdc://success";
 
@@ -36,16 +37,6 @@ static NSString *const kRevokeTokenURL              = @"/services/oauth2/revoke"
 static NSString *const kRefreshTokenURL             = @"/services/oauth2/token";
 static NSString *const kAuthorizationParamURLString = @"redirect_uri=%@&client_id=%@&response_type=token&state=mystate";
 static NSString *const kRefreshTokenParamURLString  = @"grant_type=refresh_token&client_id=%@&client_secret=%@&refresh_token=%@";
-
-
-// Service Names
-static NSString *const kOAuthServiceRevokeToken     = @"revoke";
-static NSString *const kOAuthServiceRefreshAccToken = @"refresh";
-static NSString *const kOAuthServiceAuthorization   = @"Authorize";
-
-
-static NSString *const kOAuthAccessToken            = @"access_token";
-static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Seconds, Five minutes duration between two successfull refresh token
 
 @implementation OAuthService
 
@@ -223,6 +214,41 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
     
     
     return hasTokenValid;
+}
+
+// SECSCAN-260
++(BOOL)shouldPerformRefreshAccessToken
+{
+    BOOL shouldRefreshToken = [PlistManager shouldValidateAccessToken];
+    
+    if (!shouldRefreshToken) {
+        SXLogInfo(@"Do not validate");
+    }
+    else
+    {
+        NSInteger savedTokenBornTime = [PlistManager storedAccessTokenGeneratedTime];
+        long long timeNow = (long long)[[NSDate date] timeIntervalSince1970];
+        
+        int diffTime  = (unsigned int)  (timeNow - savedTokenBornTime);
+        
+        SXLogInfo(@"Access token validity - %lld - %lld = %d", savedTokenBornTime, timeNow, diffTime);
+        
+        //if ((abs((NSInteger) timeNow - savedTokenBornTime) >  kOAuthAccessTokenRefreshDurationInSec)
+        if ((abs(diffTime) >  kOAuthAccessTokenRefreshDurationInSec)
+            || (savedTokenBornTime == 0))
+        {
+            shouldRefreshToken = YES;
+        }
+        else
+        {
+            shouldRefreshToken = NO;
+            SXLogInfo(@"Has valid token--");
+        }
+        
+    }
+    
+    
+    return shouldRefreshToken;
 }
 
 /**
@@ -547,50 +573,10 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
 {
     // PCRD-220
     
-	NSError *error = nil;
-	NSURLResponse *response = nil;
+    // SECSCAN-260
+    OauthConnectionHandler *service = [[OauthConnectionHandler alloc] init];
+    [service verifyAuthorization];
     
-    NSMutableURLRequest *request = [[self class] getRequestForService:kOAuthServiceAuthorization];
-		
-	NSData *urlData = [NSURLConnection sendSynchronousRequest:request
-                                            returningResponse:&response
-                                                        error:&error];
-	if (error != nil)
-	{
-        [[AppManager sharedInstance] setErrorMessage:[error debugDescription]];
-        [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
-	}
-    else
-    {
-        NSString *responseData = [[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
-
-        if (responseData != nil)
-        {
-            [[self class] explainRequest:request andResponseData:responseData];
-        
-            NSDictionary *responseDictionary = [Utility objectFromJsonString:responseData];
-            
-            if ( (responseDictionary != nil) && ([responseDictionary count] > 1))
-            {
-                [self parseAndSaveCustomerOrgInfoFromResponse:responseDictionary];
-                [PlistManager loadCustomerOrgInfo];
-                [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusInAuthorizationVerificationCompleted];
-            }
-            else
-            {
-                [[self class] explainRequest:request andResponseData:responseData];
-                [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
-                
-                // Vipin :  TODO whether to display error message or not ?
-            }
-            responseData = nil;
-        }
-        else
-        {
-            [[self class] explainRequest:request andResponseData:responseData];
-            [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
-        }
-    }
 }
 
 /**

@@ -2143,6 +2143,7 @@
 		D9F7EEF61A1083270098F8AF /* BizRulesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F7EEF41A1083270098F8AF /* BizRulesViewController.xib */; };
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
+		EC2A5C1B1ECD951200AF9C3B /* OauthConnectionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = EC2A5C1A1ECD951200AF9C3B /* OauthConnectionHandler.m */; };
 		EC42EC2B1DDAEA2200419D7D /* ValidateProfileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */; };
 		EC9E39AE1E66E7FE002663D6 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
 		EC9E39AF1E66E7FE002663D6 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
@@ -4553,6 +4554,8 @@
 		DE9E10CC1AA9A28C00A87768 /* PushNotificationWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceHelper.h; sourceTree = "<group>"; };
 		DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationWebServiceHelper.m; sourceTree = "<group>"; };
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
+		EC2A5C191ECD951200AF9C3B /* OauthConnectionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OauthConnectionHandler.h; sourceTree = "<group>"; };
+		EC2A5C1A1ECD951200AF9C3B /* OauthConnectionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OauthConnectionHandler.m; sourceTree = "<group>"; };
 		EC42EC291DDAEA2200419D7D /* ValidateProfileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateProfileParser.h; sourceTree = "<group>"; };
 		EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ValidateProfileParser.m; sourceTree = "<group>"; };
 		EC9E3AC11E66EEEE002663D6 /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Resource.bundle; sourceTree = "<group>"; };
@@ -7735,6 +7738,8 @@
 		18A2178319E5850300F22EA6 /* OAuth */ = {
 			isa = PBXGroup;
 			children = (
+				EC2A5C191ECD951200AF9C3B /* OauthConnectionHandler.h */,
+				EC2A5C1A1ECD951200AF9C3B /* OauthConnectionHandler.m */,
 				18A2178419E5850300F22EA6 /* CustomerOrgInfo.h */,
 				18A2178519E5850300F22EA6 /* CustomerOrgInfo.m */,
 				18A2178B19E5850300F22EA6 /* OAuthLoginViewController.h */,
@@ -10233,6 +10238,7 @@
 				184A8E7419E7A0BE006DA6BE /* SMXWeekCollectionView.m in Sources */,
 				FD09E1331D4A088A00972C95 /* ZXSMSMMSResultParser.m in Sources */,
 				183AA35E19E6DA2500919345 /* AFHTTPRequestOperationManager.m in Sources */,
+				EC2A5C1B1ECD951200AF9C3B /* OauthConnectionHandler.m in Sources */,
 				183A9E2419E69DB000919345 /* InternetConflictModel.m in Sources */,
 				84CB38EE1A0399660035D38C /* ZKSCreateObjectRequest.m in Sources */,
 				FD09E1B31D4A088A00972C95 /* ZXUPCAWriter.m in Sources */,

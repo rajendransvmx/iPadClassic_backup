@@ -35,6 +35,7 @@
 #import "PushNotificationManager.h"
 #import "PushNotificationUtility.h"
 #import "SuccessiveSyncManager.h"
+#import "OauthConnectionHandler.h"
 
 #define MAX_RETRY_COUNT 3
 NSString *cocoaErrorString = @"3840";
@@ -128,34 +129,45 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
         
         SXLogInfo(@"Req Category - %d", x);
         
-        if ([OAuthService validateAndRefreshAccessToken])
+        // SECSCAN-260
+        if([OAuthService shouldPerformRefreshAccessToken])
         {
-            [self makeNextRequesttWithPrevious:nil firstCall:YES];
+            OauthConnectionHandler *service = [[OauthConnectionHandler alloc] init];
+            [service refreshAccessTokenWithCompletion:^(BOOL isSuccess, NSString *errorMsg) {
+                if (isSuccess)
+                {
+                    [self makeNextRequesttWithPrevious:nil firstCall:YES];
+                }
+                else
+                {
+                    //if (CategoryTypeInitialSync == self.nodecategoryType)
+                    {
+                        NSError *storedError = [PlistManager lastOAuthErrorMessage];
+                        
+                        if ( (storedError != nil) && [StringUtil containsString:@"NSURLErrorDomain" inString:storedError.domain])
+                        {
+                            [self sendProgressStatusFor:RequestTypeNone
+                                             syncStatus:SyncStatusFailed
+                                              withError:storedError];
+                            
+                        }
+                        else{
+                            
+                            [self sendProgressStatusFor:RequestTypeRefresTokenFailed
+                                             syncStatus:SyncStatusFailed
+                                              withError:storedError];
+                        }
+                        
+                        
+                        [self flowCompleted];
+                        
+                    }
+                }
+            }];
         }
         else
         {
-            //if (CategoryTypeInitialSync == self.nodecategoryType)
-            {
-                NSError *storedError = [PlistManager lastOAuthErrorMessage];
-                
-                if ( (storedError != nil) && [StringUtil containsString:@"NSURLErrorDomain" inString:storedError.domain])
-                {
-                    [self sendProgressStatusFor:RequestTypeNone
-                                     syncStatus:SyncStatusFailed
-                                      withError:storedError];
-
-               }
-                else{
-                    
-                    [self sendProgressStatusFor:RequestTypeRefresTokenFailed
-                                     syncStatus:SyncStatusFailed
-                                      withError:storedError];
-                }
-               
-                
-                [self flowCompleted];
-               
-            }
+            [self makeNextRequesttWithPrevious:nil firstCall:YES];
         }
     }
 }

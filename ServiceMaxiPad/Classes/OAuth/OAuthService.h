@@ -23,6 +23,16 @@
 
 extern NSString *const kRedirectURL;
 
+// Service Names
+// Service Names
+static NSString *const kOAuthServiceRevokeToken     = @"revoke";
+static NSString *const kOAuthServiceRefreshAccToken = @"refresh";
+static NSString *const kOAuthServiceAuthorization   = @"Authorize";
+
+static NSString *const kOAuthAccessToken            = @"access_token";
+static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Seconds, Five minutes duration between two successfull refresh token
+
+
 @interface OAuthService : NSObject
 
 
@@ -150,5 +160,10 @@ extern NSString *const kRedirectURL;
  */
 
 + (void)clearOAuthErrorMessage;
+
+// SECSCAN-260
++ (NSMutableURLRequest *)getRequestForService:(NSString *)serviceName;
++ (void)parseAndSaveCustomerOrgInfoFromResponse:(NSDictionary *)responseDictionary;
++(BOOL)shouldPerformRefreshAccessToken;
 
 @end

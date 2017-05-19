@@ -31,6 +31,7 @@
 #import "AlertMessageHandler.h"
 #import "TagManager.h"
 #import "MBProgressHUD.h"
+#import "OauthConnectionHandler.h"
 
 @interface OAuthLoginViewController ()
 {
@@ -143,13 +144,23 @@ NSInteger webViewLoadCounter;
             
             
             self.startTime = CFAbsoluteTimeGetCurrent();
-            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+            __block NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
             [request setValue:@"gzip; deflate" forHTTPHeaderField:@"Accept-Encoding"];//Accept-Encoding: gzip, deflate
             
-            [self.webview loadRequest:request];
+            // SECSCAN-260
+            OauthConnectionHandler *service = [[OauthConnectionHandler alloc] init];
+            [service makeDummyCallForAuthenticationCheck:request andCompletion:^(BOOL isSuccess, NSString *errorMsg) {
+                if (isSuccess)
+                {
+                    [self performSelectorOnMainThread:@selector(loadWebViewOnAuthenticationComplete:) withObject:request waitUntilDone:NO];
+                }
+                else
+                {
+                    [self performSelectorOnMainThread:@selector(showAlertOnAuthenticationComplete:) withObject:nil waitUntilDone:NO];
+                }
+            }];
+             
             
-            [self addActivityAndLoadingLabel];
-            request = nil;
         }
         else
         {
@@ -157,6 +168,22 @@ NSInteger webViewLoadCounter;
             [self handleRequestFailedWithNetworkErrorEvent];
         }
     }
+}
+
+
+-(void)loadWebViewOnAuthenticationComplete:(NSMutableURLRequest *)request
+{
+    [self.webview loadRequest:request];
+    [self addActivityAndLoadingLabel];
+}
+
+
+-(void)showAlertOnAuthenticationComplete:(NSObject *)sender
+{
+    [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeInternetNotReachable
+                                                       andDelegate:nil];
+    [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInLaunchScreen];
+    [[AppManager sharedInstance] loadScreen];
 }
 
 #pragma mark Activity Management

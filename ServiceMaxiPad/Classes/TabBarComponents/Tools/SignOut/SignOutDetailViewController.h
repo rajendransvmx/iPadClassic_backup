@@ -11,6 +11,7 @@
 
 #import "SMAlertView.h"
 #import "SMRegularAlertView.h"
+#import "OauthConnectionHandler.h"
 
 
 @interface SignOutDetailViewController : DetailParentViewController <SMAlertViewDelegate>

@@ -241,12 +241,11 @@
     
     @synchronized([self class])
     {
-        //Pushpak changes 
-        BOOL isRevoked;
-        isRevoked = [OAuthService revokeAccessToken];
+        // SECSCAN-260
         
-//        if (isRevoked)
-        {
+        OauthConnectionHandler *service =[[OauthConnectionHandler alloc] init];
+        [service revokeAccessTokenWithCompletion:^(BOOL isSuccess, NSError *error) {
+            
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self hideAnimator];
                 //[[CacheManager sharedInstance] clearCache];
@@ -261,17 +260,11 @@
                 [self showConfirmLogoutMessage];
                 
             });
-        }
-//        else
-//        {
-//            // VIPIN : TODO
-//        }
+            
+            isLogoutInProgress = NO;
+            [[SVMXSystemUtility sharedInstance] stopNetworkActivity];
+        }];
     }
-    
-    isLogoutInProgress = NO;
-    
-    [[SVMXSystemUtility sharedInstance] stopNetworkActivity];    
-    
 }
 
 

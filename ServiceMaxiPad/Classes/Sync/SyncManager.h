@@ -14,6 +14,7 @@
 #import "SFMCustomActionWebServiceHelper.h"
 #import "TagConstant.h"
 #import "WebserviceResponseStatus.h"
+#import "OauthConnectionHandler.h"
 
 extern NSString *kInitialSyncStatusNotification;
 extern NSString *kConfigSyncStatusNotification;

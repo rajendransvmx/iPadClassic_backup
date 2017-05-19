@@ -624,6 +624,9 @@ NSString *const KTagConflicts = @"IPAD018_TAG171";
 NSString *const KWizardNameForProductIQ = @"IPAD014_TAG140";
 NSString *const KStepNameForProductIQ = @"IPAD014_TAG141";
 
+NSString *const kValidateProfileSSLPinning = @"SSL_PINNING";
+NSString *const kSSLPinningEnabled = @"SSLPinningEnabled";
+
 
 #define SERVICE_REPORT_EXPENSE_SECTION_TITLE    SUMMARY_REPORT_EXPENSES_TITLE //@"IPAD004_TAG009"
 
