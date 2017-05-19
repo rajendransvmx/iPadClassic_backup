@@ -9,12 +9,10 @@ Version = 17.19.015
 ===========================================
 
 Defect:
-
-Updating URL scheme to SUM17 for pulse app
-
+RS-7562
+PQT: SFM process having formulas configured cannot be invoked on ipad(classic)
 
 NOTE:
-
 1. NameSpace: SVMXC
 
 
