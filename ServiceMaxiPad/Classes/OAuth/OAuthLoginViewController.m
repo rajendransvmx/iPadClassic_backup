@@ -144,7 +144,7 @@ NSInteger webViewLoadCounter;
             
             
             self.startTime = CFAbsoluteTimeGetCurrent();
-            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+            __block NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
             [request setValue:@"gzip; deflate" forHTTPHeaderField:@"Accept-Encoding"];//Accept-Encoding: gzip, deflate
             
             // SECSCAN-260
@@ -152,15 +152,11 @@ NSInteger webViewLoadCounter;
             [service makeDummyCallForAuthenticationCheck:request andCompletion:^(BOOL isSuccess, NSString *errorMsg) {
                 if (isSuccess)
                 {
-                    [self.webview loadRequest:request];
-                    [self addActivityAndLoadingLabel];
+                    [self performSelectorOnMainThread:@selector(loadWebViewOnAuthenticationComplete:) withObject:request waitUntilDone:NO];
                 }
                 else
                 {
-                    [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeInternetNotReachable
-                                                                       andDelegate:nil];
-                    [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInLaunchScreen];
-                    [[AppManager sharedInstance] loadScreen];
+                    [self performSelectorOnMainThread:@selector(showAlertOnAuthenticationComplete:) withObject:nil waitUntilDone:NO];
                 }
             }];
              
@@ -172,6 +168,22 @@ NSInteger webViewLoadCounter;
             [self handleRequestFailedWithNetworkErrorEvent];
         }
     }
+}
+
+
+-(void)loadWebViewOnAuthenticationComplete:(NSMutableURLRequest *)request
+{
+    [self.webview loadRequest:request];
+    [self addActivityAndLoadingLabel];
+}
+
+
+-(void)showAlertOnAuthenticationComplete:(NSObject *)sender
+{
+    [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeInternetNotReachable
+                                                       andDelegate:nil];
+    [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInLaunchScreen];
+    [[AppManager sharedInstance] loadScreen];
 }
 
 #pragma mark Activity Management
