@@ -108,9 +108,9 @@
     
     NSString *htmlFileString =[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mobile-fieldupdaterules-app" ofType:@"html"] encoding:NSUTF8StringEncoding error:nil];
     //Fix:RS-7562
-    //NSString *htmlContent = [htmlFileString stringByAppendingString:param];
+    //NSString *htmlContent = [htmlFileString stringByAppendingString:param];//PreviousCode
+    
     NSString *htmlContent = [NSString stringWithFormat:htmlFileString,param];
-
     NSString *finalString = [bizRuleHtmlStr stringByAppendingString:htmlContent];
     return finalString;
 }
