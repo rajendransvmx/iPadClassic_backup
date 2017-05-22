@@ -4,15 +4,16 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.19.015
+Version = 17.19.016
 
 ===========================================
 
 Defect:
-RS-7562
-PQT: SFM process having formulas configured cannot be invoked on ipad(classic)
+RS-7583
+PQT: Date and DateTime fields displayed as blank in Edit SFM process which has SFM formula configured[IPad Classic]
 
 NOTE:
+
 1. NameSpace: SVMXC
 
 
