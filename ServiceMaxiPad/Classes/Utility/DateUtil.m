@@ -846,11 +846,11 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
         [dateFormatter setCalendar:[[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian]];
         if([self iSDeviceTime24HourFormat])
         {
-            [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"EEE MMM dd, yyyy HH:mm" options:0 locale:[NSLocale currentLocale]]];
+            [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:kFormulaDateTimeUserReadable24Hr options:0 locale:[NSLocale currentLocale]]];
         }
         else
         {
-            [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"EEE MMM dd, yyyy hh:mm a" options:0 locale:[NSLocale currentLocale]]];
+            [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:kFormulaDateTimeUserReadable12Hr options:0 locale:[NSLocale currentLocale]]];
         }
         dateTime = [dateFormatter dateFromString:date];
         
