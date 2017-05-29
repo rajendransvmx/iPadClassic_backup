@@ -1615,6 +1615,21 @@
         
         [self applyFieldMapping:mappingInfo forRecord:dataDict andSourceDictionary:sourceData
                      objectname:processComponent.objectName currentHeaderRecord:sfPage.headerRecord];
+        
+        
+        // RS-7602
+        if([sfPage.process.processInfo.processType isEqualToString:kProcessTypeSRCToTargetAll])
+        {
+            if (processComponent.parentColumnName != nil) {
+                SFMRecordFieldData *recordData = [[SFMRecordFieldData alloc]
+                                                  initWithFieldName:processComponent.parentColumnName
+                                                  value:sfPage.recordId
+                                                  andDisplayValue:sfPage.recordId];
+                [dataDict setObject:recordData forKey:processComponent.parentColumnName];
+            }
+        }
+        
+        
         [self updateRecordTypeField:dataDict objectName:processComponent.objectName];
         
         NSDictionary *fieldDataTypeMap =[super getFieldDataTypeMap:pageFields];
