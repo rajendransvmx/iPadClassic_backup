@@ -890,7 +890,12 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
             dateFormat = kFormulaDateUserReadable;
         }
         
-        [dateformatter setDateFormat:dateFormat];
+        //RS-7606
+        
+//        [dateformatter setDateFormat:dateFormat];
+        
+        [dateformatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:dateFormat options:0 locale:[NSLocale currentLocale]]];
+        
         NSDate *date = [dateformatter dateFromString:dateInDeviceTimeZone];
         dateFormat = (isDateWithTime)?kFormulaDateTimeForModule:kFormulaDateForModule;
         [dateformatter setDateFormat:dateFormat];

@@ -207,14 +207,9 @@ static NSString *kDateImagesAndVideosAttachment = @"%m-%d-%Y";
 
 static NSString *kDateFormatType24Hr  = @"%H:%M";
 
-//static NSString *kFormulaDateTimeUserReadable24Hr = @"EEE MMM dd, yyyy HH:mm";
-//static NSString *kFormulaDateTimeUserReadable12Hr = @"EEE MMM dd, yyyy hh:mm a";
-
-//RS-7583
-//PQT: Date and DateTime fields displayed as blank in Edit SFM process which has SFM formula configured[IPad Classic]
-static NSString *kFormulaDateTimeUserReadable24Hr = @"EEE, MMM dd, yyyy, HH:mm";
-
-static NSString *kFormulaDateTimeUserReadable12Hr = @"EEE, MMM dd, yyyy, hh:mm a";
+//RS-7606
+static NSString *kFormulaDateTimeUserReadable24Hr = @"EEE MMM dd, yyyy HH:mm";
+static NSString *kFormulaDateTimeUserReadable12Hr = @"EEE MMM dd, yyyy hh:mm a";
 
 static NSString *kFormulaDateUserReadable = @"MMMM dd yyyy";
 static NSString *kFormulaDateTimeForModule = @"yyyy-MM-dd HH:mm:ss";
