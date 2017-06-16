@@ -10,6 +10,7 @@
 #import "StyleManager.h"
 #import "StyleGuideConstants.h"
 #import "TagManager.h"
+#import "NonTagConstant.h"
 
 @interface BizRuleTableViewCell()
 @property(nonatomic, strong) IBOutlet UIButton *checkBox;
@@ -39,6 +40,7 @@
     [self.checkBox setImage:[UIImage imageNamed:@"checkbox-active-unchecked.png"] forState:UIControlStateNormal];
     [self.checkBox setImage:[UIImage imageNamed:@"checkbox-active-checked.png"] forState:UIControlStateSelected];
     [self.checkBox addTarget:self action:@selector(checkboxBtnChecked:) forControlEvents:UIControlEventTouchUpInside];
+    [self.checkBox setAccessibilityLabel:kVBizRuleCheckBoxBtn];//Verifaya Label for Checkbox
     
     
     self.resolveLabel.textColor =  [UIColor getUIColorFromHexValue:kOrangeColor];
