@@ -12233,7 +12233,7 @@
 					"-objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadsum17;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadaut17;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
 				WRAPPER_EXTENSION = app;
@@ -12274,7 +12274,7 @@
 					"-objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadsum17;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadaut17;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
 				WRAPPER_EXTENSION = app;
