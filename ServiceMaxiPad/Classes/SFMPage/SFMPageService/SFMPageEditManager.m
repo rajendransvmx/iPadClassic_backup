@@ -2161,8 +2161,13 @@
             
             if([model.action isEqualToString:@"Set"]){
                 
-                if([StringUtil isStringEmpty:finalValue]){
-                    continue;
+                // IPAD-4595
+//                if([StringUtil isStringEmpty:finalValue]){
+//                    continue;
+//                }
+                
+                if (!finalValue) {
+                    finalValue = @"";
                 }
                 NSString * fieldType =  [fieldDataType objectForKey: model.sourceFieldName];
                 
@@ -2202,7 +2207,8 @@
                 finalValue = [[NSString alloc] initWithFormat:@"%f",finalFloatValue];
             }
             
-            if(![StringUtil isStringEmpty:finalValue] && model.sourceFieldName){
+            // IPAD-4595
+            if(model.sourceFieldName){
                 [eachSourcedDict setObject:finalValue forKey:model.sourceFieldName];
             }
         }
