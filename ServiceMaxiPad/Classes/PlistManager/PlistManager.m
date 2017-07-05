@@ -511,20 +511,21 @@ NSString *const kSPReqTimedOut = @"SPReqTimedOut";
     else
     {
         preference = kPreferenceOrganizationCustom;
-       
-        NSString *customURL = [defaults valueForKey:@"custom_url"];
         
-		if ( ([customURL hasPrefix:@"http://"]) || ([customURL hasPrefix:@"https://"]) )
+        // SECSCAN-355
+        
+		if ( ([[defaults valueForKey:@"custom_url"] hasPrefix:@"http://"]) || ([[defaults valueForKey:@"custom_url"] hasPrefix:@"https://"]) )
         {
             // Yes, network protocol like http or https has added. Good to go
+            [self storeCustomURLString:[defaults valueForKey:@"custom_url"]];
+            
         }
 		else
         {
-			customURL = [NSString stringWithFormat:@"https://%@",customURL];
+            [self storeCustomURLString:[NSString stringWithFormat:@"https://%@",[defaults valueForKey:@"custom_url"]]];
         }
         
-        [self storeCustomURLString:customURL];
-        baseUrlString = customURL;
+        baseUrlString = [self customURLString];
     }
     
     /**

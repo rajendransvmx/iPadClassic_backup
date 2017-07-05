@@ -138,13 +138,15 @@ NSInteger webViewLoadCounter;
             [self.view addSubview:self.webview];
             [self addServiceMaxLogo];
             
-            NSURL *url = [NSURL URLWithString:[OAuthService authorizationURLString]];
             //NSURLRequest *request = [NSURLRequest requestWithURL:url];
             webViewLoadCounter = 0;
             
-            
+
             self.startTime = CFAbsoluteTimeGetCurrent();
-            __block NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+            
+            // SECSCAN-355
+            __block NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:[OAuthService authorizationURLString]]];
+            
             [request setValue:@"gzip; deflate" forHTTPHeaderField:@"Accept-Encoding"];//Accept-Encoding: gzip, deflate
             
             // SECSCAN-260
