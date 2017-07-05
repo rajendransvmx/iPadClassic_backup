@@ -2149,12 +2149,14 @@
                 
                 if([fieldType isEqualToString:kSfDTDate] || [fieldType isEqualToString:kSfDTDateTime])
                 {
-                    if ([self isItALiteral:finalValue]) {
-                        //defect#036563
-                        finalValue = [DateUtil evaluateDateLiteral:finalValue  dataType:fieldType];
-                    }
-                    if ([fieldType isEqualToString:kSfDTDate]) {
-                        finalValue = [self getDateForMapping:finalValue];
+                    if (![StringUtil isStringEmpty:finalValue]) { // IPAD-4595
+                        if ([self isItALiteral:finalValue]) {
+                            //defect#036563
+                            finalValue = [DateUtil evaluateDateLiteral:finalValue  dataType:fieldType];
+                        }
+                        if ([fieldType isEqualToString:kSfDTDate]) {
+                            finalValue = [self getDateForMapping:finalValue];
+                        }
                     }
                 }
                 else if ([StringUtil containsString:kLiteralCurrentRecord inString:finalValue])
@@ -2170,6 +2172,8 @@
                     {
                         valueOfLiteral = finalValue;
                     }
+                    
+                    finalValue = valueOfLiteral; // IPAD-4595
                 }
             }
             else if ([model.action isEqualToString:@"Increase"]){
