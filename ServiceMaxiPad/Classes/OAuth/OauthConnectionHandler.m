@@ -95,10 +95,9 @@
 -(void)verifyAuthorization
 {
     // PCRD-220
-    NSMutableURLRequest *request = [OAuthService getRequestForService:kOAuthServiceAuthorization];
-    
+    // SECSCAN-355
     connectionType = OauthConnectionVerifyAuth;
-    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:[OAuthService getRequestForService:kOAuthServiceAuthorization] delegate:self];
     [connection start];
 }
 

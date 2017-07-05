@@ -4,12 +4,12 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.19.019
+Version = 17.19.020
 
 ===========================================
 
 Defect:
-Added Verifaya label for biz rule checkbox button.
+SECSCAN-355
 
 NOTE:
 
