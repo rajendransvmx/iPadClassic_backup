@@ -23,6 +23,7 @@
 #import "SFObjectFieldDAO.h"
 #import "DataTypeUtility.h"
 #import "SFMSearchFilterCriteriaModel.h"
+#import "DateUtil.h"
 
 @interface SFExpressionParser ()
 
@@ -116,12 +117,35 @@
     DBCriteria *criteria = nil;
     SQLOperator sqlOperator = [self sqlOperatorForSFOperator:operator fieldType:fieldType];
     NSString *literalValue = [self valueOfLiteral:rhsValue dataType:fieldType];
-    if ([fieldType isEqualToString:kSfDTDateTime]) {
+     if ([fieldType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame) //IPAD-4596
+     {
         sqlOperator = [self overrideOperatorTypeForDatetime:operator
                                                         value:rhsValue
                                                     operator:sqlOperator];
         
+        NSString *tempString = nil;
         
+        // IPAD-4596
+        if ([rhsValue caseInsensitiveCompare:kLiteralYesterday] == NSOrderedSame && sqlOperator == SQLOperatorGreaterThan)
+        {
+            tempString = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+        }
+        
+        else if ([rhsValue caseInsensitiveCompare:kLiteralTomorrow] == NSOrderedSame && sqlOperator == SQLOperatorLessThanEqualTo)
+        {
+            tempString = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+        }
+        
+        else
+        {
+            tempString = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
+        }
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        NSDate *newDate = [formatter dateFromString:tempString];
+        tempString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+        literalValue = tempString;
     }
     else
     {
