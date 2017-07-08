@@ -121,6 +121,8 @@
      // IPAD-4596
      
      DBCriteria *innerCriteria = nil;
+     DBCriteria *emptyValueCriteria = nil; // needed if source record field's value is empty.
+     NSString *advancedExpression = nil;
 
      
      if ([fieldType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame) //IPAD-4596
@@ -152,6 +154,25 @@
              NSDate *newDate = [formatter dateFromString:endTimeString];
              endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
              innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorLessThanEqualTo andFieldValue:endTimeString];
+             advancedExpression = @"AND";
+         }
+         
+         else if (sqlOperator == SQLOperatorNotEqualWithIsNull)
+         {
+             
+             sqlOperator = SQLOperatorLessThan;
+             NSString *startTimeString = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
+             NSString *endTimeString = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+             
+             literalValue = startTimeString;
+             
+             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+             [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+             NSDate *newDate = [formatter dateFromString:endTimeString];
+             endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+             innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorGreaterThan andFieldValue:endTimeString];
+             
+             emptyValueCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorIsNull andFieldValue:nil];
          }
          
          else
@@ -192,7 +213,8 @@
         criteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:sqlOperator andFieldValue:rhsValue];
         if(innerCriteria)
         {
-            [criteria addOrCriterias:@[innerCriteria] withExpression:@"AND"];
+            NSArray *innnerCriterias = (emptyValueCriteria)?@[innerCriteria, emptyValueCriteria]:@[innerCriteria];
+            [criteria addOrCriterias:innnerCriterias withExpression:advancedExpression];
         }
     }
     
