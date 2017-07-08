@@ -117,36 +117,54 @@
     DBCriteria *criteria = nil;
     SQLOperator sqlOperator = [self sqlOperatorForSFOperator:operator fieldType:fieldType];
     NSString *literalValue = [self valueOfLiteral:rhsValue dataType:fieldType];
+     
+     // IPAD-4596
+     
+     DBCriteria *innerCriteria = nil;
+
+     
      if ([fieldType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame) //IPAD-4596
      {
-        sqlOperator = [self overrideOperatorTypeForDatetime:operator
-                                                        value:rhsValue
+         sqlOperator = [self overrideOperatorTypeForDatetime:operator
+                                                       value:rhsValue
                                                     operator:sqlOperator];
-        
-        NSString *tempString = nil;
-        
-        // IPAD-4596
-        if ([rhsValue caseInsensitiveCompare:kLiteralYesterday] == NSOrderedSame && sqlOperator == SQLOperatorGreaterThan)
-        {
-            tempString = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
-        }
-        
-        else if ([rhsValue caseInsensitiveCompare:kLiteralTomorrow] == NSOrderedSame && sqlOperator == SQLOperatorLessThanEqualTo)
-        {
-            tempString = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
-        }
-        
-        else
-        {
-            tempString = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
-        }
-        
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-        NSDate *newDate = [formatter dateFromString:tempString];
-        tempString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
-        literalValue = tempString;
-    }
+         
+         if (sqlOperator == SQLOperatorGreaterThan)
+         {
+             literalValue = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+         }
+         
+         else if (sqlOperator == SQLOperatorLessThanEqualTo)
+         {
+             literalValue = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+         }
+         else if (sqlOperator == SQLOperatorLike)
+             
+         {
+             sqlOperator = SQLOperatorGreaterThanEqualTo;
+             NSString *startTimeString = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
+             NSString *endTimeString = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+             
+             literalValue = startTimeString;
+
+             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+             [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+             NSDate *newDate = [formatter dateFromString:endTimeString];
+             endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+             innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorLessThanEqualTo andFieldValue:endTimeString];
+         }
+         
+         else
+         {
+             literalValue = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
+         }
+         
+         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+         [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+         NSDate *newDate = [formatter dateFromString:literalValue];
+         literalValue = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+
+     }
     else
     {
         sqlOperator = [self overrideOperatorTypeForMultipleValue:operator value:rhsValue operator:sqlOperator withFieldType:fieldType];
@@ -172,7 +190,10 @@
     else
     {
         criteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:sqlOperator andFieldValue:rhsValue];
-
+        if(innerCriteria)
+        {
+            [criteria addOrCriterias:@[innerCriteria] withExpression:@"AND"];
+        }
     }
     
      criteria.isCaseInsensitive = YES;
