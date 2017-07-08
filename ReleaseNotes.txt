@@ -3,14 +3,14 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.10.010
+Version = 17.10.011
 ===========================================
 
 
 Defects:
 ==================
 
-IPAD-4595 - checkbox and date field issues.
+IPAD-4596 - SFM Search literal
 
 ——————
 
