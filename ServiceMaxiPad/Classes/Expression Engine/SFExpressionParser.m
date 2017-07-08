@@ -123,6 +123,9 @@
      DBCriteria *innerCriteria = nil;
      DBCriteria *emptyValueCriteria = nil; // needed if source record field's value is empty.
      NSString *advancedExpression = nil;
+     
+     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 
      
      if ([fieldType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame) //IPAD-4596
@@ -149,8 +152,6 @@
              
              literalValue = startTimeString;
 
-             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-             [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
              NSDate *newDate = [formatter dateFromString:endTimeString];
              endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
              innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorLessThanEqualTo andFieldValue:endTimeString];
@@ -166,8 +167,6 @@
              
              literalValue = startTimeString;
              
-             NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-             [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
              NSDate *newDate = [formatter dateFromString:endTimeString];
              endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
              innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorGreaterThan andFieldValue:endTimeString];
@@ -180,8 +179,6 @@
              literalValue = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
          }
          
-         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-         [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
          NSDate *newDate = [formatter dateFromString:literalValue];
          literalValue = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
 
