@@ -3,14 +3,14 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.10.011
+Version = 17.10.012
 ===========================================
 
 
 Defects:
 ==================
 
-IPAD-4596 - SFM Search literal
+IPAD-4597 - unable to log in to the Sandbox on iPad classic
 
 ——————
 
