@@ -137,8 +137,8 @@ static NSString *const kRefreshTokenParamURLString  = @"grant_type=refresh_token
      if ([kOAuthServiceAuthorization isEqualToString:serviceName])
      {
          [request setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-         NSData *compressedData = [postData gzipDeflate];
-         [request setHTTPBody:compressedData];
+//         NSData *compressedData = [postData gzipDeflate];
+//         [request setHTTPBody:compressedData]; //IPAD-4597
      }
      else
      {
