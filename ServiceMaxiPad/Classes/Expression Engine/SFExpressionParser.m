@@ -128,7 +128,7 @@
      [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 
      
-     if ([fieldType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame) //IPAD-4596
+     if ([fieldType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame && !([rhsValue caseInsensitiveCompare:kLiteralNow] == NSOrderedSame)) //IPAD-4596
      {
          sqlOperator = [self overrideOperatorTypeForDatetime:operator
                                                        value:rhsValue
