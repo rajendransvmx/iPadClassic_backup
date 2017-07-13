@@ -746,7 +746,7 @@
             nextRequestType = RequestTypePurgeRecords;
             break;
         case RequestTypePurgeRecords:
-            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestSyncTimeLogs; // IPAD-4507
             break;
         case RequestCleanUp:
             nextRequestType = RequestSyncTimeLogs;
