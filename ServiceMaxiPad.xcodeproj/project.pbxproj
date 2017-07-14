@@ -876,6 +876,11 @@
 		5BEFF7B11A24450C0096B254 /* EditableDataValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B01A24450C0096B254 /* EditableDataValidator.m */; };
 		5BEFF7B31A248B950096B254 /* cloud-download.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B21A248B950096B254 /* cloud-download.png */; };
 		5BF1CFFE1A88BEC300F94471 /* SMXMonthCellEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */; };
+		678A2E831F18DEDF0083C1D0 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 678A2E7E1F18DEDF0083C1D0 /* IOKit.framework */; };
+		678A2E841F18DEDF0083C1D0 /* libHitachiStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 678A2E7F1F18DEDF0083C1D0 /* libHitachiStudio.a */; };
+		678A2E851F18DEDF0083C1D0 /* libVerifayaStudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 678A2E801F18DEDF0083C1D0 /* libVerifayaStudio.a */; };
+		678A2E861F18DEE00083C1D0 /* libzbar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 678A2E811F18DEDF0083C1D0 /* libzbar.a */; };
+		678A2E871F18DEE00083C1D0 /* Resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 678A2E821F18DEDF0083C1D0 /* Resource.bundle */; };
 		67919D071D6D7A95005E0954 /* AttachmentErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 67919D061D6D7A95005E0954 /* AttachmentErrorService.m */; };
 		6A13E9CC1A9AB6DC00D12CED /* libsqlcipher.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A13E9CB1A9AB6DC00D12CED /* libsqlcipher.a */; };
 		6A1B48031A05FED00003BAA5 /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A1B48021A05FED00003BAA5 /* DatabaseManager.m */; };
@@ -1830,7 +1835,6 @@
 		A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = C3EF97801A036CAE00476293 /* DocumentsViewController.xib */; };
 		A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A981E19E7D58F006DA6BE /* iOS-Email-Retina-Orange@2x.png */; };
 		A64AB0E61CF2F9E5008839FB /* SCalendar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320FB1AB7196A00A172E0 /* SCalendar@2x.png */; };
-		A64AB0E71CF2F9E5008839FB /* HitachiStudio in Resources */ = {isa = PBXBuildFile; fileRef = A64AAD961CEDCB61008839FB /* HitachiStudio */; };
 		A64AB0E81CF2F9E5008839FB /* ProductIQCustomActionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1195544B1C0E7F2F00F1989B /* ProductIQCustomActionViewController.xib */; };
 		A64AB0E91CF2F9E5008839FB /* NavBarCal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 57A320E21AB7178C00A172E0 /* NavBarCal@2x.png */; };
 		A64AB0EA1CF2F9E5008839FB /* recentlyCreated@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 184A98E619E7D58F006DA6BE /* recentlyCreated@2x.png */; };
@@ -3983,6 +3987,12 @@
 		5BEFF7B21A248B950096B254 /* cloud-download.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cloud-download.png"; sourceTree = "<group>"; };
 		5BF1CFFC1A88BEC300F94471 /* SMXMonthCellEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMonthCellEvent.h; sourceTree = "<group>"; };
 		5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMonthCellEvent.m; sourceTree = "<group>"; };
+		678A2E7D1F18DEDF0083C1D0 /* BindInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindInfo.h; path = HitachiStudio/BindInfo.h; sourceTree = "<group>"; };
+		678A2E7E1F18DEDF0083C1D0 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = HitachiStudio/IOKit.framework; sourceTree = "<group>"; };
+		678A2E7F1F18DEDF0083C1D0 /* libHitachiStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHitachiStudio.a; path = HitachiStudio/libHitachiStudio.a; sourceTree = "<group>"; };
+		678A2E801F18DEDF0083C1D0 /* libVerifayaStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libVerifayaStudio.a; path = HitachiStudio/libVerifayaStudio.a; sourceTree = "<group>"; };
+		678A2E811F18DEDF0083C1D0 /* libzbar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzbar.a; path = HitachiStudio/libzbar.a; sourceTree = "<group>"; };
+		678A2E821F18DEDF0083C1D0 /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Resource.bundle; path = HitachiStudio/Resource.bundle; sourceTree = "<group>"; };
 		67919D051D6D7A95005E0954 /* AttachmentErrorService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorService.h; sourceTree = "<group>"; };
 		67919D061D6D7A95005E0954 /* AttachmentErrorService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorService.m; sourceTree = "<group>"; };
 		67919D081D6D7AAC005E0954 /* AttachmentErrorDAO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorDAO.h; sourceTree = "<group>"; };
@@ -4203,7 +4213,6 @@
 		9EFE6DFD1A0F33EF0067F9CC /* LinkedProcessViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LinkedProcessViewController.xib; sourceTree = "<group>"; };
 		A61A1B8E1B202B1200B1C9C8 /* AutoLockManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoLockManager.h; sourceTree = "<group>"; };
 		A61A1B8F1B202B1200B1C9C8 /* AutoLockManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutoLockManager.m; sourceTree = "<group>"; };
-		A64AAD961CEDCB61008839FB /* HitachiStudio */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HitachiStudio; sourceTree = "<group>"; };
 		A64AAD981CEDCBF3008839FB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = HitachiStudio/IOKit.framework; sourceTree = "<group>"; };
 		A64AAD991CEDCBF3008839FB /* libHitachiStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHitachiStudio.a; path = HitachiStudio/libHitachiStudio.a; sourceTree = "<group>"; };
 		A64AAD9A1CEDCBF3008839FB /* libzbar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzbar.a; path = HitachiStudio/libzbar.a; sourceTree = "<group>"; };
@@ -4873,6 +4882,7 @@
 				A64AB0B51CF2F9E5008839FB /* libiconv.dylib in Frameworks */,
 				A64AB0B61CF2F9E5008839FB /* libz.dylib in Frameworks */,
 				A64AB0B71CF2F9E5008839FB /* libxml2.dylib in Frameworks */,
+				678A2E851F18DEDF0083C1D0 /* libVerifayaStudio.a in Frameworks */,
 				A64AB0B81CF2F9E5008839FB /* libz.1.2.5.dylib in Frameworks */,
 				A64AB0B91CF2F9E5008839FB /* CoreVideo.framework in Frameworks */,
 				A64AB0BA1CF2F9E5008839FB /* CoreText.framework in Frameworks */,
@@ -4887,13 +4897,16 @@
 				A64AB0C31CF2F9E5008839FB /* SystemConfiguration.framework in Frameworks */,
 				A64AB0C41CF2F9E5008839FB /* Security.framework in Frameworks */,
 				A64AB0C51CF2F9E5008839FB /* libsqlcipher.a in Frameworks */,
+				678A2E861F18DEE00083C1D0 /* libzbar.a in Frameworks */,
 				A64AB0C61CF2F9E5008839FB /* MessageUI.framework in Frameworks */,
 				A64AB0C71CF2F9E5008839FB /* AssetsLibrary.framework in Frameworks */,
 				A64AB0C81CF2F9E5008839FB /* MobileCoreServices.framework in Frameworks */,
+				678A2E841F18DEDF0083C1D0 /* libHitachiStudio.a in Frameworks */,
 				A64AB0C91CF2F9E5008839FB /* CFNetwork.framework in Frameworks */,
 				A64AB0CA1CF2F9E5008839FB /* CoreGraphics.framework in Frameworks */,
 				A64AB0CB1CF2F9E5008839FB /* UIKit.framework in Frameworks */,
 				A64AB0CC1CF2F9E5008839FB /* Foundation.framework in Frameworks */,
+				678A2E831F18DEDF0083C1D0 /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7323,8 +7336,8 @@
 		18A2171019E57C5A00F22EA6 = {
 			isa = PBXGroup;
 			children = (
+				678A2E7C1F18DEA60083C1D0 /* HitachiStudio */,
 				A64AADAB1CEDCD40008839FB /* Resource.bundle */,
-				A64AAD961CEDCB61008839FB /* HitachiStudio */,
 				18A2172219E57C5A00F22EA6 /* ServiceMaxiPad */,
 				18A2174119E57C5A00F22EA6 /* ServiceMaxiPadTests */,
 				18A2171B19E57C5A00F22EA6 /* Frameworks */,
@@ -7914,6 +7927,19 @@
 				5BE099241A5A785A00869B0D /* FieldMergeHelper.m */,
 			);
 			path = AdvancedSyncConflict;
+			sourceTree = "<group>";
+		};
+		678A2E7C1F18DEA60083C1D0 /* HitachiStudio */ = {
+			isa = PBXGroup;
+			children = (
+				678A2E7D1F18DEDF0083C1D0 /* BindInfo.h */,
+				678A2E7E1F18DEDF0083C1D0 /* IOKit.framework */,
+				678A2E7F1F18DEDF0083C1D0 /* libHitachiStudio.a */,
+				678A2E801F18DEDF0083C1D0 /* libVerifayaStudio.a */,
+				678A2E811F18DEDF0083C1D0 /* libzbar.a */,
+				678A2E821F18DEDF0083C1D0 /* Resource.bundle */,
+			);
+			name = HitachiStudio;
 			sourceTree = "<group>";
 		};
 		6B4CAF081A47DD1300B7F0F1 /* PerformanceAnalyser */ = {
@@ -9511,6 +9537,7 @@
 				A64AB0D21CF2F9E5008839FB /* Attachment-FileinCloud@2x.png in Resources */,
 				A64AB0D31CF2F9E5008839FB /* timing-line@2x.png in Resources */,
 				A64AB0D41CF2F9E5008839FB /* barcode.png in Resources */,
+				678A2E871F18DEE00083C1D0 /* Resource.bundle in Resources */,
 				A64AB0D51CF2F9E5008839FB /* com.servicemax.client.installigence.offline.model.zip in Resources */,
 				A64AB0D61CF2F9E5008839FB /* map_reload@2x.png in Resources */,
 				A64AB0D71CF2F9E5008839FB /* NavBarTasks@1x.png in Resources */,
@@ -9529,7 +9556,6 @@
 				A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */,
 				A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */,
 				A64AB0E61CF2F9E5008839FB /* SCalendar@2x.png in Resources */,
-				A64AB0E71CF2F9E5008839FB /* HitachiStudio in Resources */,
 				A64AB0E81CF2F9E5008839FB /* ProductIQCustomActionViewController.xib in Resources */,
 				A64AB0E91CF2F9E5008839FB /* NavBarCal@2x.png in Resources */,
 				A64AB0EA1CF2F9E5008839FB /* recentlyCreated@2x.png in Resources */,
