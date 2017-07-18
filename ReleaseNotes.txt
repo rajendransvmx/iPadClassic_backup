@@ -3,7 +3,7 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.10.014
+Version = 17.10.015
 
 ===========================================
 
@@ -11,7 +11,7 @@ Version = 17.10.014
 Defects:
 ==================
 
-IPAD-4597 - unable to log in to the Sandbox on iPad classic
+IPAD-4507 - remove cleanup call.
 
 ——————
 
