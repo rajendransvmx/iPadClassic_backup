@@ -385,13 +385,13 @@
             [finalString appendFormat:@"%@", orOperator];
         }
         
-        [finalString appendFormat:@"%@", [self getSearchFieldTextForReference:searchText dataArray:newDataArray]];
+        [finalString appendFormat:@" %@ ", [self getSearchFieldTextForReference:searchText dataArray:newDataArray]];
         doesSearchTextExist = YES;
     }
     
     if (finalString.length > 0) {
         
-        [whereString appendFormat:@"  %@ ",finalString];
+        [whereString appendFormat:@" ( %@ ) ",finalString]; // IPAD-4605
     }
 
     /* Adding expression and search criteria part */
