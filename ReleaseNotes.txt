@@ -3,17 +3,18 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.60.017
+Version = 16.60.018
 ===========================================
 
 Defect:
-IPAD-4597 - unable to log in to the Sandbox on iPad classic
+
 
 
 
 Feature:
 ==================
-	
+Included Verifaya changes.
+
 ——————
 
 NOTE:
