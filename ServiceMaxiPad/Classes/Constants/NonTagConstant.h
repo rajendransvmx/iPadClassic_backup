@@ -193,5 +193,21 @@ extern NSString *const kProHistory;
 extern NSString *const kChatterAttachmentId;
 extern NSString *const kChatterUserData;
 
+// IPAD-4541 - Verifaya
+extern NSString *const kVToggleTabBar;
+extern NSString *const kVEventStartDateTime;
+extern NSString *const kVEventEndDateTime;
+extern NSString *const kVDataSyncLastTimeLbl;
+extern NSString *const kVDataSyncLastTimeVal;
+extern NSString *const kVDataSyncNextTimeLbl;
+extern NSString *const kVDataSyncNextTimeVal;
+extern NSString *const kVConfigSyncLastTimeLbl;
+extern NSString *const kVConfigSyncLastTimeVal;
+extern NSString *const kVConfigSyncNextTimeLbl;
+extern NSString *const kVConfigSyncNextTimeVal;
+extern NSString *const kVSignInBtn;
+extern NSString *const kVBizRuleArrowUpBtn;
+extern NSString *const kVBizRuleCheckBoxBtn;
+
 @interface NonTagConstant : NSObject
 @end

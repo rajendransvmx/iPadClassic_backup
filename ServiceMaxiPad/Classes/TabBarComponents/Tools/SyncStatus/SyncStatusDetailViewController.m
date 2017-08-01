@@ -27,6 +27,7 @@
 #import "LocationPingManager.h"
 #import "OpDocHelper.h"
 #import "OpDocFilesTableViewController.h"
+#import "NonTagConstant.h"
 
 #define kConfigSyncAlertTag     10
 const NSInteger alertViewTagForConfigSync   = 888889;
@@ -97,6 +98,19 @@ const NSInteger alertViewTagForConfigSync   = 888889;
     reportsButton.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     reportsButton.layer.borderColor = [UIColor orangeColor].CGColor;
     reportsButton.layer.borderWidth = 0.8;
+    
+    // IPAD-4541 - Verifaya
+    lastSyncStatusTitleLabel.accessibilityLabel = kVDataSyncLastTimeLbl;
+    dataSyncLastSyncLabel.accessibilityLabel = kVDataSyncLastTimeVal;
+    
+    nextSyncStatusTitleLabel.accessibilityLabel = kVDataSyncNextTimeLbl;
+    dataSyncNextSyncLabel.accessibilityLabel = kVDataSyncNextTimeVal;
+    
+    lastSyncStatusTitleLabel_Config.accessibilityLabel = kVConfigSyncLastTimeLbl;
+    configSyncLastSyncLabel.accessibilityLabel = kVConfigSyncLastTimeVal;
+    
+    nextSyncStatusTitleLabel_Config.accessibilityLabel = kVConfigSyncNextTimeLbl;
+    configSyncNextSyncLabel.accessibilityLabel = kVConfigSyncNextTimeVal;
     
     
     [self updateDataSyncRelatedUI];
