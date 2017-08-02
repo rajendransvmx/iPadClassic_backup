@@ -315,7 +315,7 @@
     
     // IPAD-4599
     NSString *orgAddress = [[NSUserDefaults standardUserDefaults] objectForKey:kOrgAddressKey];
-    if (orgAddress == nil) orgAddress = @"";
+    orgAddress = (orgAddress == nil)?@"":orgAddress;
     
         NSArray *valuesArray = [NSArray arrayWithObjects:[self getCurrentUserName],dateformat,timeformat,amtext,pmtext, orgAddress, nil];
     NSArray *keysArray = [NSArray arrayWithObjects:@"username",@"dateformat",@"timeformat",@"amtext",@"pmtext", @"orgAddress", nil];
