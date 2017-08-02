@@ -18,8 +18,11 @@
         if (responseData && [responseData isKindOfClass:[NSDictionary class]])
         {
             NSString *orgAddress = [responseData objectForKey:kAddressField];
-            [[NSUserDefaults standardUserDefaults] setObject:orgAddress forKey:kOrgAddressKey];
-            [[NSUserDefaults standardUserDefaults] synchronize];
+            if(orgAddress)
+            {
+                [[NSUserDefaults standardUserDefaults] setObject:orgAddress forKey:kOrgAddressKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
         }
     }
     
