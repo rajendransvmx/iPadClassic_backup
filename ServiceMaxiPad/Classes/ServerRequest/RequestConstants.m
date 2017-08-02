@@ -217,3 +217,12 @@ NSString *const kSyncProfileGroupProfileKey = @"svmxprofile";
 NSString *const kSyncProfileDeviceNameKey = @"devicename";
 NSString *const kSyncProfileEndTimeKey = @"syncendtime";
 NSString *const kSyncProfileRequestTimeOutKey = @"requesttimeout";
+
+
+/* User Info */
+
+NSString *const kSFDC = @"SFDC";
+NSString *const kAddressField = @"Address";
+NSString *const kOrgAddressKey = @"kOrgAddress";
+NSString *const kGetUserInfoURLLink = @"getUserInfo";
+NSString *const kUserInfoEventName = @"UserInfo";

@@ -547,6 +547,9 @@
         case RequestProductIQDeleteData:
             eventType = kSync;
             break;
+        case RequestTypeUserInfo:
+            eventType = kSFDC; // IPAD-4599
+            break;
             
         default:
             break;
@@ -721,6 +724,9 @@
             break;
         case RequestTypeSyncProfiling:
             url = @"https://empp.servicemax-api.com/instrument/clientsync"; // [self getUrlWithStringApppended:@""];
+            break;
+        case RequestTypeUserInfo:
+            url =   [self getUrlWithStringApppended:kGetUserInfoURLLink]; // IPAD-4599
             break;
         default:
             break;
@@ -969,6 +975,9 @@
             break;
         case RequestProductIQDeleteData:
             self.eventName = kProdIQGetDeleteData;
+            break;
+        case RequestTypeUserInfo:
+            self.eventName = kUserInfoEventName; // IPAD-4599
             break;
         default:
             break;

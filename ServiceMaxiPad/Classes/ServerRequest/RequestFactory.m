@@ -97,6 +97,7 @@
             case RequestTypeCustomActionWebService:
             case RequestTypeCustomActionWebServiceAfterBefore:
             case RequestTypePurgeRecords:
+            case RequestTypeUserInfo:
                 requestClass = [self getRestRequestByType:requestType];
                 break;
             case RequestMasterSyncTimeLog:

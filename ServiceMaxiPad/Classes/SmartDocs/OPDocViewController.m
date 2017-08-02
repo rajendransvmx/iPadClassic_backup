@@ -313,8 +313,12 @@
     [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
     NSString *timeformat = [dateFormatter dateFormat];
     
-    NSArray *valuesArray = [NSArray arrayWithObjects:[self getCurrentUserName],dateformat,timeformat,amtext,pmtext,nil];
-    NSArray *keysArray = [NSArray arrayWithObjects:@"username",@"dateformat",@"timeformat",@"amtext",@"pmtext", nil];
+    // IPAD-4599
+    NSString *orgAddress = [[NSUserDefaults standardUserDefaults] objectForKey:kOrgAddressKey];
+    if (orgAddress == nil) orgAddress = @"";
+    
+        NSArray *valuesArray = [NSArray arrayWithObjects:[self getCurrentUserName],dateformat,timeformat,amtext,pmtext, orgAddress, nil];
+    NSArray *keysArray = [NSArray arrayWithObjects:@"username",@"dateformat",@"timeformat",@"amtext",@"pmtext", @"orgAddress", nil];
     NSDictionary *dict = [NSDictionary dictionaryWithObjects:valuesArray forKeys:keysArray];
     NSString * response =  [Utility jsonStringFromObject:dict];
     
