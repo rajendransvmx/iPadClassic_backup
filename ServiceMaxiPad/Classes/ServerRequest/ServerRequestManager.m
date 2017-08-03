@@ -422,6 +422,9 @@
     switch (currentRequest.requestType) {
             
         case RequestValidateProfile:
+            nextRequestType = RequestTypeUserInfo; // IPAD-4599
+            break;
+        case RequestTypeUserInfo:
             nextRequestType = RequestMasterSyncTimeLog;
             break;
             
@@ -630,6 +633,9 @@
     
     switch (currentRequest.requestType) {
         case RequestValidateProfile:
+            nextRequestType = RequestTypeUserInfo; // IPAD-4599
+            break;
+        case RequestTypeUserInfo:
             nextRequestType = RequestMasterSyncTimeLog;
             break;
         case RequestMasterSyncTimeLog:

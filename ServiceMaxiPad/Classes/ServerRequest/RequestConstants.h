@@ -144,7 +144,9 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestTypeSyncProfiling,
     
     /**Purge event related records**/
-    RequestTypePurgeRecords
+    RequestTypePurgeRecords,
+    
+    RequestTypeUserInfo // IPAD-4599
 };
 
 extern NSString *const kContentType;
@@ -360,3 +362,12 @@ extern NSString *const kSyncProfileGroupProfileKey;
 extern NSString *const kSyncProfileDeviceNameKey;
 extern NSString *const kSyncProfileEndTimeKey;
 extern NSString *const kSyncProfileRequestTimeOutKey;
+
+
+/* User Info */ // IPAD-4599
+
+extern NSString *const kSFDC;
+extern NSString *const kAddressField;
+extern NSString *const kOrgAddressKey;
+extern NSString *const kGetUserInfoURLLink;
+extern NSString *const kUserInfoEventName;

@@ -936,6 +936,7 @@ function OPDGetUserInfo(request, callbackFunction, context)
     
     var amTxt = "";
     var pmTxt = "";
+    var orgAddress = ""; // IPAD-4599
     
     $COMM.requestDataForType("relateduserinput","",function(dateString) {
                              
@@ -946,6 +947,7 @@ function OPDGetUserInfo(request, callbackFunction, context)
                              amTxt = dateString.amtext;
                              pmTxt = dateString.pmtext;
                              userFullName = dateString.username;
+                             orgAddress = dateString.orgAddress; // IPAD-4599
                              
                              var fieldNames = [{fieldName:'Id',fieldType:'TEXT'},{fieldName:'Name',fieldType:'TEXT'},{fieldName:'LocaleSidKey',fieldType:'TEXT'},{fieldName:'LanguageLocaleKey',fieldType:'TEXT'},{fieldName:'Street',fieldType:'TEXT'},{fieldName:'City',fieldType:'TEXT'},{fieldName:'State',fieldType:'TEXT'},{fieldName:'Country',fieldType:'TEXT'},{fieldName:'PostalCode',fieldType:'TEXT'}];
                              
@@ -976,7 +978,7 @@ function OPDGetUserInfo(request, callbackFunction, context)
                                                var countryString = userObj.Country;
                                                var postalCode = userObj.PostalCode;
                                                
-                                               var address = addressForData(streetString,cityString,stateString,postalCode,countryString);
+                                               var address = orgAddress; // // IPAD-4599 addressForData(streetString,cityString,stateString,postalCode,countryString);
                                                
                                                var d = new Date();
                                                var today = $UTILITY.dateWithTimeStringForDate(d);

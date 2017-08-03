@@ -2380,6 +2380,8 @@
 		ECAFEF041DD994C60065AB96 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
 		ECAFEF071DD99C710065AB96 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
 		ECBCF4091E113DE000AD1814 /* PriceCalculationManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */; };
+		ECE1CE181F31EB3B003FD322 /* UserInfoParser.m in Sources */ = {isa = PBXBuildFile; fileRef = ECE1CE171F31EB3B003FD322 /* UserInfoParser.m */; };
+		ECE1CE191F31EB88003FD322 /* UserInfoParser.m in Sources */ = {isa = PBXBuildFile; fileRef = ECE1CE171F31EB3B003FD322 /* UserInfoParser.m */; };
 		ECE752BD1DE6F465005D34C7 /* SyncManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */; };
 		ECE752C01DE6FA66005D34C7 /* DateUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A2179919E585D700F22EA6 /* DateUtil.m */; };
 		ECE752C11DE6FA6C005D34C7 /* SNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A99EE19E6890C00919345 /* SNetworkReachabilityManager.m */; };
@@ -4569,6 +4571,8 @@
 		ECAFEF051DD99C710065AB96 /* SyncProfilingRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProfilingRequest.h; sourceTree = "<group>"; };
 		ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfilingRequest.m; sourceTree = "<group>"; };
 		ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriceCalculationManagerTests.m; sourceTree = "<group>"; };
+		ECE1CE161F31EB3B003FD322 /* UserInfoParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfoParser.h; sourceTree = "<group>"; };
+		ECE1CE171F31EB3B003FD322 /* UserInfoParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfoParser.m; sourceTree = "<group>"; };
 		ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncManagerTests.m; sourceTree = "<group>"; };
 		FD09DF2C1D4A088800972C95 /* ZXAztecDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDecoder.h; sourceTree = "<group>"; };
 		FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZXAztecDecoder.m; sourceTree = "<group>"; };
@@ -6262,6 +6266,8 @@
 				840E2B7B1BA2FBB800E6EEF9 /* SFMOnlineLookUpParser.m */,
 				CDD7F3881E02AA3900A4AA79 /* PurgeRecordsParser.h */,
 				CDD7F3891E02AA3900A4AA79 /* PurgeRecordsParser.m */,
+				ECE1CE161F31EB3B003FD322 /* UserInfoParser.h */,
+				ECE1CE171F31EB3B003FD322 /* UserInfoParser.m */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -10844,6 +10850,7 @@
 				186CDD841A025D6F00DC93DA /* LocalNotificationModel.m in Sources */,
 				FD09E19C1D4A088A00972C95 /* ZXRSSDataCharacter.m in Sources */,
 				184A8E9219E7A0BE006DA6BE /* TKSwitchCell.m in Sources */,
+				ECE1CE181F31EB3B003FD322 /* UserInfoParser.m in Sources */,
 				9E8DA0B71A63BD7100BC6ACB /* AsyncImageLoader.m in Sources */,
 				C3EF97881A036CAE00476293 /* DocumentsViewController.m in Sources */,
 				183A9E2E19E69DB000919345 /* DODRecordsModel.m in Sources */,
@@ -11768,6 +11775,7 @@
 				A64AAF6A1CF2F9E5008839FB /* TaskManager.m in Sources */,
 				A64AAF6B1CF2F9E5008839FB /* LocalEventUpdateModel.m in Sources */,
 				A64AAF6C1CF2F9E5008839FB /* RequestConstants.m in Sources */,
+				ECE1CE191F31EB88003FD322 /* UserInfoParser.m in Sources */,
 				A64AAF6D1CF2F9E5008839FB /* ProdIQUserConfigParser.m in Sources */,
 				A64AAF6E1CF2F9E5008839FB /* DynamicTableCreator.m in Sources */,
 				A64AAF6F1CF2F9E5008839FB /* NSError+SMInternalError.m in Sources */,
