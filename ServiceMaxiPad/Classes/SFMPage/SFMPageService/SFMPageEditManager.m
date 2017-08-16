@@ -2161,19 +2161,26 @@
             
             if([model.action isEqualToString:@"Set"]){
                 
-                if([StringUtil isStringEmpty:finalValue]){
-                    continue;
+                // IPAD-4595
+//                if([StringUtil isStringEmpty:finalValue]){
+//                    continue;
+//                }
+                
+                if (!finalValue) {
+                    finalValue = @"";
                 }
                 NSString * fieldType =  [fieldDataType objectForKey: model.sourceFieldName];
                 
                 if([fieldType isEqualToString:kSfDTDate] || [fieldType isEqualToString:kSfDTDateTime])
                 {
-                    if ([self isItALiteral:finalValue]) {
-                        //defect#036563
-                        finalValue = [DateUtil evaluateDateLiteral:finalValue  dataType:fieldType];
-                    }
-                    if ([fieldType isEqualToString:kSfDTDate]) {
-                        finalValue = [self getDateForMapping:finalValue];
+                    if (![StringUtil isStringEmpty:finalValue]) { // IPAD-4595
+                        if ([self isItALiteral:finalValue]) {
+                            //defect#036563
+                            finalValue = [DateUtil evaluateDateLiteral:finalValue  dataType:fieldType];
+                        }
+                        if ([fieldType isEqualToString:kSfDTDate]) {
+                            finalValue = [self getDateForMapping:finalValue];
+                        }
                     }
                 }
                 else if ([StringUtil containsString:kLiteralCurrentRecord inString:finalValue])
@@ -2189,6 +2196,8 @@
                     {
                         valueOfLiteral = finalValue;
                     }
+                    
+                    finalValue = valueOfLiteral; // IPAD-4595
                 }
             }
             else if ([model.action isEqualToString:@"Increase"]){
@@ -2202,7 +2211,8 @@
                 finalValue = [[NSString alloc] initWithFormat:@"%f",finalFloatValue];
             }
             
-            if(![StringUtil isStringEmpty:finalValue] && model.sourceFieldName){
+            // IPAD-4595
+            if(model.sourceFieldName){
                 [eachSourcedDict setObject:finalValue forKey:model.sourceFieldName];
             }
         }
