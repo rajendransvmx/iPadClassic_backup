@@ -461,8 +461,8 @@
         //filter out duplicate what ids
         NSArray *finalArray = [NSArray arrayWithArray:[valuesArray arrayByAddingObjectsFromArray:parentWhatIds]];
         NSArray *filteredArray = [[NSSet setWithArray:finalArray] allObjects];
-        
-        [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:filteredArray forKey:objectName];
+        if (objectName)
+            [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:filteredArray forKey:objectName];
     }
     
     for (NSString *whatId in whatIds) {
