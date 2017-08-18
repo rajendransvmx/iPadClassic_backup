@@ -36,6 +36,7 @@
 #import "PushNotificationUtility.h"
 #import "SuccessiveSyncManager.h"
 #import "OauthConnectionHandler.h"
+#import "SyncManager.h"
 
 #define MAX_RETRY_COUNT 3
 NSString *cocoaErrorString = @"3840";
@@ -392,6 +393,12 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
         [[PerformanceAnalyser sharedInstance] observePerformanceForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeParsing andRecordCount:1];
 
     }
+    
+    // IPAD-4585
+    if(requestObject.requestType == RequestTypeSyncProfiling)
+    {
+        [[SyncManager sharedInstance] syncProfilingDidRecieveResponse:responseObject];
+    }
 
     [self removeRequestFromRequestArray:requestObject];
     
@@ -568,6 +575,11 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
 
 - (void)request:(SVMXServerRequest *)requestObject failedWithError:(NSError *)error andResponse:(id)responseObject
 {
+    // IPAD-4585
+    if(requestObject.requestType == RequestTypeSyncProfiling)
+    {
+        [[SyncManager sharedInstance] syncProfilingDidRequestFailedWithError:error andResponse:responseObject];
+    }
     
     if ([self isCocoaErrorRetryCompletedForRequest:requestObject withError:error]) {
         

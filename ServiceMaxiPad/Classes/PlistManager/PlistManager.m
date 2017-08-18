@@ -149,12 +149,10 @@ NSString *const kSalesForceOrgName = @"SalesForceOrgName";
 NSString *const kSalesForceOrgId = @"SalesForceOrgId";
 NSString *const kSyncProfileEnabled = @"SyncProfileEnabled";
 NSString *const kGroupProfileId = @"ServiceMaxGroupProfileId";
-NSString *const kSyncProfileType = @"SyncProfileType";
 NSString *const kSPTypeStart = @"SPTypeStart";
 NSString *const kSPTypeEnd = @"SPTypeEnd";
 NSString *const kGroupProfileName = @"ServiceMaxGroupProfileName";
 NSString *const kSPSyncTime = @"SPSyncTime";
-NSString *const kSPReqTimedOut = @"SPReqTimedOut";
 
 @implementation PlistManager
 
