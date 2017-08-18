@@ -64,10 +64,8 @@
     [userDefaults removeObjectForKey:kSyncProfileEnabled];
     [userDefaults removeObjectForKey:kGroupProfileName];
     [userDefaults removeObjectForKey:kGroupProfileId];
-    [userDefaults removeObjectForKey:kSyncProfileType];
     [userDefaults removeObjectForKey:kGroupProfileName];
     [userDefaults removeObjectForKey:kSPSyncTime];
-    [userDefaults removeObjectForKey:kSPReqTimedOut];
     [userDefaults synchronize];
 }
 
