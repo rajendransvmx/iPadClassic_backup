@@ -332,7 +332,7 @@ forLocalNotification:(UILocalNotification *)notification
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    
+    [[SyncManager sharedInstance] setEndTimeForSyncProfiling]; // IPAD-4585
 }
 
 #pragma mark - Backgrounding Methods -
