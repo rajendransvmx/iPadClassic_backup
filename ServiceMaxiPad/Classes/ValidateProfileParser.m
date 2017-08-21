@@ -67,7 +67,7 @@
     [userDefaults removeObjectForKey:kGroupProfileName];
     [userDefaults removeObjectForKey:kGroupProfileId];
     [userDefaults removeObjectForKey:kGroupProfileName];
-    [userDefaults removeObjectForKey:kSPSyncTime];
+
     [userDefaults synchronize];
 }
 
