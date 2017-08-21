@@ -72,7 +72,6 @@
     [userDefaults removeObjectForKey:kGroupProfileName];
     [userDefaults removeObjectForKey:kGroupProfileId];
     [userDefaults removeObjectForKey:kGroupProfileName];
-    [userDefaults removeObjectForKey:kSPSyncTime];
     
     // SECSCAN-260
     [userDefaults removeObjectForKey:kSSLPinningEnabled];
