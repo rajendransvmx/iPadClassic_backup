@@ -67,6 +67,10 @@
         else if ([syncProfileType isEqualToString:kSPTypeEnd])
         {
             NSString *currentDate = [userDefaults objectForKey:kSPSyncTime];
+            if(!currentDate)
+            {
+                currentDate = [DateUtil getCurrentDateForSyncProfiling];
+            }
             NSString *requestId = [userDefaults objectForKey:kSyncprofilePreviousReqId];
             NSString *requestTimeOut = ([[SyncManager sharedInstance] isRequestTimedOut])?@"YES":@"NO";
             [params setObject:requestId forKey:kSyncProfileRequestIdKey]; // request id
