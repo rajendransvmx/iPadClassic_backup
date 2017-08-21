@@ -206,8 +206,7 @@ NSString *const kSyncProfileAppName = @"ServiceMaxNow";
 NSString *const kSyncProfileClientIdKey = @"clientId";
 NSString *const kSyncProfileClientNameKey = @"clientName";
 NSString *const kSyncProfileRequestIdKey = @"srid";
-NSString *const kSyncprofileStartReqId = @"syncprofileStartTaskId";
-NSString *const kSyncprofileEndReqId = @"syncprofileEndTaskId";
+NSString *const kSyncprofileReqId = @"syncprofileTaskId";
 NSString *const kSyncProfileStartTimeKey = @"syncstartime";
 NSString *const kSyncProfileSFProfileIdKey = @"classicprofileid";
 NSString *const kSyncProfileIdKey = @"id";
@@ -217,7 +216,14 @@ NSString *const kSyncProfileGroupProfileKey = @"svmxprofile";
 NSString *const kSyncProfileDeviceNameKey = @"devicename";
 NSString *const kSyncProfileEndTimeKey = @"syncendtime";
 NSString *const kSyncProfileRequestTimeOutKey = @"requesttimeout";
-
+// IPAD-4585
+NSString *const kSyncprofilePreviousReqId = @"syncprofileTaskPreviousId";
+NSString *const kSyncProfileFailType = @"syncProfileFailType";
+NSString *const kSyncProfileStatusKey = @"status";
+NSString *const kSyncProfileDataSizeKey = @"Data Transferred Amount";
+NSString *const kSyncProfileSuccess = @"Success";
+NSString *const kSyncProfileAppQuit = @"App Quit";
+NSString *const kSyncProfileSyncFailure = @"Sync Failure";
 
 /* User Info */
 
