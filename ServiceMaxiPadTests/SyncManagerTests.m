@@ -19,6 +19,14 @@
     XCTestExpectation *expectation;
 }
 
+// IPAD-4585
+@property (nonatomic, strong) NSString *profileType;
+@property (nonatomic, readwrite) BOOL isRequestTimedOut;
+@property (nonatomic, readwrite) NSInteger syncProfileDataSize;
+@property (nonatomic, strong) NSString *endTimeRequestId;
+@property (nonatomic, readwrite) BOOL isSyncProfileEnabled;
+@property (nonatomic, strong) NSUserDefaults *userDefaults;
+
 @end
 
 @implementation SyncManagerTests
@@ -53,7 +61,7 @@
     
     if ([self testIsSyncProfilingEnabled])
     {
-        [self pushSyncProfileInfoToUserDefaultsWithValue:profileType forKey:kSyncProfileType];
+        self.profileType = profileType;
         
         if ([profileType isEqualToString:kSPTypeStart])
         {
@@ -63,10 +71,7 @@
             }
         }
         else if ([profileType isEqualToString:kSPTypeEnd])
-        {
-            NSString *startReqId = [[NSUserDefaults standardUserDefaults] valueForKey:kSyncprofileStartReqId];
-            [self pushSyncProfileInfoToUserDefaultsWithValue:startReqId forKey:kSyncprofileEndReqId];
-            
+        {            
             if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
             {
                 [self performSyncProfiling];
@@ -129,8 +134,8 @@
 
 -(void)setUpRequestIdForSyncProfiling:(NSString *)requestId {
     // IPAD-4355
-        [self pushSyncProfileInfoToUserDefaultsWithValue:@"No" forKey:kSPReqTimedOut];
-        [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileStartReqId];
+    self.isRequestTimedOut = NO;
+    [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileReqId];
 }
 
 @end

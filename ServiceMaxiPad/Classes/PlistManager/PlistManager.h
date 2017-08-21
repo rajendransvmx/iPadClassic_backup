@@ -22,12 +22,10 @@ extern  NSString *const kSalesForceOrgName;
 extern  NSString *const kSalesForceOrgId;
 extern  NSString *const kSyncProfileEnabled;
 extern  NSString *const kGroupProfileId;
-extern  NSString *const kSyncProfileType;
 extern  NSString *const kSPTypeStart;
 extern  NSString *const kSPTypeEnd;
 extern  NSString *const kGroupProfileName;
 extern  NSString *const kSPSyncTime;
-extern  NSString *const kSPReqTimedOut;
 
 @interface PlistManager : NSObject
 
