@@ -2164,6 +2164,9 @@
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
 		EC8003621E126F9700AEF75C /* PriceCalculationManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EC8003611E126F9700AEF75C /* PriceCalculationManagerTests.m */; };
+		EC42EC2B1DDAEA2200419D7D /* ValidateProfileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */; };
+		ECAFEF041DD994C60065AB96 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
+		ECAFEF071DD99C710065AB96 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
 		FD09E1131D4A088A00972C95 /* ZXAztecDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */; };
 		FD09E1141D4A088A00972C95 /* ZXAztecDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF301D4A088800972C95 /* ZXAztecDetector.m */; };
 		FD09E1151D4A088A00972C95 /* ZXAztecBinaryShiftToken.m in Sources */ = {isa = PBXBuildFile; fileRef = FD09DF331D4A088800972C95 /* ZXAztecBinaryShiftToken.m */; };
@@ -4341,6 +4344,12 @@
 		DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationWebServiceHelper.m; sourceTree = "<group>"; };
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
 		EC8003611E126F9700AEF75C /* PriceCalculationManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriceCalculationManagerTests.m; sourceTree = "<group>"; };
+		EC42EC291DDAEA2200419D7D /* ValidateProfileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateProfileParser.h; sourceTree = "<group>"; };
+		EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ValidateProfileParser.m; sourceTree = "<group>"; };
+		ECAFEF021DD994C60065AB96 /* SyncProfileServiceLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProfileServiceLayer.h; sourceTree = "<group>"; };
+		ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfileServiceLayer.m; sourceTree = "<group>"; };
+		ECAFEF051DD99C710065AB96 /* SyncProfilingRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProfilingRequest.h; sourceTree = "<group>"; };
+		ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfilingRequest.m; sourceTree = "<group>"; };
 		FD09DF2C1D4A088800972C95 /* ZXAztecDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDecoder.h; sourceTree = "<group>"; };
 		FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZXAztecDecoder.m; sourceTree = "<group>"; };
 		FD09DF2F1D4A088800972C95 /* ZXAztecDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDetector.h; sourceTree = "<group>"; };
@@ -7434,6 +7443,7 @@
 		18A2177C19E57E7E00F22EA6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				ECAFEF011DD992FA0065AB96 /* SyncProfiling */,
 				4344088D1C90041900628FFB /* MobileDataUsage */,
 				844F00B91B848BE3008BC652 /* ProductIQ */,
 				C8E0D03A1B4E8A65008C4AB8 /* CustomTableViewCells */,
@@ -8390,6 +8400,19 @@
 				D74A3D091A0381E000357474 /* PriceCalculationManager.m */,
 			);
 			path = GetPrice;
+			sourceTree = "<group>";
+		};
+		ECAFEF011DD992FA0065AB96 /* SyncProfiling */ = {
+			isa = PBXGroup;
+			children = (
+				ECAFEF021DD994C60065AB96 /* SyncProfileServiceLayer.h */,
+				ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */,
+				ECAFEF051DD99C710065AB96 /* SyncProfilingRequest.h */,
+				ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */,
+				EC42EC291DDAEA2200419D7D /* ValidateProfileParser.h */,
+				EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */,
+			);
+			name = SyncProfiling;
 			sourceTree = "<group>";
 		};
 		FD09DF291D4A088800972C95 /* ZXingObjC */ = {
@@ -9866,6 +9889,7 @@
 				18186E1119EC0023009F3421 /* JobLogServiceLayer.m in Sources */,
 				9EB4F7A61A446DB500E2A8BD /* ChatterPostParser.m in Sources */,
 				183A9A6319E6945B00919345 /* DatabaseIndexConstant.m in Sources */,
+				ECAFEF071DD99C710065AB96 /* SyncProfilingRequest.m in Sources */,
 				183A9F1C19E6A15700919345 /* ZKServerSwitchboard.m in Sources */,
 				183A9E8C19E6A11800919345 /* FlowNode.m in Sources */,
 				FD09E1371D4A088A00972C95 /* ZXTelParsedResult.m in Sources */,
@@ -10232,6 +10256,7 @@
 				18536E621A1F1AAE00153202 /* NSNotificationCenter+UniqueNotif.m in Sources */,
 				18A217B719E585D700F22EA6 /* DateUtil.m in Sources */,
 				183A9E9319E6A11800919345 /* RuleManager.m in Sources */,
+				EC42EC2B1DDAEA2200419D7D /* ValidateProfileParser.m in Sources */,
 				FD09E1B91D4A088A00972C95 /* ZXUPCEReader.m in Sources */,
 				FD09E1AD1D4A088A00972C95 /* ZXITFWriter.m in Sources */,
 				183AA36319E6DA2500919345 /* AFURLRequestSerialization.m in Sources */,
@@ -10673,6 +10698,7 @@
 				183A9A6219E6945B00919345 /* DatabaseConstant.m in Sources */,
 				184A8E8519E7A0BE006DA6BE /* TKGradientView.m in Sources */,
 				FD09E1181D4A088A00972C95 /* ZXAztecHighLevelEncoder.m in Sources */,
+				ECAFEF041DD994C60065AB96 /* SyncProfileServiceLayer.m in Sources */,
 				FD09E1B01D4A088A00972C95 /* ZXOneDimensionalCodeWriter.m in Sources */,
 				183A9F1619E6A15600919345 /* ZKRelatedListColumn.m in Sources */,
 				FD09E1891D4A088A00972C95 /* ZXAI013x0xDecoder.m in Sources */,

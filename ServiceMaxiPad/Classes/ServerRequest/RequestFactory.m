@@ -14,6 +14,7 @@
 #import "FileDownloadRequest.h"
 #import "ZKSCreateObjectRequest.h"
 #import "ZKSQueryRequest.h"
+#import "SyncProfilingRequest.h"
 
 @implementation RequestFactory
 
@@ -165,6 +166,9 @@
                 requestClass = [self getRestRequestByType:requestType];
                 break;
                 
+            case RequestTypeSyncProfiling:
+                requestClass = [self getSyncProfileRequestByType:requestType];
+                break;
             default:
                 break;
         }
@@ -237,6 +241,14 @@
 + (id)getSoapRequest:(RequestType)requestType
 {
     return nil;
+}
+
+/** Sync Profling **/
++ (id)getSyncProfileRequestByType:(RequestType)requestType
+{
+    id restRequestClass = [[SyncProfilingRequest alloc]initWithType:requestType];
+    
+    return restRequestClass;
 }
 
 @end

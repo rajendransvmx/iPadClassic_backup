@@ -3,7 +3,7 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.60.018
+Version = 16.60.019
 ===========================================
 
 Defect:
@@ -13,7 +13,7 @@ Defect:
 
 Feature:
 ==================
-Included Verifaya changes.
+IPAD-4610
 
 ——————
 
