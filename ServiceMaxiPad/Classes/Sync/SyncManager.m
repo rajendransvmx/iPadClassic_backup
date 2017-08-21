@@ -2601,6 +2601,8 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             {
                 [self.userDefaults setObject:dataSize forKey:startReqId];
                 [self.userDefaults setObject:kSyncProfileAppQuit forKey:kSyncProfileFailType];
+                NSString *currentDate = [DateUtil getCurrentDateForSyncProfiling];
+                [self.userDefaults setObject:currentDate forKey:kSPSyncTime];
                 [self.userDefaults synchronize];
             }
         }
@@ -2635,8 +2637,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
         if ([syncProfileType isEqualToString:kSPTypeStart]) {
             NSString *currentId = [[NSUserDefaults standardUserDefaults] objectForKey:kSyncprofileReqId];
             [[NSUserDefaults standardUserDefaults] setObject:currentId forKey:kSyncprofilePreviousReqId];
-            NSString *currentDate = [DateUtil getCurrentDateForSyncProfiling];
-            [[NSUserDefaults standardUserDefaults] setObject:currentDate forKey:kSPSyncTime];
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
         
