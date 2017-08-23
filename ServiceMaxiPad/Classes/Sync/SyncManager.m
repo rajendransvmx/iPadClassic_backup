@@ -271,12 +271,17 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     
 // IPAD-4585
     self.userDefaults = [NSUserDefaults standardUserDefaults];
-    BOOL isSyncProfileEnabled = [[self.userDefaults objectForKey:kSyncProfileEnabled] boolValue];
-    self.isSyncProfileEnabled = isSyncProfileEnabled;
+    BOOL isSyncProfileEnabledTemp = [[self.userDefaults objectForKey:kSyncProfileEnabled] boolValue];
+    self.isSyncProfileEnabled = isSyncProfileEnabledTemp;
     
     NSString *prevReqId = [self.userDefaults objectForKey:kSyncprofilePreviousReqId];
     if(prevReqId) {
         self.syncProfileDataSize = [[self.userDefaults objectForKey:prevReqId] integerValue];
+        NSString *syncStatus = [self.userDefaults objectForKey:kSyncProfileFailType];
+        if(!syncStatus) {
+            [self.userDefaults setObject:kSyncProfileAppQuit forKey:kSyncProfileFailType];
+        }
+        
         [self.userDefaults removeObjectForKey:prevReqId];
         [self.userDefaults synchronize];
     }
@@ -895,6 +900,13 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             self.isDataSyncRunning = NO;
             self.dataSyncStatus = SyncStatusSuccess;
             
+            // IPAD-4585
+            if ([self isSyncProfilingEnabled]) {
+                [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSuccess forKey:kSyncProfileFailType];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [self initiateSyncProfiling:kSPTypeEnd];
+            }
+            
             [[SMDataPurgeManager sharedInstance] restartDataPurge];
             [PlistManager removeLastDataSyncStartGMTTime];
             [PlistManager removeLastLocalIdFromDefaults];
@@ -903,12 +915,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             /* Send data sync Success notification */
             [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
             
-            // IPAD-4585
-            if ([self isSyncProfileEnabled]) {
-                [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSuccess forKey:kSyncProfileFailType];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-                [self initiateSyncProfiling:kSPTypeEnd];
-            }
+
             
             if (conflictsResolved) {
                 /* Clear user deafults utility */
@@ -956,17 +963,18 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
         [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
          self.isDataSyncRunning = NO;
          [PlistManager removeLastDataSyncStartGMTTime];
-        [[SMDataPurgeManager sharedInstance] restartDataPurge];
-        /* Send data sync Failure notification */
-        [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
         
         // IPAD-4585
-        if ([self isSyncProfileEnabled]) {
+        if ([self isSyncProfilingEnabled]) {
             [self checkIfRequestTimedOutForSyncProfiling:error];
             [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSyncFailure forKey:kSyncProfileFailType];
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self initiateSyncProfiling:kSPTypeEnd];
         }
+        
+        [[SMDataPurgeManager sharedInstance] restartDataPurge];
+        /* Send data sync Failure notification */
+        [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
         
         if (error != nil) {
             [[AlertMessageHandler sharedInstance] showCustomMessage:[error errorEndUserMessage]
@@ -2543,8 +2551,14 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                     if (response.syncStatus == SyncStatusFailed) {
                         [self checkIfRequestTimedOutForSyncProfiling:response.syncError];
                     }
-                    [self initiateSyncProfiling:kSPTypeEnd];
-                }
+                    
+                    if ([self isSyncProfilingEnabled]) {
+                        NSString *syncStatus = (response.syncStatus == SyncStatusSuccess)?kSyncProfileSuccess:kSyncProfileSyncFailure;
+                        [[NSUserDefaults standardUserDefaults] setObject:syncStatus forKey:kSyncProfileFailType];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                        [self initiateSyncProfiling:kSPTypeEnd];
+                    }
+            }
             }
                 break;
             default:
@@ -2603,7 +2617,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             if(dataSize)
             {
                 [self.userDefaults setObject:dataSize forKey:startReqId];
-                [self.userDefaults setObject:kSyncProfileAppQuit forKey:kSyncProfileFailType];
                 NSString *currentDate = [DateUtil getCurrentDateForSyncProfiling];
                 [self.userDefaults setObject:currentDate forKey:kSPSyncTime];
                 [self.userDefaults synchronize];
@@ -2614,16 +2627,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 
 -(void)clearEndTimeForSyncProfiling
 {
-    if(self.isSyncProfileEnabled)
-    {
-        NSString *startReqId = [self.userDefaults objectForKey:kSyncprofileReqId];
-        if(startReqId)
-        {
-            [self.userDefaults removeObjectForKey:startReqId];
-            [self.userDefaults removeObjectForKey:kSyncProfileFailType];
-            [self.userDefaults synchronize];
-        }
-    }
+
 }
 
 -(BOOL)checkIfEndTimeSyncIsPending
@@ -2668,6 +2672,8 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
             self.syncProfileDataSize = 0;
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSyncProfileFailType];
+            [[NSUserDefaults standardUserDefaults] synchronize];
         }
     }
 }

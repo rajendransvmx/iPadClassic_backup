@@ -191,7 +191,7 @@
                 [self displayRequest:operation];
                  
                  // IPAD-4585
-                 if ([[SyncManager sharedInstance] isSyncProfileEnabled] && self.eventName && self.requestIdentifier)
+                 if ([[SyncManager sharedInstance] isSyncProfilingEnabled] && self.eventName && self.requestIdentifier)
                  {
                      NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseObject options:0 error:nil];
                      if (responseData) {
@@ -368,7 +368,7 @@
             [urlRequest setHTTPBody:compressedData];
             
             // IPAD-4585
-            if ([[SyncManager sharedInstance] isSyncProfileEnabled] && self.eventName && self.requestIdentifier)
+            if ([[SyncManager sharedInstance] isSyncProfilingEnabled] && self.eventName && self.requestIdentifier)
             {
                 [[SyncManager sharedInstance] saveTransferredDataSize:[compressedData length] forRequestId:self.requestIdentifier];
             }
