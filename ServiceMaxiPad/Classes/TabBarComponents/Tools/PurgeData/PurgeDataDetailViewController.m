@@ -20,6 +20,7 @@
 #import "AlertMessageHandler.h"
 #import "AutoLockManager.h"
 #import "NonTagConstant.h"
+#import "PlistManager.h"
 
 @interface PurgeDataDetailViewController ()
 @property (nonatomic, strong)SMProgressAlertView *progressAlertView;
@@ -330,6 +331,12 @@
 
 -(void)cancelDataPurge
 {
+    if ([[SyncManager sharedInstance] isSyncProfilingEnabled]) {
+        [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSyncFailure forKey:kSyncProfileFailType];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [[SyncManager sharedInstance] initiateSyncProfiling:kSPTypeEnd];
+    }
+    
     [self disableProgressBarCancelButton];
     [[SMDataPurgeManager sharedInstance] stopDataPurge];
     [self removeProgresBar];

@@ -26,6 +26,7 @@
 #import "AlertMessageHandler.h"
 #import "NonTagConstant.h"
 #import "ProductIQManager.h"
+#import "PlistManager.h"
 
 const int percentage = 5;
 const float progress = 0.05;
@@ -130,6 +131,9 @@ const float progress = 0.05;
             {
                 self.purgeStatus = DataPurgeStatusWSForDownloadCriteria;
                 [self makeRequestToserverForTheCategoryType:CategoryTypeDataPurge];
+                if ([[SyncManager sharedInstance] isSyncProfilingEnabled]) {
+                    [[SyncManager sharedInstance] initiateSyncProfiling:kSPTypeStart];
+                }
                 break;
             }
                 
@@ -1678,6 +1682,11 @@ const float progress = 0.05;
                                                  requestParam:nil
                                                callerDelegate:[SMDataPurgeManager sharedInstance]];
         self.dataPurgeTaskID = taskModel.taskId;
+        
+        if ([[SyncManager sharedInstance] isSyncProfilingEnabled]) {
+            [[SyncManager sharedInstance] setUpRequestIdForSyncProfiling:taskModel.taskId];
+        }
+        
         [[TaskManager sharedInstance] addTask:taskModel];
     }
     else
@@ -1733,6 +1742,12 @@ const float progress = 0.05;
             {
                 if (st.syncStatus == SyncStatusSuccess)
                 {
+                    if ([[SyncManager sharedInstance] isSyncProfilingEnabled]) {
+                        [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSuccess forKey:kSyncProfileFailType];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                        [[SyncManager sharedInstance] initiateSyncProfiling:kSPTypeEnd];
+                    }
+     
                     //DefectFix:26563
                     SyncManager *syncManager = [SyncManager sharedInstance];
                     [syncManager updateDataPurgeStatus:SyncStatusSuccess];
@@ -1743,6 +1758,13 @@ const float progress = 0.05;
                          || (st.syncStatus == SyncStatusRefreshTokenFailedWithError)
                          || (st.syncStatus == SyncStatusNetworkError))
                 {
+                    
+                    if ([[SyncManager sharedInstance] isSyncProfilingEnabled]) {
+                        [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSyncFailure forKey:kSyncProfileFailType];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                        [[SyncManager sharedInstance] initiateSyncProfiling:kSPTypeEnd];
+                    }
+                    
                     [self dataPurgeWebserviceFailedWithError:st.syncError];
                 }
                 
