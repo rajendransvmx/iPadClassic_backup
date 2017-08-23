@@ -900,6 +900,13 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             self.isDataSyncRunning = NO;
             self.dataSyncStatus = SyncStatusSuccess;
             
+            // IPAD-4585
+            if ([self isSyncProfilingEnabled]) {
+                [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSuccess forKey:kSyncProfileFailType];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [self initiateSyncProfiling:kSPTypeEnd];
+            }
+            
             [[SMDataPurgeManager sharedInstance] restartDataPurge];
             [PlistManager removeLastDataSyncStartGMTTime];
             [PlistManager removeLastLocalIdFromDefaults];
@@ -908,12 +915,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             /* Send data sync Success notification */
             [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
             
-            // IPAD-4585
-            if ([self isSyncProfilingEnabled]) {
-                [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSuccess forKey:kSyncProfileFailType];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-                [self initiateSyncProfiling:kSPTypeEnd];
-            }
+
             
             if (conflictsResolved) {
                 /* Clear user deafults utility */
@@ -961,9 +963,6 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
         [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
          self.isDataSyncRunning = NO;
          [PlistManager removeLastDataSyncStartGMTTime];
-        [[SMDataPurgeManager sharedInstance] restartDataPurge];
-        /* Send data sync Failure notification */
-        [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
         
         // IPAD-4585
         if ([self isSyncProfilingEnabled]) {
@@ -972,6 +971,10 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             [[NSUserDefaults standardUserDefaults] synchronize];
             [self initiateSyncProfiling:kSPTypeEnd];
         }
+        
+        [[SMDataPurgeManager sharedInstance] restartDataPurge];
+        /* Send data sync Failure notification */
+        [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
         
         if (error != nil) {
             [[AlertMessageHandler sharedInstance] showCustomMessage:[error errorEndUserMessage]
