@@ -8,7 +8,6 @@
 
 #import "ValidateProfileParser.h"
 #import "PlistManager.h"
-#import "SyncManager.h"
 
 @implementation ValidateProfileParser
 
@@ -38,7 +37,6 @@
                     }
                     if ([key isEqualToString:kValidateProfileSyncProfiling]) {
                         [userDefaults setObject:value forKey:kSyncProfileEnabled];
-                        [SyncManager sharedInstance].isSyncProfileEnabled = value;
                     }
                     if ([key isEqualToString:kValidateProfileGroupProfileName]) {
                         [userDefaults setObject:value forKey:kGroupProfileName];
@@ -71,7 +69,10 @@
     [userDefaults removeObjectForKey:kSyncProfileEnabled];
     [userDefaults removeObjectForKey:kGroupProfileName];
     [userDefaults removeObjectForKey:kGroupProfileId];
+    [userDefaults removeObjectForKey:kSyncProfileType];
     [userDefaults removeObjectForKey:kGroupProfileName];
+    [userDefaults removeObjectForKey:kSPSyncTime];
+    [userDefaults removeObjectForKey:kSPReqTimedOut];
     
     // SECSCAN-260
     [userDefaults removeObjectForKey:kSSLPinningEnabled];

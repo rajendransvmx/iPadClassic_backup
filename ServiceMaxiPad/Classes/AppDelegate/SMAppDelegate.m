@@ -102,8 +102,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
  {
-     NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler); // IPAD-4585
-     
      [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
      [FileManager createApplicationDirectory];
 //     [self disableIdleTimerForApplication];
@@ -315,7 +313,6 @@ forLocalNotification:(UILocalNotification *)notification
 {
     [LocationPingManager sharedInstance].isApplicationInBackground = YES;
     [[SyncManager sharedInstance] invalidateScheduleSync];
-    [[SyncManager sharedInstance] setEndTimeForSyncProfiling]; // IPAD-4585
 }
 
 
@@ -329,7 +326,6 @@ forLocalNotification:(UILocalNotification *)notification
     }
     [LocationPingManager sharedInstance].isApplicationInBackground = NO;
     [[NSNotificationCenter defaultCenter] postNotificationName:CHECK_FOR_TIMEZONE_CHANGE object:nil];
-    [[SyncManager sharedInstance] clearEndTimeForSyncProfiling]; // IPAD-4585
 }
 
 
@@ -347,7 +343,7 @@ forLocalNotification:(UILocalNotification *)notification
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
-    [[SyncManager sharedInstance] setEndTimeForSyncProfiling]; // IPAD-4585
+    
 }
 
 #pragma mark - Backgrounding Methods -
@@ -372,12 +368,6 @@ forLocalNotification:(UILocalNotification *)notification
         }
     }
     return YES;
-}
-
-// IPAD-4585
-void uncaughtExceptionHandler(NSException *exception)
-{
-    [[SyncManager sharedInstance] setEndTimeForSyncProfiling];
 }
 
 @end

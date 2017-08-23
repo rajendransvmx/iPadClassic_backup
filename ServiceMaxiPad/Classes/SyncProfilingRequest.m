@@ -11,7 +11,6 @@
 #import "PlistManager.h"
 #import "DateUtil.h"
 #import "CustomerOrgInfo.h"
-#import "SyncManager.h"
 
 @implementation SyncProfilingRequest
 
@@ -38,17 +37,28 @@
         
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-        NSString *syncProfileType = [[SyncManager sharedInstance] profileType];
+        NSString *syncProfileType = [userDefaults objectForKey:kSyncProfileType];
+        
+        // datetime read from user defaults which is saved at the time of sync end request when there's no network
+        NSString *currentDate = [userDefaults objectForKey:kSPSyncTime];
+        if (currentDate == nil)
+        {
+            currentDate = [DateUtil getCurrentDateForSyncProfiling];
+        }
+        else
+        {
+            [userDefaults setObject:nil forKey:kSPSyncTime];
+            [userDefaults synchronize];
+        }
         
         if ([syncProfileType isEqualToString:kSPTypeStart])
         {
-            NSString *currentDate = [DateUtil getCurrentDateForSyncProfiling];
             NSString *salesforceProfileId = [userDefaults objectForKey:kSalesForceProfileId];
             [[AppMetaData sharedInstance] loadApplicationMetaData];
             NSString *deviceName = [[AppMetaData sharedInstance] getCurrentDeviceVersion];
             NSString *groupProfileId = [userDefaults objectForKey:kGroupProfileId];
             NSString *groupProfileName = [userDefaults objectForKey:kGroupProfileName];
-            NSString *requestId = [userDefaults objectForKey:kSyncprofileReqId];
+            NSString *requestId = [userDefaults objectForKey:kSyncprofileStartReqId];
             NSDictionary *profileDictionary = [NSDictionary
                                                dictionaryWithObjects:@[groupProfileId, groupProfileName]
                                                forKeys:@[kSyncProfileIdKey, kSyncProfileNameKey]];
@@ -66,32 +76,16 @@
         }
         else if ([syncProfileType isEqualToString:kSPTypeEnd])
         {
-            NSString *currentDate = [userDefaults objectForKey:kSPSyncTime];
-            if(!currentDate)
-            {
-                currentDate = [DateUtil getCurrentDateForSyncProfiling];
-            }
-            NSString *requestId = [userDefaults objectForKey:kSyncprofilePreviousReqId];
-            NSString *requestTimeOut = ([[SyncManager sharedInstance] isRequestTimedOut])?@"YES":@"NO";
+            NSString *requestId = [userDefaults objectForKey:kSyncprofileEndReqId];
+            NSString *requestTimeOut = [userDefaults objectForKey:kSPReqTimedOut];
             [params setObject:requestId forKey:kSyncProfileRequestIdKey]; // request id
             [params setObject:currentDate forKey:kSyncProfileEndTimeKey]; // end time
             [params setObject:requestTimeOut forKey:kSyncProfileRequestTimeOutKey]; // request timeout
-            
-            // IPH-2778
-            NSNumber *dataSize = [NSNumber numberWithInteger:[[SyncManager sharedInstance] syncProfileDataSize]];
-            if (dataSize) {
-                [params setObject:dataSize forKey:kSyncProfileDataSizeKey];
-            }
-            
-            NSString *status = [[NSUserDefaults standardUserDefaults] objectForKey:kSyncProfileFailType];
-            [params setObject:status forKey:kSyncProfileStatusKey];
         }
         self.requestParameter.requestInformation = params;
         return params;
     }
 }
-
-
 
 
 

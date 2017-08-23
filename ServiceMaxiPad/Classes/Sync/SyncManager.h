@@ -39,14 +39,6 @@ extern NSString *KBlockScreenForProductIQ;
 @property (nonatomic,strong) WebserviceResponseStatus *syncResponseStatus;
 @property (nonatomic,strong) NSError *syncError;
 
-// IPAD-4585
-@property (nonatomic, strong) NSString *profileType;
-@property (nonatomic, readwrite) BOOL isRequestTimedOut;
-@property (nonatomic, readwrite) NSInteger syncProfileDataSize;
-@property (nonatomic, strong) NSString *endTimeRequestId;
-@property (nonatomic, readwrite) BOOL isSyncProfileEnabled;
-@property (nonatomic, strong) NSUserDefaults *userDefaults;
-
 
 // ...
 
@@ -112,14 +104,5 @@ extern NSString *KBlockScreenForProductIQ;
 - (void)updateDataPurgeStatus:(SyncStatus )status;
 - (void)handleSyncCompletion;
 - (dispatch_queue_t)getSyncErrorReportQueue;
-
-// IPAD-4585
--(void)saveTransferredDataSize:(NSInteger)dataLength forRequestId:(NSString *)requestId;
--(void)setEndTimeForSyncProfiling;
--(void)clearEndTimeForSyncProfiling;
--(BOOL)checkIfEndTimeSyncIsPending;
--(void)performSyncProfilingWithoutCheckingForPendingEvents:(NSString *)profileType;
--(void)syncProfilingDidRecieveResponse:(id)responseObject;
-- (void)syncProfilingDidRequestFailedWithError:(NSError *)error andResponse:(id)someResponseObj;
 
 @end
