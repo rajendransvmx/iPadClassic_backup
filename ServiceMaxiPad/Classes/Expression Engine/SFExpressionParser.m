@@ -125,6 +125,9 @@
      NSString *advancedExpression = nil;
      
      NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+     [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+     [formatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]]; // IPAD-4660
+     
      [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
 
      
