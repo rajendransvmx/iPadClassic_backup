@@ -109,6 +109,8 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 @property (nonatomic, assign) BOOL isDataSyncRunning;
 @property (nonatomic) BOOL isDataSyncInLoop;
 
+@property (nonatomic, strong) NSString *oneCallSyncRequestId;
+
 - (void)performInitialSync;
 - (void)performConfigSync;
 - (void)performDataSync;
@@ -267,7 +269,23 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     _queue = dispatch_queue_create([[NSString stringWithFormat:@"syncreport.%@", self] UTF8String], NULL);
     dispatch_queue_set_specific(_queue, kDispatchSyncReportQueueSpecificKey, (__bridge void *)self, NULL);
     
-
+// IPAD-4585
+    self.userDefaults = [NSUserDefaults standardUserDefaults];
+    BOOL isSyncProfileEnabledTemp = [[self.userDefaults objectForKey:kSyncProfileEnabled] boolValue];
+    self.isSyncProfileEnabled = isSyncProfileEnabledTemp;
+    
+    NSString *prevReqId = [self.userDefaults objectForKey:kSyncprofilePreviousReqId];
+    if(prevReqId) {
+        self.syncProfileDataSize = [[self.userDefaults objectForKey:prevReqId] integerValue];
+        NSString *syncStatus = [self.userDefaults objectForKey:kSyncProfileFailType];
+        if(!syncStatus) {
+            [self.userDefaults setObject:kSyncProfileAppQuit forKey:kSyncProfileFailType];
+        }
+        
+        [self.userDefaults removeObjectForKey:prevReqId];
+        [self.userDefaults synchronize];
+    }
+    
     return self;
 }
 
@@ -882,6 +900,13 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             self.isDataSyncRunning = NO;
             self.dataSyncStatus = SyncStatusSuccess;
             
+            // IPAD-4585
+            if ([self isSyncProfilingEnabled]) {
+                [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSuccess forKey:kSyncProfileFailType];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                [self initiateSyncProfiling:kSPTypeEnd];
+            }
+            
             [[SMDataPurgeManager sharedInstance] restartDataPurge];
             [PlistManager removeLastDataSyncStartGMTTime];
             [PlistManager removeLastLocalIdFromDefaults];
@@ -890,7 +915,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             /* Send data sync Success notification */
             [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
             
-            [self initiateSyncProfiling:kSPTypeEnd];
+
             
             if (conflictsResolved) {
                 /* Clear user deafults utility */
@@ -938,12 +963,18 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
         [self updatePlistWithLastDataSyncTimeAndStatus:kFailed];
          self.isDataSyncRunning = NO;
          [PlistManager removeLastDataSyncStartGMTTime];
+        
+        // IPAD-4585
+        if ([self isSyncProfilingEnabled]) {
+            [self checkIfRequestTimedOutForSyncProfiling:error];
+            [[NSUserDefaults standardUserDefaults] setObject:kSyncProfileSyncFailure forKey:kSyncProfileFailType];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            [self initiateSyncProfiling:kSPTypeEnd];
+        }
+        
         [[SMDataPurgeManager sharedInstance] restartDataPurge];
         /* Send data sync Failure notification */
         [self sendNotification:kDataSyncStatusNotification andUserInfo:nil];
-        
-        [self checkIfRequestTimedOutForSyncProfiling:error];
-        [self initiateSyncProfiling:kSPTypeEnd];
         
         if (error != nil) {
             [[AlertMessageHandler sharedInstance] showCustomMessage:[error errorEndUserMessage]
@@ -2473,39 +2504,27 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 
 
 #pragma mark - Sync Profiling
-
+// IPAD-4585
 -(void)initiateSyncProfiling:(NSString *)profileType {
-    
-    if ([self isSyncProfilingEnabled])
-    {
-        [self pushSyncProfileInfoToUserDefaultsWithValue:profileType forKey:kSyncProfileType];
+    if ([self isSyncProfilingEnabled]) {
+        BOOL prevEndSyncPending = [self checkIfEndTimeSyncIsPending];
+        if(prevEndSyncPending)
+        {
+            self.oneCallSyncRequestId = [[NSUserDefaults standardUserDefaults] objectForKey:@"requestIdentifier"];
+        }
+        self.profileType = (prevEndSyncPending)?kSPTypeEnd:profileType;
         
-        if ([profileType isEqualToString:kSPTypeStart])
-        {
-            // IPAD-4480
-            [self pushSyncProfileInfoToUserDefaultsWithValue:@"No" forKey:kSPReqTimedOut];
-            
-            if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
-            {
-                [self performSyncProfiling];
-            }
+        if ([self.profileType isEqualToString:kSPTypeStart] || ([self.profileType isEqualToString:kSPTypeEnd] && prevEndSyncPending)) {
+            [self performSyncProfiling];
         }
-        else if ([profileType isEqualToString:kSPTypeEnd])
-        {
-            NSString *startReqId = [[NSUserDefaults standardUserDefaults] valueForKey:kSyncprofileStartReqId];
-            [self pushSyncProfileInfoToUserDefaultsWithValue:startReqId forKey:kSyncprofileEndReqId];
-            
-            if ([[SNetworkReachabilityManager sharedInstance] isNetworkReachable])
-            {
-                [self performSyncProfiling];
-            }
-            else
-            {
-                NSString *currentDate = [DateUtil getCurrentDateForSyncProfiling];
-                [self pushSyncProfileInfoToUserDefaultsWithValue:currentDate forKey:kSPSyncTime];
-                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkConnectivityChanged) name:kNetworkConnectionChanged object:nil];
-            }
-        }
+    }
+}
+
+
+-(void)performSyncProfilingWithoutCheckingForPendingEvents:(NSString *)profileType {
+    if ([self isSyncProfilingEnabled]) {
+        self.profileType = profileType;
+        [self performSyncProfiling];
     }
 }
 
@@ -2532,8 +2551,14 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                     if (response.syncStatus == SyncStatusFailed) {
                         [self checkIfRequestTimedOutForSyncProfiling:response.syncError];
                     }
-                    [self initiateSyncProfiling:kSPTypeEnd];
-                }
+                    
+                    if ([self isSyncProfilingEnabled]) {
+                        NSString *syncStatus = (response.syncStatus == SyncStatusSuccess)?kSyncProfileSuccess:kSyncProfileSyncFailure;
+                        [[NSUserDefaults standardUserDefaults] setObject:syncStatus forKey:kSyncProfileFailType];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                        [self initiateSyncProfiling:kSPTypeEnd];
+                    }
+            }
             }
                 break;
             default:
@@ -2556,17 +2581,16 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     [userDefaults synchronize];
 }
 
--(BOOL)isSyncProfilingEnabled {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    BOOL isSyncProfileEnabled = [[userDefaults objectForKey:kSyncProfileEnabled] boolValue];
-    return isSyncProfileEnabled;
+-(BOOL)isSyncProfilingEnabled
+{
+    return self.isSyncProfileEnabled;
 }
 
 -(void)checkIfRequestTimedOutForSyncProfiling:(NSError *)error {
     if ([self isSyncProfilingEnabled]) {
         if (error != nil) {
             if ([[error description] containsString:@"-1001"]) {
-                [self pushSyncProfileInfoToUserDefaultsWithValue:@"Yes" forKey:kSPReqTimedOut];
+                self.isRequestTimedOut = YES;
             }
         }
     }
@@ -2574,7 +2598,95 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 
 -(void)setUpRequestIdForSyncProfiling:(NSString *)requestId {
     // IPAD-4355
-    [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileStartReqId];
+    [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileReqId];
 }
+
+-(void)saveTransferredDataSize:(NSInteger)dataLength forRequestId:(NSString *)requestId
+{
+    self.syncProfileDataSize += dataLength;
+}
+
+-(void)setEndTimeForSyncProfiling
+{
+    if(self.isSyncProfileEnabled)
+    {
+        NSString *startReqId = [self.userDefaults objectForKey:kSyncprofileReqId];
+        if (startReqId)
+        {
+            NSNumber *dataSize = [NSNumber numberWithInteger:self.syncProfileDataSize];
+            if(dataSize)
+            {
+                [self.userDefaults setObject:dataSize forKey:startReqId];
+                NSString *currentDate = [DateUtil getCurrentDateForSyncProfiling];
+                [self.userDefaults setObject:currentDate forKey:kSPSyncTime];
+                [self.userDefaults synchronize];
+            }
+        }
+    }
+}
+
+-(void)clearEndTimeForSyncProfiling
+{
+
+}
+
+-(BOOL)checkIfEndTimeSyncIsPending
+{
+    NSString *prevReqId = [self.userDefaults objectForKey:kSyncprofilePreviousReqId];
+    return (prevReqId)?YES:NO;
+}
+
+-(void)syncProfilingDidRecieveResponse:(id)responseObject
+{
+    @synchronized([self class]){
+        NSString *syncProfileType = self.profileType;
+
+        if ([syncProfileType isEqualToString:kSPTypeStart]) {
+            NSString *currentId = [[NSUserDefaults standardUserDefaults] objectForKey:kSyncprofileReqId];
+            [[NSUserDefaults standardUserDefaults] setObject:currentId forKey:kSyncprofilePreviousReqId];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+        
+        if ([syncProfileType isEqualToString:kSPTypeEnd]) {
+            
+            if ([self checkIfEndTimeSyncIsPending]) {
+                NSString *prevId = [[NSUserDefaults standardUserDefaults] objectForKey:kSyncprofilePreviousReqId];
+                NSString *currentId = [[NSUserDefaults standardUserDefaults] objectForKey:kSyncprofileReqId];
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSyncprofilePreviousReqId];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                if([prevId isEqualToString:currentId] && ![prevId isEqualToString:self.oneCallSyncRequestId])
+                {
+                    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSyncprofileReqId];
+                    [[NSUserDefaults standardUserDefaults] synchronize];
+                }
+                else
+                {
+                    [self initiateSyncProfiling:kSPTypeStart];
+                }
+                
+                self.oneCallSyncRequestId = nil;
+            }
+            else {
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSyncprofileReqId];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            self.syncProfileDataSize = 0;
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSyncProfileFailType];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+    }
+}
+
+- (void)syncProfilingDidRequestFailedWithError:(NSError *)error andResponse:(id)someResponseObj {
+    @synchronized([self class]){
+        if ([self.profileType isEqualToString:kSPTypeEnd]) {
+            if ([self checkIfEndTimeSyncIsPending]) {
+                [[SyncManager sharedInstance] performSyncProfilingWithoutCheckingForPendingEvents:kSPTypeStart];
+            }
+        }
+    }
+}
+
 
 @end
