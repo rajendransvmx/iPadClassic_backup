@@ -232,11 +232,12 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
             nextRequestType = RequestTypePurgeRecords;
         }
         else {
-            nextRequestType = RequestCleanUp;
+            nextRequestType = RequestSyncTimeLogs; //IPAD-4507
         }
     }
     
-    if (nextRequestType == RequestCleanUp) {
+    // IPAD-4507
+    if (nextRequestType == RequestSyncTimeLogs) {
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:nil];
     }
     
