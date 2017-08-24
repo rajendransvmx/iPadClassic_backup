@@ -84,6 +84,7 @@
             }
             
             NSString *status = [[NSUserDefaults standardUserDefaults] objectForKey:kSyncProfileFailType];
+            status = (!status)?@"":status;
             [params setObject:status forKey:kSyncProfileStatusKey];
         }
         self.requestParameter.requestInformation = params;

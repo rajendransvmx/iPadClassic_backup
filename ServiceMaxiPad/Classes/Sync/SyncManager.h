@@ -120,5 +120,7 @@ extern NSString *KBlockScreenForProductIQ;
 -(void)performSyncProfilingWithoutCheckingForPendingEvents:(NSString *)profileType;
 -(void)syncProfilingDidRecieveResponse:(id)responseObject;
 - (void)syncProfilingDidRequestFailedWithError:(NSError *)error andResponse:(id)someResponseObj;
-
+-(BOOL)isSyncProfilingEnabled;
+-(void)setUpRequestIdForSyncProfiling:(NSString *)requestId;
+-(void)initiateSyncProfiling:(NSString *)profileType;
 @end
