@@ -361,14 +361,23 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                       
                       var processCompObj = request.response.objectData[0];
                       
+                      // 012895 - get inner join and sortOrder string
+                      var innerJoin = processCompObj.innerJoin;
+                      var sortingOrder = processCompObj.sortingOrder;
+                      
+                      
+                      // 012895 - setting inner join and sorting order
+                      // 040513 - assigning sorting order and innerjoin to template detail record
+                      templateDetailRecords[index].innerJoin = innerJoin;
+                      templateDetailRecords[index].sortingOrder = sortingOrder;
+                      
+                      
                       if(processCompObj.expressionId.length > 0)
                       {
                       
                       expr_id =  processCompObj.expressionId;
                       
-                      // 012895 - get inner join and sortOrder string
-                      var innerJoin = processCompObj.innerJoin;
-                      var sortingOrder = processCompObj.sortingOrder;
+
                       
                       /* Get the expression for the retrieved expression_id */
                       var exptblName = "SFExpression";
@@ -473,10 +482,7 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                                           templateDetailRecords[index].criteria = advCriteria; // [{fieldName:hdr_ref_fld,fieldValue:ref_fld_Id,operator:'='}];
                                                           templateDetailRecords[index].advancedExpression = advCriteriaExpression;
                                                           
-                                                          
-                                                          // 012895 - setting inner join and sorting order
-                                                          templateDetailRecords[index].innerJoin = innerJoin;
-                                                          templateDetailRecords[index].sortingOrder = sortingOrder;
+
                                                           
                                                           
                                                           
