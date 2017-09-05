@@ -674,6 +674,9 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     if (date != nil) {
         dateInString = [self getDatabaseStringForDate:date];
     }
+    else if(![StringUtil isStringEmpty:literal]){
+        dateInString =literal;
+    }
     return dateInString;
 }
 
