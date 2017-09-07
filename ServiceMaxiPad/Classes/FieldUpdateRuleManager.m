@@ -106,12 +106,21 @@
     
     NSString *param = [NSString stringWithFormat:@"var params = %@", paramsStr];
     
+    /*
     NSString *htmlFileString =[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mobile-fieldupdaterules-app" ofType:@"html"] encoding:NSUTF8StringEncoding error:nil];
     //Fix:RS-7562
     //NSString *htmlContent = [htmlFileString stringByAppendingString:param];//PreviousCode
     
     NSString *htmlContent = [NSString stringWithFormat:htmlFileString,param];
     NSString *finalString = [bizRuleHtmlStr stringByAppendingString:htmlContent];
+     */
+    
+    //Fix - SecScan-581
+    NSString *htmlFileString1  = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mobile-fieldupdaterules-app_1" ofType:@"html"] encoding:NSUTF8StringEncoding error:nil];
+    NSString *htmlFileString2  = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"mobile-fieldupdaterules-app_2" ofType:@"html"] encoding:NSUTF8StringEncoding error:nil];
+    NSString *htmlFinalString = [htmlFileString1 stringByAppendingString:param];
+    htmlFileString1 = [htmlFinalString stringByAppendingString:htmlFileString2];
+    NSString *finalString = [bizRuleHtmlStr stringByAppendingString:htmlFileString1];
     return finalString;
 }
 

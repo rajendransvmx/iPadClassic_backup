@@ -1,0 +1,16 @@
+var results = svmxExecuteFieldUpdateRules({
+rules: rules,
+data: dataToValidate,
+fields: fields
+});
+
+//document.writeln("RESULT:<pre>" + SVMX.prettyPrint(results) + "</pre>");
+var jsonString= JSON.stringify(results);
+$COMM.requestDataForType("fieldUpdateruleresult",jsonString,function(){});
+
+},
+context : {}
+
+});
+window.svmxExecuteFieldUpdateRules = function(inParams)
+{

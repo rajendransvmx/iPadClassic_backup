@@ -1015,8 +1015,11 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
     NSString *local_id = [AppManager generateUniqueId];
     NSString *outputPath = [AttachmentUtility pathToAttachmentfile:local_id withExt:extension];
     NSURL *outputUrl = [NSURL fileURLWithPath:outputPath];
-    NSData *databeforeCompres = [NSData dataWithContentsOfURL:inputPathURL];
-    NSUInteger sizebeforeCompression = [databeforeCompres length];
+    //NSData *databeforeCompres = [NSData dataWithContentsOfURL:inputPathURL];
+    //NSUInteger sizebeforeCompression = [databeforeCompres length];
+    NSUInteger sizebeforeCompression = [[NSData dataWithContentsOfURL:inputPathURL] length]; //SecScan-580
+
+    
     float sizeinMB = (1.0 *sizebeforeCompression)/1048576;
     
     if (sizeinMB > 25) {
@@ -1045,7 +1048,10 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
         
         if([[NSFileManager defaultManager] fileExistsAtPath:[outputUrl path]])
             [[NSFileManager defaultManager] removeItemAtURL:outputUrl error:nil];
-        [[NSFileManager defaultManager] createFileAtPath:[outputUrl path] contents:databeforeCompres attributes:nil];
+        //[[NSFileManager defaultManager] createFileAtPath:[outputUrl path] contents:databeforeCompres attributes:nil];
+        [[NSFileManager defaultManager] createFileAtPath:[outputUrl path] contents:[NSData dataWithContentsOfURL:inputPathURL] attributes:nil];//SecScan-580
+
+        
         [self saveAttachmentInfoDictWithId:local_id andExtension:extension];
         
     }

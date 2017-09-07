@@ -1,0 +1,22 @@
+
+
+try{
+
+var bizrules = SVMX.create("com.servicemax.client.sfmbizrules.impl.FieldUpdateRuleValidator");
+
+var result = bizrules.evaluateFieldUpdateRules(params);
+// result = {warnings: [], errors: []}
+return result;
+}catch(e){
+    return e.message;
+}
+}
+});
+</script>
+
+</head>
+<body>
+    <div id="client_display_root"></div>
+</body>
+</html>
+

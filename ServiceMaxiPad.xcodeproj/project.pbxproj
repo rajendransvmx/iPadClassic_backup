@@ -812,6 +812,8 @@
 		4344089D1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip in Resources */ = {isa = PBXBuildFile; fileRef = 4344089A1C9035B600628FFB /* com.servicemax.client.offline.sal.model.zip */; };
 		4374A8681AAF12F200404768 /* APNSServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4374A8671AAF12F200404768 /* APNSServiceLayer.m */; };
 		43B98E671AC18CCC003DCF80 /* APNSParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43B98E661AC18CCC003DCF80 /* APNSParser.m */; };
+		43BEFA6E1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_1.html in Resources */ = {isa = PBXBuildFile; fileRef = 43BEFA6C1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_1.html */; };
+		43BEFA6F1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_2.html in Resources */ = {isa = PBXBuildFile; fileRef = 43BEFA6D1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_2.html */; };
 		43C5F4861A138FD60046FF43 /* DODParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C5F4851A138FD60046FF43 /* DODParser.m */; };
 		43E7C2DE1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip in Resources */ = {isa = PBXBuildFile; fileRef = 43E7C2DD1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip */; };
 		57186B5919EF9DDD00B4642A /* TroubleshootingDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B4D19EF9DDD00B4642A /* TroubleshootingDataLoader.m */; };
@@ -4104,6 +4106,8 @@
 		4374A8671AAF12F200404768 /* APNSServiceLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APNSServiceLayer.m; sourceTree = "<group>"; };
 		43B98E651AC18CCC003DCF80 /* APNSParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APNSParser.h; sourceTree = "<group>"; };
 		43B98E661AC18CCC003DCF80 /* APNSParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APNSParser.m; sourceTree = "<group>"; };
+		43BEFA6C1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mobile-fieldupdaterules-app_1.html"; sourceTree = "<group>"; };
+		43BEFA6D1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "mobile-fieldupdaterules-app_2.html"; sourceTree = "<group>"; };
 		43C5F4841A138FD60046FF43 /* DODParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DODParser.h; sourceTree = "<group>"; };
 		43C5F4851A138FD60046FF43 /* DODParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DODParser.m; sourceTree = "<group>"; };
 		43E7C2DD1B5CC4C70045E629 /* com.servicemax.client.sfmbizrules.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.sfmbizrules.zip; sourceTree = "<group>"; };
@@ -7998,6 +8002,8 @@
 				427305161A10BD2C005F41E1 /* BusinessRuleManager.m */,
 				427305171A10BD2C005F41E1 /* BusinessRuleResult.h */,
 				427305181A10BD2C005F41E1 /* BusinessRuleResult.m */,
+				43BEFA6C1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_1.html */,
+				43BEFA6D1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_2.html */,
 				427305191A10BD2C005F41E1 /* mobile-bizrules-app.html */,
 				186F7E031B3D705200EDFB2D /* mobile-fieldupdaterules-app.html */,
 				186F7E051B3D9B6300EDFB2D /* FieldUpdateRuleDataFormatter.h */,
@@ -9740,6 +9746,7 @@
 				C3EF97A51A036D7300476293 /* Attachment-Share@2x.png in Resources */,
 				6BE779F11AB95E4700BBE149 /* NotificationTrackerVC.xib in Resources */,
 				40A06F341B06041400218162 /* SExplore@1x.png in Resources */,
+				43BEFA6E1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_1.html in Resources */,
 				184A9E1419E7D592006DA6BE /* map_phone@2x.png in Resources */,
 				5B4F52B71A15D1A90008FDB3 /* File in Cloud - 70.png in Resources */,
 				40A06F211B06033100218162 /* NavBarRecents@3x.png in Resources */,
@@ -9748,6 +9755,7 @@
 				189AE1691BC513D500AD549D /* com.servicemax.client.installigence.native.zip in Resources */,
 				184A8EFD19E7A535006DA6BE /* Map.storyboard in Resources */,
 				40A06F371B06041400218162 /* SNewItem@3x.png in Resources */,
+				43BEFA6F1F5EAA95007AE7DE /* mobile-fieldupdaterules-app_2.html in Resources */,
 				9EEC45D919F27950003B5A43 /* RemoveNew@2x.png in Resources */,
 				4273051F1A10BD2C005F41E1 /* mobile-bizrules-app.html in Resources */,
 				40A06F3B1B06041400218162 /* STasks@3x.png in Resources */,
