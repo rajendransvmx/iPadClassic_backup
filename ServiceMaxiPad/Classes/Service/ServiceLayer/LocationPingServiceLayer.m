@@ -92,6 +92,8 @@
         [finaldict setObject:@"Fields" forKey:kSVMXKey];
         [finaldict setObject:@"" forKey:kSVMXValue];
         
+        NSString *timeRecorded = @""; // IPAD-4607
+        
         if (![StringUtil isStringEmpty:model.latitude] && ![StringUtil isStringEmpty:model.longitude]) {
             
             NSDictionary *latDict = @{kSVMXKey:ORG_NAME_SPACE@"__Latitude__c",
@@ -99,12 +101,20 @@
             NSDictionary *longDict = @{kSVMXKey:ORG_NAME_SPACE@"__Longitude__c",
                                        kSVMXValue:model.longitude};
             [finaldict setObject:@[latDict,longDict] forKey:kSVMXSVMXMap];
+            
+            // IPAD-4607
+            timeRecorded = model.timeRecorded;
+            timeRecorded = [timeRecorded stringByReplacingOccurrencesOfString:@"T" withString:@" "];
+            timeRecorded = [timeRecorded stringByDeletingPathExtension];
+
+            
         } else {
             [finaldict setObject:@[] forKey:kSVMXSVMXMap];
         }
 
         RequestParamModel *reqParModel = [[RequestParamModel alloc]init];
         reqParModel.valueMap = @[finaldict];
+        reqParModel.values = @[timeRecorded]; // IPAD-4607
         result = @[reqParModel];
     }
 

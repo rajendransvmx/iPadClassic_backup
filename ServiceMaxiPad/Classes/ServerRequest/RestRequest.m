@@ -25,6 +25,7 @@
 #import "CustomActionAfterBeforeXMLRequestHelper.h"
 #import "CustomActionXMLRequestHelper.h"
 #import "ProductIQManager.h"
+#import "SyncManager.h"
 
 @implementation RestRequest
 @synthesize dataDictionary;
@@ -188,6 +189,16 @@
                [[PerformanceAnalyser sharedInstance] ObservePerformanceCompletionForContext:contextValue subContextName:subContextValue operationType:PAOperationTypeNetworkLatency andRecordCount:0];
                  
                 [self displayRequest:operation];
+                 
+                 // IPAD-4585
+                 if ([[SyncManager sharedInstance] isSyncProfilingEnabled] && self.eventName && self.requestIdentifier)
+                 {
+                     NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseObject options:0 error:nil];
+                     if (responseData) {
+                         [[SyncManager sharedInstance] saveTransferredDataSize:[responseData length] forRequestId:self.requestIdentifier];
+                     }
+                 }
+                 
                  if (self.requestType ==  RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
                  {
                      //[self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
@@ -356,6 +367,11 @@
             NSData *compressedData = [someData gzipDeflate];
             [urlRequest setHTTPBody:compressedData];
             
+            // IPAD-4585
+            if ([[SyncManager sharedInstance] isSyncProfilingEnabled] && self.eventName && self.requestIdentifier)
+            {
+                [[SyncManager sharedInstance] saveTransferredDataSize:[compressedData length] forRequestId:self.requestIdentifier];
+            }
         }
     }
     
@@ -547,6 +563,9 @@
         case RequestProductIQDeleteData:
             eventType = kSync;
             break;
+        case RequestTypeUserInfo:
+            eventType = kSFDC; // IPAD-4599
+            break;
             
         default:
             break;
@@ -721,6 +740,9 @@
             break;
         case RequestTypeSyncProfiling:
             url = @"https://empp.servicemax-api.com/instrument/clientsync"; // [self getUrlWithStringApppended:@""];
+            break;
+        case RequestTypeUserInfo:
+            url =   [self getUrlWithStringApppended:kGetUserInfoURLLink]; // IPAD-4599
             break;
         default:
             break;
@@ -969,6 +991,9 @@
             break;
         case RequestProductIQDeleteData:
             self.eventName = kProdIQGetDeleteData;
+            break;
+        case RequestTypeUserInfo:
+            self.eventName = kUserInfoEventName; // IPAD-4599
             break;
         default:
             break;

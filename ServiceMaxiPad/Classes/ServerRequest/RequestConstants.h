@@ -144,7 +144,9 @@ typedef NS_ENUM(NSUInteger, RequestType)
     RequestTypeSyncProfiling,
     
     /**Purge event related records**/
-    RequestTypePurgeRecords
+    RequestTypePurgeRecords,
+    
+    RequestTypeUserInfo // IPAD-4599
 };
 
 extern NSString *const kContentType;
@@ -349,8 +351,7 @@ extern NSString *const kSyncProfileAppName;
 extern NSString *const kSyncProfileClientIdKey;
 extern NSString *const kSyncProfileClientNameKey;
 extern NSString *const kSyncProfileRequestIdKey;
-extern NSString *const kSyncprofileStartReqId;
-extern NSString *const kSyncprofileEndReqId;
+extern NSString *const kSyncprofileReqId;
 extern NSString *const kSyncProfileStartTimeKey;
 extern NSString *const kSyncProfileSFProfileIdKey;
 extern NSString *const kSyncProfileIdKey;
@@ -360,3 +361,20 @@ extern NSString *const kSyncProfileGroupProfileKey;
 extern NSString *const kSyncProfileDeviceNameKey;
 extern NSString *const kSyncProfileEndTimeKey;
 extern NSString *const kSyncProfileRequestTimeOutKey;
+
+// IPAD-4585
+extern NSString *const kSyncprofilePreviousReqId;
+extern NSString *const kSyncProfileFailType;
+extern NSString *const kSyncProfileStatusKey;
+extern NSString *const kSyncProfileDataSizeKey;
+extern NSString *const kSyncProfileSuccess;
+extern NSString *const kSyncProfileAppQuit;
+extern NSString *const kSyncProfileSyncFailure;
+
+/* User Info */ // IPAD-4599
+
+extern NSString *const kSFDC;
+extern NSString *const kAddressField;
+extern NSString *const kOrgAddressKey;
+extern NSString *const kGetUserInfoURLLink;
+extern NSString *const kUserInfoEventName;

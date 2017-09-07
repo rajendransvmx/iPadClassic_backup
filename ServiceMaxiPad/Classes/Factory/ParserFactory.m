@@ -46,6 +46,7 @@
 #import "MobileDataUsageParser.h"
 #import "ValidateProfileParser.h"
 #import "PurgeRecordsParser.h"
+#import "UserInfoParser.h"
 
 @implementation ParserFactory
 
@@ -387,6 +388,9 @@
                 break;
             case RequestMasterSyncTimeLog:
                 parser = [[MobileDataUsageParser alloc] init];
+                break;
+            case RequestTypeUserInfo: // IPAD-4599
+                parser = [[UserInfoParser alloc] init];
                 break;
             default:
                 SXLogWarning(@"Invalid parser type requested");

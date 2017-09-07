@@ -361,14 +361,23 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                       
                       var processCompObj = request.response.objectData[0];
                       
+                      // 012895 - get inner join and sortOrder string
+                      var innerJoin = processCompObj.innerJoin;
+                      var sortingOrder = processCompObj.sortingOrder;
+                      
+                      
+                      // 012895 - setting inner join and sorting order
+                      // 040513 - assigning sorting order and innerjoin to template detail record
+                      templateDetailRecords[index].innerJoin = innerJoin;
+                      templateDetailRecords[index].sortingOrder = sortingOrder;
+                      
+                      
                       if(processCompObj.expressionId.length > 0)
                       {
                       
                       expr_id =  processCompObj.expressionId;
                       
-                      // 012895 - get inner join and sortOrder string
-                      var innerJoin = processCompObj.innerJoin;
-                      var sortingOrder = processCompObj.sortingOrder;
+
                       
                       /* Get the expression for the retrieved expression_id */
                       var exptblName = "SFExpression";
@@ -473,10 +482,7 @@ var GetDataForTemplateDetailsRecord = function(inputObj, templateDetailRecords, 
                                                           templateDetailRecords[index].criteria = advCriteria; // [{fieldName:hdr_ref_fld,fieldValue:ref_fld_Id,operator:'='}];
                                                           templateDetailRecords[index].advancedExpression = advCriteriaExpression;
                                                           
-                                                          
-                                                          // 012895 - setting inner join and sorting order
-                                                          templateDetailRecords[index].innerJoin = innerJoin;
-                                                          templateDetailRecords[index].sortingOrder = sortingOrder;
+
                                                           
                                                           
                                                           
@@ -936,6 +942,7 @@ function OPDGetUserInfo(request, callbackFunction, context)
     
     var amTxt = "";
     var pmTxt = "";
+    var orgAddress = ""; // IPAD-4599
     
     $COMM.requestDataForType("relateduserinput","",function(dateString) {
                              
@@ -946,6 +953,7 @@ function OPDGetUserInfo(request, callbackFunction, context)
                              amTxt = dateString.amtext;
                              pmTxt = dateString.pmtext;
                              userFullName = dateString.username;
+                             orgAddress = dateString.orgAddress; // IPAD-4599
                              
                              var fieldNames = [{fieldName:'Id',fieldType:'TEXT'},{fieldName:'Name',fieldType:'TEXT'},{fieldName:'LocaleSidKey',fieldType:'TEXT'},{fieldName:'LanguageLocaleKey',fieldType:'TEXT'},{fieldName:'Street',fieldType:'TEXT'},{fieldName:'City',fieldType:'TEXT'},{fieldName:'State',fieldType:'TEXT'},{fieldName:'Country',fieldType:'TEXT'},{fieldName:'PostalCode',fieldType:'TEXT'}];
                              
@@ -976,7 +984,7 @@ function OPDGetUserInfo(request, callbackFunction, context)
                                                var countryString = userObj.Country;
                                                var postalCode = userObj.PostalCode;
                                                
-                                               var address = addressForData(streetString,cityString,stateString,postalCode,countryString);
+                                               var address = orgAddress; // // IPAD-4599 addressForData(streetString,cityString,stateString,postalCode,countryString);
                                                
                                                var d = new Date();
                                                var today = $UTILITY.dateWithTimeStringForDate(d);

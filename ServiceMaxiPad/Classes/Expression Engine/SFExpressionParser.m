@@ -23,6 +23,7 @@
 #import "SFObjectFieldDAO.h"
 #import "DataTypeUtility.h"
 #import "SFMSearchFilterCriteriaModel.h"
+#import "DateUtil.h"
 
 @interface SFExpressionParser ()
 
@@ -116,13 +117,75 @@
     DBCriteria *criteria = nil;
     SQLOperator sqlOperator = [self sqlOperatorForSFOperator:operator fieldType:fieldType];
     NSString *literalValue = [self valueOfLiteral:rhsValue dataType:fieldType];
-    if ([fieldType isEqualToString:kSfDTDateTime]) {
-        sqlOperator = [self overrideOperatorTypeForDatetime:operator
-                                                        value:rhsValue
+     
+     // IPAD-4596
+     
+     DBCriteria *innerCriteria = nil;
+     DBCriteria *emptyValueCriteria = nil; // needed if source record field's value is empty.
+     NSString *advancedExpression = nil;
+     
+     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+     [formatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+     [formatter setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"]]; // IPAD-4660
+     
+     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+
+     
+     if ([fieldType caseInsensitiveCompare:kSfDTDateTime] == NSOrderedSame && !([rhsValue caseInsensitiveCompare:kLiteralNow] == NSOrderedSame)) //IPAD-4596
+     {
+         sqlOperator = [self overrideOperatorTypeForDatetime:operator
+                                                       value:rhsValue
                                                     operator:sqlOperator];
-        
-        
-    }
+         
+         if (sqlOperator == SQLOperatorGreaterThan)
+         {
+             literalValue = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+         }
+         
+         else if (sqlOperator == SQLOperatorLessThanEqualTo)
+         {
+             literalValue = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+         }
+         else if (sqlOperator == SQLOperatorLike)
+             
+         {
+             sqlOperator = SQLOperatorGreaterThanEqualTo;
+             NSString *startTimeString = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
+             NSString *endTimeString = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+             
+             literalValue = startTimeString;
+
+             NSDate *newDate = [formatter dateFromString:endTimeString];
+             endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+             innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorLessThanEqualTo andFieldValue:endTimeString];
+             advancedExpression = @"AND";
+         }
+         
+         else if (sqlOperator == SQLOperatorNotEqualWithIsNull)
+         {
+             
+             sqlOperator = SQLOperatorLessThan;
+             NSString *startTimeString = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
+             NSString *endTimeString = [NSString stringWithFormat:@"%@ 23:59:59", literalValue];
+             
+             literalValue = startTimeString;
+             
+             NSDate *newDate = [formatter dateFromString:endTimeString];
+             endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+             innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorGreaterThan andFieldValue:endTimeString];
+             
+             emptyValueCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorIsNull andFieldValue:nil];
+         }
+         
+         else
+         {
+             literalValue = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
+         }
+         
+         NSDate *newDate = [formatter dateFromString:literalValue];
+         literalValue = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+
+     }
     else
     {
         sqlOperator = [self overrideOperatorTypeForMultipleValue:operator value:rhsValue operator:sqlOperator withFieldType:fieldType];
@@ -148,7 +211,11 @@
     else
     {
         criteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:sqlOperator andFieldValue:rhsValue];
-
+        if(innerCriteria)
+        {
+            NSArray *innnerCriterias = (emptyValueCriteria)?@[innerCriteria, emptyValueCriteria]:@[innerCriteria];
+            [criteria addOrCriterias:innnerCriterias withExpression:advancedExpression];
+        }
     }
     
      criteria.isCaseInsensitive = YES;

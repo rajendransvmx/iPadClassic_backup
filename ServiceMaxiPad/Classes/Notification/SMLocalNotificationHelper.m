@@ -168,6 +168,7 @@ NSInteger const purgeDataDueAlertTag = 999;
                  * User pressed ok.
                  */
                 [SMDataPurgeManager sharedInstance].isPurgeDataDueAlertShown = NO;
+                [[SMDataPurgeManager sharedInstance] initiateAllDataPurgeProcess]; //IPAD-4651
             }
         }
             break;
