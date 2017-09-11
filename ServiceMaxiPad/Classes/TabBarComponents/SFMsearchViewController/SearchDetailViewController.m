@@ -377,7 +377,10 @@
     }
     
     if([displayType isEqualToString:kSfDTDateTime]) {
-        
+        if (![StringUtil containsString:@"T" inString:value]) {
+            value=[value stringByReplacingOccurrencesOfString:@" " withString:@"T"];
+            value=[value stringByAppendingString:@".000+0000"];
+        }
         value = [DateUtil getUserReadableDateForDateBaseDate:value];
     }
     else if ([displayType isEqualToString:kSfDTDate]) {
