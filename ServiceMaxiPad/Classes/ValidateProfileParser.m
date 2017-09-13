@@ -38,7 +38,7 @@
                     }
                     if ([key isEqualToString:kValidateProfileSyncProfiling]) {
                         [userDefaults setObject:value forKey:kSyncProfileEnabled];
-                        [SyncManager sharedInstance].isSyncProfileEnabled = value;
+                        [SyncManager sharedInstance].isSyncProfileEnabled = [value boolValue];
                     }
                     if ([key isEqualToString:kValidateProfileGroupProfileName]) {
                         [userDefaults setObject:value forKey:kGroupProfileName];
