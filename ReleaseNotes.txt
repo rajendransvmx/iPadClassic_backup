@@ -4,14 +4,14 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.29.017
+Version = 17.29.018
 
 ===========================================
 
 Defect:
 ===========================================
 
-IPAD-4675
+Added Sign-in image for portrait mode.
 
 
 Feature:
