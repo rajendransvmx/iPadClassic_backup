@@ -3,14 +3,14 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.10.023
+Version = 17.10.024
 
 ===========================================
 
 
 Defects:
 ==================
-Sync profiling: data type mismatch issue.
+IPAD-4652
 
 Feature:
 ==================
