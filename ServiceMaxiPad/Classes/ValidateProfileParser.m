@@ -48,6 +48,12 @@
                     if ([key isEqualToString:kValidateProfileSSLPinning]) {
                         [userDefaults setObject:value forKey:kSSLPinningEnabled];
                     }
+                    if ([key isEqualToString:kValidateProfileSyncProfileOrgType]) {
+                        [userDefaults setObject:value forKey:kSyncProfileOrgType];
+                    }
+                    if ([key isEqualToString:kValidateProfileSyncProfileEndPointUrl]) {
+                        [userDefaults setObject:value forKey:kSyncProfileEndPointUrl];
+                    }
                 }
             }
             
@@ -75,7 +81,8 @@
     
     // SECSCAN-260
     [userDefaults removeObjectForKey:kSSLPinningEnabled];
-
+    [userDefaults removeObjectForKey:kSyncProfileEndPointUrl];
+    [userDefaults removeObjectForKey:kSyncProfileOrgType];
     [userDefaults synchronize];
 }
 

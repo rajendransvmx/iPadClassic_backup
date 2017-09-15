@@ -26,6 +26,9 @@ extern  NSString *const kSPTypeStart;
 extern  NSString *const kSPTypeEnd;
 extern  NSString *const kGroupProfileName;
 extern  NSString *const kSPSyncTime;
+extern  NSString *const kSyncProfileEndPointUrl;
+extern  NSString *const kSyncProfileOrgType;
+extern  NSString *const kSyncProfileCustomOrgType;
 
 @interface PlistManager : NSObject
 

@@ -153,6 +153,9 @@ NSString *const kSPTypeStart = @"SPTypeStart";
 NSString *const kSPTypeEnd = @"SPTypeEnd";
 NSString *const kGroupProfileName = @"ServiceMaxGroupProfileName";
 NSString *const kSPSyncTime = @"SPSyncTime";
+NSString *const kSyncProfileEndPointUrl = @"SyncProfileEndPointUrl";
+NSString *const kSyncProfileOrgType = @"SyncProfileOrgType";
+NSString *const kSyncProfileCustomOrgType = @"custom";
 
 @implementation PlistManager
 
