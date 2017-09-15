@@ -14,7 +14,7 @@
 #import "TaskManager.h"
 #import "SNetworkReachabilityManager.h"
 #import "DateUtil.h"
-
+#import "RestRequest.h"
 @interface SyncManagerTests : XCTestCase <FlowDelegate> {
     XCTestExpectation *expectation;
 }
@@ -28,7 +28,10 @@
 @property (nonatomic, strong) NSUserDefaults *userDefaults;
 
 @end
-
+@interface RestRequest (Tests){
+}
+-(NSString *)getSyncProfilingURL;
+@end
 @implementation SyncManagerTests
 
 - (void)setUp {
@@ -136,6 +139,18 @@
     // IPAD-4355
     self.isRequestTimedOut = NO;
     [self pushSyncProfileInfoToUserDefaultsWithValue:requestId forKey:kSyncprofileReqId];
+}
+
+-(void)testIsSyncProfilingEndpointUrlExists{
+    XCTAssert([[[[NSUserDefaults standardUserDefaults]objectForKey:kSyncProfileOrgType]lowercaseString]isEqualToString:kSyncProfileCustomOrgType],@"Custom OrgType");
+}
+-(void)testSyncProfilingEndpointUrlExists{
+    XCTAssert([[NSUserDefaults standardUserDefaults]objectForKey:kSyncProfileEndPointUrl],@"Endpoint URL exists");
+}
+-(void)testSyncProfilingURL{
+    RestRequest *requestClass=[RestRequest new];;
+    NSString *syncProfileUrl=[requestClass getSyncProfilingURL];
+    XCTAssertNotNil(syncProfileUrl,@"SyncProfileURL exists");
 }
 
 @end
