@@ -427,3 +427,5 @@ extern NSString *const kValidateProfileOrgName;
 extern NSString *const kValidateProfileOrgId;
 extern NSString *const kValidateProfileSyncProfiling;
 extern NSString *const kValidateProfileGroupProfileName;
+extern NSString *const kValidateProfileSyncProfileOrgType;
+extern NSString *const kValidateProfileSyncProfileEndPointUrl;
