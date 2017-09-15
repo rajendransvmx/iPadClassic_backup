@@ -19,6 +19,6 @@ IPAD-4674
 
 NOTE:
 
-1. NameSpace: SVMXC
+1. NameSpace: SVMXDEV
 
 
