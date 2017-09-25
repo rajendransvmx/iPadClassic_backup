@@ -369,9 +369,11 @@
         }
     }
 }
+
+// IPAD-4687 - if child record count is more than 1, then response will of type NSArray,not NSDictionary
 -(void)parshingChildRecord:(NSDictionary *)detailDictValue
 {
-    NSDictionary *detailDictValueTemp;
+    id detailDictValueTemp;
     if ([detailDictValue isKindOfClass:[NSDictionary class]]) {
         detailDictValueTemp = [detailDictValue objectForKey:@"SFM_PageData:pageDataSet"];
         if (detailDictValueTemp)
@@ -379,20 +381,38 @@
             if ([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
                 detailDictValueTemp = [detailDictValueTemp objectForKey:@"SFM_PageData:sobjectinfo"];
             }
-            NSDictionary *dict = [self getRecords:detailDictValueTemp];
-            NSString *objectName = [detailDictValueTemp objectForKey:@"xsi:type"];
-            if ([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
-                NSDictionary *id_temp = [detailDictValueTemp objectForKey:@"Id"];
-                if (id_temp) {
-                    NSString *sfId = [id_temp objectForKey:@"text"];
-                    TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
-                    [model setFieldValueDictionaryForFields:dict];
-                    NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
-                    if (![StringUtil isStringEmpty:sfId])
-                        [objectrecords setObject:model forKey:sfId];
-                    [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
+            
+            if([detailDictValueTemp isKindOfClass:[NSDictionary class]]) {
+                [self updateChildRecordInDB:detailDictValueTemp];
+            }
+            
+            if([detailDictValueTemp isKindOfClass:[NSArray class]]) {
+                for (NSDictionary *tempDict in detailDictValueTemp) {
+                    NSDictionary *objectInfoDict = [tempDict objectForKey:@"SFM_PageData:sobjectinfo"];
+                    if([objectInfoDict isKindOfClass:[NSDictionary class]]) {
+                        [self updateChildRecordInDB:objectInfoDict];
+                    }
                 }
             }
+        }
+    }
+}
+
+// IPAD-4687
+-(void)updateChildRecordInDB:(NSDictionary *)recordDict
+{
+    NSDictionary *dict = [self getRecords:recordDict];
+    NSString *objectName = [recordDict objectForKey:@"xsi:type"];
+    if ([recordDict isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *id_temp = [recordDict objectForKey:@"Id"];
+        if (id_temp) {
+            NSString *sfId = [id_temp objectForKey:@"text"];
+            TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
+            [model setFieldValueDictionaryForFields:dict];
+            NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
+            if (![StringUtil isStringEmpty:sfId])
+                [objectrecords setObject:model forKey:sfId];
+            [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
         }
     }
 }
