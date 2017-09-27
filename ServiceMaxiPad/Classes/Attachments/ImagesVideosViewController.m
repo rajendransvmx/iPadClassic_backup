@@ -36,7 +36,7 @@
 #import "FactoryDAO.h"
 #import "AttachmentErrorDAO.h"
 #import "AttachmentErrorService.h"
-
+#import "Photos/Photos.h"
 
 #define MaximumDuration 120
 static NSInteger const kDeleteButton = 321;
@@ -748,42 +748,81 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
     
     [self hideAttachmentPopover];
     
-    if(selectedIndex == ImagePickerOptionFromCameraRoll)
-    {
-        [self startCameraControllerFromViewControllerisImageFromCamera:NO isVideoMode:NO];
+    //Check for PhotoLibrary access persmissions
+    PHAuthorizationStatus photoStatus = [PHPhotoLibrary authorizationStatus];
+    if (photoStatus == PHAuthorizationStatusAuthorized) {
+        [self evaluateAdditionalAccessPermissionAndLaunchSelectedIndexOptions:selectedIndex];
     }
-    else
-    {
-        ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
-        
-        if (status != ALAuthorizationStatusAuthorized)
-        {
-            
-            if (selectedIndex == ImagePickerOptionNewPicture)
-            {
-                [self startCameraControllerFromViewControllerisImageFromCamera:NO isVideoMode:NO];
+    else if (photoStatus == PHAuthorizationStatusDenied) {
+        //Do Nothing
+    }
+    else if (photoStatus == PHAuthorizationStatusNotDetermined) {
+        //Request photo library access authorization
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            if (status == PHAuthorizationStatusAuthorized) {
+                [self evaluateAdditionalAccessPermissionAndLaunchSelectedIndexOptions:selectedIndex];
             }
-            else if(selectedIndex == ImagePickerOptionNewVideo)
-            {
-                [self startCameraControllerFromViewControllerisImageFromCamera:NO isVideoMode:NO];
-            }
-            
-        } else {
-            
-            if (selectedIndex == ImagePickerOptionNewPicture)
-            {
-                [self startCameraControllerFromViewControllerisImageFromCamera:YES isVideoMode:NO];
-            }
-            else if(selectedIndex == ImagePickerOptionNewVideo)
-            {
+        }];
+    }
+    else if (photoStatus == PHAuthorizationStatusRestricted) {
+        // Restricted access - normally won't happen.
+    }
+}
+-(void)evaluateAdditionalAccessPermissionAndLaunchSelectedIndexOptions:(ImagePickerOptions)selectedIndex{
+    if (selectedIndex == ImagePickerOptionNewVideo || selectedIndex==ImagePickerOptionNewPicture) {
+        //Check for camera access permissions
+        AVAuthorizationStatus cameraStatus = (AVAuthorizationStatus)[AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+        if (cameraStatus == AVAuthorizationStatusAuthorized) {
+            if (selectedIndex== ImagePickerOptionNewVideo) {
+                //Check for microphone access permissions
+                AVAuthorizationStatus micStatus = (AVAuthorizationStatus)[AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+                if (micStatus!=AVAuthorizationStatusNotDetermined) {
+                    [self showCaptureViewWhenPermissionIsAuthorizedWithSelectedIndex:selectedIndex];
+                }else{
+                    //Request microphone access authorization
+                    [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted)
+                     {
+                         [self showCaptureViewWhenPermissionIsAuthorizedWithSelectedIndex:selectedIndex];
+                     }];
+                }
                 
-                [self startCameraControllerFromViewControllerisImageFromCamera:YES isVideoMode:YES];
+            }
+            else{
+                [self showCaptureViewWhenPermissionIsAuthorizedWithSelectedIndex:selectedIndex];
             }
         }
+        else if (cameraStatus == AVAuthorizationStatusDenied) {
+            //Do nothing
+        }
+        else if (cameraStatus == AVAuthorizationStatusNotDetermined) {
+            //Request camera access authorization
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted)
+             {
+                 if (granted) {
+                     [self showCaptureViewWhenPermissionIsAuthorizedWithSelectedIndex:selectedIndex];
+                 }
+             }];
+        }
+        else if (cameraStatus == AVAuthorizationStatusRestricted) {
+            // Restricted access - normally won't happen.
+        }
     }
-    
+    else{
+        [self showCaptureViewWhenPermissionIsAuthorizedWithSelectedIndex:selectedIndex];
+    }
 }
 
+-(void)showCaptureViewWhenPermissionIsAuthorizedWithSelectedIndex:(ImagePickerOptions)selectedIndex{
+    if (selectedIndex==ImagePickerOptionFromCameraRoll) {
+        [self startCameraControllerFromViewControllerisImageFromCamera:NO isVideoMode:NO];
+    }
+    else if (selectedIndex==ImagePickerOptionNewPicture) {
+        [self startCameraControllerFromViewControllerisImageFromCamera:YES isVideoMode:NO];
+    }
+    else if (selectedIndex==ImagePickerOptionNewVideo) {
+        [self startCameraControllerFromViewControllerisImageFromCamera:YES isVideoMode:YES];
+    }
+}
 - (BOOL) startCameraControllerFromViewControllerisImageFromCamera:(BOOL)isCameraCapture isVideoMode:(BOOL)isVideoMode {
     
     if(!self.cameraViewController)

@@ -866,6 +866,7 @@
 		5BEFF7B11A24450C0096B254 /* EditableDataValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B01A24450C0096B254 /* EditableDataValidator.m */; };
 		5BEFF7B31A248B950096B254 /* cloud-download.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B21A248B950096B254 /* cloud-download.png */; };
 		5BF1CFFE1A88BEC300F94471 /* SMXMonthCellEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */; };
+		677FE3A01F7B723600BF7C5F /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 677FE39F1F7B723600BF7C5F /* Photos.framework */; };
 		67919D071D6D7A95005E0954 /* AttachmentErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 67919D061D6D7A95005E0954 /* AttachmentErrorService.m */; };
 		6A13E9CC1A9AB6DC00D12CED /* libsqlcipher.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A13E9CB1A9AB6DC00D12CED /* libsqlcipher.a */; };
 		6A1B48031A05FED00003BAA5 /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A1B48021A05FED00003BAA5 /* DatabaseManager.m */; };
@@ -4194,6 +4195,7 @@
 		5BEFF7B21A248B950096B254 /* cloud-download.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cloud-download.png"; sourceTree = "<group>"; };
 		5BF1CFFC1A88BEC300F94471 /* SMXMonthCellEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMonthCellEvent.h; sourceTree = "<group>"; };
 		5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMonthCellEvent.m; sourceTree = "<group>"; };
+		677FE39F1F7B723600BF7C5F /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		67919D051D6D7A95005E0954 /* AttachmentErrorService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorService.h; sourceTree = "<group>"; };
 		67919D061D6D7A95005E0954 /* AttachmentErrorService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorService.m; sourceTree = "<group>"; };
 		67919D081D6D7AAC005E0954 /* AttachmentErrorDAO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorDAO.h; sourceTree = "<group>"; };
@@ -5036,6 +5038,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				677FE3A01F7B723600BF7C5F /* Photos.framework in Frameworks */,
 				A64AADA71CEDCC89008839FB /* CoreTelephony.framework in Frameworks */,
 				A64AADA51CEDCC4F008839FB /* CoreFoundation.framework in Frameworks */,
 				A64AADA31CEDCC37008839FB /* libiconv.tbd in Frameworks */,
@@ -7570,6 +7573,7 @@
 		18A2171B19E57C5A00F22EA6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				677FE39F1F7B723600BF7C5F /* Photos.framework */,
 				A64AADA81CEDCCA7008839FB /* AdSupport.framework */,
 				A64AADA61CEDCC89008839FB /* CoreTelephony.framework */,
 				A64AADA41CEDCC4F008839FB /* CoreFoundation.framework */,
