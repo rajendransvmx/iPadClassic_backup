@@ -8,7 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #include <sqlite3.h>
-
+#if defined(SQLITE_HAS_CODEC)
+SQLITE_API int sqlite3_key(sqlite3 *db, const void *pKey, int nKey);
+SQLITE_API int sqlite3_rekey(sqlite3 *db, const void *pKey, int nKey);
+#endif
 typedef int(^DBExecuteStatementsCallbackBlock)(NSDictionary *resultsDictionary);
 
 @class SQLResultSet;
