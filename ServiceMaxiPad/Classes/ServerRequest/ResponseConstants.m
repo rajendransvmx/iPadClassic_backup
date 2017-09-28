@@ -449,5 +449,9 @@ NSString *const kValidateProfileOrgId = @"ORGID";
 NSString *const kValidateProfileSyncProfiling = @"SYNC_PROFILING";
 NSString *const kValidateProfileGroupProfileName = @"PROFILENAME";
 
+/*IPAD-4674 */
+NSString *const kValidateProfileSyncProfileOrgType = @"SYNC_PROFILING_ORG_TYPE";
+NSString *const kValidateProfileSyncProfileEndPointUrl = @"SYNC_PROFILING_ENDPOINT_URL";
+
 
 

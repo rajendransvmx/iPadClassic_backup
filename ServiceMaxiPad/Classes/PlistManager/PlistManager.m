@@ -154,6 +154,11 @@ NSString *const kSPTypeEnd = @"SPTypeEnd";
 NSString *const kGroupProfileName = @"ServiceMaxGroupProfileName";
 NSString *const kSPSyncTime = @"SPSyncTime";
 
+/*IPAD-4674 */
+NSString *const kSyncProfileEndPointUrl = @"SyncProfileEndPointUrl";
+NSString *const kSyncProfileOrgType = @"SyncProfileOrgType";
+NSString *const kSyncProfileCustomOrgType = @"custom";
+
 @implementation PlistManager
 
 + (void)registerDefaultAppSettings
