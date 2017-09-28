@@ -27,6 +27,11 @@ extern  NSString *const kSPTypeEnd;
 extern  NSString *const kGroupProfileName;
 extern  NSString *const kSPSyncTime;
 
+/*IPAD-4674 */
+extern  NSString *const kSyncProfileEndPointUrl;
+extern  NSString *const kSyncProfileOrgType;
+extern  NSString *const kSyncProfileCustomOrgType;
+
 @interface PlistManager : NSObject
 
 + (void)registerDefaultAppSettings;

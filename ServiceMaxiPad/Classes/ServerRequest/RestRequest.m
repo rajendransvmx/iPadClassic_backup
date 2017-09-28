@@ -26,6 +26,8 @@
 #import "CustomActionXMLRequestHelper.h"
 #import "ProductIQManager.h"
 #import "SyncManager.h"
+#import "PlistManager.h"
+
 
 @implementation RestRequest
 @synthesize dataDictionary;
@@ -736,7 +738,7 @@
             url =   [self getUrlWithStringApppended:kDataSyncUrlLink];
             break;
         case RequestTypeSyncProfiling:
-            url = @"https://empp.servicemax-api.com/instrument/clientsync"; // [self getUrlWithStringApppended:@""];
+            url =[self getSyncProfilingURL];
             break;
         default:
             break;
@@ -744,6 +746,7 @@
     return url;
     
 }
+
 
 /**
  * @name - (void)nameByType:(RequestType)type
@@ -1009,6 +1012,7 @@
     NSString *urlStringNew = [baseUrl stringByAppendingFormat:@"%@%@%@",kRestUrlDPPicklist,objectName,kDPRestURlDescribe];
     return urlStringNew;
 }
+
 
 
 /**
@@ -1464,4 +1468,23 @@
     }
 }
 
+
+/*IPAD-4674 */
+-(NSString *)getSyncProfilingURL{
+    NSString *url;
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:kSyncProfileEndPointUrl]) {
+        NSString *orgType=[[NSUserDefaults standardUserDefaults]objectForKey:kSyncProfileOrgType];
+        if ([[orgType lowercaseString]isEqualToString:kSyncProfileCustomOrgType]) {
+            url=[[NSUserDefaults standardUserDefaults]objectForKey:kSyncProfileEndPointUrl];
+        }
+        else{
+            url=[NSString stringWithFormat:@"%@/instrument/clientsync",[[NSUserDefaults standardUserDefaults]objectForKey:kSyncProfileEndPointUrl]];
+        }
+        
+    }
+    else
+        url = @"https://empp.servicemax-api.com/instrument/clientsync"; // [self getUrlWithStringApppended:@""];
+    
+    return url;
+}
 @end
