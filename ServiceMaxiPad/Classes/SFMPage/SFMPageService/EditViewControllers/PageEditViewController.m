@@ -154,7 +154,6 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self startFormula];
 }
 
 
@@ -214,6 +213,8 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     
     /*Pass all the information to page manager and let it fill up sfpage*/
     [self.sfmEditPageManager fillSfmPage:self.sfmPage andProcessType:self.processType];
+    
+    [self performSelectorOnMainThread:@selector(startFormula) withObject:nil waitUntilDone:NO]; // IPAD-4694
     
     /*Reload both master and child data*/
     [self performSelectorOnMainThread:@selector(refreshAllViews) withObject:nil waitUntilDone:NO];
