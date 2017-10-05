@@ -24,6 +24,8 @@
 #import "TagManager.h"
 #import "StringUtil.h"
 #import "AppManager.h"
+#import "SFPicklistService.h"
+#import "FactoryDAO.h"
 
 @implementation CustomDODButton
 
@@ -179,7 +181,7 @@
     
     SFMRecordFieldData *fldValue1 = (SFMRecordFieldData *)[self.transactionObject valueForField:[fieldModel getDisplayField]];
     
-    NSString *titleString = [self getDisplayStringForValue:fldValue1.displayValue withType:fieldModel.displayType];
+    NSString *titleString = [self getDisplayStringForValue:fldValue1.displayValue withType:fieldModel.displayType forField:fldValue1.name]; // IPAD-4677
     if ([StringUtil isStringEmpty:titleString]) {
         titleString = @"- - - -";
     }
@@ -245,7 +247,7 @@
     return result;
 }
 
-- (NSString *) getDisplayStringForValue:(NSString *)value withType:(NSString *)displayType {
+- (NSString *) getDisplayStringForValue:(NSString *)value withType:(NSString *)displayType forField:(NSString *)fieldName { // IPAD-4677
     if ([Utility isStringEmpty:value] && ![value isKindOfClass:[NSNumber class]]) {
         return @"";
     }
@@ -269,6 +271,13 @@
         //value = istrue ? kYes : kNo; //HS Fix:020290
         value = istrue ? [[TagManager sharedInstance]tagByName:kTagYes]:[[TagManager sharedInstance]tagByName:kTagNo];
         
+    }
+    
+    else if ([displayType isEqualToString:kSfDTPicklist]) { // IPAD-4677
+        
+        id <SFPicklistDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
+        NSString *displayValue =  [picklistService getDisplayValueFromPicklistForObjectName:self.searchObject.targetObjectName forFiledName:fieldName forValue:value];
+        value = (![StringUtil isStringEmpty:displayValue])?displayValue:value;
     }
     else
     {
