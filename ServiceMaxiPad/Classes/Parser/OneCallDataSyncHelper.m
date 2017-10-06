@@ -23,6 +23,7 @@
 #import "CalenderDAO.h"
 #import "CalenderEventObjectService.h"
 #import "CalenderEventObjectModel.h"
+#import "StringUtil.h"
 
 @interface OneCallDataSyncHelper()
 @property(nonatomic,strong)CommonServices *commonServices;
@@ -457,20 +458,26 @@
         
         NSString *objectName =  [serviceRequest getObjectName:whatId];
         
-        NSArray *valuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName]];
-        
-        //filter out duplicate what ids
-        NSArray *finalArray = [NSArray arrayWithArray:[valuesArray arrayByAddingObjectsFromArray:parentWhatIds]];
-        NSArray *filteredArray = [[NSSet setWithArray:finalArray] allObjects];
-        
-        [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:filteredArray forKey:objectName];
+        // IPAD-4588
+        if (![StringUtil isStringEmpty:objectName]) {
+            
+            NSArray *valuesArray = [NSArray arrayWithArray:[[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] objectForKey:objectName]];
+            
+            //filter out duplicate what ids
+            NSArray *finalArray = [NSArray arrayWithArray:[valuesArray arrayByAddingObjectsFromArray:parentWhatIds]];
+            NSArray *filteredArray = [[NSSet setWithArray:finalArray] allObjects];
+            
+            [[[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete] setObject:filteredArray forKey:objectName];
+            
+        }
     }
     
     for (NSString *whatId in whatIds) {
         
         NSString *objectName =  [serviceRequest getObjectName:whatId];
         
-        if ([objectName isEqualToString:kWorkOrderTableName]) {
+        // IPAD-4588
+        if (![StringUtil isStringEmpty:objectName] && [objectName isEqualToString:kWorkOrderTableName]) {
             
             childWhatIds = [NSMutableArray arrayWithArray:[self getChildLineIdsForWO:whatId]];
             
