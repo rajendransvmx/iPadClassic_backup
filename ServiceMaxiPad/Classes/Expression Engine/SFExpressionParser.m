@@ -155,8 +155,10 @@
              
              literalValue = startTimeString;
 
-             NSDate *newDate = [formatter dateFromString:endTimeString];
-             endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+            // NSDate *newDate = [formatter dateFromString:endTimeString];
+             //endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+             endTimeString = [self getGMTDateStringForDateString:endTimeString];//Fix:IPAD-4679
+
              innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorLessThanEqualTo andFieldValue:endTimeString];
              advancedExpression = @"AND";
          }
@@ -170,8 +172,9 @@
              
              literalValue = startTimeString;
              
-             NSDate *newDate = [formatter dateFromString:endTimeString];
-             endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+             //NSDate *newDate = [formatter dateFromString:endTimeString];
+             //endTimeString = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+             endTimeString = [self getGMTDateStringForDateString:endTimeString];//Fix:IPAD-4679
              innerCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorGreaterThan andFieldValue:endTimeString];
              
              emptyValueCriteria = [[DBCriteria alloc] initWithFieldName:lhsValue operatorType:SQLOperatorIsNull andFieldValue:nil];
@@ -182,8 +185,9 @@
              literalValue = [NSString stringWithFormat:@"%@ 00:00:00", literalValue];
          }
          
-         NSDate *newDate = [formatter dateFromString:literalValue];
-         literalValue = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+         //NSDate *newDate = [formatter dateFromString:literalValue];
+         //literalValue = [DateUtil gmtStringFromDate:newDate inFormat:kDateFormatDefault];
+         literalValue = [self getGMTDateStringForDateString:literalValue];//Fix:IPAD-4679
 
      }
     else
@@ -222,6 +226,23 @@
      
     return criteria;
 }
+
+//Fix:IPAD-4679
+-(NSString *)getGMTDateStringForDateString:(NSString *)localDate
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+    [dateFormatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
+    NSDate *test = [dateFormatter dateFromString:localDate];
+    
+    NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:@"GMT"];
+    [dateFormatter setTimeZone:timeZone];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZ"];
+    NSString *dateString = [dateFormatter stringFromDate:test];
+    return dateString;
+}
+
 
 
 - (SQLOperator) sqlOperatorForSFOperator:(NSString *)sfOperator fieldType:(NSString *)fieldType
