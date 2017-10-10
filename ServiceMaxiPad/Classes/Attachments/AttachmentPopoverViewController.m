@@ -11,6 +11,7 @@
 #import "TagConstant.h"
 #import "StyleManager.h"
 #import "StyleGuideConstants.h"
+#import <Photos/Photos.h>
 
 @interface AttachmentPopoverViewController ()
 
@@ -72,9 +73,37 @@
     }
     
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:16.0f];
-    cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
     cell.textLabel.text = [_optionsArray objectAtIndex:indexPath.row];
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
+    // IPAD-4703
+    switch (indexPath.row) {
+        case 0:
+        {
+            PHAuthorizationStatus photoStatus = [PHPhotoLibrary authorizationStatus];
+            if (photoStatus != PHAuthorizationStatusAuthorized) {
+                cell.textLabel.textColor = [UIColor lightGrayColor];
+            }
+            else {
+                cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
+            }
+        }
+            break;
+        case 1:
+        case 2:
+        {
+            AVAuthorizationStatus cameraStatus = (AVAuthorizationStatus)[AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+            if (cameraStatus != AVAuthorizationStatusAuthorized) {
+                cell.textLabel.textColor = [UIColor lightGrayColor];
+            }
+            else {
+                cell.textLabel.textColor = [UIColor getUIColorFromHexValue:kOrangeColor];
+            }
+        }
+            break;
+        default:
+            break;
+    }
+    
     return cell;
 }
 
