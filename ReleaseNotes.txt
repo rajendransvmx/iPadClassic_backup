@@ -3,13 +3,13 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.20.013
+Version = 17.20.014
 
 ===========================================
 
 Defect:
 ===========================================
-Sum17 - IPAD-4674 iPad - Sync Profiling Endpoint Configuration - Client Changes
+iOS 11 fixes.
 
 NOTE:
 
