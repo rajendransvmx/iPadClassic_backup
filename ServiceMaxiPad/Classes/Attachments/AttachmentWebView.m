@@ -278,8 +278,7 @@ static NSInteger const kDeleteButton = 321;
 - (void)populateNavigationBar
 {
     NSDictionary *textAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [UIColor whiteColor],NSForegroundColorAttributeName,
-                                    [UIColor whiteColor],NSBackgroundColorAttributeName,nil];
+                                    [UIColor whiteColor],NSForegroundColorAttributeName, nil]; // IPAD-4702
     
     self.navigationController.navigationBar.titleTextAttributes = textAttributes;
     self.navigationItem.title = _attachmentTXModel.name;

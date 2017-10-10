@@ -9,6 +9,7 @@
 #import "BarCodeScannerUtility.h"
 #import "SMAppDelegate.h"
 #import "BarCoderScannerViewController.h"
+#import <Photos/Photos.h>
 
 @interface BarCodeScannerUtility () <BarCoderScannerViewDelegate>
 
@@ -36,7 +37,29 @@
  *
  */
 - (void)loadScannerOnViewController:(UIViewController *)viewController forModalPresentationStyle:(NSInteger)presentationStyle {
-    
+    AVAuthorizationStatus cameraStatus = (AVAuthorizationStatus)[AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (cameraStatus == AVAuthorizationStatusAuthorized) {
+        [self loadBarCodeScannerOnViewController:viewController forModalPresentationStyle:presentationStyle];
+    }
+    else if (cameraStatus == AVAuthorizationStatusDenied) {
+        //Don nothing.
+    }
+    else if (cameraStatus == AVAuthorizationStatusNotDetermined) {
+        //Request camera access authorization
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted)
+         {
+             if (granted) {
+                 [self loadBarCodeScannerOnViewController:viewController forModalPresentationStyle:presentationStyle];
+             }
+         }];
+    }
+    else if (cameraStatus == PHAuthorizationStatusRestricted) {
+        // Restricted access - normally won't happen.
+    }
+}
+
+-(void)loadBarCodeScannerOnViewController:(UIViewController *)viewController forModalPresentationStyle:(NSInteger)presentationStyle{
+
     SXLogDebug(@"\n\n\n Loaded scanner");
     self.scanner = [[BarCoderScannerViewController alloc] initWithNibName:@"BarCoderScannerViewController" bundle:nil];
     self.scanner.readerDelegate = self;
