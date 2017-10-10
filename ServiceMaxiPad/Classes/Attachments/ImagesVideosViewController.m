@@ -1001,7 +1001,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
 
 - (void) dataFromCapturedImage:(NSData *)capturedImageData extension:(NSString *)extension
 {
-    if ([StringUtil isStringEmpty:extension]) {
+    if ([StringUtil isStringEmpty:extension] || ![extension caseInsensitiveCompare:@"png"]) {
         extension = kJpgExtension;
     }
     
