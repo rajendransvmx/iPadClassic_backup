@@ -185,29 +185,22 @@
                  
                 [self displayRequest:operation];
                  
+                 // IPAD-4585
+                 if ([[SyncManager sharedInstance] isSyncProfilingEnabled] && self.eventName && self.requestIdentifier)
+                 {
+                     NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseObject options:0 error:nil];
+                     if (responseData) {
+                         [[SyncManager sharedInstance] saveTransferredDataSize:[responseData length] forRequestId:self.requestIdentifier];
+                     }
+                 }
+                 
                  if (self.requestType ==  RequestTypeCustomActionWebService || self.requestType == RequestTypeCustomActionWebServiceAfterBefore)
                  {
-                     // IPAD-4585
-                     if ([[SyncManager sharedInstance] isSyncProfilingEnabled] && self.eventName && self.requestIdentifier)
-                     {
-                         NSData *responseData = operation.responseData;
-                         if (responseData) {
-                             [[SyncManager sharedInstance] saveTransferredDataSize:[responseData length] forRequestId:self.requestIdentifier];
-                         }
-                     }
                      //[self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
                      [self performSelectorInBackground:@selector(didReceiveResponseSuccessfullyForAfterBeforeSave:) withObject:operation];
                  }
                  else
                  {
-                     // IPAD-4585
-                     if ([[SyncManager sharedInstance] isSyncProfilingEnabled] && self.eventName && self.requestIdentifier)
-                     {
-                         NSData *responseData = [NSJSONSerialization dataWithJSONObject:responseObject options:0 error:nil];
-                         if (responseData) {
-                             [[SyncManager sharedInstance] saveTransferredDataSize:[responseData length] forRequestId:self.requestIdentifier];
-                         }
-                     }
                      [self performSelectorInBackground:@selector(didReceiveResponseSuccessfully:) withObject:responseObject];
                  }
              }
