@@ -92,7 +92,8 @@ NSString *const kTableSFExpressionComponentSchema = @"CREATE TABLE IF NOT EXISTS
 // sequence_number varchar
 //NSString *const kTableSFExpressionComponentSchema1 = @"CREATE TABLE IF NOT EXISTS SFExpressionComponent ('local_id' INTEGER PRIMARY KEY NOT NULL, 'expression_id' VARCHAR, 'component_sequence_number' VARCHAR, 'component_lhs' VARCHAR, 'component_rhs' VARCHAR, 'operator'CHAR)";
 
-NSString *const kTableSFExpressionSchema = @"CREATE TABLE IF NOT EXISTS SFExpression ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'expressionId' VARCHAR, 'expression' VARCHAR, 'expressionName' VARCHAR, 'errorMessage' VARCHAR, 'sourceObjectName' VARCHAR, 'sequence' DOUBLE)";
+//IPAD-4697 - Added Unique key as "expressionId" to avoid dublicates
+NSString *const kTableSFExpressionSchema = @"CREATE TABLE IF NOT EXISTS SFExpression ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'expressionId' VARCHAR UNIQUE, 'expression' VARCHAR, 'expressionName' VARCHAR, 'errorMessage' VARCHAR, 'sourceObjectName' VARCHAR, 'sequence' DOUBLE)";
 
 // source ObjectName and sequenece
 //NSString *const kTableSFExpressionSchema1 = @"CREATE TABLE IF NOT EXISTS SFExpression ('local_id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'expression_id' VARCHAR, 'expression' VARCHAR, 'expression_name' VARCHAR, 'error_message' VARCHAR)";
