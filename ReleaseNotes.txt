@@ -3,14 +3,15 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.10.029
+Version = 17.10.030
 
 ===========================================
 
 
 Defects:
 ==================
-Custom web service crash when sync profiling is enabled.
+IPH-3186
+
 
 Feature:
 ==================
