@@ -46,6 +46,12 @@
     _optionsArray = [[NSArray alloc] initWithObjects:addFromCamera, takeNewPicture,takeNewVideo, nil];
 }
 
+
+-(void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [attachmentTableView reloadData]; // IPH-3186
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -75,12 +81,13 @@
     cell.textLabel.font = [UIFont fontWithName:kHelveticaNeueLight size:16.0f];
     cell.textLabel.text = [_optionsArray objectAtIndex:indexPath.row];
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
-    // IPAD-4703
+    
+    PHAuthorizationStatus photoStatus = [PHPhotoLibrary authorizationStatus]; //IPH-3186
+    
     switch (indexPath.row) {
         case 0:
         {
-            PHAuthorizationStatus photoStatus = [PHPhotoLibrary authorizationStatus];
-            if (photoStatus != PHAuthorizationStatusAuthorized) {
+            if (photoStatus == PHAuthorizationStatusRestricted || photoStatus == PHAuthorizationStatusDenied) { //IPH-3186
                 cell.textLabel.textColor = [UIColor lightGrayColor];
             }
             else {
@@ -92,7 +99,7 @@
         case 2:
         {
             AVAuthorizationStatus cameraStatus = (AVAuthorizationStatus)[AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-            if (cameraStatus != AVAuthorizationStatusAuthorized) {
+            if (cameraStatus == AVAuthorizationStatusRestricted || cameraStatus == AVAuthorizationStatusDenied || photoStatus == PHAuthorizationStatusRestricted || photoStatus == PHAuthorizationStatusDenied) { //IPH-3186
                 cell.textLabel.textColor = [UIColor lightGrayColor];
             }
             else {
