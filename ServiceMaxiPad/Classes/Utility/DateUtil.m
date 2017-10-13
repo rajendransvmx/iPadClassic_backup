@@ -146,23 +146,29 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
 
 + (NSString *)stringFromDate:(NSDate *)date inFormat:(NSString *)format
 {
-    NSAssert(format != NULL, @"stringFromDate:inFormat: The format string must not be NULL!");
-    NSAssert(date != NULL, @"stringFromDate:inFormat: The input date must not be NULL!");
-    NSAssert(format != nil, @"stringFromDate:inFormat: The format string must not be nil!");
-    NSAssert(date != nil, @"stringFromDate:inFormat: The input date must not be nil!");
+    //    NSAssert(format != NULL, @"stringFromDate:inFormat: The format string must not be NULL!");
+    //    NSAssert(date != NULL, @"stringFromDate:inFormat: The input date must not be NULL!");
+    //    NSAssert(format != nil, @"stringFromDate:inFormat: The format string must not be nil!");
+    //    NSAssert(date != nil, @"stringFromDate:inFormat: The input date must not be nil!");
     
-    time_t timeInterval;
-    struct tm time;
-    char buffer[80];
-    const char *formatString = [format cStringUsingEncoding:NSASCIIStringEncoding];
-    
-    timeInterval = [date timeIntervalSince1970];
-    time = *localtime(&timeInterval);
-    //time = *gmtime (&timeInterval);
-    
-    strftime_l(buffer, sizeof(buffer), formatString, &time, NULL);
-    
-    return [NSString stringWithCString:buffer encoding:NSASCIIStringEncoding];
+    if (!date) {
+        return @"";
+    }
+    else {
+        
+        time_t timeInterval;
+        struct tm time;
+        char buffer[80];
+        const char *formatString = [format cStringUsingEncoding:NSASCIIStringEncoding];
+        
+        timeInterval = [date timeIntervalSince1970];
+        time = *localtime(&timeInterval);
+        //time = *gmtime (&timeInterval);
+        
+        strftime_l(buffer, sizeof(buffer), formatString, &time, NULL);
+        
+        return [NSString stringWithCString:buffer encoding:NSASCIIStringEncoding];
+    }
 }
 
 /**
