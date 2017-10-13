@@ -37,6 +37,7 @@
 #import "SFObjectFieldDAO.h"
 #import "PageEditPickerFieldController.h"
 #import "SFMPickerData.h"
+#import "SFPicklistDAO.h"
 
 #define SRCH_ROW_HEIGHT 80.0
 #define SRCH_SECTION_HEIGHT 50.0
@@ -359,7 +360,7 @@
         SFMRecordFieldData *fldValue = (SFMRecordFieldData *)[objectData valueForField:[fieldModel getDisplayField]];
         
         NSString *label = [objectFieldService getFieldLabelFromFieldName:[fieldModel getDisplayField] andObjectName:fieldModel.objectName];
-        NSString *value = [self getDisplayStringForValue:fldValue.displayValue withType:fieldModel.displayType];
+        NSString *value = [self getDisplayStringForValue:fldValue.displayValue withType:fieldModel.displayType forField:fldValue.name andObjectName:srchObj.targetObjectName]; // IPAD-4677
         
         if ((label !=nil) && (value != nil))
         {
@@ -371,7 +372,7 @@
     return dataArray;
 }
 
-- (NSString *) getDisplayStringForValue:(NSString *)value withType:(NSString *)displayType {
+- (NSString *) getDisplayStringForValue:(NSString *)value withType:(NSString *)displayType forField:(NSString *)fieldName andObjectName:(NSString *)objectName { // IPAD-4677
     if ([Utility isStringEmpty:value] && ![value isKindOfClass:[NSNumber class]]) {
         return @"";
     }
@@ -397,6 +398,12 @@
         BOOL istrue = [Utility isItTrue:value];
         //value = istrue ? kYes : kNo;//HS Fix:020290
         value = istrue ? [[TagManager sharedInstance]tagByName:kTagYes]:[[TagManager sharedInstance]tagByName:kTagNo];
+    }
+    else if ([displayType isEqualToString:kSfDTPicklist]) { // IPAD-4677
+        
+        id <SFPicklistDAO> picklistService = [FactoryDAO serviceByServiceType:ServiceTypeSFPickList];
+        NSString *displayValue =  [picklistService getDisplayValueFromPicklistForObjectName:objectName forFiledName:fieldName forValue:value];
+        value = (![StringUtil isStringEmpty:displayValue])?displayValue:value;
     }
     else
     {

@@ -52,39 +52,76 @@ NSMutableString *currentElementValue;
     if (page)
     {
         [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kEventType,kEventType]];
-        [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kFieldsToNull,kFieldsToNull]];
-        [xml appendString:[NSString stringWithFormat:@"<%@>SCON_SC_Activate</%@>",kSfmProcessId,kSfmProcessId]];
+        [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kSfmProcessId, page.process.processInfo.processId,kSfmProcessId]]; // IPAD-4687
         [xml appendString:[NSString stringWithFormat:@"%@",[self getHeaderRecordNode:customActionWebserviceModel.sfmPage]]];
         [xml appendString:[NSString stringWithFormat:@"%@",[self getDetailsRecordNode:customActionWebserviceModel.sfmPage]]];
     }
     return xml;
 }
 
+// IPAD-4687
 -(NSString *)getHeaderRecordNode:(SFMPage *)sfmPage
 {
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
-    [xml appendString:[NSString stringWithFormat:@"<%@>   </%@>",KHeaderRecord,KHeaderRecord]];
-    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KHeaderRecord,[self getRecodeNode:sfmPage.headerRecord objectName:sfmPage.objectName recordType:KHeaderRecord pageLayout:sfmPage.process.pageLayout.headerLayout.hdrLayoutId],KHeaderRecord]];
+    
+    NSString *parentColumnName = @"";
+    NSString *pageLayoutId = sfmPage.process.pageLayout.headerLayout.hdrLayoutId;
+    
+    NSMutableString *tempXML = [[NSMutableString alloc] initWithString:@""];
+    
+    [tempXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KObjName,sfmPage.objectName,KObjName]];
+    [tempXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kAliasName,pageLayoutId,kAliasName]];
+    [tempXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kParentColumnName,parentColumnName,kParentColumnName]];
+    [tempXML appendString:[NSString stringWithFormat:@"<%@></%@>",kDeleteRecID,kDeleteRecID]];
+    [tempXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kPageLayoutId,pageLayoutId,kPageLayoutId]];
+    
+    NSMutableString *recordsXML = [NSMutableString stringWithString:@""];
+    [recordsXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kRecords,[self getRecordXMLString:sfmPage.headerRecord], kRecords]];
+    [tempXML appendString:recordsXML];
+    
+    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KHeaderRecord,tempXML,KHeaderRecord]];
     return xml;
 }
 
+// IPAD-4687 - aliasname, parentcolumn name, targetRecordId is mandatory
 -(NSString *)getDetailsRecordNode:(SFMPage *)sfmPage
 {
-    NSDictionary *dict = sfmPage.detailsRecord;
+    NSDictionary *detailRecords = sfmPage.detailsRecord;
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     NSDictionary *objectDict = [self getProcessComponentIdFromSfPage:sfmPage];
-    NSDictionary *pageLayoutId = [self getPageLayoutIds:sfmPage.process.pageLayout.detailLayouts];
-    if (dict)
-    {
-        for (NSString *key_Id in [dict allKeys])
-        {
-            NSString *objectName = [objectDict objectForKey:key_Id];
-            NSArray *itemArray = [dict objectForKey:key_Id];
-            for (NSDictionary *childDict in itemArray)
-            {
-                [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kDetailRecords,[self getRecodeNode:childDict objectName:objectName recordType:kDetailRecords pageLayout:[pageLayoutId objectForKey:key_Id]],kDetailRecords]];
-            }
+    NSDictionary *pageLayoutDict = [self getPageLayoutIds:sfmPage.process.pageLayout.detailLayouts];
+    
+    NSMutableString *tempXML = [[NSMutableString alloc] initWithString:@""];
+    
+    for (NSString *pageLayoutId in pageLayoutDict) {
+        
+        NSString *parentColumnName;
+        SFProcessComponentModel *processComponent = [sfmPage.process.component objectForKey:pageLayoutId];
+        if (processComponent) {
+            parentColumnName = processComponent.parentColumnName;
         }
+        
+        if (parentColumnName == nil) {
+            parentColumnName = @"";
+        }
+        
+        NSString *objectName = [objectDict objectForKey:pageLayoutId];
+        NSString *layoutId = [pageLayoutDict objectForKey:pageLayoutId];
+        
+        [tempXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",KObjName,objectName,KObjName]];
+        [tempXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kAliasName,layoutId,kAliasName]];
+        [tempXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kParentColumnName,parentColumnName,kParentColumnName]];
+        [tempXML appendString:[NSString stringWithFormat:@"<%@></%@>",kDeleteRecID,kDeleteRecID]];
+        [tempXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kPageLayoutId,layoutId,kPageLayoutId]];
+        
+        NSArray *componentLevelRecords = [detailRecords objectForKey:pageLayoutId];
+        NSMutableString *recordsXML = [NSMutableString stringWithString:@""];
+        for (NSDictionary *record in componentLevelRecords) {
+            [recordsXML appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kRecords,[self getRecordXMLString:record], kRecords]];
+        }
+        
+        [tempXML appendString:recordsXML];
+        [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kDetailRecords,tempXML,kDetailRecords]];
     }
     return xml;
 }
@@ -131,10 +168,13 @@ NSMutableString *currentElementValue;
         for(NSString *string in [dict allKeys])
         {
             if (![string isEqualToString:@"localId"]) {
-                [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kTargetRecordAsKeyValue,[self getValueNode:[dict objectForKey:string]],kTargetRecordAsKeyValue]];
+                [xml appendString:[NSString stringWithFormat:@"%@",[self getValueNode:[dict objectForKey:string]]]];
             }
         }
     }
+    
+    SFMRecordFieldData *recordData = [dict objectForKey:kId];
+    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kTargetRecordId,recordData.internalValue,kTargetRecordId]];
     [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSourceRecordId,kSourceRecordId]];
 
     return xml;
@@ -143,14 +183,13 @@ NSMutableString *currentElementValue;
 -(NSString *)getValueNode:(SFMRecordFieldData *)recordFieldData
 {
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
-    [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kFieldsToNull,kFieldsToNull]];
-    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kKey,recordFieldData.name,kKey]];
     
-    /* Testing on 22 sep  */
-    //[xml appendString:[NSString stringWithFormat:@"<%@></%@>",kSortValue,kSortValue]];
-    //[xml appendString:[NSString stringWithFormat:@"<%@></%@>",kType,kType]];
-    [xml appendString:[NSString stringWithFormat:@"<%@></%@>",kValue1,kValue1]];
-    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kValue,recordFieldData.internalValue,kValue]];
+    NSString *key = [NSString stringWithFormat:@"<%@>%@</%@>",kKey,recordFieldData.name,kKey];
+    
+    NSString *inval = recordFieldData.internalValue;
+    NSString *value = [NSString stringWithFormat:@"<%@>%@</%@>",kValue,inval,kValue];
+    
+    [xml appendString:[NSString stringWithFormat:@"<%@>%@%@</%@>", kTargetRecordAsKeyValue, key, value, kTargetRecordAsKeyValue]];
     return xml;
 }
 
