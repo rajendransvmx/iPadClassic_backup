@@ -378,3 +378,7 @@ extern NSString *const kAddressField;
 extern NSString *const kOrgAddressKey;
 extern NSString *const kGetUserInfoURLLink;
 extern NSString *const kUserInfoEventName;
+
+// Multi-server support
+extern NSString *const kServerVersionKey;
+extern NSString *const kSVMXVersion;

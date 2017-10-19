@@ -91,17 +91,24 @@
 
 - (BOOL)isProductIQSettingEnable {
     
-    return NO; // IPAD-4506
-    
-    /*
-    BOOL settingEnabled = NO;
-    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
-    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"PRODIQ002_SET001"];
-    settingEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
-    
-    return settingEnabled;
-     */
+    // Multi-server support
+    NSString *serverVersion = [[NSUserDefaults standardUserDefaults] objectForKey:kServerVersionKey];
+    float sVersion = [serverVersion floatValue];
+   
+    // if server version is less than Sum 17, then Product IQ is setting driven. From Sum 17 onwards, PIQ is disabled from client end.
+    if(sVersion < 17.20) {
+        BOOL settingEnabled = NO;
+        MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+        MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"PRODIQ002_SET001"];
+        settingEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+        
+        return settingEnabled;
+    }
+    else {
+        return NO; // IPAD-4506
+    }
 }
+
 - (BOOL)isProductIQRelatedFieldsAvailableOnSFMPageView:(SFMPageViewModel*)sfmPageView {
     BOOL productIQFieldsAvailable = NO;
     
