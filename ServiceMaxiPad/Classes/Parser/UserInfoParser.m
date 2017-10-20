@@ -23,6 +23,13 @@
                 [[NSUserDefaults standardUserDefaults] setObject:orgAddress forKey:kOrgAddressKey];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
+            
+            // Multi-server support
+            NSString *svmxVersion = [responseData objectForKey:kSVMXVersion];
+            if (svmxVersion) {
+                [[NSUserDefaults standardUserDefaults] setObject:svmxVersion forKey:kServerVersionKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
         }
     }
     

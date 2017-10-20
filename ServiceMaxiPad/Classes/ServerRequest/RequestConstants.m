@@ -232,3 +232,7 @@ NSString *const kAddressField = @"Address";
 NSString *const kOrgAddressKey = @"kOrgAddress";
 NSString *const kGetUserInfoURLLink = @"getUserInfo";
 NSString *const kUserInfoEventName = @"UserInfo";
+
+// Multi-server support
+NSString *const kServerVersionKey = @"kServerVersion";
+NSString *const kSVMXVersion = @"SvmxVersion";
