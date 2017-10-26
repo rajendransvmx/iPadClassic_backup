@@ -49,7 +49,10 @@
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted)
          {
              if (granted) {
-                 [self loadBarCodeScannerOnViewController:viewController forModalPresentationStyle:presentationStyle];
+                 // IPAD-4720
+                 dispatch_sync(dispatch_get_main_queue(), ^{
+                     [self loadBarCodeScannerOnViewController:viewController forModalPresentationStyle:presentationStyle];
+                 });
              }
          }];
     }
@@ -57,7 +60,7 @@
         // Restricted access - normally won't happen.
     }
 }
-
+                               
 -(void)loadBarCodeScannerOnViewController:(UIViewController *)viewController forModalPresentationStyle:(NSInteger)presentationStyle{
 
     SXLogDebug(@"\n\n\n Loaded scanner");
