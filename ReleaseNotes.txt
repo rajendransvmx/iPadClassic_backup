@@ -3,15 +3,15 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.10.031
+Version = 17.10.032
 
 ===========================================
 
 
 Defects:
 ==================
-IPAD-4694
-
+IPAD-4730
+(iPad) Decimal setting is not respected as decimal place is not taken into account for total length of text.
 
 Feature:
 ==================
