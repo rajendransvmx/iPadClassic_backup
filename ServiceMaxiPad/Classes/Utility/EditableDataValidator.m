@@ -102,17 +102,17 @@
         {
             return NO;
         }
-        
-        /*if(scaleStr.length > scale){
+        //Defect Fix 041025
+        if(scaleStr.length > scale){
             return NO;
-        }*/
+        }
         
        
         
       //  NSInteger finalPreclength = ([finalStr containsString:@"."])?precision+1:precision;
         
         NSInteger finalPreclength = ([StringUtil containsString:@"." inString:finalStr])?precision+1:precision;
-
+        finalPreclength = ([StringUtil containsString:@"-" inString:finalStr])?finalPreclength+1:finalPreclength;//Defect Fix 041025
         if(finalStr.length > finalPreclength){
             return NO;
         }
