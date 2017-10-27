@@ -122,6 +122,16 @@
     }
     if(textField.text.length + string.length > currentLenght)
     {
+        //Defect Fix 041025
+        if([self.dataType isEqualToString:kSfDTCurrency]  //For numberfields should consider decimal point and negative sign.
+                || [self.dataType isEqualToString:kSfDTDouble]
+                || [self.dataType isEqualToString:kSfDTPercent]) {
+            BOOL isTextAllowed =  [EditableDataValidator validateNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType];
+            if(isTextAllowed){
+                return  [EditableDataValidator precisionHandlingNumberString:string inParentString:textField.text withRange:range andDataType:self.dataType precision:self.precision scale:self.scale];
+            }
+            return isTextAllowed;
+        }
         return NO;
     }
     else
