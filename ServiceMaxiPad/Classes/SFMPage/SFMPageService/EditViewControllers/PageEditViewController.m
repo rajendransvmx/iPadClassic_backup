@@ -147,7 +147,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self loadChildViewControllers];
-    [self loadData];
+    [self loadData:NO]; //IPAD-4735
     [self setUpNavigationBarButtonItems];
     [self invalidateLinkedSfm];
 }
@@ -204,7 +204,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 
 #pragma mark - Loading Data
 
-- (void)loadData {
+- (void)loadData:(BOOL)forLinkedSFM { // IPAD-4735
     /* Start activity indicator */
     
     /*Create page edit manager*/
@@ -214,7 +214,10 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     /*Pass all the information to page manager and let it fill up sfpage*/
     [self.sfmEditPageManager fillSfmPage:self.sfmPage andProcessType:self.processType];
     
-    [self performSelectorOnMainThread:@selector(startFormula) withObject:nil waitUntilDone:NO]; // IPAD-4694
+    // IPAD-4735
+    if (!forLinkedSFM) {
+        [self performSelectorOnMainThread:@selector(startFormula) withObject:nil waitUntilDone:NO]; // IPAD-4694
+    }
     
     /*Reload both master and child data*/
     [self performSelectorOnMainThread:@selector(refreshAllViews) withObject:nil waitUntilDone:NO];
@@ -981,7 +984,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
             didSave = YES;
             
             if ([self isEditProcess]) {
-                [self loadData];
+                [self loadData:YES]; // IPAD-4735
             }
             
         } else {
