@@ -99,9 +99,12 @@
                  DBCriteria *aCriteria3 = [[DBCriteria alloc] initWithFieldName:searchField operatorType:SQLOperatorIn andFieldValues:recordIds];
                 
                 DBRequestDelete *deleteRequest = [[DBRequestDelete alloc] initWithTableName:kModifiedRecords whereCriteria:@[aCriteria1,aCriteria2,aCriteria3] andAdvanceExpression:@"(1 and 2 and 3)"];
-                
-               
                 [self.commonServices executeStatement:[deleteRequest query]];
+                
+                DBRequestDelete *deleteCustomActionParamsRequest = [[DBRequestDelete alloc] initWithTableName:kCustomActionRequestParams whereCriteria:@[aCriteria1,aCriteria2,aCriteria3] andAdvanceExpression:@"(1 and 2 and 3)"];
+                [self.commonServices executeStatement:[deleteCustomActionParamsRequest query]];
+
+                
             }
         }
     }

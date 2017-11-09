@@ -199,6 +199,8 @@ NSString *const kTableAttachmentLocalSchema = @"CREATE TABLE IF NOT EXISTS Attac
 
 NSString *const kTableSFMCustomActionParams = @"CREATE TABLE IF NOT EXISTS CustomActionParams ('local_id' INTEGER PRIMARY KEY NOT NULL DEFAULT (0), 'Id' VARCHAR, 'Name' VARCHAR, 'DispatchProcessId' VARCHAR , 'ParameterName' VARCHAR, 'ParameterValue' VARCHAR , 'ParameterType' VARCHAR)";
 
+NSString *const kTableSFMCustomActionRequestParams = @"CREATE TABLE IF NOT EXISTS CustomActionRequestParams ('localId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'recordLocalId' VARCHAR, 'sfId' VARCHAR, 'recordType' VARCHAR, 'operation' VARCHAR, 'objectName' VARCHAR, 'parentObjectName' VARCHAR, 'parentLocalId' VARCHAR, 'headerLocalId' VARCHAR, 'timeStamp' DATETIME,'fieldsModified' VARCHAR ,'customActionFlag' BOOL)";
+
 //ProductIQ tables.
 
 NSString *const KTableRecordName = @"CREATE TABLE IF NOT EXISTS 'RecordName' ('RecordId'	INTEGER PRIMARY KEY AUTOINCREMENT,  'Id' VARCHAR UNIQUE,  'Name'	VARCHAR);";

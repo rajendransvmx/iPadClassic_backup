@@ -158,6 +158,7 @@ NSString *const kSyncRecordOperation        = @"operation";
 NSString *const kSyncRecordObjectname       = @"objectName";
 NSString *const kModifiedRecords            = @"ModifiedRecords";
 NSString *const kSyncRecordSent             = @"recordSent";
+NSString *const kCustomActionRequestParams  = @"CustomActionRequestParams";
 
 /* Lookup constants */
 NSString *const kSearchObjectFields         = @"SRCH_Object_Fields";

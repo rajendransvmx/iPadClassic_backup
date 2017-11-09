@@ -65,4 +65,5 @@
 -(BOOL)executeFieldUpdateRulesOnload:(SFMPage *)sfmPage andView:(UIView *)aView andDelegate:(id)aDelegate forEvent:(NSString *)event;
 -(void)updateSFMPageWithFieldUpdateResponse:(NSString *)response andSFMPage:(SFMPage *)sfmPage;
 
+- (NSString *)getModifiedJSONStringForObject:(NSString *)objectName recordId:(NSString *)recordId sfid:(NSString *)sfid;
 @end

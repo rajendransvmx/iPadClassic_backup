@@ -784,7 +784,9 @@ typedef enum {
                 
                 /* Delete from respective table , modified records table and sync heap table */
                 [self.oneCallSyncHelper deleteRecordWithIds:sfIdsList fromObjectName:objectName andCriteriaFieldName:kId];
-                
+                /*Delete from Custom Action Params Table */
+                [self.oneCallSyncHelper deleteRecordWithIds:sfIdsList fromObjectName:kCustomActionRequestParams andCriteriaFieldName:kSyncRecordSFId];
+
             }
         }
     }

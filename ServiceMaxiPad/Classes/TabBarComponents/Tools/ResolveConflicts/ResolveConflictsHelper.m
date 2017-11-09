@@ -31,6 +31,7 @@
 #import "ModifiedRecordsService.h"
 #import "MobileDeviceSettingService.h"
 #import "OpDocHelper.h"
+#import "CustomActionRequestService.h"
 
 NSString *const kResolveConflictRetry                = @"retry";
 NSString *const kResolveConflictRemove               = @"remove";
@@ -349,6 +350,10 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
                    
                         [modifiedRrcordServiceObj deleteRecordsForRecordLocalIds:recordIds];
                     
+                    CustomActionRequestService *customActionRequestService = [[CustomActionRequestService alloc] init];
+                    [customActionRequestService deleteRecordsForRecordLocalIds:recordIds];
+
+                    
                 }
                 
                 
@@ -611,6 +616,8 @@ NSString *const kSyncTypeAttachmentSync              = @"SyncTypeAttachmentSync"
     NSString * deleteId = ([syncConflictModel.operationType isEqualToString:kModificationTypeUpdate])? syncConflictModel.sfId:syncConflictModel.localId;
     NSString * fieldName = ([syncConflictModel.operationType isEqualToString:kModificationTypeUpdate])? kSyncRecordSFId:kSyncRecordLocalId;
     [ResolveConflictsHelper deleteRecordWithFieldName:fieldName forRecord:deleteId fromObjectName:kModifiedRecords];
+    [ResolveConflictsHelper deleteRecordWithFieldName:fieldName forRecord:deleteId fromObjectName:kCustomActionRequestParams];
+
 }
 
 +(void)handleCustomCallRecordToUpdateTheRecordSentToINSERTHold:(SyncErrorConflictModel *)syncConflictModel

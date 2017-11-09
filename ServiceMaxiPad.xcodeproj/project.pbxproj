@@ -868,6 +868,7 @@
 		5BEFF7B11A24450C0096B254 /* EditableDataValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B01A24450C0096B254 /* EditableDataValidator.m */; };
 		5BEFF7B31A248B950096B254 /* cloud-download.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B21A248B950096B254 /* cloud-download.png */; };
 		5BF1CFFE1A88BEC300F94471 /* SMXMonthCellEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */; };
+		674395131FA95ADC001C5361 /* CustomActionRequestService.m in Sources */ = {isa = PBXBuildFile; fileRef = 674395121FA95ADC001C5361 /* CustomActionRequestService.m */; };
 		677FE3A01F7B723600BF7C5F /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 677FE39F1F7B723600BF7C5F /* Photos.framework */; };
 		67919D071D6D7A95005E0954 /* AttachmentErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 67919D061D6D7A95005E0954 /* AttachmentErrorService.m */; };
 		6A13E9CC1A9AB6DC00D12CED /* libsqlcipher.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A13E9CB1A9AB6DC00D12CED /* libsqlcipher.a */; };
@@ -4202,6 +4203,9 @@
 		5BEFF7B21A248B950096B254 /* cloud-download.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cloud-download.png"; sourceTree = "<group>"; };
 		5BF1CFFC1A88BEC300F94471 /* SMXMonthCellEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMonthCellEvent.h; sourceTree = "<group>"; };
 		5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMonthCellEvent.m; sourceTree = "<group>"; };
+		674395101FA95A88001C5361 /* CustomActionsDAO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomActionsDAO.h; sourceTree = "<group>"; };
+		674395111FA95ADC001C5361 /* CustomActionRequestService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomActionRequestService.h; sourceTree = "<group>"; };
+		674395121FA95ADC001C5361 /* CustomActionRequestService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomActionRequestService.m; sourceTree = "<group>"; };
 		677FE39F1F7B723600BF7C5F /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		67919D051D6D7A95005E0954 /* AttachmentErrorService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorService.h; sourceTree = "<group>"; };
 		67919D061D6D7A95005E0954 /* AttachmentErrorService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorService.m; sourceTree = "<group>"; };
@@ -6072,6 +6076,8 @@
 				18E0BE8719F131E6007DBC69 /* UserGPSLogService.m */,
 				183A9F7219E6B18400919345 /* UserImageService.h */,
 				183A9F7319E6B18400919345 /* UserImageService.m */,
+				674395111FA95ADC001C5361 /* CustomActionRequestService.h */,
+				674395121FA95ADC001C5361 /* CustomActionRequestService.m */,
 			);
 			path = DAOService;
 			sourceTree = "<group>";
@@ -6136,6 +6142,7 @@
 				183A9F9B19E6B18500919345 /* UniversalDAO.h */,
 				18E0BE8919F1320D007DBC69 /* UserGPSLogDAO.h */,
 				183A9F9C19E6B18500919345 /* UserImageDAO.h */,
+				674395101FA95A88001C5361 /* CustomActionsDAO.h */,
 			);
 			path = DAOServiceProtocols;
 			sourceTree = "<group>";
@@ -9460,7 +9467,7 @@
 				ORGANIZATIONNAME = "ServiceMax Inc";
 				TargetAttributes = {
 					18A2171819E57C5A00F22EA6 = {
-						DevelopmentTeam = UZ47KHA3AB;
+						DevelopmentTeam = 4B24F56ULW;
 					};
 					18A2173919E57C5A00F22EA6 = {
 						DevelopmentTeam = 4B24F56ULW;
@@ -11053,6 +11060,7 @@
 				C362BE721A1442220067E09E /* UIImage+FixOrientation.m in Sources */,
 				183AA1C319E6D26400919345 /* SFMPageChildLayoutViewController.m in Sources */,
 				183A9A7A19E6949800919345 /* DBCriteria.m in Sources */,
+				674395131FA95ADC001C5361 /* CustomActionRequestService.m in Sources */,
 				CD0CE9081DDC759A005BA93C /* InitialSyncContentViewController.m in Sources */,
 				FD09E13E1D4A088A00972C95 /* ZXVEventResultParser.m in Sources */,
 				18A2179419E5850300F22EA6 /* OAuthService.m in Sources */,
@@ -12224,8 +12232,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				DEVELOPMENT_TEAM = 4B24F56ULW;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -12255,7 +12264,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadwin18;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
+				PROVISIONING_PROFILE = "1338d81c-f7d2-4887-b044-f70116ae27e5";
+				PROVISIONING_PROFILE_SPECIFIER = "Dev-Debugging";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -12265,7 +12275,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				ENABLE_BITCODE = NO;
@@ -12297,6 +12307,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadwin18;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "de728aec-422c-420e-bd77-3c25880a31b6";
+				PROVISIONING_PROFILE_SPECIFIER = "Dev-Debugging";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

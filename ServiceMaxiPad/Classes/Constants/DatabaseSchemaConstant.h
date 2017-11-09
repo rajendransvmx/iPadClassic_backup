@@ -117,6 +117,8 @@ extern NSString *const kTableAttachmentLocalSchema;
 
 //Custom url Table
 extern NSString *const kTableSFMCustomActionParams;
+//Custom Action Request Params
+extern NSString *const kTableSFMCustomActionRequestParams;
 
 //ProductIQ tables.
 extern NSString *const KTableRecordName;

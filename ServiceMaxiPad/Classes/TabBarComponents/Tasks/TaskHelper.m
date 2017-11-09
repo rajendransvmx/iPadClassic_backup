@@ -24,7 +24,7 @@
 #import "SFMPageEditHelper.h"
 #import "SNetworkReachabilityManager.h"
 #import "SFMPageEditManager.h"
-
+#import "CustomActionsDAO.h"
 NSString *const kTaskPriorityLow = @"Low";
 NSString *const kTaskPriorityNormal = @"Normal";
 NSString *const kTaskPriorityHigh = @"High";
@@ -197,6 +197,12 @@ NSString *const kTaskPriorityHigh = @"High";
                 id syncHeapService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
                 if ([modifiedRecordService conformsToProtocol:@protocol(ModifiedRecordsDAO)]) {
                     [modifiedRecordService deleteRecordsForRecordLocalIds:@[model.localID]];
+                }
+                
+                id customActionRequestService = [FactoryDAO serviceByServiceType:ServiceTypeCustomActionRequestParams];
+                if ([customActionRequestService conformsToProtocol:@protocol(CustomActionsDAO)]){
+                    [customActionRequestService deleteRecordsForRecordLocalIds:@[model.localID]];
+                    
                 }
                 
                 // delete conflict entry if task is deleted..
