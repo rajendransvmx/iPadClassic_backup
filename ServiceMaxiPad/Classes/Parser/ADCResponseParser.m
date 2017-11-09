@@ -99,6 +99,17 @@
                     
                     if((![partiallyExecutedObjName isEqualToString:@""]) && (partiallyExecutedObjName != nil))
                     {
+                        //IPAD-4743
+                        sfidsArray = [heapDictionary allValues];
+                        NSArray *objectIds = [sfidsArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@" objectName == [c] %@", partiallyExecutedObjName]];
+                        NSMutableArray *sfids = [[NSMutableArray alloc] init];
+                        if ([objectIds count] > 0) {
+                            SyncRecordHeapModel *model  = [objectIds lastObject];
+                            [sfids addObject:model.sfId];
+                        }
+                        [partiallyExecutedObjectDictionary setObject:sfids forKey:kSVMXRequestValues];
+                        
+                        /*
                         id daoService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
                         
                         if ([daoService conformsToProtocol:@protocol(SyncHeapDAO)]) {
@@ -112,6 +123,7 @@
                             //Add sfids to partiallyExecutedObjectDictionary with values
                             [partiallyExecutedObjectDictionary setObject:sfids forKey:kSVMXRequestValues];
                         }
+                         */
                     }
                 }
                 
@@ -121,12 +133,13 @@
                     
                     RequestParamModel *callbackData = [[RequestParamModel alloc] init];
                     callbackData.values = objectNameValues;
+                    callbackData.requestInformation = requestParamModel.requestInformation; //IPAD-4743
                     
                     //[NSArray arrayWithObjects:callBackValues, sfidsArray, nil];
                     
                     if ([partiallyExecutedObjectDictionary count] > 0) {
                         CategoryType type = [[requestParamModel.requestInformation objectForKey:@"categoryType"] intValue];
-                        if (type == CategoryTypeDataSync) {
+                        if (type == CategoryTypeDataSync || type == CategoryTypeOneCallDataSync) { //IPAD-4743
                             callbackData.valueMap = [NSArray arrayWithObjects:[self getLastSyncTimeForRecords],partiallyExecutedObjectDictionary, nil];
                         }
                         else {
