@@ -1735,7 +1735,7 @@
         
         SFMRecordFieldData *recordData = [self getFieldValueForFieldName:lookup.contextLookupFilter.lookupContext forHeaderField:lookup.contextLookupFilter.sourceObjectName];
         
-        displayValue = (recordData.displayValue.length > 0) ? recordData.displayValue : @"";;
+        displayValue = (recordData.internalValue.length > 0) ? recordData.internalValue : @""; //IPAD-4734
         //Remvoe the white spaces from string.
         if (displayValue.length > 0) {
             displayValue = [displayValue stringByTrimmingCharactersInSet:
