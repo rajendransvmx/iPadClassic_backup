@@ -871,6 +871,7 @@
 		674395131FA95ADC001C5361 /* CustomActionRequestService.m in Sources */ = {isa = PBXBuildFile; fileRef = 674395121FA95ADC001C5361 /* CustomActionRequestService.m */; };
 		677FE3A01F7B723600BF7C5F /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 677FE39F1F7B723600BF7C5F /* Photos.framework */; };
 		67919D071D6D7A95005E0954 /* AttachmentErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 67919D061D6D7A95005E0954 /* AttachmentErrorService.m */; };
+		679EDA891FB9278000D59D74 /* SFMCustomActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 679EDA881FB9278000D59D74 /* SFMCustomActionTests.m */; };
 		6A13E9CC1A9AB6DC00D12CED /* libsqlcipher.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A13E9CB1A9AB6DC00D12CED /* libsqlcipher.a */; };
 		6A1B48031A05FED00003BAA5 /* DatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A1B48021A05FED00003BAA5 /* DatabaseManager.m */; };
 		6A1BCAFD1AA85DAB0074AB7D /* EventTransactionObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A1BCAFC1AA85DAB0074AB7D /* EventTransactionObjectModel.m */; };
@@ -4210,6 +4211,7 @@
 		67919D051D6D7A95005E0954 /* AttachmentErrorService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorService.h; sourceTree = "<group>"; };
 		67919D061D6D7A95005E0954 /* AttachmentErrorService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorService.m; sourceTree = "<group>"; };
 		67919D081D6D7AAC005E0954 /* AttachmentErrorDAO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorDAO.h; sourceTree = "<group>"; };
+		679EDA881FB9278000D59D74 /* SFMCustomActionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SFMCustomActionTests.m; sourceTree = "<group>"; };
 		6A13E9CB1A9AB6DC00D12CED /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libsqlcipher.a; sourceTree = "<group>"; };
 		6A1B48011A05FED00003BAA5 /* DatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseManager.h; sourceTree = "<group>"; };
 		6A1B48021A05FED00003BAA5 /* DatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DatabaseManager.m; sourceTree = "<group>"; };
@@ -7669,6 +7671,7 @@
 				ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */,
 				CDD7F38E1E03DE5D00A4AA79 /* PurgeRecordsTests.m */,
 				ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */,
+				679EDA881FB9278000D59D74 /* SFMCustomActionTests.m */,
 			);
 			path = ServiceMaxiPadTests;
 			sourceTree = "<group>";
@@ -11098,6 +11101,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				679EDA891FB9278000D59D74 /* SFMCustomActionTests.m in Sources */,
 				ECE752C21DE6FA78005D34C7 /* TaskModel.m in Sources */,
 				ECE752C31DE6FA78005D34C7 /* TaskGenerator.m in Sources */,
 				ECE752C41DE6FA78005D34C7 /* TaskManager.m in Sources */,
