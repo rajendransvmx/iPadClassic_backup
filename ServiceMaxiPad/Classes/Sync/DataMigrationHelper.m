@@ -178,6 +178,7 @@
              @"Configuration",
              @"InstallBaseObject",
              @"ClientSyncLogTransient",
+             @"CustomActionRequestParams"
              ];
 }
 
