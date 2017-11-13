@@ -46,7 +46,7 @@
 @synthesize fieldsModified;
 @synthesize overrideFlag;
 @synthesize Pending;
-
+@synthesize customActionFlag;
 - (id)init
 {
 	self = [super init];
@@ -122,7 +122,9 @@
     if ([dict objectForKey:@"overrideFlag"]) {
         overrideFlag = [dict valueForKey:@"overrideFlag"];
     }
-    
+    if ([dict objectForKey:@"customActionFlag"]) {
+        customActionFlag = [[dict valueForKey:@"customActionFlag"]boolValue];
+    }
 }
 
 

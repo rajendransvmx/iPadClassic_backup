@@ -11,4 +11,5 @@
 @interface CustomActionXMLRequestHelper : UICollectionViewCell
 
 -(NSString *)getXmlBody;
+- (NSString *)getSFMCustomActionsParamsRequest;
 @end

@@ -29,6 +29,9 @@
 
 @property(nonatomic) BOOL syncFlag;
 
+@property(nonatomic) BOOL customActionFlag;
+
+
 @property(nonatomic, strong) NSString *recordLocalId;
 @property(nonatomic, strong) NSString *sfId;
 @property(nonatomic, strong) NSString *recordType;

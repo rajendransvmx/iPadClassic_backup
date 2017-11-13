@@ -34,6 +34,7 @@
 #import "TXFetchHelper.h"
 #import "NonTagConstant.h"
 #import "FactoryDAO.h"
+#import "CustomActionsDAO.h"
 #import "MobileDeviceSettingDAO.h"
 #import "ResolveConflictsHelper.h"
 #import "SMLocalNotificationManager.h"
@@ -2231,6 +2232,8 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
         id <ModifiedRecordsDAO> modifiedRecordService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
         
         BOOL status = [modifiedRecordService deleteUpdatedRecordsForModifiedRecordModel:self.cCustomCallRecordModel];
+        id <CustomActionsDAO> customActionParamsService = [FactoryDAO serviceByServiceType:ServiceTypeCustomActionRequestParams];
+        [customActionParamsService deleteUpdatedRecordsForModifiedRecordModel:self.cCustomCallRecordModel];
         
         if (status) {
             self.cCustomCallRecordModel = nil;

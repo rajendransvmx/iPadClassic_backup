@@ -67,7 +67,7 @@
 #import "AttachmentLocalService.h"
 #import "CustomActionURLModel.h"
 #import "SFCustomActionURLService.h"
-
+#import "CustomActionRequestService.h"
 @implementation FactoryDAO
 
 
@@ -203,6 +203,9 @@
             break;
         case ServiceTypeModifiedRecords:
             serviceObject = [[ModifiedRecordsService alloc] init];
+            break;
+        case ServiceTypeCustomActionRequestParams:
+            serviceObject = [[CustomActionRequestService alloc] init];
             break;
         case ServiceTypeSFChildRelationShip:
             serviceObject = [[SFChildRelationshipService  alloc] init];
