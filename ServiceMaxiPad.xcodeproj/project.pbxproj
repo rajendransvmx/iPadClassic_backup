@@ -9470,7 +9470,7 @@
 				ORGANIZATIONNAME = "ServiceMax Inc";
 				TargetAttributes = {
 					18A2171819E57C5A00F22EA6 = {
-						DevelopmentTeam = 4B24F56ULW;
+						ProvisioningStyle = Manual;
 					};
 					18A2173919E57C5A00F22EA6 = {
 						DevelopmentTeam = 4B24F56ULW;
@@ -12237,8 +12237,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				DEVELOPMENT_TEAM = 4B24F56ULW;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -12268,8 +12269,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadwin18;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "ab4d0375-7e70-4c99-a687-f71fac8bc03b";
-				PROVISIONING_PROFILE_SPECIFIER = "Dev-Debugging";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -12280,9 +12281,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
-				DEVELOPMENT_TEAM = 4B24F56ULW;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -12311,8 +12313,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadwin18;
 				PRODUCT_NAME = ServiceMax;
-				PROVISIONING_PROFILE = "ab4d0375-7e70-4c99-a687-f71fac8bc03b";
-				PROVISIONING_PROFILE_SPECIFIER = "Dev-Debugging";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
