@@ -68,7 +68,7 @@
     NSString *existingReqId = [userDefaults objectForKey:@"custom_actions_req_id"];
     
     NSString *requestId= [StringUtil checkIfStringEmpty:existingReqId]?[AppManager generateUniqueId]:existingReqId;
-    [userDefaults setObject:existingReqId forKey:@"custom_actions_req_id"];
+    [userDefaults setObject:requestId forKey:@"custom_actions_req_id"];
     [userDefaults synchronize];
     NSString *deviceUDID =[[[UIDevice currentDevice] identifierForVendor] UUIDString];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kUserId,userId,kUserId]];
