@@ -138,12 +138,13 @@
                     //[NSArray arrayWithObjects:callBackValues, sfidsArray, nil];
                     
                     if ([partiallyExecutedObjectDictionary count] > 0) {
+                        NSDictionary *adcOptimized = [NSDictionary dictionaryWithObjects:@[kADCOptimized, kTrue] forKeys:@[kSVMXKey, kSVMXValue]]; // IPAD-4698
                         CategoryType type = [[requestParamModel.requestInformation objectForKey:@"categoryType"] intValue];
                         if (type == CategoryTypeDataSync || type == CategoryTypeOneCallDataSync) { //IPAD-4743
-                            callbackData.valueMap = [NSArray arrayWithObjects:[self getLastSyncTimeForRecords],partiallyExecutedObjectDictionary, nil];
+                            callbackData.valueMap = [NSArray arrayWithObjects:[self getLastSyncTimeForRecords],partiallyExecutedObjectDictionary, adcOptimized, nil]; // IPAD-4698
                         }
                         else {
-                            callbackData.valueMap = [NSArray arrayWithObjects:partiallyExecutedObjectDictionary, nil];
+                            callbackData.valueMap = [NSArray arrayWithObjects:partiallyExecutedObjectDictionary, adcOptimized, nil]; // IPAD-4698
                         }
                     }
                     callbk.callBackData = callbackData;
