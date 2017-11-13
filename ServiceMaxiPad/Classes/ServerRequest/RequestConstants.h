@@ -382,3 +382,7 @@ extern NSString *const kUserInfoEventName;
 // Multi-server support
 extern NSString *const kServerVersionKey;
 extern NSString *const kSVMXVersion;
+
+// DC-ADC optimization
+extern NSString *const kADCOptimized; // IPAD-4698
+

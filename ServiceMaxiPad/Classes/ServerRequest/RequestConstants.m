@@ -236,3 +236,6 @@ NSString *const kUserInfoEventName = @"UserInfo";
 // Multi-server support
 NSString *const kServerVersionKey = @"kServerVersion";
 NSString *const kSVMXVersion = @"SvmxVersion";
+
+// DC-ADC optimization
+NSString *const kADCOptimized = @"ADC_OPTIMIZED"; // IPAD-4698

@@ -123,8 +123,9 @@
 - (NSArray *)getParamterForAdvancedDownloadCriteria {
     RequestParamModel *paramObj = [[RequestParamModel alloc]init];
     NSDictionary *lastSyncTime = [self getLastSyncTimeForRecords];
+    NSDictionary *adcOptimized = [NSDictionary dictionaryWithObjects:@[kADCOptimized, kTrue] forKeys:@[kSVMXKey, kSVMXValue]]; // IPAD-4698
     paramObj.requestInformation = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:self.categoryType] forKey:@"categoryType"];
-    paramObj.valueMap = @[lastSyncTime];
+    paramObj.valueMap = @[lastSyncTime, adcOptimized]; // IPAD-4698
     return @[paramObj];
 }
 
