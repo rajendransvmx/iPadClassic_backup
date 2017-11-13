@@ -91,7 +91,16 @@
     XCTAssert(isParentExists ,@"Parent record exists");
 }
 
-
+-(void)testCustomActionRecordInsert{
+    id <CustomActionsDAO>customActionRequestService = [FactoryDAO serviceByServiceType:ServiceTypeCustomActionRequestParams];
+    
+    [customActionRequestService saveRecordModel:testSyncRecord];
+    
+    [customActionRequestService updateFieldsModifed:testSyncRecord];
+    
+    BOOL doesExist =   [customActionRequestService doesRecordExistForId:testSyncRecord.recordLocalId];
+    XCTAssert(doesExist ,@"Record Exist and inserted successfully");
+}
 
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
