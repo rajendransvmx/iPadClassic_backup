@@ -290,7 +290,7 @@
             NSDictionary *adcOptimized = [NSDictionary dictionaryWithObjects:@[kADCOptimized, kTrue] forKeys:@[kSVMXKey, kSVMXValue]]; // IPAD-4698
             
             if ([partiallyExecutedObjectDictionary count] > 0) {
-                callbackData.valueMap = [NSArray arrayWithObjects:[self getLastSyncTimeForRecords], partiallyExecutedObjectDictionary, adcOptimized, nil];
+                callbackData.valueMap = [NSArray arrayWithObjects:partiallyExecutedObjectDictionary, adcOptimized, nil]; // removed last_sync_time key, not needed for data purge.
             }
             callbk.callBackData = callbackData;
             
