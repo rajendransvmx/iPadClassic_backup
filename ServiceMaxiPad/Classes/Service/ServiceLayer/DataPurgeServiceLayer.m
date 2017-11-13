@@ -116,6 +116,14 @@
 - (NSArray*)getRequestParametersWithRequestCount:(NSInteger)requestCount {
     
     switch (self.requestType) {
+        case RequestDataPurgeAdvancedDownLoadCriteria:
+        {
+            RequestParamModel *model = [[RequestParamModel alloc] init];
+            model.valueMap = [NSArray arrayWithObject:[NSDictionary dictionaryWithObjects:@[kADCOptimized, kTrue] forKeys:@[kSVMXKey, kSVMXValue]]]; // IPAD-4698
+            model.requestInformation = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:self.categoryType] forKey:@"categoryType"];
+            return @[model];
+        }
+            break;
         case RequestDataPurgeGetPriceDataTypeZero:
             return [self getRequestParamModelForGetPriceData:RequestDataPurgeGetPriceDataTypeZero];
             break;
