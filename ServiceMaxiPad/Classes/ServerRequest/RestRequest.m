@@ -320,7 +320,7 @@
     }
     
     NSString *xmlInitialData = @"<?xml version=\"1.0\" encoding=\"utf-8\"?>";
-     NSString *soapEnvelopeStart = [xmlInitialData stringByAppendingFormat:@"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tes=\"http://soap.sforce.com/schemas/class/%@/%@\">",ORG_NAME_SPACE, className];
+     NSString *soapEnvelopeStart = [xmlInitialData stringByAppendingFormat:@"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tes=\"http://soap.sforce.com/schemas/class/%@\">", className];
     NSString *soapHeader = [soapEnvelopeStart stringByAppendingFormat:@"<soapenv:Header><tes:SessionHeader><tes:sessionId>%@</tes:sessionId></tes:SessionHeader></soapenv:Header>", self.oAuthId];
     NSString *soapBodyStart = [soapHeader stringByAppendingFormat:@"<soapenv:Body>"];
     NSString*soapMethodStart = [soapBodyStart stringByAppendingFormat:@"<tes:%@>",methodName];

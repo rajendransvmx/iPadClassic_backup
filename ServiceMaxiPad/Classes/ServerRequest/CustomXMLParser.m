@@ -217,133 +217,154 @@
                     if ([temp isKindOfClass:[NSDictionary class]]) {
 //                        temp = [temp objectForKey:@"INTF_Response:valueMap"];
 //                        Array of valueMaps
-                        NSArray *valueMapArray=[temp objectForKey:@"INTF_Response:valueMap"];
-                        for(NSDictionary *valueMapDict in valueMapArray){
-                            NSDictionary * errorDict = [valueMapDict objectForKey:@"INTF_Response:key"];
-                            NSString *errorKey;
-                            if ([errorDict objectForKey:@"text"]) {
-                                errorKey = [errorDict objectForKey:@"text"];
-                            }
-                            if ([valueMapDict objectForKey:@"INTF_Response:valueMap"]) {
-                                NSDictionary *objectNameDict=[valueMapDict objectForKey:@"INTF_Response:value"];
-                                NSString *objectName;
-                                NSString *idValue;
-                                NSString *localIdValue;
-                                NSString *recordValues;
-                                if ([objectNameDict isKindOfClass:[NSDictionary class]]) {
-                                    objectName = [objectNameDict objectForKey:@"text"];
-                                }
-                                NSArray *objectValueMapArray =[valueMapDict objectForKey:@"INTF_Response:valueMap"];
-                                for (NSDictionary *recordMap in objectValueMapArray) {
-                                    if ([recordMap objectForKey:@"INTF_Response:key"]) {
-                                        NSString *keyValue;
-                                        NSDictionary *keyValueDict =[recordMap objectForKey:@"INTF_Response:key"];
-                                        if ([keyValueDict isKindOfClass:[NSDictionary class]]) {
-                                            keyValue = [keyValueDict objectForKey:@"text"];
-                                        }
-                                        if ([keyValue isEqualToString:@"UPDATED_IDS"]) {
-                                            NSDictionary *idValueDict= [recordMap objectForKey:@"INTF_Response:values"];
-                                            if ([idValueDict isKindOfClass:[NSDictionary class]]) {
-                                                idValue = [idValueDict objectForKey:@"text"];
-                                            }
-                                        }
-                                        else if ([keyValue isEqualToString:@"INSERTED_IDS"]) {
-                                            NSDictionary *localIdValueMapDict= [recordMap objectForKey:@"INTF_Response:valueMap"];
-                                            if ([localIdValueMapDict isKindOfClass:[NSDictionary class]]) {
-                                                NSDictionary *localIdDict= [localIdValueMapDict objectForKey:@"INTF_Response:key"];
-                                                if ([localIdDict isKindOfClass:[NSDictionary class]]) {
-                                                    localIdValue = [localIdDict objectForKey:@"text"];
-                                                }
-                                                NSDictionary *idValueDict= [localIdValueMapDict objectForKey:@"INTF_Response:value"];
-                                                if ([idValueDict isKindOfClass:[NSDictionary class]]) {
-                                                    idValue = [idValueDict objectForKey:@"text"];
-                                                    
-                                                    DBField *aField = [[DBField alloc] initWithFieldName:kId andTableName:objectName];
-                                                    DBCriteria *aDbcriteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:localIdValue];
-                                                    TransactionObjectService *service = [[TransactionObjectService alloc] init];
-                                                    [service updateField:aField withValue:idValue andDbCriteria:aDbcriteria];
-                                                }
-                                                
-                                            }
-                                        }
-                                        else if ([[keyValue uppercaseString] isEqualToString:@"RECORD"]) {
-                                            NSDictionary *recordValueDict= [recordMap objectForKey:@"INTF_Response:value"];
-                                            if ([recordValueDict isKindOfClass:[NSDictionary class]]) {
-                                                recordValues = [recordValueDict objectForKey:@"text"];
-                                            }
-                                        }
-                                    }
-
-                                }
-//                                Parent and child records update
-                                NSString *sfId = ([StringUtil checkIfStringEmpty:localIdValue])?idValue :localIdValue ;
-                                NSData *attributesData = [recordValues dataUsingEncoding:NSUTF8StringEncoding];
-                                NSArray *recordArray = [NSJSONSerialization JSONObjectWithData:attributesData options:0 error:nil];
-                                if (recordArray.count) {
-                                    NSDictionary *dict=[recordArray objectAtIndex:0];
-                                    TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
-                                    [model setFieldValueDictionaryForFields:dict];
-                                    NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
-                                    if (![StringUtil isStringEmpty:sfId])
-                                        [objectrecords setObject:model forKey:sfId];
-                                    [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
-                                    
-                                    id <CustomActionsDAO>customActionRequestService = [FactoryDAO serviceByServiceType:ServiceTypeCustomActionRequestParams];
-                                    [customActionRequestService deleteRecordsForRecordLocalIds:@[idValue,localIdValue]];
-                                    
-                                    id <ModifiedRecordsDAO>modifiedService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-                                    [modifiedService deleteRecordsForRecordLocalIds:@[idValue,localIdValue]];
-
-                                }
-                                SXLogDebug(@"VALUES %@  -- %@ ---\n record :%@",localIdValue,idValue,recordValues);
-
-                            }
-                            /*Error Handling Code */
-                            else if ([[errorKey uppercaseString]isEqualToString:@"ERROR"]){
-                                NSDictionary * errMsgDict = [valueMapDict objectForKey:@"INTF_Response:value"];
-                                if ([errMsgDict objectForKey:@"INTF_Response:value"]) {
-                                    NSString *errorMsg = [errMsgDict objectForKey:@"INTF_Response:value"];
-                                    if (![StringUtil checkIfStringEmpty:errorMsg]) {
-                                        SXLogError(@"CUSTOM ACTIONS ERROR : %@",errorMsg);
-
-                                        dispatch_async(dispatch_get_main_queue(), ^{
-                                            AlertViewHandler *alert = [[AlertViewHandler alloc] init];
-                                            [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage]
-                                                                  Message:errorMsg
-                                                                 Delegate:nil cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-                                                           andOtherButton:nil];
-                                        });
-                                    }
-                                   
-                                }
-                                else{
-                                    NSUserDefaults *userdefaults= [NSUserDefaults standardUserDefaults];
-                                    [userdefaults removeObjectForKey:@"custom_actions_req_id"];
-                                    [userdefaults synchronize];
-                                }
-                            }
-                            else{
-                                temp = [valueMapDict objectForKey:@"INTF_Response:record"];
-                                if ([temp isKindOfClass:[NSDictionary class]]) {
-                                    NSDictionary *dict = [self getRecords:temp];
-                                    NSString *objectName = [temp objectForKey:@"xsi:type"];
-                                    if ([temp isKindOfClass:[NSDictionary class]])
-                                    {
-                                        NSDictionary *id_temp = [temp objectForKey:@"Id"];
-                                        if (id_temp) {
-                                            NSString *sfId = [id_temp objectForKey:@"text"];
-                                            TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
-                                            [model setFieldValueDictionaryForFields:dict];
-                                            NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
-                                            if (![StringUtil isStringEmpty:sfId])
-                                                [objectrecords setObject:model forKey:sfId];
-                                            [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
-                                        }
+                        id valueMapArray=[temp objectForKey:@"INTF_Response:valueMap"];
+                        if ([valueMapArray isKindOfClass:[NSDictionary class]]) {
+                            temp = [valueMapArray objectForKey:@"INTF_Response:record"];
+                            if ([temp isKindOfClass:[NSDictionary class]]) {
+                                NSDictionary *dict = [self getRecords:temp];
+                                NSString *objectName = [temp objectForKey:@"xsi:type"];
+                                if ([temp isKindOfClass:[NSDictionary class]])
+                                {
+                                    NSDictionary *id_temp = [temp objectForKey:@"Id"];
+                                    if (id_temp) {
+                                        NSString *sfId = [id_temp objectForKey:@"text"];
+                                        TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
+                                        [model setFieldValueDictionaryForFields:dict];
+                                        NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
+                                        if (![StringUtil isStringEmpty:sfId])
+                                            [objectrecords setObject:model forKey:sfId];
+                                        [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
                                     }
                                 }
                             }
                         }
-                        
+                        else if ([valueMapArray isKindOfClass:[NSArray class]]){
+                            for(NSDictionary *valueMapDict in valueMapArray){
+                                NSDictionary * errorDict = [valueMapDict objectForKey:@"INTF_Response:key"];
+                                NSString *errorKey;
+                                if ([errorDict objectForKey:@"text"]) {
+                                    errorKey = [errorDict objectForKey:@"text"];
+                                }
+                                if ([valueMapDict objectForKey:@"INTF_Response:valueMap"]) {
+                                    NSDictionary *objectNameDict=[valueMapDict objectForKey:@"INTF_Response:value"];
+                                    NSString *objectName;
+                                    NSString *idValue;
+                                    NSString *localIdValue;
+                                    NSString *recordValues;
+                                    if ([objectNameDict isKindOfClass:[NSDictionary class]]) {
+                                        objectName = [objectNameDict objectForKey:@"text"];
+                                    }
+                                    NSArray *objectValueMapArray =[valueMapDict objectForKey:@"INTF_Response:valueMap"];
+                                    for (NSDictionary *recordMap in objectValueMapArray) {
+                                        if ([recordMap objectForKey:@"INTF_Response:key"]) {
+                                            NSString *keyValue;
+                                            NSDictionary *keyValueDict =[recordMap objectForKey:@"INTF_Response:key"];
+                                            if ([keyValueDict isKindOfClass:[NSDictionary class]]) {
+                                                keyValue = [keyValueDict objectForKey:@"text"];
+                                            }
+                                            if ([keyValue isEqualToString:@"UPDATED_IDS"]) {
+                                                NSDictionary *idValueDict= [recordMap objectForKey:@"INTF_Response:values"];
+                                                if ([idValueDict isKindOfClass:[NSDictionary class]]) {
+                                                    idValue = [idValueDict objectForKey:@"text"];
+                                                }
+                                            }
+                                            else if ([keyValue isEqualToString:@"INSERTED_IDS"]) {
+                                                NSDictionary *localIdValueMapDict= [recordMap objectForKey:@"INTF_Response:valueMap"];
+                                                if ([localIdValueMapDict isKindOfClass:[NSDictionary class]]) {
+                                                    NSDictionary *localIdDict= [localIdValueMapDict objectForKey:@"INTF_Response:key"];
+                                                    if ([localIdDict isKindOfClass:[NSDictionary class]]) {
+                                                        localIdValue = [localIdDict objectForKey:@"text"];
+                                                    }
+                                                    NSDictionary *idValueDict= [localIdValueMapDict objectForKey:@"INTF_Response:value"];
+                                                    if ([idValueDict isKindOfClass:[NSDictionary class]]) {
+                                                        idValue = [idValueDict objectForKey:@"text"];
+                                                        
+                                                        DBField *aField = [[DBField alloc] initWithFieldName:kId andTableName:objectName];
+                                                        DBCriteria *aDbcriteria = [[DBCriteria alloc] initWithFieldName:kLocalId operatorType:SQLOperatorEqual andFieldValue:localIdValue];
+                                                        TransactionObjectService *service = [[TransactionObjectService alloc] init];
+                                                        [service updateField:aField withValue:idValue andDbCriteria:aDbcriteria];
+                                                    }
+                                                    
+                                                }
+                                            }
+                                            else if ([[keyValue uppercaseString] isEqualToString:@"RECORD"]) {
+                                                NSDictionary *recordValueDict= [recordMap objectForKey:@"INTF_Response:value"];
+                                                if ([recordValueDict isKindOfClass:[NSDictionary class]]) {
+                                                    recordValues = [recordValueDict objectForKey:@"text"];
+                                                }
+                                            }
+                                        }
+                                        
+                                    }
+                                    NSString *sfId = ([StringUtil checkIfStringEmpty:localIdValue])?idValue :localIdValue ;
+                                    NSData *attributesData = [recordValues dataUsingEncoding:NSUTF8StringEncoding];
+                                    NSArray *recordArray = [NSJSONSerialization JSONObjectWithData:attributesData options:0 error:nil];
+                                    if (recordArray.count) {
+                                        NSDictionary *dict=[recordArray objectAtIndex:0];
+                                        TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
+                                        [model setFieldValueDictionaryForFields:dict];
+                                        NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
+                                        if (![StringUtil isStringEmpty:sfId])
+                                            [objectrecords setObject:model forKey:sfId];
+                                        [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
+                                        
+                                        id <CustomActionsDAO>customActionRequestService = [FactoryDAO serviceByServiceType:ServiceTypeCustomActionRequestParams];
+                                        [customActionRequestService deleteRecordsForRecordLocalIds:@[idValue,localIdValue]];
+                                        
+                                        id <ModifiedRecordsDAO>modifiedService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+                                        [modifiedService deleteRecordsForRecordLocalIds:@[idValue,localIdValue]];
+                                        
+                                    }
+                                    SXLogDebug(@"VALUES %@  -- %@ ---\n record :%@",localIdValue,idValue,recordValues);
+                                    
+                                }
+                                else if ([[errorKey uppercaseString]isEqualToString:@"ERROR"]){
+                                    NSDictionary * errMsgDict = [valueMapDict objectForKey:@"INTF_Response:value"];
+                                    if ([errMsgDict objectForKey:@"INTF_Response:value"]) {
+                                        NSString *errorMsg = [errMsgDict objectForKey:@"INTF_Response:value"];
+                                        if (![StringUtil checkIfStringEmpty:errorMsg]) {
+                                            SXLogError(@"CUSTOM ACTIONS ERROR : %@",errorMsg);
+                                            
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                AlertViewHandler *alert = [[AlertViewHandler alloc] init];
+                                                [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage]
+                                                                      Message:errorMsg
+                                                                     Delegate:nil cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
+                                                               andOtherButton:nil];
+                                            });
+                                        }
+                                        
+                                    }
+                                    else{
+                                        NSUserDefaults *userdefaults= [NSUserDefaults standardUserDefaults];
+                                        [userdefaults removeObjectForKey:@"custom_actions_req_id"];
+                                        [userdefaults synchronize];
+                                    }
+                                }
+                                else{
+                                    temp = [valueMapDict objectForKey:@"INTF_Response:record"];
+                                    if ([temp isKindOfClass:[NSDictionary class]]) {
+                                        NSDictionary *dict = [self getRecords:temp];
+                                        NSString *objectName = [temp objectForKey:@"xsi:type"];
+                                        if ([temp isKindOfClass:[NSDictionary class]])
+                                        {
+                                            NSDictionary *id_temp = [temp objectForKey:@"Id"];
+                                            if (id_temp) {
+                                                NSString *sfId = [id_temp objectForKey:@"text"];
+                                                TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
+                                                [model setFieldValueDictionaryForFields:dict];
+                                                NSMutableDictionary *objectrecords = [[NSMutableDictionary alloc] initWithCapacity:0];
+                                                if (![StringUtil isStringEmpty:sfId])
+                                                    [objectrecords setObject:model forKey:sfId];
+                                                [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+
 
                     }
                 }
