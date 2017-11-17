@@ -161,23 +161,22 @@
     NSArray *customActionRecords=[customActionRequestService getCustomActionRequestParamsRecord];
         xml = [[NSMutableString alloc] initWithString:@""];
     for (ModifiedRecordModel* modifiedRecord in customActionRecords) {
-        [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kValueMap,[self generateXmlBodyWithRecord:modifiedRecord],kValueMap]];
+        if (modifiedRecord.fieldsModified) {
+            [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kValueMap,[self generateXmlBodyWithRecord:modifiedRecord],kValueMap]];
+        }
+        else if([StringUtil checkIfStringEmpty:modifiedRecord.parentLocalId]){
+         [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kValueMap,[self generateXmlForParentRecordWithoutModification:modifiedRecord],kValueMap]];
+        }
     }
-    //Parent record not modified
-    if (headerModelArray.count == 0) {
-         [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kValueMap,[self generateXmlForParentRecordWithoutModification:headerDict],kValueMap]];
-    }
+
     return xml;
 }
 
--(NSString *)generateXmlForParentRecordWithoutModification :(NSDictionary *)headerDict{
-    CustomActionWebserviceModel *customActionWebserviceModel = [[CacheManager sharedInstance] getCachedObjectByKey:kCustomWebServiceAction];
-
+-(NSString *)generateXmlForParentRecordWithoutModification :(ModifiedRecordModel *)modifiedRecord{
     NSMutableString *xml = [[NSMutableString alloc] initWithString:@""];
     [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kSVMXRequestKey,kparentObjectName,kSVMXRequestKey]];
-    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kSVMXValue,customActionWebserviceModel.sfmPage.objectName,kSVMXRequestValue]];
-    SFMRecordFieldData *fieldData=[headerDict objectForKey:kId];
-    NSDictionary *idDict=[[NSDictionary alloc]initWithObjectsAndKeys:fieldData.internalValue,kId , nil];
+    [xml appendString:[NSString stringWithFormat:@"<%@>%@</%@>",kSVMXValue,modifiedRecord.objectName,kSVMXRequestValue]];
+    NSDictionary *idDict=[[NSDictionary alloc]initWithObjectsAndKeys:modifiedRecord.sfId,kId , nil];
     NSData * idData = [NSJSONSerialization dataWithJSONObject:idDict options:0 error:nil];
     NSString * idString = [[NSString alloc] initWithData:idData encoding:NSUTF8StringEncoding];
     [xml appendString:[NSString stringWithFormat:@"<%@><%@>%@</%@>",kValueMap,kSVMXRequestKey,krecord_id,kSVMXRequestKey]];

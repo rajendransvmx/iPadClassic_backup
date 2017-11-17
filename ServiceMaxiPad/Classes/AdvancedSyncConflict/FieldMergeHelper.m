@@ -85,13 +85,15 @@
             continue;
         }
         
-        if ([oldValue isEqualToString:newValue])
-        {
-            if ([self isRemovableField:newKey
-                  andOldDataDictionary:conflictDictionary])
+        if ([newValue isKindOfClass:[NSString class]]) {
+            if ([oldValue isEqualToString:newValue] )
             {
-                [self.dataDictionaryBeforeModification removeObjectForKey:newKey];
-                [self.dataDictionaryAfterModification removeObjectForKey:newKey];
+                if ([self isRemovableField:newKey
+                      andOldDataDictionary:conflictDictionary])
+                {
+                    [self.dataDictionaryBeforeModification removeObjectForKey:newKey];
+                    [self.dataDictionaryAfterModification removeObjectForKey:newKey];
+                }
             }
         }
         
@@ -99,6 +101,7 @@
         NSString *dataType = [sfObjectFieldService getDatatypeOfField:newKey andObject:self.objectName];
         
         if ([dataType isEqualToString:@"boolean"]) {
+            newValue= newValue.boolValue==TRUE?@"true":@"false";
             [self compareBooleanOldValue:oldValue withNewValue:newValue forFieldName:newKey];
         }else if ([dataType isEqualToString:kSfDTDateTime]) {
             [self compareDateTimeTypeOldValue:oldValue withNewValue:newValue forFieldName:newKey];
