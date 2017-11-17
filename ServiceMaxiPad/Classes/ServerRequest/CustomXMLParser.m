@@ -307,15 +307,22 @@
                                         if (![StringUtil isStringEmpty:sfId])
                                             [objectrecords setObject:model forKey:sfId];
                                         [self updateOrInsertTransactionObjectArray:objectrecords sfIdArray:[objectrecords allKeys] objectName:objectName];
-                                        
+                                        NSMutableArray *recordIdsToDelete =[[NSMutableArray alloc]init];
+                                        if (![StringUtil checkIfStringEmpty:localIdValue] ) {
+                                            [recordIdsToDelete addObject:localIdValue];
+                                        }
+                                        if (![StringUtil checkIfStringEmpty:idValue] ) {
+                                            [recordIdsToDelete addObject:idValue];
+                                        }
                                         id <CustomActionsDAO>customActionRequestService = [FactoryDAO serviceByServiceType:ServiceTypeCustomActionRequestParams];
-                                        [customActionRequestService deleteRecordsForRecordLocalIds:@[idValue,localIdValue]];
                                         
                                         id <ModifiedRecordsDAO>modifiedService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
-                                        [modifiedService deleteRecordsForRecordLocalIds:@[idValue,localIdValue]];
-                                        
+                                        if (recordIdsToDelete.count>0) {
+                                            [modifiedService deleteRecordsForRecordLocalIds:recordIdsToDelete];
+                                            [customActionRequestService deleteRecordsForRecordLocalIds:recordIdsToDelete];
+                                        }
+
                                     }
-                                    SXLogDebug(@"VALUES %@  -- %@ ---\n record :%@",localIdValue,idValue,recordValues);
                                     
                                 }
                                 else if ([[errorKey uppercaseString]isEqualToString:@"ERROR"]){
