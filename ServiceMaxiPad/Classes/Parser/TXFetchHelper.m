@@ -32,6 +32,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
 
 @property(nonatomic,assign)BOOL shouldCheckForDuplicateRecords;
 @property(nonatomic,strong)DataTypeUtility *dataTypeUtility;
+@property(nonatomic, strong)NSMutableDictionary *objectNameFieldDictionary; // IPAD-4747
 
 @end
 
@@ -43,6 +44,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
     
     if (self != nil) {
         self.shouldCheckForDuplicateRecords = shouldCheck;
+        self.objectNameFieldDictionary = [[NSMutableDictionary alloc] init]; // IPAD-4747
     }
     return self;
 }
@@ -120,6 +122,9 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
                 }
             }
         }
+        
+        [self createUniqueIndex:objectName]; // IPAD-4747
+        
         return updateRequest;
     }
     return nil;
@@ -181,7 +186,7 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
         ObjectNameFieldValueService *service = [[ObjectNameFieldValueService alloc] init];
         [service saveRecordModels:nameFieldObjects];
     }
-    
+
     if ([pIQnameFieldObjects count] > 0) {
         [self insertNameFieldObjectsForPIQ:pIQnameFieldObjects];
     }
@@ -287,14 +292,18 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
             NSString *nameField = [self getNameFieldNameForobject:objName];
             NSString *value = [referenceDictionary objectForKey:nameField];
             
-            ObjectNameFieldValueModel *nameFieldModel = [[ObjectNameFieldValueModel alloc] init];
-            nameFieldModel.Id =sfid;
-            nameFieldModel.value =value;
-            
-            if (nameFieldModel.Id   != nil) {
-                [objectsArray addObject:nameFieldModel];
+            // IPAD-4747
+            if (sfid != nil && ![[self.objectNameFieldDictionary objectForKey:sfid] isEqualToString:value]) {
+                ObjectNameFieldValueModel *nameFieldModel = [[ObjectNameFieldValueModel alloc] init];
+                nameFieldModel.Id =sfid;
+                nameFieldModel.value =value;
+                
+                if (nameFieldModel.Id != nil) {
+                    [objectsArray addObject:nameFieldModel];
+                }
+                [self.objectNameFieldDictionary setObject:value forKey:sfid]; // IPAD-4747
             }
-            
+                    
             if ([pIQInstance isProductIQSettingEnable] && [[pIQInstance getProdIQRelatedObjects] containsObject:objectName]) {
                 if (sfid != nil) {
                     NSDictionary *nameFieldDict = [NSDictionary dictionaryWithObjects:@[sfid, value] forKeys:@[@"Id", @"Name"]];
@@ -372,6 +381,26 @@ NSString *const kUpdateQueryCache   = @"UpdateQueryCache";
 -(void)insertNameFieldObjectsForPIQ:(NSMutableArray *)pIQNameFieldObjects {
     CommonServices *service = [[CommonServices alloc] init];
     [service saveRecordsFromArray:pIQNameFieldObjects inTable:@"RecordName"];
+}
+
+
+// IPAD-4747
+-(void)createUniqueIndex:(NSString*)objectName {
+    @autoreleasepool {
+        NSString *createIndexQuery = [[NSString alloc] initWithFormat:@"CREATE UNIQUE INDEX IF NOT EXISTS unique_id_%@ on %@ (%@) ", objectName, objectName, kId];
+        DatabaseQueue *queue = [[DatabaseManager sharedInstance] databaseQueue];
+        __block BOOL sucessFull = NO;
+        [queue inTransaction:^(SMDatabase *db, BOOL *rollback) {
+            sucessFull = [db executeUpdate:createIndexQuery];
+            if (!sucessFull)
+            {
+                if ([db hadError])
+                {
+                    NSLog(@"Create unique index failed with error : %@ ", [db lastErrorMessage]);
+                }
+            }
+        }];
+    }
 }
 
 @end
