@@ -28,6 +28,8 @@
 #import "AlertViewHandler.h"
 #import "TagManager.h"
 #import "CustomActionsDAO.h"
+#import "SMXConstants.h"
+
 @interface CustomXMLParser ()
 @property(nonatomic, strong) NSMutableDictionary *something;
 @property(nonatomic, strong) NSMutableDictionary *currentDictionary;
@@ -245,7 +247,42 @@
                                 if ([errorDict objectForKey:@"text"]) {
                                     errorKey = [errorDict objectForKey:@"text"];
                                 }
-                                if ([valueMapDict objectForKey:@"INTF_Response:valueMap"]) {
+                                if ([[errorKey uppercaseString]isEqualToString:@"ERROR"]){
+                                    NSDictionary * errMsgDict = [valueMapDict objectForKey:@"INTF_Response:valueMap"];
+                                    if ([errMsgDict objectForKey:@"INTF_Response:value"] ) {
+                                        NSString *errorMsg;
+                                        NSDictionary *errorValueDict = [errMsgDict objectForKey:@"INTF_Response:value"];
+                                        if ([errorValueDict isKindOfClass:[NSDictionary class]]) {
+                                            errorMsg = [errorValueDict objectForKey:@"text"];
+                                        }
+                                        if (![StringUtil checkIfStringEmpty:errorMsg]) {
+                                            SXLogError(@"CUSTOM ACTIONS ERROR : %@",errorMsg);
+                                            
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                if (SYSTEM_VERSION < 8.0) {
+                                                    UIAlertView * _alert = [[UIAlertView alloc] initWithTitle:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage] message:errorMsg delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles:nil];
+                                                    
+                                                    [_alert show];
+                                                }
+                                                else {
+                                                    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage] message:errorMsg preferredStyle:(UIAlertControllerStyleAlert)];
+                                                    UIAlertAction *okAction = [UIAlertAction actionWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction *action) {
+                                                    }];
+                                                    [alertController addAction:okAction];
+                                                    [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:alertController animated:YES completion:^{}];
+                                                }
+
+                                            });
+                                        }
+                                        
+                                    }
+                                    else{
+                                        NSUserDefaults *userdefaults= [NSUserDefaults standardUserDefaults];
+                                        [userdefaults removeObjectForKey:@"custom_actions_req_id"];
+                                        [userdefaults synchronize];
+                                    }
+                                }
+                                else if ([valueMapDict objectForKey:@"INTF_Response:valueMap"]) {
                                     NSDictionary *objectNameDict=[valueMapDict objectForKey:@"INTF_Response:value"];
                                     NSString *objectName;
                                     NSString *idValue;
@@ -324,29 +361,6 @@
 
                                     }
                                     
-                                }
-                                else if ([[errorKey uppercaseString]isEqualToString:@"ERROR"]){
-                                    NSDictionary * errMsgDict = [valueMapDict objectForKey:@"INTF_Response:value"];
-                                    if ([errMsgDict objectForKey:@"INTF_Response:value"]) {
-                                        NSString *errorMsg = [errMsgDict objectForKey:@"INTF_Response:value"];
-                                        if (![StringUtil checkIfStringEmpty:errorMsg]) {
-                                            SXLogError(@"CUSTOM ACTIONS ERROR : %@",errorMsg);
-                                            
-                                            dispatch_async(dispatch_get_main_queue(), ^{
-                                                AlertViewHandler *alert = [[AlertViewHandler alloc] init];
-                                                [alert showAlertViewWithTitle:[[TagManager sharedInstance]tagByName:kTagSyncErrorMessage]
-                                                                      Message:errorMsg
-                                                                     Delegate:nil cancelButton:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk]
-                                                               andOtherButton:nil];
-                                            });
-                                        }
-                                        
-                                    }
-                                    else{
-                                        NSUserDefaults *userdefaults= [NSUserDefaults standardUserDefaults];
-                                        [userdefaults removeObjectForKey:@"custom_actions_req_id"];
-                                        [userdefaults synchronize];
-                                    }
                                 }
                                 else{
                                     temp = [valueMapDict objectForKey:@"INTF_Response:record"];
