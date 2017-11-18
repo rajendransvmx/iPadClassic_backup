@@ -318,8 +318,10 @@
 {
  
     //020267
-    oldValue = [oldValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    newValue = [newValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if ([oldValue isKindOfClass:[NSString class]])
+        oldValue = [oldValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if ([newValue isKindOfClass:[NSString class]])
+        newValue = [newValue stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     if (![oldValue isEqualToString:newValue] && ([StringUtil isStringEmpty:oldValue] || [StringUtil isStringEmpty:newValue])) {
         if(newValue != nil){
