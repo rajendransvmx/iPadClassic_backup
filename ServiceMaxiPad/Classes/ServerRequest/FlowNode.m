@@ -226,6 +226,8 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
 {
     RequestType  nextRequestType = [self nextRequestTypeWithPreviousRequest:previousRequest];
     
+    [self saveRequestIdForSyncTimeLogs:previousRequest andNextRequestType:nextRequestType]; // IPAD-4764
+    
     // IPAD-4510
     if ((previousRequest.categoryType == CategoryTypeDataSync || previousRequest.categoryType == CategoryTypeOneCallDataSync) && previousRequest.requestType == RequestTXFetch) {
         if ([[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete].count > 0) {
@@ -823,4 +825,60 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
     }
     
 }
+
+// IPAD-4764
+-(void)saveRequestIdForSyncTimeLogs:(SVMXServerRequest *)previousRequest andNextRequestType:(RequestType)nextRequestType {
+    
+    switch (self.nodecategoryType) {
+        case CategoryTypeResetApp:
+        case CategoryTypeInitialSync:
+        case CategoryTypeOneCallDataSync:
+        case CategoryTypeDataSync:
+        case CategoryTypeConfigSync:
+        case CategoryTypeDataPurge:
+        case CategoryTypeIncrementalOneCallMetaSync:
+        case CategoryTypeOneCallRestInitialSync:
+        {
+            if (previousRequest == nil) {
+                NSMutableArray *syncTLRequestIds = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kSTLMetaDataSyncIdKey]];
+                [syncTLRequestIds addObject:self.flowId];
+                [[NSUserDefaults standardUserDefaults] setObject:syncTLRequestIds forKey:kSTLMetaDataSyncIdKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            if (nextRequestType == RequestTypeNone) {
+                NSMutableArray *syncTLRequestIds = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kSTLMetaDataSyncIdKey]];
+                if (syncTLRequestIds) {
+                    [syncTLRequestIds removeObject:self.flowId];
+                }
+                [[NSUserDefaults standardUserDefaults] setObject:syncTLRequestIds forKey:kSTLMetaDataSyncIdKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+        }
+            break;
+        case CategoryTypeGetPriceData:
+        {
+            if (previousRequest == nil) {
+                NSMutableArray *syncTLRequestIds = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kSTLGetPriceSyncIdKey]];
+                [syncTLRequestIds addObject:self.flowId];
+                [[NSUserDefaults standardUserDefaults] setObject:syncTLRequestIds forKey:kSTLGetPriceSyncIdKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+            
+            if (nextRequestType == RequestTypeNone) {
+                NSMutableArray *syncTLRequestIds = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kSTLGetPriceSyncIdKey]];
+                if (syncTLRequestIds) {
+                    [syncTLRequestIds removeObject:self.flowId];
+                }
+                [[NSUserDefaults standardUserDefaults] setObject:syncTLRequestIds forKey:kSTLGetPriceSyncIdKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+
 @end

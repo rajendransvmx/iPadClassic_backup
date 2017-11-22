@@ -4,13 +4,13 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.99.021
+Version = 17.99.022
 
 ===========================================
 
 Defect:
 ===========================================
-IPAD-4733
+IPAD-4764
 
 Feature:
 ===========================================
@@ -19,6 +19,6 @@ Feature:
 
 NOTE:
 
-1. NameSpace: SVMXC (multi server support)
+1. NameSpace: SVMXDEV
 
 

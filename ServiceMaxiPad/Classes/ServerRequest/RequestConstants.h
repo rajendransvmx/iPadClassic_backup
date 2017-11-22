@@ -386,3 +386,7 @@ extern NSString *const kSVMXVersion;
 // DC-ADC optimization
 extern NSString *const kADCOptimized; // IPAD-4698
 
+// IPAD-4764
+extern NSString *const kSTLGetPriceSyncIdKey;
+extern NSString *const kSTLMetaDataSyncIdKey;
+
