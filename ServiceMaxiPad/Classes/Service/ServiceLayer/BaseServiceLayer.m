@@ -44,7 +44,7 @@
     {
         RequestParamModel * param = nil;
         
-        NSArray *resultArray = [[TimeLogCacheManager sharedInstance] getCompleteLogEntryforCategoryType:self.categoryType];
+        NSArray *resultArray = [[TimeLogCacheManager sharedInstance] getCompleteLogEntryforCategoryType:self.categoryType andCurrentRequestId:self.requestIdentifier]; // IPAD-4764
         if ([resultArray count] > 0) {
             
             param = [[RequestParamModel alloc] init];
