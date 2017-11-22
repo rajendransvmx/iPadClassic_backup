@@ -243,7 +243,7 @@
 
 #pragma mark - Get entry for request parameter
 //special request parameters
--(NSArray *) getCompleteLogEntryforCategoryType:(CategoryType)categoryType
+-(NSArray *) getCompleteLogEntryforCategoryType:(CategoryType)categoryType andCurrentRequestId:(NSString *)currentID
 {
     NSMutableArray *logIdArray = nil;
     NSMutableArray *failureIdArray = nil;
@@ -254,12 +254,24 @@
         logIdArray = self.logIdGetPriceTimeCacheArray;
         cacheDictionary = self.getPriceTimeCacheDictionary;
         failureIdArray = self.syncRequestGetPriceTimeCacheIdForFailure;
+        if (!failureIdArray) {
+            failureIdArray = [NSMutableArray array];
+        }
+        
+        [failureIdArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults] objectForKey:kSTLGetPriceSyncIdKey]];
+        [failureIdArray removeObject:currentID]; // IPAD-4764
     }
     else
     {
         logIdArray = self.logIdTimeCacheArray;
         cacheDictionary = self.timeCacheDictionary;
         failureIdArray = self.syncRequestTimeCacheIdForFailure;
+        if (!failureIdArray) {
+            failureIdArray = [NSMutableArray array];
+        }
+        
+        [failureIdArray addObjectsFromArray:[[NSUserDefaults standardUserDefaults] objectForKey:kSTLMetaDataSyncIdKey]];
+        [failureIdArray removeObject:currentID]; // IPAD-4764
     }
     
     NSMutableArray *finalArray = [[NSMutableArray alloc] initWithCapacity:0];
