@@ -378,3 +378,7 @@ extern NSString *const kAddressField;
 extern NSString *const kOrgAddressKey;
 extern NSString *const kGetUserInfoURLLink;
 extern NSString *const kUserInfoEventName;
+
+// IPAD-4764
+extern NSString *const kSTLGetPriceSyncIdKey;
+extern NSString *const kSTLMetaDataSyncIdKey;
