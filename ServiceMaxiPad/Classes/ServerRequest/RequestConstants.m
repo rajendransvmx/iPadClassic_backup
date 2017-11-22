@@ -239,3 +239,7 @@ NSString *const kSVMXVersion = @"SvmxVersion";
 
 // DC-ADC optimization
 NSString *const kADCOptimized = @"ADC_OPTIMIZED"; // IPAD-4698
+
+// IPAD-4764
+NSString *const kSTLGetPriceSyncIdKey = @"kSTLGetPriceSyncId";
+NSString *const kSTLMetaDataSyncIdKey = @"kSTLMetaDataSyncId";

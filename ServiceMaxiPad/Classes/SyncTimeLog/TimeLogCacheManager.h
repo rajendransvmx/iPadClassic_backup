@@ -122,7 +122,7 @@
  * @return empty/non empty
  *
  */
-- (NSArray *) getCompleteLogEntryforCategoryType:(CategoryType)categoryType;
+- (NSArray *) getCompleteLogEntryforCategoryType:(CategoryType)categoryType andCurrentRequestId:(NSString *)currentID; // IPAD-4764
 
 - (void) addEntryToFailureList:(NSString *)requestId forCategoryType:(CategoryType)categoryType;
 - (void) clearAllFailureListforCategoryType:(CategoryType)categoryType;
