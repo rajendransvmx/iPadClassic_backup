@@ -538,7 +538,7 @@
 {
     self.lookUpObject.searchString = nil;
     [self loadLookUpData];
-    [self removePreviouslySelectedData];
+    //[self removePreviouslySelectedData]; //IPAD-4733
     [self.tableView reloadData];
     [searchBar resignFirstResponder];
     
@@ -928,7 +928,7 @@
     if (!self.isOnlineLookUpSelected) {
         
         [self loadLookUpData];
-        [self removePreviouslySelectedData];
+        //[self removePreviouslySelectedData]; //IPAD-4733
         [self.tableView reloadData];
         [self noRecordsToDisplay];
     }
@@ -1010,7 +1010,7 @@
     {
         
         [self loadLookUpData];
-        [self removePreviouslySelectedData];
+        //[self removePreviouslySelectedData]; //IPAD-4733
         [self.tableView reloadData];
         [self noRecordsToDisplay];
         [self enableSearchButton];
@@ -1022,7 +1022,7 @@
 - (void)onlineLookupSearchSuccessfullwithResponse:(NSMutableArray *)dataArray {
     
     [self.lookUpHelper fillOnlineLookupData:dataArray forLookupObject:self.lookUpObject];
-    [self removePreviouslySelectedData];
+    //[self removePreviouslySelectedData]; //IPAD-4733
     [self.tableView reloadData];
     [self noRecordsToDisplay];
     [self enableSearchButton];
