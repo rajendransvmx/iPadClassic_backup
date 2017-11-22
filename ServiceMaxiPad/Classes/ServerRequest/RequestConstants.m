@@ -234,5 +234,5 @@ NSString *const kGetUserInfoURLLink = @"getUserInfo";
 NSString *const kUserInfoEventName = @"UserInfo";
 
 // IPAD-4764
-extern NSString *const kSTLGetPriceSyncIdKey;
-extern NSString *const kSTLMetaDataSyncIdKey;
+NSString *const kSTLGetPriceSyncIdKey = @"kSTLGetPriceSyncId";
+NSString *const kSTLMetaDataSyncIdKey = @"kSTLMetaDataSyncId";
