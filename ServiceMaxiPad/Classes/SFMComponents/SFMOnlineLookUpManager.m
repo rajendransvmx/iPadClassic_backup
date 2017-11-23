@@ -252,7 +252,7 @@
         
         
         //check if its reference. then check for Id else just check with what is displayed
-        if ([lhsFieldModel.type isEqualToString:kSfDTReference] || [fieldModel.type isEqualToString:kSfDTDate] ||   [fieldModel.type isEqualToString:kSfDTDateTime]  || ([lhsFieldModel.type caseInsensitiveCompare:kId] == NSOrderedSame)) {
+        if ([lhsFieldModel.type isEqualToString:kSfDTReference] || [fieldModel.type isEqualToString:kSfDTDate] ||   [fieldModel.type isEqualToString:kSfDTDateTime]  || [fieldModel.type isEqualToString:kSfDTPicklist] || ([lhsFieldModel.type caseInsensitiveCompare:kId] == NSOrderedSame)) {
             
             displayValue = (recordData.internalValue.length > 0) ? recordData.internalValue : @"";
         }
