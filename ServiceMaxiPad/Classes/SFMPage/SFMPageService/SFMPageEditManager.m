@@ -2423,9 +2423,10 @@
             }
             [[SuccessiveSyncManager sharedSuccessiveSyncManager] registerForSuccessiveSync:syncRecord withData:finalDict];
         }
-        ModifiedRecordModel *customActionRecord = [syncRecord copy];
+        ModifiedRecordModel *customActionRecord = [ModifiedRecordModel new];
+        customActionRecord = syncRecord;
         customActionRecord.fieldsModified = [self getModifiedJSONStringForObject:objectName recordId:localId sfid:sfId];
-        [self updateCustomActionRequestParamsForModifiedRecords:syncRecord];
+        [self updateCustomActionRequestParamsForModifiedRecords:customActionRecord];
 
     }
 }
