@@ -847,11 +847,7 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
             }
             
             if (nextRequestType == RequestTypeNone) {
-                NSMutableArray *syncTLRequestIds = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kSTLMetaDataSyncIdKey]];
-                if (syncTLRequestIds) {
-                    [syncTLRequestIds removeObject:self.flowId];
-                }
-                [[NSUserDefaults standardUserDefaults] setObject:syncTLRequestIds forKey:kSTLMetaDataSyncIdKey];
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSTLMetaDataSyncIdKey];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
         }
@@ -866,11 +862,7 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
             }
             
             if (nextRequestType == RequestTypeNone) {
-                NSMutableArray *syncTLRequestIds = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:kSTLGetPriceSyncIdKey]];
-                if (syncTLRequestIds) {
-                    [syncTLRequestIds removeObject:self.flowId];
-                }
-                [[NSUserDefaults standardUserDefaults] setObject:syncTLRequestIds forKey:kSTLGetPriceSyncIdKey];
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSTLGetPriceSyncIdKey];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
         }
