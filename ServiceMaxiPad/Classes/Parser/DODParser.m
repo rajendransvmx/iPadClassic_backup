@@ -89,7 +89,9 @@
                     else {
                         NSString *jsonStr = [recordDict objectForKey:kSVMXValue];
                         TransactionObjectModel *model = [self getTxnObjectForJsonString:jsonStr objectName:objectName];
-                        [objectrecords addObject:model];
+                        if (model) {
+                            [objectrecords addObject:model];
+                        }
                     }
                 }
                 if ([objectrecords count] > 0) {
@@ -116,7 +118,9 @@
     NSData *recordData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     NSError *e = nil;
     NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:recordData options:NSJSONReadingMutableContainers error:&e];
-
+    if (!jsonDict) {
+        return nil;
+    }
     TransactionObjectModel *model = [[TransactionObjectModel alloc] initWithObjectApiName:objectName];
     [model setFieldValueDictionaryForFields:jsonDict];
     
