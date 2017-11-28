@@ -232,3 +232,7 @@ NSString *const kAddressField = @"Address";
 NSString *const kOrgAddressKey = @"kOrgAddress";
 NSString *const kGetUserInfoURLLink = @"getUserInfo";
 NSString *const kUserInfoEventName = @"UserInfo";
+
+// IPAD-4764
+NSString *const kSTLGetPriceSyncIdKey = @"kSTLGetPriceSyncId";
+NSString *const kSTLMetaDataSyncIdKey = @"kSTLMetaDataSyncId";
