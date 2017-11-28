@@ -171,6 +171,7 @@
     self.tempViewController.wizardsArray = allWizards;
     self.tempViewController.viewProcessArray = [processService fetchAllViewProcessForObjectName:self.sfmPageView.sfmPage.objectName];
     self.tempViewController.shouldShowTroubleShooting = self.sfmPageView.sfmPage.process.pageLayout.headerLayout.enableTroubleShooting;
+    [self.tempViewController reloadTableView];
 }
 
 
