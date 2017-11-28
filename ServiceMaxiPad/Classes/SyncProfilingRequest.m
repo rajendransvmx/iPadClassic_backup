@@ -66,7 +66,13 @@
         }
         else if ([syncProfileType isEqualToString:kSPTypeEnd])
         {
-            NSString *currentDate = [userDefaults objectForKey:kSPSyncTime];
+            // Sync profiling - fixed wrong end time issue.
+            NSString *status = [[NSUserDefaults standardUserDefaults] objectForKey:kSyncProfileFailType];
+            NSString * currentDate = [DateUtil getCurrentDateForSyncProfiling];
+            if ([status isEqualToString:kSyncProfileAppQuit]) {
+                currentDate = [userDefaults objectForKey:kSPSyncTime];
+            }
+            
             if(!currentDate)
             {
                 currentDate = [DateUtil getCurrentDateForSyncProfiling];
@@ -83,10 +89,16 @@
                 [params setObject:dataSize forKey:kSyncProfileDataSizeKey];
             }
             
-            NSString *status = [[NSUserDefaults standardUserDefaults] objectForKey:kSyncProfileFailType];
-            status = (!status)?@"":status;
+            status = (!status)?kSyncProfileSuccess:status;
             [params setObject:status forKey:kSyncProfileStatusKey];
         }
+        
+        NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+        if (appVersion) {
+            NSString *versionStr = [NSString stringWithFormat:@"iPad Classic %@", appVersion];
+            [params setObject:versionStr forKey:kSyncProfileClientVersion];
+        }
+        
         self.requestParameter.requestInformation = params;
         return params;
     }

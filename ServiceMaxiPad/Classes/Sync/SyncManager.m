@@ -2668,9 +2668,10 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                 [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSyncprofileReqId];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
-            self.syncProfileDataSize = 0;
+
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSyncProfileFailType];
             [[NSUserDefaults standardUserDefaults] synchronize];
+            [self clearSPEndcallData];
         }
     }
 }
@@ -2681,9 +2682,15 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             if ([self checkIfEndTimeSyncIsPending]) {
                 [[SyncManager sharedInstance] performSyncProfilingWithoutCheckingForPendingEvents:kSPTypeStart];
             }
+            [self clearSPEndcallData];
         }
     }
 }
 
+-(void)clearSPEndcallData {
+    self.syncProfileDataSize = 0;
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:kSPSyncTime];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 @end
