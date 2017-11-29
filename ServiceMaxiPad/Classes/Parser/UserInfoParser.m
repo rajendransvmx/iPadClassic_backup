@@ -17,12 +17,14 @@
     {
         if (responseData && [responseData isKindOfClass:[NSDictionary class]])
         {
+            
             NSString *orgAddress = [responseData objectForKey:kAddressField];
-            if(orgAddress)
-            {
-                [[NSUserDefaults standardUserDefaults] setObject:orgAddress forKey:kOrgAddressKey];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-            }
+            
+            orgAddress=(orgAddress)?orgAddress:@"";             //IPAD-4779
+            
+            [[NSUserDefaults standardUserDefaults] setObject:orgAddress forKey:kOrgAddressKey];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
             
             // Multi-server support
             NSString *svmxVersion = [responseData objectForKey:kSVMXVersion];
