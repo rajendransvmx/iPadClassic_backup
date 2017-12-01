@@ -361,6 +361,7 @@ extern NSString *const kSyncProfileGroupProfileKey;
 extern NSString *const kSyncProfileDeviceNameKey;
 extern NSString *const kSyncProfileEndTimeKey;
 extern NSString *const kSyncProfileRequestTimeOutKey;
+extern NSString *const kSyncProfileClientVersion;
 
 // IPAD-4585
 extern NSString *const kSyncprofilePreviousReqId;

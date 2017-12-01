@@ -216,6 +216,7 @@ NSString *const kSyncProfileGroupProfileKey = @"svmxprofile";
 NSString *const kSyncProfileDeviceNameKey = @"devicename";
 NSString *const kSyncProfileEndTimeKey = @"syncendtime";
 NSString *const kSyncProfileRequestTimeOutKey = @"requesttimeout";
+NSString *const kSyncProfileClientVersion = @"clientversion";
 // IPAD-4585
 NSString *const kSyncprofilePreviousReqId = @"syncprofileTaskPreviousId";
 NSString *const kSyncProfileFailType = @"syncProfileFailType";
