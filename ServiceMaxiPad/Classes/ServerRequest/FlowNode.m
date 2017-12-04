@@ -238,8 +238,8 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
         }
     }
     
-    // IPAD-4507
-    if (nextRequestType == RequestSyncTimeLogs) {
+    // IPAD-4507 // IPAD-4781
+    if (previousRequest.categoryType != CategoryTypeGetPriceData && nextRequestType == RequestSyncTimeLogs) {
         [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:nil];
     }
     
