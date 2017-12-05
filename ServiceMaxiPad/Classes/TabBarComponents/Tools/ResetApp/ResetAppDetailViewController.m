@@ -327,6 +327,7 @@
         else
         {
             [[AppManager sharedInstance] resetApplicationContents];
+            [syncManager pushSyncProfileInfoToUserDefaultsWithValue:kSPSyncTypeResetApp forKey:kSyncProfileSyncType]; // SP sync type
             [syncManager performSyncWithType:SyncTypeInitial];
         }
     }

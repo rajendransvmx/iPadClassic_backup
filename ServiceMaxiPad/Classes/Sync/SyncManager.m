@@ -549,6 +549,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
                                              requestParam:nil
                                            callerDelegate:self];
     [self setUpRequestIdForSyncProfiling:taskModel.taskId];
+    [self pushSyncProfileInfoToUserDefaultsWithValue:kSPSyncTypeConfigSync forKey:kSyncProfileSyncType];// SP sync type
     [[TaskManager sharedInstance] addTask:taskModel];
 }
 
@@ -871,6 +872,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
             [PlistManager storeLastDataSyncStartGMTTime:[DateUtil getDatabaseStringForDate:[NSDate date]]];
             [PlistManager storeLastDataSyncStatus:kInProgress];
             [self performSelectorInBackground:@selector(initiateSyncInBackGround) withObject:nil];
+            [self pushSyncProfileInfoToUserDefaultsWithValue:kSPSyncTypeDataSync forKey:kSyncProfileSyncType]; // SP sync type
             [self performSelectorInBackground:@selector(initiateSyncProfiling:) withObject:kSPTypeStart];
         }
         return YES;
