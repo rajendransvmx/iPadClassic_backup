@@ -1685,6 +1685,7 @@ const float progress = 0.05;
         
         if ([[SyncManager sharedInstance] isSyncProfilingEnabled]) {
             [[SyncManager sharedInstance] setUpRequestIdForSyncProfiling:taskModel.taskId];
+            [[SyncManager sharedInstance] pushSyncProfileInfoToUserDefaultsWithValue:kSPSyncTypeDataPurge forKey:kSyncProfileSyncType]; // SP sync type
         }
         
         [[TaskManager sharedInstance] addTask:taskModel];
