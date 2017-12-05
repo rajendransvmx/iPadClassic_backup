@@ -362,6 +362,7 @@ extern NSString *const kSyncProfileDeviceNameKey;
 extern NSString *const kSyncProfileEndTimeKey;
 extern NSString *const kSyncProfileRequestTimeOutKey;
 extern NSString *const kSyncProfileClientVersion;
+extern NSString *const kSyncProfileSyncType; // SP sync type
 
 // IPAD-4585
 extern NSString *const kSyncprofilePreviousReqId;
@@ -371,6 +372,13 @@ extern NSString *const kSyncProfileDataSizeKey;
 extern NSString *const kSyncProfileSuccess;
 extern NSString *const kSyncProfileAppQuit;
 extern NSString *const kSyncProfileSyncFailure;
+
+// SP sync type
+extern NSString *const kSPSyncTypeDataSync;
+extern NSString *const kSPSyncTypeInitialSync;
+extern NSString *const kSPSyncTypeResetApp;
+extern NSString *const kSPSyncTypeConfigSync;
+extern NSString *const kSPSyncTypeDataPurge;
 
 /* User Info */ // IPAD-4599
 
