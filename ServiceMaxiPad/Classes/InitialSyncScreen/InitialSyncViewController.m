@@ -71,6 +71,7 @@
     self.detailLabel2.text = [[TagManager sharedInstance]tagByName:kTag_WhileYouWaitTakeLook];
     
     SyncManager *syncMgr = [SyncManager sharedInstance];
+    [syncMgr pushSyncProfileInfoToUserDefaultsWithValue:kSPSyncTypeInitialSync forKey:kSyncProfileSyncType]; // SP sync type
     [syncMgr performSyncWithType:SyncTypeInitial];
     
     [[AutoLockManager sharedManager] disableAutoLockSettingFor:initialSyncAL]; // Disable the user controlled device Autolock. 26-May-2015 BSP

@@ -12267,7 +12267,7 @@
 					"-objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadwin18;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadclassic;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -12311,7 +12311,7 @@
 					"-objc",
 					"-all_load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadwin18;
+				PRODUCT_BUNDLE_IDENTIFIER = com.servicemaxinc.svmxipadclassic;
 				PRODUCT_NAME = ServiceMax;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
