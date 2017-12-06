@@ -63,6 +63,12 @@
             [params setObject:userDictionary forKey:kSyncProfileUserIdKey]; // user id
             [params setObject:profileDictionary forKey:kSyncProfileGroupProfileKey]; // group profile id
             [params setObject:deviceName forKey:kSyncProfileDeviceNameKey]; // device name
+            
+            NSString *syncType = [userDefaults objectForKey:kSyncProfileSyncType];
+            if (!syncType) {
+                syncType = @"";
+            }
+            [params setObject:syncType forKey:kSyncProfileSyncType]; // SP sync type
         }
         else if ([syncProfileType isEqualToString:kSPTypeEnd])
         {

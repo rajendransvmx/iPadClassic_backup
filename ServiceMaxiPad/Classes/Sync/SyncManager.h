@@ -123,4 +123,5 @@ extern NSString *KBlockScreenForProductIQ;
 -(BOOL)isSyncProfilingEnabled;
 -(void)setUpRequestIdForSyncProfiling:(NSString *)requestId;
 -(void)initiateSyncProfiling:(NSString *)profileType;
+-(void)pushSyncProfileInfoToUserDefaultsWithValue:(NSString *)value forKey:(NSString *)key;
 @end
