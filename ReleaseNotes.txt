@@ -4,7 +4,7 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.99.035
+Version = 17.99.036
 
 ===========================================
 
@@ -18,6 +18,6 @@ Feature:
 
 NOTE:
 
-1. NameSpace: SVMXDEV
+1. NameSpace: SVMXC
 
 
