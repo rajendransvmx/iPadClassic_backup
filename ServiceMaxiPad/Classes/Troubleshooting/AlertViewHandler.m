@@ -26,7 +26,10 @@
                                                           delegate:self
                                                  cancelButtonTitle:cancelButton
                                                  otherButtonTitles:otherButton, nil];
-        [alertView show];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [alertView show];
+        });
+        
         
     }
     else
@@ -44,8 +47,10 @@
         
         [alertController addAction:cancelAction];
         
-        [delegate presentViewController:alertController animated:YES completion:nil];
         
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [delegate presentViewController:alertController animated:YES completion:nil];
+        });
         
     }
     
