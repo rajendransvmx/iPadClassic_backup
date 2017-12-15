@@ -302,7 +302,8 @@
     }
     else if ([sfOperator isEqualToString:@"in"])
     {
-        sqlOperator = SQLOperatorIn;//HS 24 Dec test
+        sqlOperator = SQLOperatorLike; //Fix IPAD-4785
+//        sqlOperator = SQLOperatorIn;//HS 24 Dec test
     }
     else if ([sfOperator isEqualToString:@"notin"])
     {
@@ -310,8 +311,8 @@
         
         if ([fieldType caseInsensitiveCompare:kSfDTReference] == NSOrderedSame || [fieldType caseInsensitiveCompare:kSfDTPicklist] == NSOrderedSame)
         {
-            //sqlOperator = SQLOperatorNotLike;
-            sqlOperator = SQLOperatorNotIn;//HS 24 Dec test
+            sqlOperator = SQLOperatorNotLike; //Fix IPAD-4785
+//            sqlOperator = SQLOperatorNotIn;//HS 24 Dec test
         }
     }
     else if ([sfOperator  isEqualToString:@"starts"])
