@@ -742,6 +742,9 @@
                 if ([objectfieldModel.type isEqualToString:kSfDTReference]) {
                     displayValue =  [self getDisplayValueForReferenceField:objectfieldModel ForValue:evaluatedLiteralvalue];
                 }
+                else if([objectfieldModel.type isEqualToString:kSfDTDateTime]){
+                    displayValue = [self getUserReadableDateTime:evaluatedLiteralvalue];//Fix IPAD-4789
+                }
             }
         }
         else
