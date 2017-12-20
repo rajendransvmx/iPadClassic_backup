@@ -33,6 +33,7 @@
 #import "SFRecordTypeModel.h"
 #import "TransactionObjectDAO.h"
 #import "TransactionObjectModel.h"
+#import "StringUtil.h"
 
 //#import "SFMPageDatabaseService.h" // SFM page view helper to fill up reference fields
 
@@ -169,7 +170,7 @@
     
     NSMutableArray *dataIdsArray = [[NSMutableArray alloc] init];
     
-    if (dataArray.count > 0) {
+    if (dataArray.count > 0 && ![StringUtil checkIfStringEmpty:searchString] ) {
         
         for (TransactionObjectModel *dataDict in dataArray)
         {
