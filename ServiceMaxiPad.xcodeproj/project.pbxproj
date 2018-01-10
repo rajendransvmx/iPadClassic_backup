@@ -2380,6 +2380,10 @@
 		ECAFEF041DD994C60065AB96 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
 		ECAFEF071DD99C710065AB96 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
 		ECBCF4091E113DE000AD1814 /* PriceCalculationManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */; };
+		ECC557D620062D9B00C6A8C5 /* root_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557D420062D9A00C6A8C5 /* root_digicert.cer */; };
+		ECC557D720062D9B00C6A8C5 /* root_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557D420062D9A00C6A8C5 /* root_digicert.cer */; };
+		ECC557D820062D9B00C6A8C5 /* intermediate_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557D520062D9B00C6A8C5 /* intermediate_digicert.cer */; };
+		ECC557D920062D9B00C6A8C5 /* intermediate_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557D520062D9B00C6A8C5 /* intermediate_digicert.cer */; };
 		ECE752BD1DE6F465005D34C7 /* SyncManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */; };
 		ECE752C01DE6FA66005D34C7 /* DateUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A2179919E585D700F22EA6 /* DateUtil.m */; };
 		ECE752C11DE6FA6C005D34C7 /* SNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 183A99EE19E6890C00919345 /* SNetworkReachabilityManager.m */; };
@@ -4568,6 +4572,8 @@
 		ECAFEF051DD99C710065AB96 /* SyncProfilingRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyncProfilingRequest.h; sourceTree = "<group>"; };
 		ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncProfilingRequest.m; sourceTree = "<group>"; };
 		ECBCF4081E113DE000AD1814 /* PriceCalculationManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PriceCalculationManagerTests.m; sourceTree = "<group>"; };
+		ECC557D420062D9A00C6A8C5 /* root_digicert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = root_digicert.cer; sourceTree = "<group>"; };
+		ECC557D520062D9B00C6A8C5 /* intermediate_digicert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = intermediate_digicert.cer; sourceTree = "<group>"; };
 		ECE752BC1DE6F465005D34C7 /* SyncManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyncManagerTests.m; sourceTree = "<group>"; };
 		FD09DF2C1D4A088800972C95 /* ZXAztecDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZXAztecDecoder.h; sourceTree = "<group>"; };
 		FD09DF2D1D4A088800972C95 /* ZXAztecDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZXAztecDecoder.m; sourceTree = "<group>"; };
@@ -7791,6 +7797,8 @@
 		18B49AA81C0D76E200599ACD /* Certificates */ = {
 			isa = PBXGroup;
 			children = (
+				ECC557D520062D9B00C6A8C5 /* intermediate_digicert.cer */,
+				ECC557D420062D9A00C6A8C5 /* root_digicert.cer */,
 				8413DF201C7D98C900FF5345 /* intermediateTrial.cer */,
 				8413DF211C7D98C900FF5345 /* rootTrial.cer */,
 				18B49AAB1C0D82C300599ACD /* intermediate.cer */,
@@ -9565,6 +9573,7 @@
 				57186B5B19EF9DDD00B4642A /* TroubleshootingDetailViewController.xib in Resources */,
 				183AA1B419E6D26400919345 /* PageEditViewController.xib in Resources */,
 				189AE16C1BC513D500AD549D /* com.servicemax.client.installigence.ui.components.zip in Resources */,
+				ECC557D820062D9B00C6A8C5 /* intermediate_digicert.cer in Resources */,
 				C3AE0BA31A0795AC00490009 /* iOS-Trash-Can-Gray@2x.png in Resources */,
 				8410153A1BA94CCA007DFAC8 /* checkbox-selected.png in Resources */,
 				189F001A1A14896600570C54 /* DODViewController.xib in Resources */,
@@ -9733,6 +9742,7 @@
 				C3EF97A51A036D7300476293 /* Attachment-Share@2x.png in Resources */,
 				6BE779F11AB95E4700BBE149 /* NotificationTrackerVC.xib in Resources */,
 				40A06F341B06041400218162 /* SExplore@1x.png in Resources */,
+				ECC557D620062D9B00C6A8C5 /* root_digicert.cer in Resources */,
 				184A9E1419E7D592006DA6BE /* map_phone@2x.png in Resources */,
 				5B4F52B71A15D1A90008FDB3 /* File in Cloud - 70.png in Resources */,
 				40A06F211B06033100218162 /* NavBarRecents@3x.png in Resources */,
@@ -9785,6 +9795,7 @@
 				A64AB0E01CF2F9E5008839FB /* ResolveConflictsDetailViewController.xib in Resources */,
 				A64AB0E11CF2F9E5008839FB /* DocumentsTableViewCell.xib in Resources */,
 				A64AB0E21CF2F9E5008839FB /* Attachment-TrashCan@2x.png in Resources */,
+				ECC557D720062D9B00C6A8C5 /* root_digicert.cer in Resources */,
 				A64AB0E31CF2F9E5008839FB /* sync_Error@2x.png in Resources */,
 				A64AB0E41CF2F9E5008839FB /* DocumentsViewController.xib in Resources */,
 				A64AB0E51CF2F9E5008839FB /* iOS-Email-Retina-Orange@2x.png in Resources */,
@@ -9912,6 +9923,7 @@
 				A64AB1671CF2F9E5008839FB /* map_prioritypin@2x.png in Resources */,
 				A64AB1681CF2F9E5008839FB /* com.servicemax.client.sfmopdocdelivery.zip in Resources */,
 				A64AB1691CF2F9E5008839FB /* SFMLookUpFilterCell.xib in Resources */,
+				ECC557D920062D9B00C6A8C5 /* intermediate_digicert.cer in Resources */,
 				A64AB16A1CF2F9E5008839FB /* NavBarTools@3x.png in Resources */,
 				A64AB16B1CF2F9E5008839FB /* com.servicemax.client.installigence.utils.zip in Resources */,
 				A64AB16C1CF2F9E5008839FB /* Attachment-Powerpoint@2x.png in Resources */,
