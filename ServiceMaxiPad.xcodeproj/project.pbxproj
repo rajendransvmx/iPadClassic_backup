@@ -2172,6 +2172,10 @@
 		D9F7EEF61A1083270098F8AF /* BizRulesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F7EEF41A1083270098F8AF /* BizRulesViewController.xib */; };
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
+		ECC557CA200624E800C6A8C5 /* root_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557C8200624E800C6A8C5 /* root_digicert.cer */; };
+		ECC557CB200624E800C6A8C5 /* intermediate_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557C9200624E800C6A8C5 /* intermediate_digicert.cer */; };
+		ECC557CC200624F600C6A8C5 /* root_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557C8200624E800C6A8C5 /* root_digicert.cer */; };
+		ECC557CD200624F900C6A8C5 /* intermediate_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557C9200624E800C6A8C5 /* intermediate_digicert.cer */; };
 		FD441AD91CAA54DE00016C04 /* com.servicemax.client.usage.zip in Resources */ = {isa = PBXBuildFile; fileRef = FD441AD81CAA54DE00016C04 /* com.servicemax.client.usage.zip */; };
 /* End PBXBuildFile section */
 
@@ -4147,6 +4151,8 @@
 		DE9E10CC1AA9A28C00A87768 /* PushNotificationWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceHelper.h; sourceTree = "<group>"; };
 		DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationWebServiceHelper.m; sourceTree = "<group>"; };
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
+		ECC557C8200624E800C6A8C5 /* root_digicert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = root_digicert.cer; sourceTree = "<group>"; };
+		ECC557C9200624E800C6A8C5 /* intermediate_digicert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = intermediate_digicert.cer; sourceTree = "<group>"; };
 		FD441AD81CAA54DE00016C04 /* com.servicemax.client.usage.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = com.servicemax.client.usage.zip; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -6898,6 +6904,8 @@
 		18B49AA81C0D76E200599ACD /* Certificates */ = {
 			isa = PBXGroup;
 			children = (
+				ECC557C9200624E800C6A8C5 /* intermediate_digicert.cer */,
+				ECC557C8200624E800C6A8C5 /* root_digicert.cer */,
 				8413DF201C7D98C900FF5345 /* intermediateTrial.cer */,
 				8413DF211C7D98C900FF5345 /* rootTrial.cer */,
 				18B49AAB1C0D82C300599ACD /* intermediate.cer */,
@@ -7976,6 +7984,7 @@
 				40A06F3C1B06041400218162 /* STools@1x.png in Resources */,
 				4072531119FF6C2900ACA729 /* com.servicemax.client.sfmconsole.zip in Resources */,
 				184A9C4E19E7D591006DA6BE /* login-servicemax-logo.png in Resources */,
+				ECC557CB200624E800C6A8C5 /* intermediate_digicert.cer in Resources */,
 				184A9CBC19E7D591006DA6BE /* explore.png in Resources */,
 				5B2F9F3519EBF382006837C8 /* fadeout.png in Resources */,
 				8BA32EAB19EE3F9300BFA769 /* day_triangle-down@2x.png in Resources */,
@@ -8020,6 +8029,7 @@
 				84BEDC9919FA157800350B56 /* priority_Flag@2x.png in Resources */,
 				5BE2CC1619ED2B2C00A9721C /* clear.png in Resources */,
 				84BEDC9A19FA157800350B56 /* sla_Indicator@2x.png in Resources */,
+				ECC557CA200624E800C6A8C5 /* root_digicert.cer in Resources */,
 				183AA1AF19E6D26400919345 /* PageEditDetailViewController.xib in Resources */,
 				184F1C431A136A1000A2B985 /* bizInfo@2x.png in Resources */,
 				8BA32EAF19EE4EAE00BFA769 /* down-arrow-white.png in Resources */,
@@ -8299,6 +8309,7 @@
 				A64AB1391CF2F9E5008839FB /* triangle-down@2x.png in Resources */,
 				A64AB13A1CF2F9E5008839FB /* ProductManualDetail.xib in Resources */,
 				A64AB13B1CF2F9E5008839FB /* SNewItem@2x.png in Resources */,
+				ECC557CC200624F600C6A8C5 /* root_digicert.cer in Resources */,
 				A64AB13C1CF2F9E5008839FB /* up_arrow_gray.png in Resources */,
 				A64AB13D1CF2F9E5008839FB /* SFMLookUpDeatilViewController.xib in Resources */,
 				A64AB13E1CF2F9E5008839FB /* OPDocBackArrow.png in Resources */,
@@ -8318,6 +8329,7 @@
 				A64AB14C1CF2F9E5008839FB /* clear.png in Resources */,
 				A64AB14D1CF2F9E5008839FB /* sla_Indicator@2x.png in Resources */,
 				A64AB14E1CF2F9E5008839FB /* PageEditDetailViewController.xib in Resources */,
+				ECC557CD200624F900C6A8C5 /* intermediate_digicert.cer in Resources */,
 				A64AB14F1CF2F9E5008839FB /* bizInfo@2x.png in Resources */,
 				A64AB1501CF2F9E5008839FB /* down-arrow-white.png in Resources */,
 				A64AB1511CF2F9E5008839FB /* com.servicemax.client.runtime.zip in Resources */,
