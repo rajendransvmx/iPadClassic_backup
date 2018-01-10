@@ -1084,6 +1084,8 @@
 		D9F7EEF61A1083270098F8AF /* BizRulesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F7EEF41A1083270098F8AF /* BizRulesViewController.xib */; };
 		DE5083AF1AB2BFA500AA9DCE /* PushNotificationUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = DE5083AE1AB2BFA500AA9DCE /* PushNotificationUtility.m */; };
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
+		ECC557C62006183700C6A8C5 /* root_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557C42006183700C6A8C5 /* root_digicert.cer */; };
+		ECC557C72006183700C6A8C5 /* intermediate_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECC557C52006183700C6A8C5 /* intermediate_digicert.cer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3043,6 +3045,8 @@
 		DE9E10CC1AA9A28C00A87768 /* PushNotificationWebServiceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceHelper.h; sourceTree = "<group>"; };
 		DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationWebServiceHelper.m; sourceTree = "<group>"; };
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
+		ECC557C42006183700C6A8C5 /* root_digicert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = root_digicert.cer; sourceTree = "<group>"; };
+		ECC557C52006183700C6A8C5 /* intermediate_digicert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = intermediate_digicert.cer; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5730,6 +5734,8 @@
 		18B49AA81C0D76E200599ACD /* Certificates */ = {
 			isa = PBXGroup;
 			children = (
+				ECC557C52006183700C6A8C5 /* intermediate_digicert.cer */,
+				ECC557C42006183700C6A8C5 /* root_digicert.cer */,
 				18B49AAB1C0D82C300599ACD /* intermediate.cer */,
 				18B49AAC1C0D82C300599ACD /* root.cer */,
 			);
@@ -6727,6 +6733,7 @@
 				C3EF97871A036CAE00476293 /* DocumentsTableViewCell.xib in Resources */,
 				C3EF97A71A036D7300476293 /* Attachment-TrashCan@2x.png in Resources */,
 				84BEDC9B19FA157800350B56 /* sync_Error@2x.png in Resources */,
+				ECC557C72006183700C6A8C5 /* intermediate_digicert.cer in Resources */,
 				C3EF97891A036CAE00476293 /* DocumentsViewController.xib in Resources */,
 				184A9C0C19E7D591006DA6BE /* iOS-Email-Retina-Orange@2x.png in Resources */,
 				57A321001AB7196A00A172E0 /* SCalendar@2x.png in Resources */,
@@ -6942,6 +6949,7 @@
 				C3EF97A11A036D7300476293 /* Attachment-File-Missing@2x.png in Resources */,
 				C3CD32961A0FF9D4002F7705 /* AttachmentWebView.xib in Resources */,
 				184A9CA319E7D591006DA6BE /* checked@2x.png in Resources */,
+				ECC557C62006183700C6A8C5 /* root_digicert.cer in Resources */,
 				183A9E9219E6A11800919345 /* RuleBook.plist in Resources */,
 				4072530C19FF6C2900ACA729 /* com.servicemax.client.mvc.zip in Resources */,
 				18E522B51A6916C000FD9295 /* Sync_Error_White@2x.png in Resources */,
