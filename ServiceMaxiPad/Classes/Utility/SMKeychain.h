@@ -10,9 +10,9 @@
 
 @interface SMKeychain : NSObject
 + (instancetype)sharedKeychain;
-- (NSString *)readAccessTokenFromKeychainWithClientId:(NSString *)clientId;
-- (void)saveAccessTokenInKeychain:(NSString *)accessToken forClientId:(NSString *)clientId;
-- (void)removeAccessTokenFromKeychainWithClientId:(NSString *)clientId;
+- (NSString *)readRefreshTokenFromKeychainWithClientId:(NSString *)clientId;
+- (void)saveRefreshTokenInKeychain:(NSString *)refreshToken forClientId:(NSString *)clientId;
+- (void)removeRefreshTokenFromKeychainWithClientId:(NSString *)clientId;
 
 /**
  * @name  getRefreshToken
@@ -67,4 +67,11 @@
  */
 
 + (void)deleteRefreshToken;
+
+//access token
+
++ (NSString*)getAccessToken;
++ (void)storeAccessToken:(NSString *)accessToken;
++ (void)deleteAccessToken;
+
 @end

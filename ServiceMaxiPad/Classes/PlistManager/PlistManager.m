@@ -332,7 +332,6 @@ NSString *const kSyncProfileCustomOrgType = @"custom";
     
     
     [userDefaults setObject:identityURL forKey:kPersistanceStoreIdentityUrl];
-    [userDefaults setObject:accessToken forKey:kPersistanceStoreAccessToken];
     [userDefaults setObject:instanceURL forKey:kPersistanceStoreInstanceUrl];
     
     if (accessToken != nil)
@@ -341,12 +340,13 @@ NSString *const kSyncProfileCustomOrgType = @"custom";
     }
     
     [userDefaults synchronize];
+
+    [SMKeychain deleteAccessToken];
+    [SMKeychain storeAccessToken:accessToken];
     
     /*** Lets remove existing refresh token and store new one in key chain utils. */
     [SMKeychain deleteRefreshToken];
     [SMKeychain storeRefreshToken:refreshToken];
-    /* Lets store refresh token in plist as well as back up plan */
-    [PlistManager setRefreshToken:refreshToken];
     
     [[CustomerOrgInfo sharedInstance] setRefreshToken:refreshToken];
     [[CustomerOrgInfo sharedInstance] setAccessToken:accessToken];
@@ -440,7 +440,7 @@ NSString *const kSyncProfileCustomOrgType = @"custom";
     
     /** Access Token  */
     
-    [orgInfo setAccessToken:[userDefaults objectForKey:kPersistanceStoreAccessToken]];
+    [orgInfo setAccessToken:[SMKeychain getAccessToken]];
 
      /** 
       *  ApiURL
@@ -471,16 +471,6 @@ NSString *const kSyncProfileCustomOrgType = @"custom";
     
     if ([StringUtil isStringEmpty:refreshToken]) {
         SXLogWarning(@"Key Chain token is invalid            : %@ ", refreshToken);
-        refreshToken = [PlistManager getRefreshToken];
-        SXLogWarning(@"Stored Plist Token            : %@ ", refreshToken);
-    }
-    else
-    {
-        NSString * storedToken = [PlistManager getRefreshToken];
-        if ([StringUtil isStringEmpty:storedToken])
-        {
-            [PlistManager setRefreshToken:refreshToken];
-        }
     }
     
     [[CustomerOrgInfo sharedInstance] setRefreshToken:refreshToken];
@@ -828,9 +818,8 @@ NSString *const kSyncProfileCustomOrgType = @"custom";
 
 + (void)saveAccessToken:(NSString *)newAccesToken
 {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    [userDefaults setObject:newAccesToken forKey:kPersistanceStoreAccessToken];
-    [userDefaults synchronize];
+    [SMKeychain deleteAccessToken];
+    [SMKeychain storeAccessToken:newAccesToken];
     [self saveAccessTokenGeneratedTime];
     [self loadCustomerOrgInfo];
 }
