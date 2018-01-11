@@ -202,7 +202,12 @@ NSInteger webViewLoadCounter;
                     }
                 }];
             }
-             
+            else
+            {
+                [[AlertMessageHandler sharedInstance] showAlertMessageWithType:AlertMessageTypeCannotFindCustomHost
+                                                                   andDelegate:nil];
+                [[AppManager sharedInstance] completedLoginProcessWithStatus:ApplicationStatusAuthorizationFailedWithError];
+            }
             
         }
         else
