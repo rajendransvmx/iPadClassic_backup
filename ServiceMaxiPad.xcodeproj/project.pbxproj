@@ -1055,6 +1055,8 @@
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
 		EC809F091CC78C60004E1A8E /* intermediate.cer in Resources */ = {isa = PBXBuildFile; fileRef = EC809F071CC78C60004E1A8E /* intermediate.cer */; };
 		EC809F0A1CC78C60004E1A8E /* root.cer in Resources */ = {isa = PBXBuildFile; fileRef = EC809F081CC78C60004E1A8E /* root.cer */; };
+		ECBC410120074C620000D907 /* root_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECBC40FF20074C620000D907 /* root_digicert.cer */; };
+		ECBC410220074C620000D907 /* intermediate_digicert.cer in Resources */ = {isa = PBXBuildFile; fileRef = ECBC410020074C620000D907 /* intermediate_digicert.cer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2968,6 +2970,8 @@
 		DE9E10CF1AA9A32500A87768 /* PushNotificationWebServiceProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationWebServiceProtocol.h; sourceTree = "<group>"; };
 		EC809F071CC78C60004E1A8E /* intermediate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = intermediate.cer; sourceTree = "<group>"; };
 		EC809F081CC78C60004E1A8E /* root.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = root.cer; sourceTree = "<group>"; };
+		ECBC40FF20074C620000D907 /* root_digicert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = root_digicert.cer; sourceTree = "<group>"; };
+		ECBC410020074C620000D907 /* intermediate_digicert.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = intermediate_digicert.cer; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6470,6 +6474,8 @@
 		EC809F061CC78C31004E1A8E /* Certificates */ = {
 			isa = PBXGroup;
 			children = (
+				ECBC410020074C620000D907 /* intermediate_digicert.cer */,
+				ECBC40FF20074C620000D907 /* root_digicert.cer */,
 				432768F31D9C255400CC247B /* com.servicemax.client.native.laptop.zip */,
 				432768F41D9C255400CC247B /* com.servicemax.client.offline.sal.model.zip */,
 				432768F51D9C255400CC247B /* com.servicemax.client.usage.zip */,
@@ -6631,6 +6637,7 @@
 				184A9CC619E7D591006DA6BE /* task@2x.png in Resources */,
 				184F1C421A136A1000A2B985 /* bizInfo.png in Resources */,
 				184A9C0D19E7D591006DA6BE /* iOSChat-Retina-Orange@2x.png in Resources */,
+				ECBC410120074C620000D907 /* root_digicert.cer in Resources */,
 				9E565ED51A068B4B003D194A /* SFMLookUpFilterViewController.xib in Resources */,
 				40A06F331B06041400218162 /* SCalendar@3x.png in Resources */,
 				40A06F3C1B06041400218162 /* STools@1x.png in Resources */,
@@ -6728,6 +6735,7 @@
 				4072531019FF6C2900ACA729 /* com.servicemax.client.sfmconsole.ui.web.zip in Resources */,
 				184A9CB419E7D591006DA6BE /* Section_down_arrow@2x.png in Resources */,
 				184A8EEF19E7A535006DA6BE /* api.html in Resources */,
+				ECBC410220074C620000D907 /* intermediate_digicert.cer in Resources */,
 				18800CEB1A08D14400930FF9 /* ResetAppDetailViewController.xib in Resources */,
 				57A320EC1AB7178C00A172E0 /* NavBarTasks@2x.png in Resources */,
 				117656D91B3928A200BA0B63 /* selectEmpty@2x.png in Resources */,
