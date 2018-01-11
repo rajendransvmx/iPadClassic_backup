@@ -358,20 +358,51 @@ forLocalNotification:(UILocalNotification *)notification
     self.backgroundSessionCompletionHandler = completionHandler;
 }
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+
+//Fix: SecScan-814
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options NS_AVAILABLE_IOS(9_0)
 {
-    //Defect Fix:026723
-    if ([[url scheme] containsString:@"svmxmobilepulse"])
+    BOOL openURL = NO;
+    NSString *sourceKey = @"UIApplicationOpenURLOptionsSourceApplicationKey";
+    if ([options objectForKey:sourceKey])
     {
-        NSDictionary *queryStringDictionary = [PushNotificationUtility getDictionaryFromSharedURL:url];
-        
-        BOOL isValidUser = [PushNotificationUtility validateOrg:queryStringDictionary];
-        if (isValidUser)
-        {
-            [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
-        }
+      if([[options objectForKey:sourceKey] isEqualToString:@"com.servicemaxinc.pushnotification1stAct"])
+      {
+          //Defect Fix:026723
+          if ([[url scheme] containsString:@"svmxmobilepulse"])
+          {
+              NSDictionary *queryStringDictionary = [PushNotificationUtility getDictionaryFromSharedURL:url];
+              
+              BOOL isValidUser = [PushNotificationUtility validateOrg:queryStringDictionary];
+              if (isValidUser)
+              {
+                  [[PushNotificationManager sharedInstance] loadNotification:queryStringDictionary];
+              }
+          }
+         
+          openURL = YES;
+      }
+       else
+          {
+              
+              UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Servicemax" message:@"Unauthorized Request" preferredStyle:(UIAlertControllerStyleAlert)];
+              
+              UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[[TagManager sharedInstance] tagByName:kTagAlertErrorOk] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
+              }];
+              
+              [alertController addAction:alertAction];
+              UIViewController *controller = self.window.rootViewController;
+              if(controller.presentedViewController != nil)
+              {
+                  controller = controller.presentedViewController;
+
+              }
+              [controller presentViewController:alertController animated:YES completion:^{}];
+          }
+      
     }
-    return YES;
+  
+    return openURL;
 }
 
 // IPAD-4585
