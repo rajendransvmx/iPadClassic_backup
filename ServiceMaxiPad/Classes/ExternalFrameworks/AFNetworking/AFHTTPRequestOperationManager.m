@@ -28,6 +28,9 @@
 #import <Availability.h>
 #import <Security/Security.h>
 
+#import "MobileDeviceSettingService.h"
+#import "StringUtil.h"
+
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 #import <UIKit/UIKit.h>
 #endif
@@ -58,8 +61,18 @@
 
     self.requestSerializer = [AFHTTPRequestSerializer serializer];
     self.responseSerializer = [AFJSONResponseSerializer serializer];
-
-    self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    
+    //025428
+    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET023"];
+    BOOL isPinningEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+    
+    if (isPinningEnabled) {
+        self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    }
+    else {
+        self.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    }
 
     self.reachabilityManager = [AFNetworkReachabilityManager sharedManager];
 

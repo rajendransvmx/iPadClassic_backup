@@ -21,6 +21,8 @@
 // THE SOFTWARE.
 
 #import "AFURLSessionManager.h"
+#import "MobileDeviceSettingService.h"
+#import "StringUtil.h"
 
 #if (defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000) || (defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 1090)
 
@@ -317,8 +319,18 @@ expectedTotalBytes:(int64_t)expectedTotalBytes {
     self.session = [NSURLSession sessionWithConfiguration:self.sessionConfiguration delegate:self delegateQueue:self.operationQueue];
 
     self.mutableTaskDelegatesKeyedByTaskIdentifier = [[NSMutableDictionary alloc] init];
-
-    self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    
+    //025428
+    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET023"];
+    BOOL isPinningEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+    
+    if (isPinningEnabled) {
+        self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    }
+    else {
+        self.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    }
 
     self.reachabilityManager = [AFNetworkReachabilityManager sharedManager];
 
