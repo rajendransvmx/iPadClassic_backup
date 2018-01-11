@@ -4,16 +4,14 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.025
+Version = 16.20.026
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-
-Added salesforce digicerts for SSL pinning.
-
+SSL Pinning: added setting check.
 
 Namespace - SVMXC
 ——————

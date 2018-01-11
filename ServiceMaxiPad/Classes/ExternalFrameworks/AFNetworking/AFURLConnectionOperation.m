@@ -21,6 +21,8 @@
 // THE SOFTWARE.
 
 #import "AFURLConnectionOperation.h"
+#import "MobileDeviceSettingService.h"
+#import "StringUtil.h"
 
 #if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
 #import <UIKit/UIKit.h>
@@ -187,9 +189,19 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
     self.shouldUseCredentialStorage = YES;
 
     self.state = AFOperationReadyState;
-
-    self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
-
+    
+    //025428
+    MobileDeviceSettingService *mobileDeviceSettingService = [[MobileDeviceSettingService alloc]init];
+    MobileDeviceSettingsModel *mobDeviceSettings = [mobileDeviceSettingService fetchDataForSettingId:@"IPAD018_SET023"];
+    BOOL isPinningEnabled = [StringUtil isItTrue:mobDeviceSettings.value];
+    
+    if (isPinningEnabled) {
+        self.securityPolicy = [AFSecurityPolicy policyWithPinningMode:(AFSSLPinningModePublicKey)];
+    }
+    else {
+        self.securityPolicy = [AFSecurityPolicy defaultPolicy];
+    }
+    
     return self;
 }
 
