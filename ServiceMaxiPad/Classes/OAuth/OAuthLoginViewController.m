@@ -138,6 +138,7 @@ NSInteger webViewLoadCounter;
             [self.view addSubview:self.webview];
             [self addServiceMaxLogo];
             
+            /* HS commented for SECSCAN-727
             NSURL *url = [NSURL URLWithString:[OAuthService authorizationURLString]];
             //NSURLRequest *request = [NSURLRequest requestWithURL:url];
             webViewLoadCounter = 0;
@@ -159,6 +160,48 @@ NSInteger webViewLoadCounter;
                     [self performSelectorOnMainThread:@selector(showAlertOnAuthenticationComplete:) withObject:nil waitUntilDone:NO];
                 }
             }];
+            HS ends here  */
+            
+            //Fix:SECSCAN-727
+            
+            NSArray *domainsCheck = @[@"salesforce.com",
+                                         @"servicemax.com",
+                                         @"force.com"];
+            NSURL *url = [NSURL URLWithString:[OAuthService authorizationURLString]];
+
+            
+            NSString *host = [url host]; //where URL is some NSURL object
+            
+            BOOL hostMatches = NO;
+            
+            for (NSString *testHost in domainsCheck) {
+                if ([[host lowercaseString] isEqualToString:testHost]) hostMatches = YES;  // matches salesforce.com exectly
+                
+                NSString *testSubdomain = [NSString stringWithFormat:@".%@",testHost];  // matches www.salesforce.com but not fakesalesforce..com
+                if ([[host lowercaseString] rangeOfString:testSubdomain].location != NSNotFound) hostMatches = YES;
+            }
+            
+            if (hostMatches) {
+                webViewLoadCounter = 0;
+                
+                
+                self.startTime = CFAbsoluteTimeGetCurrent();
+                __block NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+                [request setValue:@"gzip; deflate" forHTTPHeaderField:@"Accept-Encoding"];//Accept-Encoding: gzip, deflate
+                
+                // SECSCAN-260
+                OauthConnectionHandler *service = [[OauthConnectionHandler alloc] init];
+                [service makeDummyCallForAuthenticationCheck:request andCompletion:^(BOOL isSuccess, NSString *errorMsg) {
+                    if (isSuccess)
+                    {
+                        [self performSelectorOnMainThread:@selector(loadWebViewOnAuthenticationComplete:) withObject:request waitUntilDone:NO];
+                    }
+                    else
+                    {
+                        [self performSelectorOnMainThread:@selector(showAlertOnAuthenticationComplete:) withObject:nil waitUntilDone:NO];
+                    }
+                }];
+            }
              
             
         }

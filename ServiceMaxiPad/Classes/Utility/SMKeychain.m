@@ -10,6 +10,7 @@
 #import <Security/Security.h>
 
 static NSString *ServiceMaxKeyChainIdenitifier = @"ServiceMaxMobile";
+static NSString *ServiceMaxKeyChainAccessIdenitifier = @"ServiceMaxMobileAccess";
 
 @implementation SMKeychain
 
@@ -41,7 +42,7 @@ static NSString *ServiceMaxKeyChainIdenitifier = @"ServiceMaxMobile";
     return keychainQuery;
 }
 
-- (void)removeAccessTokenFromKeychainWithClientId:(NSString *)clientId {
+- (void)removeRefreshTokenFromKeychainWithClientId:(NSString *)clientId {
     NSDictionary *keychainQuery = [self.class keychainQueryWithClientId:clientId];
     OSStatus status = SecItemDelete((__bridge CFDictionaryRef)keychainQuery);
     if (status != errSecSuccess && status != errSecItemNotFound) {
@@ -49,14 +50,14 @@ static NSString *ServiceMaxKeyChainIdenitifier = @"ServiceMaxMobile";
     }
 }
 
-- (void)saveAccessTokenInKeychain:(NSString *)accessToken forClientId:(NSString *)clientId {
-    if (accessToken == nil || accessToken.length == 0) {
+- (void)saveRefreshTokenInKeychain:(NSString *)refreshToken forClientId:(NSString *)clientId {
+    if (refreshToken == nil || refreshToken.length == 0) {
         return;
     }
     
-    [self removeAccessTokenFromKeychainWithClientId:clientId];
+    [self removeRefreshTokenFromKeychainWithClientId:clientId];
     NSMutableDictionary *keychainQuery = [[self.class keychainQueryWithClientId:clientId] mutableCopy];
-    NSData *passwordData = [accessToken dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *passwordData = [refreshToken dataUsingEncoding:NSUTF8StringEncoding];
     [keychainQuery setObject:passwordData forKey:(__bridge id)kSecValueData];
     OSStatus status = SecItemAdd((__bridge CFDictionaryRef)keychainQuery, NULL);
     if (status != noErr) {
@@ -64,7 +65,7 @@ static NSString *ServiceMaxKeyChainIdenitifier = @"ServiceMaxMobile";
     }
 }
 
-- (NSString *)readAccessTokenFromKeychainWithClientId:(NSString *)clientId {
+- (NSString *)readRefreshTokenFromKeychainWithClientId:(NSString *)clientId {
     NSMutableDictionary *keychainQuery = [[self.class keychainQueryWithClientId:clientId] mutableCopy];
     [keychainQuery setObject:(__bridge id)kCFBooleanTrue forKey:(__bridge id)kSecReturnData];
     [keychainQuery setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
@@ -99,7 +100,7 @@ static NSString *ServiceMaxKeyChainIdenitifier = @"ServiceMaxMobile";
 
 + (NSString*)getRefreshToken
 {
-    return [[SMKeychain sharedKeychain] readAccessTokenFromKeychainWithClientId:ServiceMaxKeyChainIdenitifier];
+    return [[SMKeychain sharedKeychain] readRefreshTokenFromKeychainWithClientId:ServiceMaxKeyChainIdenitifier];
 }
 
 /**
@@ -121,7 +122,7 @@ static NSString *ServiceMaxKeyChainIdenitifier = @"ServiceMaxMobile";
 
 + (void)storeRefreshToken:(NSString *)refreshToken
 {
-    [[SMKeychain sharedKeychain] saveAccessTokenInKeychain:refreshToken
+    [[SMKeychain sharedKeychain] saveRefreshTokenInKeychain:refreshToken
                                                       forClientId:ServiceMaxKeyChainIdenitifier];
 }
 
@@ -143,6 +144,25 @@ static NSString *ServiceMaxKeyChainIdenitifier = @"ServiceMaxMobile";
 
 + (void)deleteRefreshToken
 {
-    return [[SMKeychain sharedKeychain] removeAccessTokenFromKeychainWithClientId:ServiceMaxKeyChainIdenitifier];
+    return [[SMKeychain sharedKeychain] removeRefreshTokenFromKeychainWithClientId:ServiceMaxKeyChainIdenitifier];
 }
+
+#pragma mark Access Token
+
++ (NSString*)getAccessToken
+{
+    return [[SMKeychain sharedKeychain] readRefreshTokenFromKeychainWithClientId:ServiceMaxKeyChainAccessIdenitifier];
+}
+
++ (void)storeAccessToken:(NSString *)accessToken
+{
+    [[SMKeychain sharedKeychain] saveRefreshTokenInKeychain:accessToken
+                                                forClientId:ServiceMaxKeyChainAccessIdenitifier];
+}
+
++ (void)deleteAccessToken
+{
+    return [[SMKeychain sharedKeychain] removeRefreshTokenFromKeychainWithClientId:ServiceMaxKeyChainAccessIdenitifier];
+}
+
 @end
