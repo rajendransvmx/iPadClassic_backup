@@ -391,7 +391,13 @@ forLocalNotification:(UILocalNotification *)notification
               }];
               
               [alertController addAction:alertAction];
-              [self.window.rootViewController presentViewController:alertController animated:YES completion:^{}];
+              UIViewController *controller = self.window.rootViewController;
+              if(controller.presentedViewController != nil)
+              {
+                  controller = controller.presentedViewController;
+
+              }
+              [controller presentViewController:alertController animated:YES completion:^{}];
           }
       
     }
