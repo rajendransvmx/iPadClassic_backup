@@ -4,14 +4,14 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.026
+Version = 16.20.027
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-SSL Pinning: added setting check.
+Assets update in Grey color
 
 Namespace - SVMXC
 ——————
