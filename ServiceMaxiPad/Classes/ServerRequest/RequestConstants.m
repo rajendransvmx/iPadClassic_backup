@@ -251,3 +251,5 @@ NSString *const kADCOptimized = @"ADC_OPTIMIZED"; // IPAD-4698
 // IPAD-4764
 NSString *const kSTLGetPriceSyncIdKey = @"kSTLGetPriceSyncId";
 NSString *const kSTLMetaDataSyncIdKey = @"kSTLMetaDataSyncId";
+
+NSString *const kNewRelicAnalyticsKey = @"AA52f9b098a44dda133c2cc297bdada772be33163e";

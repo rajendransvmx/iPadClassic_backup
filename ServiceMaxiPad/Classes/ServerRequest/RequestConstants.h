@@ -399,3 +399,4 @@ extern NSString *const kADCOptimized; // IPAD-4698
 extern NSString *const kSTLGetPriceSyncIdKey;
 extern NSString *const kSTLMetaDataSyncIdKey;
 
+extern NSString *const kNewRelicAnalyticsKey;
