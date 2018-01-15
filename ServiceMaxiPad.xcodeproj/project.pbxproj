@@ -2150,6 +2150,9 @@
 		DE9E10CE1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DE9E10CD1AA9A28C00A87768 /* PushNotificationWebServiceHelper.m */; };
 		EC2A5C1B1ECD951200AF9C3B /* OauthConnectionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = EC2A5C1A1ECD951200AF9C3B /* OauthConnectionHandler.m */; };
 		EC42EC2B1DDAEA2200419D7D /* ValidateProfileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */; };
+		EC718426200C8A02007AADFB /* NewRelicAgent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC718425200C8A01007AADFB /* NewRelicAgent.framework */; };
+		EC718428200C8A43007AADFB /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EC718427200C8A42007AADFB /* libc++.tbd */; };
+		EC71842A200C8A50007AADFB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EC718429200C8A50007AADFB /* libz.tbd */; };
 		EC9E39AE1E66E7FE002663D6 /* SyncProfileServiceLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF031DD994C60065AB96 /* SyncProfileServiceLayer.m */; };
 		EC9E39AF1E66E7FE002663D6 /* SyncProfilingRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = ECAFEF061DD99C710065AB96 /* SyncProfilingRequest.m */; };
 		EC9E39B01E66E7FE002663D6 /* ValidateProfileParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */; };
@@ -4576,6 +4579,9 @@
 		EC2A5C1A1ECD951200AF9C3B /* OauthConnectionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OauthConnectionHandler.m; sourceTree = "<group>"; };
 		EC42EC291DDAEA2200419D7D /* ValidateProfileParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidateProfileParser.h; sourceTree = "<group>"; };
 		EC42EC2A1DDAEA2200419D7D /* ValidateProfileParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ValidateProfileParser.m; sourceTree = "<group>"; };
+		EC718425200C8A01007AADFB /* NewRelicAgent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NewRelicAgent.framework; sourceTree = "<group>"; };
+		EC718427200C8A42007AADFB /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		EC718429200C8A50007AADFB /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		EC9E3AC11E66EEEE002663D6 /* Resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Resource.bundle; sourceTree = "<group>"; };
 		EC9E3AC31E66EF1A002663D6 /* BindInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BindInfo.h; sourceTree = "<group>"; };
 		EC9E3AC41E66EF1A002663D6 /* libHitachiStudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libHitachiStudio.a; sourceTree = "<group>"; };
@@ -5061,8 +5067,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				677FE3A01F7B723600BF7C5F /* Photos.framework in Frameworks */,
+				EC71842A200C8A50007AADFB /* libz.tbd in Frameworks */,
+				EC718428200C8A43007AADFB /* libc++.tbd in Frameworks */,
+				18A2176619E57D1800F22EA6 /* SystemConfiguration.framework in Frameworks */,
 				A64AADA71CEDCC89008839FB /* CoreTelephony.framework in Frameworks */,
+				677FE3A01F7B723600BF7C5F /* Photos.framework in Frameworks */,
 				A64AADA51CEDCC4F008839FB /* CoreFoundation.framework in Frameworks */,
 				A64AADA31CEDCC37008839FB /* libiconv.tbd in Frameworks */,
 				A64AADA11CEDCC27008839FB /* libicucore.tbd in Frameworks */,
@@ -5084,7 +5093,7 @@
 				18A2176C19E57D3B00F22EA6 /* MediaPlayer.framework in Frameworks */,
 				18A2176A19E57D3200F22EA6 /* MapKit.framework in Frameworks */,
 				18A2176819E57D2400F22EA6 /* AVFoundation.framework in Frameworks */,
-				18A2176619E57D1800F22EA6 /* SystemConfiguration.framework in Frameworks */,
+				EC718426200C8A02007AADFB /* NewRelicAgent.framework in Frameworks */,
 				18A2176419E57D0E00F22EA6 /* Security.framework in Frameworks */,
 				6A13E9CC1A9AB6DC00D12CED /* libsqlcipher.a in Frameworks */,
 				18A2176219E57CFB00F22EA6 /* MessageUI.framework in Frameworks */,
@@ -7601,6 +7610,9 @@
 		18A2171B19E57C5A00F22EA6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC718429200C8A50007AADFB /* libz.tbd */,
+				EC718427200C8A42007AADFB /* libc++.tbd */,
+				EC718425200C8A01007AADFB /* NewRelicAgent.framework */,
 				677FE39F1F7B723600BF7C5F /* Photos.framework */,
 				A64AADA81CEDCCA7008839FB /* AdSupport.framework */,
 				A64AADA61CEDCC89008839FB /* CoreTelephony.framework */,
@@ -9421,6 +9433,7 @@
 				18A2171619E57C5A00F22EA6 /* Frameworks */,
 				18A2171719E57C5A00F22EA6 /* Resources */,
 				18A2177B19E57DF900F22EA6 /* Run Script */,
+				EC71842B200C8BC0007AADFB /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -10107,6 +10120,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "targetFile=\"${SRCROOT}/ServiceMaxiPad/ServiceMaxiPad-Info.plist\"\n\nrootFile=\"${SRCROOT}/ServiceMaxiPad/Settings.bundle/Root.plist\"\n\necho \"Target file \" $targetFile\n\necho \"Root file \" $rootFile\n\nversion=`/usr/libexec/PlistBuddy -c \"Print:CFBundleVersion\" \"$targetFile\"`\n\necho \"Project Version =\" $version\n\n/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:8:DefaultValue $version\" \"$rootFile\"";
+		};
+		EC71842B200C8BC0007AADFB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "SCRIPT=`/usr/bin/find \"${SRCROOT}\" -name newrelic_postbuild.sh | head -n 1`\n\n/bin/sh \"${SCRIPT}\" \"AA52f9b098a44dda133c2cc297bdada772be33163e\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -12256,6 +12282,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/HitachiStudio",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
@@ -12301,6 +12328,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/HitachiStudio",
+					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";

@@ -21,6 +21,7 @@
 #import "AttachmentsUploadManager.h"
 #import "PushNotificationUtility.h"
 #import "PushNotificationManager.h"
+#import <NewRelicAgent/NewRelic.h>
 
 @implementation SMAppDelegate
 
@@ -102,6 +103,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
  {
+     if([PlistManager enableAnalytics]) {
+         [NewRelicAgent startWithApplicationToken:kNewRelicAnalyticsKey];
+     }
+     
      NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler); // IPAD-4585
      
      [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
