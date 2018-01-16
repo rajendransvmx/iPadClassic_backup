@@ -4,15 +4,15 @@ ServiceMax iPad Sum15SPBuild
 
 *******************************************
 
-Version = 15.60.052
+Version = 15.60.053
 
 ===========================================
+
 
 -------------
 Fixed Defects
 -------------
-IPAD-4597
-
+Updated the assets in grey color
 ____
 
 
