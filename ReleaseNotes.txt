@@ -3,13 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.60.027
+Version = 16.60.028
 ===========================================
 
 Defect:
 
-Added salesforce digicerts for SSL pinning.
-
+Updated Assets in grey color
 Feature:
 ==================
 
