@@ -928,6 +928,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
             __block UIImage *image = nil;
             __block NSData *dataToSaveFromImage;
             
+            __block float compressionQuality = 0.7;
             [library assetForURL:[info valueForKey:UIImagePickerControllerReferenceURL] resultBlock:^(ALAsset *asset) {
 
                 if (asset){
@@ -935,12 +936,18 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
                     // SUCCESS POINT #1 - asset is what we are looking for
                     //////////////////////////////////////////////////////
                     image = [UIImage imageWithCGImage:[[asset defaultRepresentation] fullResolutionImage]];
-                    
-                    ALAssetRepresentation *rep = [asset defaultRepresentation];
-                    Byte *buffer = (Byte*)malloc(rep.size);
-                    NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
-                    dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
-                    
+//
+//                    ALAssetRepresentation *rep = [asset defaultRepresentation];
+//                    Byte *buffer = (Byte*)malloc(rep.size);
+//                    NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
+//                    dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
+                    //Fix IPAD-4796
+                    if ([extension caseInsensitiveCompare:@"png"] == NSOrderedSame && extension!=nil) {
+                        dataToSaveFromImage = UIImagePNGRepresentation(image);
+                    }
+                    else{
+                        dataToSaveFromImage = UIImageJPEGRepresentation(image, compressionQuality);
+                    }
                     if(self && [self respondsToSelector:@selector(dataFromCapturedImage:extension:)]) {
                         [self performSelector:@selector(dataFromCapturedImage:extension:) withObject:dataToSaveFromImage withObject:extension];
                     }
@@ -962,11 +969,17 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
                                  ///////////////////////////////////////////////////////
                                  image = [UIImage imageWithCGImage:[[result defaultRepresentation] fullResolutionImage]];
                                  
-                                 ALAssetRepresentation *rep = [result defaultRepresentation];
-                                 Byte *buffer = (Byte*)malloc(rep.size);
-                                 NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
-                                 dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
-                                 
+//                                 ALAssetRepresentation *rep = [result defaultRepresentation];
+//                                 Byte *buffer = (Byte*)malloc(rep.size);
+//                                 NSUInteger buffered = [rep getBytes:buffer fromOffset:0.0 length:rep.size error:nil];
+//                                 dataToSaveFromImage = [NSData dataWithBytesNoCopy:buffer length:buffered freeWhenDone:YES];
+                                 //Fix IPAD-4796
+                                 if ([extension caseInsensitiveCompare:@"png"] == NSOrderedSame && extension!=nil) {
+                                     dataToSaveFromImage = UIImagePNGRepresentation(image);
+                                 }
+                                 else{
+                                     dataToSaveFromImage = UIImageJPEGRepresentation(image, compressionQuality);
+                                 }
                                  if(self && [self respondsToSelector:@selector(dataFromCapturedImage:extension:)]) {
                                      [self performSelector:@selector(dataFromCapturedImage:extension:) withObject:dataToSaveFromImage withObject:extension];
                                  }
@@ -999,7 +1012,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
 
 - (void) dataFromCapturedImage:(NSData *)capturedImageData extension:(NSString *)extension
 {
-    if ([StringUtil isStringEmpty:extension] || ![extension caseInsensitiveCompare:@"png"]) {
+    if ([StringUtil isStringEmpty:extension] || [extension caseInsensitiveCompare:@"png"]!=NSOrderedSame) {
         extension = kJpgExtension;
     }
     
