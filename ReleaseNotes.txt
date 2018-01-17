@@ -4,18 +4,17 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.99.048
+Version = 17.99.049
 
 
 ===========================================
 
 Defect:
 ===========================================
-IPAD-4796
 
 Feature:
 ===========================================
-Downgraded New Relic framework.
+New Relic framework - default set to YES.
 
 
 NOTE:
