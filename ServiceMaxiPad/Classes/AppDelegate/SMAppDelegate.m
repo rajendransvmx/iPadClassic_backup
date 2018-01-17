@@ -103,10 +103,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
  {
-     if([PlistManager enableAnalytics]) {
-         [NewRelicAgent startWithApplicationToken:kNewRelicAnalyticsKey];
-     }
-     
      NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler); // IPAD-4585
      
      [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
@@ -174,6 +170,10 @@
                                                        usingBlock:^(NSNotification *note) {
                                                            [PlistManager updateServerURLFromManagedConfig];
                                                        }];
+     }
+     
+     if([PlistManager enableAnalytics]) {
+         [NewRelicAgent startWithApplicationToken:kNewRelicAnalyticsKey];
      }
 
      //[[SyncManager sharedInstance] scheduleSync];

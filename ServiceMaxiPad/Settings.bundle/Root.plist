@@ -106,7 +106,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<true/>
+            <true/>
 			<key>Key</key>
 			<string>Session Auto Refresh</string>
 			<key>Title</key>
@@ -138,7 +138,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<false/>
+			<true/>
 			<key>Key</key>
 			<string>Enable Analytics</string>
 			<key>Title</key>
