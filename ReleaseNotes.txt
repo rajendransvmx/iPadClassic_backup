@@ -4,7 +4,7 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 17.99.049
+Version = 17.99.050
 
 
 ===========================================
@@ -14,7 +14,7 @@ Defect:
 
 Feature:
 ===========================================
-New Relic framework - default set to YES.
+New Relic framework - changed setting title.
 
 
 NOTE:
