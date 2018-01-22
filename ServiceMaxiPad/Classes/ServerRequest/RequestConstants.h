@@ -382,3 +382,5 @@ extern NSString *const kUserInfoEventName;
 // IPAD-4764
 extern NSString *const kSTLGetPriceSyncIdKey;
 extern NSString *const kSTLMetaDataSyncIdKey;
+extern NSString *const kNewRelicAnalyticsKey;
+
