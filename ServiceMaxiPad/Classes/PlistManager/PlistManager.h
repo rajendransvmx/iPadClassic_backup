@@ -202,4 +202,8 @@ extern  NSString *const kPreferenceOrganizationCustom;
 + (NSString *)getProdIQDataSyncTime;
 + (void)storeProdIQDataSyncTime:(NSString *)time;
 
+//New Relic
++ (BOOL)enableAnalytics;
+
+
 @end
