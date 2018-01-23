@@ -4,14 +4,14 @@ ServiceMax iPad Win16SPBuild
 
 *******************************************
 
-Version = 16.20.027
+Version = 16.20.028
  
 ===========================================
 
 -------------
 Fixed Defects
 -------------
-Assets update in Grey color
+New Relic Integration
 
 Namespace - SVMXC
 ——————
