@@ -236,3 +236,7 @@ NSString *const kUserInfoEventName = @"UserInfo";
 // IPAD-4764
 NSString *const kSTLGetPriceSyncIdKey = @"kSTLGetPriceSyncId";
 NSString *const kSTLMetaDataSyncIdKey = @"kSTLMetaDataSyncId";
+
+
+NSString *const kNewRelicAnalyticsKey = @"AA04b4a3637b4ac54ccc36510fd1211f3e96d05e4a";
+
