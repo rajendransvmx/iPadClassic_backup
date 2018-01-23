@@ -232,3 +232,6 @@ NSString *const kAddressField = @"Address";
 NSString *const kOrgAddressKey = @"kOrgAddress";
 NSString *const kGetUserInfoURLLink = @"getUserInfo";
 NSString *const kUserInfoEventName = @"UserInfo";
+
+NSString *const kNewRelicAnalyticsKey = @"AA49ed3f7aeddc68ed7bbb8b2d37d35e781e3dd013";
+

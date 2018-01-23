@@ -376,3 +376,6 @@ extern NSString *const kAddressField;
 extern NSString *const kOrgAddressKey;
 extern NSString *const kGetUserInfoURLLink;
 extern NSString *const kUserInfoEventName;
+
+extern NSString *const kNewRelicAnalyticsKey;
+
