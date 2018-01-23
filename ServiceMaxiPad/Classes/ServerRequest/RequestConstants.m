@@ -199,3 +199,6 @@ NSString *const kProductIQSyncData = @"SYNC_PRODUCTIQ_DATA";
 NSString *const kProdIQLastSyncTime = @"PRODUCTIQ_LAST_SYNC";
 NSString *const kProdIQGetDeleteData = @"GET_DELETE_PRODUCTIQ_DATA";
 
+NSString *const kNewRelicAnalyticsKey = @"AA8302e411c79bb8a5ff91a3f222c4871b9cf67120";
+
+

@@ -201,5 +201,7 @@ extern  NSString *const kPreferenceOrganizationCustom;
 
 + (NSString *)getProdIQDataSyncTime;
 + (void)storeProdIQDataSyncTime:(NSString *)time;
++ (BOOL)enableAnalytics;
+
 
 @end
