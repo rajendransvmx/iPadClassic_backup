@@ -3,14 +3,13 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.20.024
+Version = 17.20.025
 
 ===========================================
 
 Defect:
 ===========================================
-Updated assets in grey color
-
+Integrated New Relic
 NOTE:
 
 1. NameSpace: SVMXC
