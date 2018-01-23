@@ -154,6 +154,9 @@ NSString *const kSPTypeEnd = @"SPTypeEnd";
 NSString *const kGroupProfileName = @"ServiceMaxGroupProfileName";
 NSString *const kSPSyncTime = @"SPSyncTime";
 
+//New Relic integration
+NSString *const kEnableNewRelicAnalytics = @"Enable Analytics";
+
 @implementation PlistManager
 
 + (void)registerDefaultAppSettings
@@ -1454,6 +1457,13 @@ NSString *const kSPSyncTime = @"SPSyncTime";
         [[NSUserDefaults standardUserDefaults]  synchronize];
     }
 }
+
+
++ (BOOL)enableAnalytics
+{
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:kEnableNewRelicAnalytics] boolValue];
+}
+
 
 
 @end
