@@ -2,12 +2,12 @@
 ServiceMax Win 15 SP iPad Release Win15SPBuild
 
 *******************************************
-Version = 15.20.043
+Version = 15.20.044
 ===========================================
 -------------
 Fixed Defects
 -------------
-com.servicemax.client.lib.zip file changes (Backported all js files except Usertiming.js to 15.20.039).
+
 
 
 -------------
@@ -23,7 +23,8 @@ None
 ---------------------
 Features Implemented
 ---------------------
-None
+New Relic Integration
+Assets Updated in grey color
 
 ---------------------
 Additional Notes
