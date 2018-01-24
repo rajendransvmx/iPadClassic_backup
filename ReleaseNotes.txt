@@ -3,12 +3,11 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.042
+Version = 15.40.043
 ===========================================
 -------------
 Fixed Defects
 -------------
-036258
  
 
 Known Issues
@@ -23,7 +22,10 @@ None
 ---------------------
 Features Implemented
 ---------------------
-None
+Updated Assets in Grey color 
+New Relic Integrated
+
+
 
 ---------------------
 Additional Notes
