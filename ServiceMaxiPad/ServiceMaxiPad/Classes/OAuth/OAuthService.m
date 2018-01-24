@@ -144,8 +144,8 @@ static NSInteger const kOAuthAccessTokenRefreshDurationInSec = 300; // 300 Secon
      if ([kOAuthServiceAuthorization isEqualToString:serviceName])
      {
          [request setValue:@"gzip" forHTTPHeaderField:@"Content-Encoding"];
-         NSData *compressedData = [postData gzipDeflate];
-         [request setHTTPBody:compressedData];
+         //NSData *compressedData = [postData gzipDeflate];
+         //[request setHTTPBody:compressedData]; //IPAD-4597
      }
      else
      {
