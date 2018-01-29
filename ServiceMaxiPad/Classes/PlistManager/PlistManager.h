@@ -195,4 +195,7 @@ extern  NSString *const kPreferenceOrganizationCustom;
 
 //017609
 + (BOOL) shouldValidateAccessToken;
+
++ (BOOL)enableAnalytics;
+
 @end

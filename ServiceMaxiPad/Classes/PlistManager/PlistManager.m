@@ -140,6 +140,10 @@ static NSUInteger const kRefreshTokenSplitIndex      = 10;        /** Refresh to
 static NSString * const kConfigurationKey = @"com.apple.configuration.managed";
 static NSString * const kConfigurationServerURLKey = @"serverURL";
 
+
+//New Relic integration
+NSString *const kEnableNewRelicAnalytics = @"Enable Analytics";
+
 @implementation PlistManager
 
 + (void)registerDefaultAppSettings
@@ -1420,6 +1424,11 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
 {
     return [[[NSUserDefaults standardUserDefaults] objectForKey:kPreferenceAccessToken] boolValue];
     
+}
+
++ (BOOL)enableAnalytics
+{
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:kEnableNewRelicAnalytics] boolValue];
 }
 
 

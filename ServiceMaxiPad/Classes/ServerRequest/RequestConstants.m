@@ -185,4 +185,7 @@ NSString *const kSFMSearchRecordLimit = @"RecordLimit";
 
 NSString *const kAfterSaveInsertCustomCallValueMap = @"After_Insert_Web_Service";
 
+NSString *const kNewRelicAnalyticsKey = @"AA7bb961f845d31727686dd7cd277698b297c999a6";
+
+
 

@@ -307,3 +307,5 @@ extern NSString *const kSFMSearchObjectId;
 extern NSString *const kSFMSearchRecordLimit;
 extern NSString *const kAfterSaveInsertCustomCallValueMap;
 extern NSString *const  kSoapUrlForWebservice;
+
+extern NSString *const  kNewRelicAnalyticsKey;
