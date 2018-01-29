@@ -213,4 +213,8 @@ extern  NSString *const kSPSyncTime;
 + (NSString *)getProdIQDataSyncTime;
 + (void)storeProdIQDataSyncTime:(NSString *)time;
 
+//New Relic Integration
++ (BOOL)enableAnalytics;
+
+
 @end
