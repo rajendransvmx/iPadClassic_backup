@@ -142,6 +142,8 @@ static NSUInteger const kRefreshTokenSplitIndex      = 10;        /** Refresh to
 // The Managed app configuration dictionary pushed down from an MDM server are stored in this key.
 static NSString * const kConfigurationKey = @"com.apple.configuration.managed";
 static NSString * const kConfigurationServerURLKey = @"serverURL";
+//New Relic integration
+NSString *const kEnableNewRelicAnalytics = @"Enable Analytics";
 
 @implementation PlistManager
 
@@ -1442,6 +1444,12 @@ static NSString * const kConfigurationServerURLKey = @"serverURL";
         [[NSUserDefaults standardUserDefaults]  synchronize];
     }
 }
+
++ (BOOL)enableAnalytics
+{
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:kEnableNewRelicAnalytics] boolValue];
+}
+
 
 
 @end

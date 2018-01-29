@@ -3,12 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.40.043
+Version = 16.40.044
 ===========================================
 
 Defects:
 
-Updated assets in grey color
+New Relic Integration
 
 NOTE:
 

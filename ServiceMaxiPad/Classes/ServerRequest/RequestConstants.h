@@ -337,3 +337,6 @@ extern NSString *const kProductIQObjectDescribeUrl;
 extern NSString *const kProductIQSyncData;
 extern NSString *const kProdIQLastSyncTime;
 extern NSString *const kProdIQGetDeleteData;
+
+extern NSString *const kNewRelicAnalyticsKey;
+
