@@ -132,7 +132,7 @@
 		</dict>
 		<dict>
 			<key>Title</key>
-			<string>Analytics</string>
+			<string>Share Usage Analytics</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
