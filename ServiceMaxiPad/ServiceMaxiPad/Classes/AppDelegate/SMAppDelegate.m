@@ -19,6 +19,10 @@
 #import "SyncManager.h"
 #import "AttachmentsUploadManager.h"
 #import "SMXConstants.h"
+#import <NewRelicAgent/NewRelic.h>
+#import "RequestConstants.h"
+
+
 
 @implementation SMAppDelegate
 
@@ -101,6 +105,11 @@
                                                    usingBlock:^(NSNotification *note) {
                                                        [PlistManager updateServerURLFromManagedConfig];
                                                    }];
+     
+     if([PlistManager enableAnalytics]) {
+         [NewRelicAgent startWithApplicationToken:kNewRelicAnalyticsKey];
+     }
+     
      //[[SyncManager sharedInstance] scheduleSync];
      NSLog(@"------ AapplicationLaunching -------");
      

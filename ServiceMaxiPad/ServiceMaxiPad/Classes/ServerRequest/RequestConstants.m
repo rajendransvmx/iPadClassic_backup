@@ -172,4 +172,7 @@ NSString *const kSFMSearchOperator = @"SEARCH_OPERATOR";
 NSString *const kSFMSearchObjectId = @"ObjectId";
 NSString *const kSFMSearchRecordLimit = @"RecordLimit";
 
+NSString *const kNewRelicAnalyticsKey = @"AAf02f0c81a3a2bc9bf8ea30ce60d22467a594cf61";
+
+
 

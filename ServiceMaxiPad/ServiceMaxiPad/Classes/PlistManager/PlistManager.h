@@ -183,4 +183,7 @@ extern  NSString *const kPreferenceOrganizationCustom;
 + (NSString *)getInitialSyncTime;
 + (void)storeInitiaSyncSyncTimeForDP:(NSString *)time;
 
++ (BOOL)enableAnalytics;
+
+
 @end

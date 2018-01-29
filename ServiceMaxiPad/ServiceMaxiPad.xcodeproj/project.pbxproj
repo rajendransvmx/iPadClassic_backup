@@ -745,6 +745,10 @@
 		42B1EECE19ECF96C00E3511D /* timing-line.png in Resources */ = {isa = PBXBuildFile; fileRef = 42B1EECB19ECF96C00E3511D /* timing-line.png */; };
 		42B1EED119ECF98700E3511D /* timing-line@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 42B1EED019ECF98700E3511D /* timing-line@2x.png */; };
 		42F968361A073CF000676C34 /* SuccessiveSyncManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 42F968351A073CF000676C34 /* SuccessiveSyncManager.m */; };
+		43148EF62018961200CBDDD9 /* NewRelicAgent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43148EF52018961200CBDDD9 /* NewRelicAgent.framework */; };
+		43148EF82018962400CBDDD9 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43148EF72018962400CBDDD9 /* CoreTelephony.framework */; };
+		43148EFA2018963500CBDDD9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 43148EF92018963500CBDDD9 /* libz.tbd */; };
+		43148EFC2018963C00CBDDD9 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 43148EFB2018963C00CBDDD9 /* libc++.tbd */; };
 		43C5F4861A138FD60046FF43 /* DODParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 43C5F4851A138FD60046FF43 /* DODParser.m */; };
 		57186B5919EF9DDD00B4642A /* TroubleshootingDataLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B4D19EF9DDD00B4642A /* TroubleshootingDataLoader.m */; };
 		57186B5A19EF9DDD00B4642A /* TroubleshootingDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 57186B4F19EF9DDD00B4642A /* TroubleshootingDetailViewController.m */; };
@@ -2351,6 +2355,10 @@
 		42B1EED019ECF98700E3511D /* timing-line@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "timing-line@2x.png"; sourceTree = "<group>"; };
 		42F968341A073CF000676C34 /* SuccessiveSyncManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuccessiveSyncManager.h; sourceTree = "<group>"; };
 		42F968351A073CF000676C34 /* SuccessiveSyncManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SuccessiveSyncManager.m; sourceTree = "<group>"; };
+		43148EF52018961200CBDDD9 /* NewRelicAgent.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NewRelicAgent.framework; sourceTree = "<group>"; };
+		43148EF72018962400CBDDD9 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		43148EF92018963500CBDDD9 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		43148EFB2018963C00CBDDD9 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		43C5F4841A138FD60046FF43 /* DODParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DODParser.h; sourceTree = "<group>"; };
 		43C5F4851A138FD60046FF43 /* DODParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DODParser.m; sourceTree = "<group>"; };
 		57186B4C19EF9DDD00B4642A /* TroubleshootingDataLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TroubleshootingDataLoader.h; sourceTree = "<group>"; };
@@ -2689,6 +2697,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43148EFC2018963C00CBDDD9 /* libc++.tbd in Frameworks */,
+				43148EFA2018963500CBDDD9 /* libz.tbd in Frameworks */,
+				18A2176619E57D1800F22EA6 /* SystemConfiguration.framework in Frameworks */,
+				43148EF82018962400CBDDD9 /* CoreTelephony.framework in Frameworks */,
 				6BBFB76719F67565002070BC /* libsqlite3.0.dylib in Frameworks */,
 				18A2175C19E57CDE00F22EA6 /* libsqlite3.dylib in Frameworks */,
 				18A2176019E57CF200F22EA6 /* libiconv.dylib in Frameworks */,
@@ -2706,8 +2718,8 @@
 				18A2176A19E57D3200F22EA6 /* MapKit.framework in Frameworks */,
 				18A2176819E57D2400F22EA6 /* AVFoundation.framework in Frameworks */,
 				18BB0A6C19E9088600162524 /* libzbar.a in Frameworks */,
-				18A2176619E57D1800F22EA6 /* SystemConfiguration.framework in Frameworks */,
 				18A2176419E57D0E00F22EA6 /* Security.framework in Frameworks */,
+				43148EF62018961200CBDDD9 /* NewRelicAgent.framework in Frameworks */,
 				18A2176219E57CFB00F22EA6 /* MessageUI.framework in Frameworks */,
 				18A2175619E57CBB00F22EA6 /* AssetsLibrary.framework in Frameworks */,
 				18A2175419E57CAC00F22EA6 /* MobileCoreServices.framework in Frameworks */,
@@ -5046,6 +5058,10 @@
 		18A2171B19E57C5A00F22EA6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				43148EFB2018963C00CBDDD9 /* libc++.tbd */,
+				43148EF92018963500CBDDD9 /* libz.tbd */,
+				43148EF72018962400CBDDD9 /* CoreTelephony.framework */,
+				43148EF52018961200CBDDD9 /* NewRelicAgent.framework */,
 				6BBFB76619F67565002070BC /* libsqlite3.0.dylib */,
 				18A2177919E57D8100F22EA6 /* CoreVideo.framework */,
 				18A2177719E57D7100F22EA6 /* CoreText.framework */,
@@ -5916,6 +5932,7 @@
 				18A2171619E57C5A00F22EA6 /* Frameworks */,
 				18A2171719E57C5A00F22EA6 /* Resources */,
 				18A2177B19E57DF900F22EA6 /* Run Script */,
+				43148EFD2018964F00CBDDD9 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -6217,6 +6234,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "targetFile=\"${SRCROOT}/ServiceMaxiPad/ServiceMaxiPad-Info.plist\"\n\nrootFile=\"${SRCROOT}/ServiceMaxiPad/Settings.bundle/Root.plist\"\n\necho \"Target file \" $targetFile\n\necho \"Root file \" $rootFile\n\nversion=`/usr/libexec/PlistBuddy -c \"Print:CFBundleVersion\" \"$targetFile\"`\n\necho \"Project Version =\" $version\n\n/usr/libexec/PlistBuddy -c \"Set PreferenceSpecifiers:8:DefaultValue $version\" \"$rootFile\"";
+		};
+		43148EFD2018964F00CBDDD9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "SCRIPT=`/usr/bin/find \"${SRCROOT}\" -name newrelic_postbuild.sh | head -n 1`\n\n/bin/sh \"${SCRIPT}\" \"AAf02f0c81a3a2bc9bf8ea30ce60d22467a594cf61\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -7054,6 +7084,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -7083,6 +7117,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Krishnaprasad Athani (53YNEQEZ6V)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ServiceMaxiPad/ServiceMaxiPad-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
