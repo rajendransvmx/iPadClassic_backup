@@ -116,7 +116,7 @@
 		</dict>
 		<dict>
 			<key>Title</key>
-			<string>Share Usage Analytics</string>
+			<string>Analytics</string>
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 		</dict>
@@ -126,7 +126,7 @@
 			<key>Key</key>
 			<string>Enable Analytics</string>
 			<key>Title</key>
-			<string>Enable Analytics</string>
+			<string>Share Usage Analytics</string>
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 		</dict>
