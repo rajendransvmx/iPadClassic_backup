@@ -159,6 +159,10 @@ NSString *const kSyncProfileEndPointUrl = @"SyncProfileEndPointUrl";
 NSString *const kSyncProfileOrgType = @"SyncProfileOrgType";
 NSString *const kSyncProfileCustomOrgType = @"custom";
 
+//New Relic integration
+NSString *const kEnableNewRelicAnalytics = @"Enable Analytics";
+
+
 @implementation PlistManager
 
 + (void)registerDefaultAppSettings
@@ -1457,6 +1461,11 @@ NSString *const kSyncProfileCustomOrgType = @"custom";
         [[NSUserDefaults standardUserDefaults] setObject:time forKey:kPersistantStorageProdIQSyncTime];
         [[NSUserDefaults standardUserDefaults]  synchronize];
     }
+}
+
++ (BOOL)enableAnalytics
+{
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:kEnableNewRelicAnalytics] boolValue];
 }
 
 

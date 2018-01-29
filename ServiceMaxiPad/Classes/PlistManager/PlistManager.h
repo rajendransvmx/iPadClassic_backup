@@ -218,4 +218,7 @@ extern  NSString *const kSyncProfileCustomOrgType;
 + (NSString *)getProdIQDataSyncTime;
 + (void)storeProdIQDataSyncTime:(NSString *)time;
 
++ (BOOL)enableAnalytics;
+
+
 @end
