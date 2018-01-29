@@ -21,6 +21,8 @@
 #import "AttachmentsUploadManager.h"
 #import "PushNotificationUtility.h"
 #import "PushNotificationManager.h"
+#import <NewRelicAgent/NewRelic.h>
+
 
 @implementation SMAppDelegate
 
@@ -103,6 +105,10 @@
                                                    usingBlock:^(NSNotification *note) {
                                                        [PlistManager updateServerURLFromManagedConfig];
                                                    }];
+     
+     if([PlistManager enableAnalytics]) {
+         [NewRelicAgent startWithApplicationToken:kNewRelicAnalyticsKey];
+     }
      //[[SyncManager sharedInstance] scheduleSync];
     NSLog(@"------ AapplicationLaunching -------");
      
