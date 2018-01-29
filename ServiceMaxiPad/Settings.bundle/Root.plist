@@ -122,13 +122,29 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>17.10.040</string>
+			<string>17.10.041</string>
 			<key>Key</key>
 			<string>appVersion</string>
 			<key>Title</key>
 			<string>Version</string>
 			<key>Type</key>
 			<string>PSTitleValueSpecifier</string>
+		</dict>
+		<dict>
+			<key>Title</key>
+			<string>Analytics</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>DefaultValue</key>
+			<true/>
+			<key>Key</key>
+			<string>Enable Analytics</string>
+			<key>Title</key>
+			<string>Share Usage Analytics</string>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
 		</dict>
 	</array>
 	<key>StringsTable</key>
