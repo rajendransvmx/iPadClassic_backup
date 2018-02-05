@@ -3,12 +3,12 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 16.40.044
+Version = 16.40.045
 ===========================================
 
 Defects:
 
-New Relic Integration
+IPAD-4804
 
 NOTE:
 
