@@ -46,5 +46,5 @@
 //After config sync if you want to re add the index.
 - (void) createAllIndices;
 - (void) addCompositeIndices:(NSArray *)indices ToTable:(NSString *)tableName ;
-
+- (void) databaseOperationForIndexArray:(NSArray *)indices;
 @end
