@@ -230,17 +230,28 @@ NSString *heapSizeErrorString = @"System.LimitException"; //{"errorCode":"APEX_E
     
     // IPAD-4510
     if ((previousRequest.categoryType == CategoryTypeDataSync || previousRequest.categoryType == CategoryTypeOneCallDataSync) && previousRequest.requestType == RequestTXFetch) {
-        if ([[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete].count > 0) {
-            nextRequestType = RequestTypePurgeRecords;
-        }
-        else {
-            nextRequestType = RequestSyncTimeLogs; //IPAD-4507
+        // Multi-server support
+        NSString *serverVersion = [[NSUserDefaults standardUserDefaults] objectForKey:kServerVersionKey];
+        float sVersion = [serverVersion floatValue];
+        
+        // if server version is less than Win 17, then PurgeRecords for Events will not be handled.
+        if(sVersion < 17.10) {
+            nextRequestType = RequestSyncTimeLogs;
+        
+      }
+        else{
+            if ([[SuccessiveSyncManager sharedSuccessiveSyncManager] whatIdsToDelete].count > 0) {
+                nextRequestType = RequestTypePurgeRecords;
+            }
+            else {
+                nextRequestType = RequestSyncTimeLogs; //IPAD-4507
+            }
         }
     }
     
     // IPAD-4507 // IPAD-4781
     if (previousRequest.categoryType != CategoryTypeGetPriceData && nextRequestType == RequestSyncTimeLogs) {
-        [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:nil];
+        [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:nil]; //HS needs to check
     }
     
     if(nextRequestType == RequestTypeNone)
