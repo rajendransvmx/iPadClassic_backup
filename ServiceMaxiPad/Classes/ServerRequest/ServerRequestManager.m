@@ -749,7 +749,19 @@
             nextRequestType = RequestTXFetch;
             break;
         case RequestTXFetch:
-            nextRequestType = RequestTypePurgeRecords;
+        {
+            // Multi-server support
+            NSString *serverVersion = [[NSUserDefaults standardUserDefaults] objectForKey:kServerVersionKey];
+            float sVersion = [serverVersion floatValue];
+            
+            // if server version is less than Win 17, then PurgeRecords for Events will not be handled.
+            if(sVersion < 17.10) {
+                nextRequestType = RequestSyncTimeLogs; // IPAD-4507
+            }
+            else
+                nextRequestType = RequestTypePurgeRecords;
+
+        }
             break;
         case RequestTypePurgeRecords:
             nextRequestType = RequestSyncTimeLogs; // IPAD-4507
