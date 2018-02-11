@@ -14,8 +14,9 @@ Defect:
 
 Feature:
 ===========================================
+IPAD-4801 MultiServer Compatibilty - Sum16SP
 
-Build number updated to v18.0.0
+Build number updated to 18.0.0.1
 
 
 NOTE:
