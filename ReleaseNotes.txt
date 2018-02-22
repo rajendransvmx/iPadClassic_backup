@@ -4,7 +4,7 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 18.0.0
+Version = 18.0.0.2
 
 
 ===========================================
@@ -14,12 +14,12 @@ Defect:
 
 Feature:
 ===========================================
-IPAD-4801 MultiServer Compatibilty - Sum16SP
 
-Build number updated to 18.0.0.1
 
 
 NOTE:
+
+Changed EMPP url to sandbox for testing.
 
 1. NameSpace: SVMXC
 
