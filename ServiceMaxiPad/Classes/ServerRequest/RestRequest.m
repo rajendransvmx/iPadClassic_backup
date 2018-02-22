@@ -1496,7 +1496,7 @@
         
     }
     else
-        url = @"https://empp.servicemax-api.com/instrument/clientsync"; // [self getUrlWithStringApppended:@""];
+        url = @"https://emppdev.servicemax-api.com/instrument/clientsync"; // [self getUrlWithStringApppended:@""];
     
     return url;
 }
