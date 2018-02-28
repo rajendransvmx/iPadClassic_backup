@@ -19,6 +19,7 @@
 #import "CacheManager.h"
 #import "StringUtil.h"
 #import "SVMXGetPriceHelper.h"
+#import "TransactionObjectDAO.h"
 
 @interface IncrementalSyncRequestParamHelper ()
 
@@ -373,13 +374,51 @@
     
 }
 
+- (NSDictionary *)filterModifiedRecordsForDeletedRecords:(NSDictionary *)updatedRecords {
+
+    id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    id <ModifiedRecordsDAO> modifiedRecordsService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] init];
+    
+    for (NSString *key in [updatedRecords allKeys]) {
+        NSDictionary *recordDictionary = [updatedRecords objectForKey:key];
+        NSMutableDictionary *filteredRecordDictionary = [[NSMutableDictionary alloc] init];
+        
+        for (NSString *objectKey in [recordDictionary allKeys]) {
+            NSArray *modifiedRecords = [recordDictionary objectForKey:objectKey];
+            NSMutableArray *filteredModifiedRecords = [[NSMutableArray alloc] init];
+            for (ModifiedRecordModel *modifiedRecordModel in modifiedRecords) {
+                /* Check if record exist */
+                BOOL isRecordExist =  [transObjectService isRecordExistsForObject:objectKey forRecordLocalId:modifiedRecordModel.recordLocalId];
+                if (isRecordExist) {
+                    [filteredModifiedRecords addObject:modifiedRecordModel];
+                }
+                else {
+                    //delete record from ModifiedRecords table
+                    [modifiedRecordsService deleteRecordsForRecordLocalIds:@[modifiedRecordModel.recordLocalId]];
+                }
+            }
+            if (filteredModifiedRecords.count > 0) {
+                [filteredRecordDictionary setObject:filteredModifiedRecords forKey:objectKey];
+            }
+        }
+        
+        if (filteredRecordDictionary.count > 0) {
+            [resultDictionary setObject:filteredRecordDictionary forKey:key];
+        }
+    }
+    
+    return resultDictionary;
+}
+
 - (NSInteger)putUpdateParametersForIdLimit:(NSInteger)maximumNumberOfId
                                  intoArray:(NSMutableArray *)dataArray{
     @autoreleasepool {
         self.putInsertRecords = nil;
         id<ModifiedRecordsDAO> daoObj= [self getModifiedRecordsDAOInstance];
         NSDictionary *updatedRecords = [daoObj getUpdatedRecords];
-        [self fillRequestParameters:dataArray forSyncRecords:updatedRecords withOperationType:kModificationTypeUpdate];
+        NSDictionary *filteredUpdatedRecords = [self filterModifiedRecordsForDeletedRecords:updatedRecords]; //IPAD-4825
+        [self fillRequestParameters:dataArray forSyncRecords:filteredUpdatedRecords withOperationType:kModificationTypeUpdate];
         
     }
     
