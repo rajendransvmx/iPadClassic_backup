@@ -24,7 +24,6 @@
 #import "DateUtil.h"
 #import "ModifiedRecordsService.h"
 #import "FlowNode.h"
-#import "SuccessiveSyncManager.h"
 
 typedef enum {
     OneCallSyncPutDelete = 1,
@@ -168,15 +167,6 @@ typedef enum {
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"DoGetPrice"
                                                                     object:self
                                                                   userInfo:nil];
-                // Multi-server support
-                NSString *serverVersion = [[NSUserDefaults standardUserDefaults] objectForKey:kServerVersionKey];
-                float sVersion = [serverVersion floatValue];
-                
-                // if server version is less than Win 17, then PurgeRecords for Events will not be handled.
-                if(sVersion < 17.10) {
-
-                 [[SuccessiveSyncManager sharedSuccessiveSyncManager] setWhatIdsToDelete:nil];
-                }
                 
             }
             return callBack;
