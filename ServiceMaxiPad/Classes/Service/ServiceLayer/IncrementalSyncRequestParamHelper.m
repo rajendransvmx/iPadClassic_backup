@@ -20,6 +20,8 @@
 #import "StringUtil.h"
 #import "SVMXGetPriceHelper.h"
 #import "TransactionObjectDAO.h"
+#import "CustomActionsDAO.h"
+#import "SyncHeapDAO.h"
 
 @interface IncrementalSyncRequestParamHelper ()
 
@@ -378,6 +380,9 @@
 
     id <TransactionObjectDAO> transObjectService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
     id <ModifiedRecordsDAO> modifiedRecordsService = [FactoryDAO serviceByServiceType:ServiceTypeModifiedRecords];
+    id <CustomActionsDAO> customActionsService = [FactoryDAO serviceByServiceType:ServiceTypeCustomActionRequestParams];
+    id <SyncHeapDAO> syncHeapService = [FactoryDAO serviceByServiceType:ServiceTypeSyncHeap];
+    
     NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] init];
     
     for (NSString *key in [updatedRecords allKeys]) {
@@ -394,8 +399,10 @@
                     [filteredModifiedRecords addObject:modifiedRecordModel];
                 }
                 else {
-                    //delete record from ModifiedRecords table
-                    [modifiedRecordsService deleteRecordsForRecordLocalIds:@[modifiedRecordModel.recordLocalId]];
+                    //delete record from ModifiedRecords, Sync Heap and CustomActionRequestParams table
+                    [modifiedRecordsService deleteRecordsForRecordLocalIds:@[modifiedRecordModel.sfId]];
+                    [customActionsService deleteRecordsForRecordLocalIds:@[modifiedRecordModel.sfId]];
+                    [syncHeapService deleteRecordsForSfIds:@[modifiedRecordModel.sfId] forParallelSyncType:nil];
                 }
             }
             if (filteredModifiedRecords.count > 0) {
