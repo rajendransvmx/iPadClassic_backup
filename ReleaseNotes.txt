@@ -3,12 +3,12 @@
 ServiceMax iPad  Spring15SPBuild
 
 *******************************************
-Version = 15.40.043
+Version = 15.40.044
 ===========================================
 -------------
 Fixed Defects
 -------------
- 
+Added missing info plist keys.
 
 Known Issues
 -------------
