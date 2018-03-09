@@ -2,12 +2,12 @@
 ServiceMax Win 15 SP iPad Release Win15SPBuild
 
 *******************************************
-Version = 15.20.045
+Version = 15.20.046
 ===========================================
 -------------
 Fixed Defects
 -------------
-OPDOc loop issue (018957)
+Added missing info plist keys.
 
 
 -------------
