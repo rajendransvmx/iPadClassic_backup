@@ -550,6 +550,7 @@ static NSString *kSyncProfileDateFormat = @"YYYY-MM-dd HH:mm:ss.SSS";
 
 + (NSString*)getLocalDateForGetpriceFromDateString:(NSString*)date;
 
++ (NSString *) getUserReadableDateForAttachment:(NSString *)dateString withFormat:(NSString *)format;
 
 #pragma mark - GE formula related
 
