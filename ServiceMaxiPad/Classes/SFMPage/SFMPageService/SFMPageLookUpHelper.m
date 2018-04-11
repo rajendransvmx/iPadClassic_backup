@@ -1675,9 +1675,9 @@
             }
             else {
             //Fix for IPAD-4383
-              [modifiedExpression appendFormat:@"%d ",str.intValue];
-                if (str.intValue > self.expressionCount) {
-                    self.expressionCount=str.intValue;
+              [modifiedExpression appendFormat:@"%d ",(int)(count+str.intValue)];
+                if ((count+str.intValue) > self.expressionCount) {
+                    self.expressionCount=(count+str.intValue);
                 }
             }
         }
