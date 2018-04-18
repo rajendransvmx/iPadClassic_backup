@@ -1767,7 +1767,7 @@
             NSString *fieldLabel = (fieldModel.label.length > 0) ? fieldModel.label : @"";
             
            // NSString *value = [NSString stringWithFormat:@"%@ %@: %@",[[TagManager sharedInstance] tagByName:kTagLimitToForContextFilter],fieldLabel,displayValue];
-             NSString *value = [NSString stringWithFormat:@"%@ %@: %@",[[TagManager sharedInstance] tagByName:kTagLimitToForContextFilter],fieldLabel,recordData.displayValue]; //IPAD-4792
+            NSString *value = [NSString stringWithFormat:@"%@ %@: %@",[[TagManager sharedInstance] tagByName:kTagLimitToForContextFilter],fieldLabel,recordData.displayValue?recordData.displayValue:@""]; //IPAD-4792 //IPAD-4834
             
             filter.name = value;
         }
