@@ -1292,5 +1292,7 @@
 	<string>Open tree view</string>
 	<key>IPAD006_TAG132</key>
 	<string>Only Gregorian calendar supported. Open Settings, then Language and Region, then Calendar to select Gregorian calendar.</string>
+	<key>IPAD015_TAG027</key>
+	<string>Your organization uses a different version of this mobile app. Please install Servicemax SvmxVersion for iPad</string>
 </dict>
 </plist>

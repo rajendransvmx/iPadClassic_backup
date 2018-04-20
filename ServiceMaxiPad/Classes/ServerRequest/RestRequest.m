@@ -27,11 +27,21 @@
 #import "ProductIQManager.h"
 #import "SyncManager.h"
 #import "PlistManager.h"
-
+#import "Utility.h"
+#import "TagManager.h"
+const float kSum16 = 16.60;
 @implementation RestRequest
 @synthesize dataDictionary;
 @synthesize apiType;
-
+typedef enum : NSUInteger
+{
+    SVMXWin = 1,
+    SVMXWinSP = 2,
+    SVMXSpr = 3,
+    SVMXSprSP = 4,
+    SVMXSum = 5,
+    SVMXSumSP = 6,
+}SVMXServerVersion;
 #pragma mark - request lifecycle method
 /**
  * @name  init
@@ -1409,9 +1419,58 @@
         {
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"requestIdentifier"];
             [[NSUserDefaults standardUserDefaults] synchronize];
+             [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
         }
-        [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
+        else if (self.requestType == RequestTypeUserInfo) {
+            NSString *svmxVersion = [[NSUserDefaults standardUserDefaults]objectForKey:kServerVersionKey];
+            BOOL isMinVersionAllow = [Utility isAllowSvmxMinVersion];
+            if (svmxVersion.floatValue < kSum16 && !isMinVersionAllow && svmxVersion.length>4 ) {
+                NSString *serverVersion = [self getSeverNameFromVersion:svmxVersion];
+                NSString*message =[[TagManager sharedInstance]tagByName:kTagAllowMinVersionMessage];
+                message =[message stringByReplacingOccurrencesOfString:kSVMXVersion withString:serverVersion];
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[TagManager sharedInstance]tagByName:kTagAlertIpadError] message:message preferredStyle:(UIAlertControllerStyleAlert)];
+                UIAlertAction *signOutAction = [UIAlertAction actionWithTitle:[[TagManager sharedInstance] tagByName:kTagSignOut] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction *action) {
+                        [[NSNotificationCenter defaultCenter]postNotificationName:@"InitialSyncSignoutNotification" object:nil];
+                }];
+                [alertController addAction:signOutAction];
+                UIAlertAction *continueAction = [UIAlertAction actionWithTitle:[[TagManager sharedInstance]tagByName:kTagLoginContinue] style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+                    [Utility setAllowMinVersionFlag];
+                    [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
+                }];
+                [alertController addAction:continueAction];
+                [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:alertController animated:YES completion:^{}];
+            }
+            else{
+                [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
+            }
+        }
+        else{
+            [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
+        }
+//        [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
     }
+}
+-(NSString *)getSeverNameFromVersion:(NSString *)version{
+    NSString *serverName=@"";
+    NSString *serverVersion =[version substringWithRange:NSMakeRange(3,1)];
+    NSString *releaseVersion = [version substringToIndex:2];
+    switch (serverVersion.intValue) {
+        case SVMXWin:
+        case SVMXWinSP:
+            serverName = @"Winter";
+            break;
+        case SVMXSpr:
+        case SVMXSprSP:
+            serverName = @"Spring";
+            break;
+        case SVMXSum:
+        case SVMXSumSP:
+            serverName = @"Summer";
+            break;
+        default:
+            break;
+    }
+    return [NSString stringWithFormat:@"%@ %@",serverName,releaseVersion];
 }
 - (void)didReceiveResponseSuccessfullyForAfterBeforeSave:(AFHTTPRequestOperation *)operation
 {

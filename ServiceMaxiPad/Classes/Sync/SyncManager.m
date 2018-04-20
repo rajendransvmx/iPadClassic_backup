@@ -508,6 +508,7 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 
 - (void)performInitialSync
 {
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(InitialSyncSignoutNotification:) name:@"InitialSyncSignoutNotification" object:nil];
     [self performSelectorInBackground:@selector(cancelGetPriceInBackGround) withObject:nil];
     [self performSelectorInBackground:@selector(cancelProdIQDataSync) withObject:nil];
     
@@ -649,11 +650,13 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
     
     if (responseStatus.syncStatus == SyncStatusSuccess)
     {
+        [[NSNotificationCenter defaultCenter]removeObserver:@"InitialSyncSignoutNotification"];
         SXLogDebug(@"Initial Sync Finished");
         [self executeSyncErrorReporting];
     }
     else  if ( (responseStatus.syncStatus == SyncStatusFailed) ||  (responseStatus.syncStatus == SyncStatusNetworkError))
     {
+        [[NSNotificationCenter defaultCenter]removeObserver:@"InitialSyncSignoutNotification"];
          SXLogDebug(@"Initial Sync Failed");
         if(responseStatus.syncError!=nil) {
             self.syncError=[responseStatus.syncError copy];
@@ -1495,7 +1498,9 @@ static const void * const kDispatchSyncReportQueueSpecificKey = &kDispatchSyncRe
 }
 
 #pragma mark End 
-
+-(void)InitialSyncSignoutNotification:(NSNotification *)not{
+    [self performSelectorOnMainThread:@selector(performLoggout) withObject:nil waitUntilDone:NO];
+}
 - (void)performLoggout
 {
     [[SVMXSystemUtility sharedInstance] startNetworkActivity];
