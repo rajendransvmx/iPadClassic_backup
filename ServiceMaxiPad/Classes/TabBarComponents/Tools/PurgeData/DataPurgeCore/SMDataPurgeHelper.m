@@ -41,7 +41,6 @@
 
 @implementation SMDataPurgeHelper
 #pragma mark - Database operations changed
-
 + (NSMutableArray *)getGraceOrNonGraceRecord:(NSString *)object
                               filterCriteria:(DBCriteria *)criteria
                              trialerCriteria:(DBCriteria *)trialerCriteria
@@ -873,19 +872,40 @@
 }
 
 
-+ (void)getAllNonGraceDODRecrds:(SMDataPurgeModel *)model filterCriteria:(DBCriteria *)criteria
++ (void)getAllGraceNonGraceDODRecords:(SMDataPurgeModel *)model filterCriteria:(DBCriteria *)criteria
 {
     DBCriteria *criteria1 = [[DBCriteria alloc]initWithFieldName:@"objectName"
                                                     operatorType:SQLOperatorEqual
                                                    andFieldValue:model.name];
     
-    NSMutableArray * recordIds = [self getGraceOrNonGraceDODRecord:@[criteria,criteria1]];
+    NSMutableArray * recordIds = [self getGraceOrNonGraceDODRecord:@[criteria1]];
+    DBCriteria *lmdCriteria = [[DBCriteria alloc]initWithFieldName:@"LastModifiedDate" operatorType:SQLOperatorLessThan andFieldValue:criteria.rhsValue];
+    DBCriteria *sfIdCriteria = [[DBCriteria alloc]initWithFieldName:@"Id" operatorType:SQLOperatorIn andFieldValues:recordIds];
+    id transactionService = [FactoryDAO serviceByServiceType:ServiceTypeTransactionObject];
+    NSArray *transactionModels = [transactionService fetchDataForObject:model.name
+                                                                 fields:@[kId]
+                                                             expression:@"(1 AND 2)"
+                                                               criteria:@[sfIdCriteria,lmdCriteria]];
+    NSMutableArray *purgeableRecordIds = [NSMutableArray new];
     
+    for (TransactionObjectModel *objectModel in transactionModels) {
+        NSDictionary *fieldValueDict = [objectModel getFieldValueDictionary];
+        if ([fieldValueDict objectForKey:kId]) {
+            [purgeableRecordIds addObject:[fieldValueDict objectForKey:kId]];
+        }
+    }
+
     if (model != nil)
     {
         for (NSString * Id in recordIds)
         {
-            [model addPurgeableDODRecord:Id];
+            if ([purgeableRecordIds containsObject:Id]) {
+                [model addPurgeableDODRecord:Id];
+            }
+            else{
+                [model addNonPurgeableDODRecord:Id];
+            }
+            
         }
     }
 }

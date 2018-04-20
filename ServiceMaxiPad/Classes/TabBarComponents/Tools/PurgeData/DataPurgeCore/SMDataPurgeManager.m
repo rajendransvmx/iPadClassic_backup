@@ -300,7 +300,7 @@ const float progress = 0.05;
        // [self fillNonGracePeriodTrailerTableRecords];
         
         [self fillPurgeableDODRecords];
-        [self fillNonPurgeableDODRecords];
+//        [self fillNonPurgeableDODRecords];
         [self fillEventRelatedDataForPurgeMap];
         
         [self seggregateNonPurgeableRecords:NO];
@@ -933,21 +933,21 @@ const float progress = 0.05;
     }
 }
 
-- (void)fillNonPurgeableDODRecords
-{
-    NSArray * purgeMapKey = [self.purgeMap allKeys];
-    DBCriteria *filterCriteria = [[DBCriteria alloc]initWithFieldName:@"timeStamp"
-                                                         operatorType:SQLOperatorGreaterThanEqualTo
-                                                        andFieldValue:self.graceLimitDate];
-    @autoreleasepool
-    {
-        for (NSString * objectName in purgeMapKey)
-        {
-            [SMDataPurgeHelper getAllGarceDODRecrds:[self.purgeMap objectForKey:objectName]
-                                     filterCriteria:filterCriteria];
-        }
-    }
-}
+//- (void)fillNonPurgeableDODRecords
+//{
+//    NSArray * purgeMapKey = [self.purgeMap allKeys];
+//    DBCriteria *filterCriteria = [[DBCriteria alloc]initWithFieldName:@"timeStamp"
+//                                                         operatorType:SQLOperatorGreaterThanEqualTo
+//                                                        andFieldValue:self.graceLimitDate];
+//    @autoreleasepool
+//    {
+//        for (NSString * objectName in purgeMapKey)
+//        {
+//            [SMDataPurgeHelper getAllGarceDODRecrds:[self.purgeMap objectForKey:objectName]
+//                                     filterCriteria:filterCriteria];
+//        }
+//    }
+//}
 
 
 - (void)fillPurgeableDODRecords
@@ -961,7 +961,7 @@ const float progress = 0.05;
     {
         for (NSString * objectName in purgeMapKey)
         {
-            [SMDataPurgeHelper getAllNonGraceDODRecrds:[self.purgeMap objectForKey:objectName]
+            [SMDataPurgeHelper getAllGraceNonGraceDODRecords:[self.purgeMap objectForKey:objectName]
                                         filterCriteria:filterCriteria];
         }
     }

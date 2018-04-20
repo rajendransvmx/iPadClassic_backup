@@ -57,7 +57,7 @@
 + (void)getAllGarceDODRecrds:(SMDataPurgeModel *)model
               filterCriteria:(DBCriteria *)criteria;
 
-+ (void)getAllNonGraceDODRecrds:(SMDataPurgeModel *)model
++ (void)getAllGraceNonGraceDODRecords:(SMDataPurgeModel *)model
                  filterCriteria:(DBCriteria *)criteria;
 
 + (NSMutableArray *)getAllEventRelatedWhatId;
