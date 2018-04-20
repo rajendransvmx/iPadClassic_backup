@@ -353,6 +353,7 @@ NSString *const kTagAlertConfigureMail                 = @"IPAD024_TAG029";
 NSString *const kTagSystemError                        = @"IPAD011_TAG015";
 NSString *const kTagFunctionalError                    = @"IPAD011_TAG016";
 NSString *const kTagTypeOfError                        = @"IPAD011_TAG017";
+NSString *const kTagAllowMinVersionMessage             = @"IPAD015_TAG027";
 
 
 NSString *const kTagIpadSyncLabel                      = @"IPAD012_TAG014";

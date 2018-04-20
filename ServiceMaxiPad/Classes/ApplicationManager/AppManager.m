@@ -28,6 +28,7 @@
 #import "SMDataPurgeManager.h"
 #import "SyncManager.h"
 #import "UnzipUtility.h"
+#import "Utility.h"
 
 //#import "PushNotificationWebServiceHelper.h"
 
@@ -641,6 +642,7 @@
     
     if ([StringUtil isStringEmpty:previousUserName])
     {
+        [Utility removeAllowMinVersionFlag];
         //SXLogDebug(@"First time login - %@", loggedInUserName);
         [[AppManager sharedInstance] setLoggedInUserStatus:UserStatusFirstTimeLoggedIn];
         [[AppManager sharedInstance] setApplicationStatus:ApplicationStatusInitialSyncYetToStart];
@@ -1094,6 +1096,7 @@
 
 - (void)resetApplicationContentsForNewUser
 {
+    [Utility removeAllowMinVersionFlag];
     [self resetApplicationContents];
     [self setApplicationStatus:ApplicationStatusInitialSyncYetToStart];
     [self loadScreen];

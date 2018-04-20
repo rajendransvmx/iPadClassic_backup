@@ -891,5 +891,5 @@ extern NSString *const KStepNameForProductIQ;
 // SECSCAN-260
 extern NSString *const kValidateProfileSSLPinning;
 extern NSString *const kSSLPinningEnabled;
-
+extern NSString *const kTagAllowMinVersionMessage;
 //@end

@@ -404,5 +404,19 @@ void SMXLog(int level,const char *methodContext,int lineNumber,NSString *message
     return isPinningEnabled;
 }
 
+#pragma mark - Set allow minimum version flag
++ (void)setAllowMinVersionFlag {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"MIN_VERSION_FLAG"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+}
++ (BOOL)isAllowSvmxMinVersion {
+    return  [[NSUserDefaults standardUserDefaults]  boolForKey:@"MIN_VERSION_FLAG"];
+}
++(void)removeAllowMinVersionFlag{
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"MIN_VERSION_FLAG"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 
 @end

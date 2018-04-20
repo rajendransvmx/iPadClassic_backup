@@ -59,4 +59,8 @@
 +(NSInteger)requestTimeOutValueFromSetting;
 +(BOOL)isSSLPinningEnabled;
 
++ (void)setAllowMinVersionFlag;
++ (BOOL)isAllowSvmxMinVersion;
++(void)removeAllowMinVersionFlag;
+
 @end
