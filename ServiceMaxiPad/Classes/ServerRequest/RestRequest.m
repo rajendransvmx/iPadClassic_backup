@@ -1422,13 +1422,11 @@ typedef enum : NSUInteger
              [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
         }
         else if (self.requestType == RequestTypeUserInfo) {
-            NSString *svmxVersion = [[NSUserDefaults standardUserDefaults]objectForKey:kServerVersionKey];
-            if (!svmxVersion) {
-                svmxVersion = [responseObject objectForKey:kSVMXVersion];
-                if (svmxVersion) {
-                    [[NSUserDefaults standardUserDefaults] setObject:svmxVersion forKey:kServerVersionKey];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-                }
+            NSString *svmxVersion1 = [[NSUserDefaults standardUserDefaults]objectForKey:kServerVersionKey];
+            NSString *svmxVersion = [responseObject objectForKey:kSVMXVersion];
+            if (svmxVersion) {
+                [[NSUserDefaults standardUserDefaults] setObject:svmxVersion forKey:kServerVersionKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
             }
             BOOL isMinVersionAllow = [Utility isAllowSvmxMinVersion];
             if (svmxVersion.floatValue < kSum16 && !isMinVersionAllow && svmxVersion.length>4 ) {
