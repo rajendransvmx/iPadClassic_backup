@@ -1422,7 +1422,6 @@ typedef enum : NSUInteger
              [self.serverRequestdelegate didReceiveResponseSuccessfully:responseObject andRequestObject:self];
         }
         else if (self.requestType == RequestTypeUserInfo) {
-            NSString *svmxVersion1 = [[NSUserDefaults standardUserDefaults]objectForKey:kServerVersionKey];
             NSString *svmxVersion = [responseObject objectForKey:kSVMXVersion];
             if (svmxVersion) {
                 [[NSUserDefaults standardUserDefaults] setObject:svmxVersion forKey:kServerVersionKey];
