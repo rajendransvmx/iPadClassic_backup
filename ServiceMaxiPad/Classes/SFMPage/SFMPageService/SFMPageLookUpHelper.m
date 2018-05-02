@@ -1660,6 +1660,7 @@
 
 - (NSString *)getAdvanceExpression:(NSString *)expression criteriaCount:(NSInteger)count
 {
+    int value = 0;
     NSMutableString *modifiedExpression = nil;
     
     if ([expression length] > 0) {
@@ -1674,11 +1675,9 @@
                 [modifiedExpression appendFormat:@"%@ ", str];
             }
             else {
-            //Fix for IPAD-4383
-              [modifiedExpression appendFormat:@"%d ",(int)(count+str.intValue)];
-                if ((count+str.intValue) > self.expressionCount) {
-                    self.expressionCount=(count+str.intValue);
-                }
+                value++;
+                [modifiedExpression appendFormat:@"%d ", (int)(count+ value)];
+                self.expressionCount++;
             }
         }
 

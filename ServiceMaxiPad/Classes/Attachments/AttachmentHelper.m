@@ -63,7 +63,7 @@ static NSString *const kThirdPartyApps                  = @"Third Party Apps";
             if ([StringUtil isStringEmpty:attachModel.lastModifiedDate]) {
                 attachModel.lastModifiedDate = attachModel.createdDate;
             }
-            attachModel.displayDateString = [DateUtil getUserReadableDateForAttachment:attachModel.lastModifiedDate withFormat:kDateAttachment];
+            attachModel.displayDateString = [DateUtil getDateStringForDBDateTime:attachModel.lastModifiedDate inFormat:kDateAttachment];
             
             NSString *videoExtension, *imageExtension;
             if (![StringUtil isStringEmpty:attachModel.extensionName]) {
@@ -92,7 +92,7 @@ static NSString *const kThirdPartyApps                  = @"Third Party Apps";
         attachmentModel.isOutputdoc = YES;
         attachmentModel.lastModifiedDate = opDocHtmlModel.lastModifiedDate;
         attachmentModel.bodyLength = opDocHtmlModel.bodyLength;
-        attachmentModel.displayDateString = [DateUtil getUserReadableDateForAttachment:attachmentModel.lastModifiedDate withFormat:kDateAttachment];
+        attachmentModel.displayDateString = [DateUtil getDateStringForDBDateTime:attachmentModel.lastModifiedDate inFormat:kDateAttachment];
         if ([AttachmentUtility getUrlForAttachment:attachmentModel]) {
             [documentsArray addObject:attachmentModel];
         }
@@ -139,7 +139,7 @@ static NSString *const kThirdPartyApps                  = @"Third Party Apps";
             if ([StringUtil isStringEmpty:attachModel.lastModifiedDate]) {
                 attachModel.lastModifiedDate = attachModel.createdDate;
             }
-            attachModel.displayDateString = [DateUtil getUserReadableDateForAttachment:attachModel.lastModifiedDate withFormat:kDateImagesAndVideosAttachment];
+            attachModel.displayDateString = [DateUtil getDateStringForDBDateTime:attachModel.lastModifiedDate inFormat:kDateImagesAndVideosAttachment];
             
             NSString *videoExtension, *imageExtension;
             if (![StringUtil isStringEmpty:attachModel.extensionName]) {
