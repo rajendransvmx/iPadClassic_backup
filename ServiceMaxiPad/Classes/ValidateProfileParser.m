@@ -70,6 +70,7 @@
 }
 
 -(void)resetDataForSyncProfiling {
+    [SyncManager sharedInstance].isSyncProfileEnabled = NO ;
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     [userDefaults removeObjectForKey:kSalesForceProfileId];
     [userDefaults removeObjectForKey:kSalesForceOrgName];
