@@ -708,27 +708,27 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 -(void)dismissUI
 {
     [self enableUI];
-    if ([self isSourceToTargetProcess] || [self isStandAloneCreateProcess] ) {
-        [self dismissViewControllerAnimated:NO completion:nil];
-        
-        [self performSelector:@selector(changViewControl) withObject:nil afterDelay:0.2];
-        
-        
-        
-        //Commnented on 16-dec. Cause Notification is getting called. BSP
-        //        if ([self.editViewControllerDelegate respondsToSelector:@selector(refreshEventInCalendarView)]) {
-        //            [self.editViewControllerDelegate refreshEventInCalendarView];
-        //        }
-    }
-    else if ([self isEditProcess] || [self isSourceToTargetChildOnlyProcess]) {
-        [self dismissViewControllerAnimated:NO completion:nil];
-        if ([self.editViewControllerDelegate respondsToSelector:@selector(loadLinkedSFMViewProcess:andObjectName:)]) {
-            [self.editViewControllerDelegate loadLinkedSFMViewProcess:self.sfmPage.recordId andObjectName:self.sfmPage.objectName];
+    if (![self.navigationController.visibleViewController isKindOfClass:[UIAlertController class]]) { //IPAD-4844
+        if ([self isSourceToTargetProcess] || [self isStandAloneCreateProcess] ) {
+            [self dismissViewControllerAnimated:NO completion:nil];
+            
+            [self performSelector:@selector(changViewControl) withObject:nil afterDelay:0.2];
+            //Commnented on 16-dec. Cause Notification is getting called. BSP
+            //        if ([self.editViewControllerDelegate respondsToSelector:@selector(refreshEventInCalendarView)]) {
+            //            [self.editViewControllerDelegate refreshEventInCalendarView];
+            //        }
+        }
+        else if ([self isEditProcess] || [self isSourceToTargetChildOnlyProcess]) {
+            [self dismissViewControllerAnimated:NO completion:nil];
+            if ([self.editViewControllerDelegate respondsToSelector:@selector(loadLinkedSFMViewProcess:andObjectName:)]) {
+                [self.editViewControllerDelegate loadLinkedSFMViewProcess:self.sfmPage.recordId andObjectName:self.sfmPage.objectName];
+            }
+        }
+        else {
+            [self dismissViewControllerAnimated:YES completion:nil];
         }
     }
-    else {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
+    
 }
 
 -(void)changViewControl {
@@ -1440,6 +1440,7 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:(UIAlertControllerStyleAlert)];
         
         UIAlertAction *alertAction = [UIAlertAction actionWithTitle:[[TagManager sharedInstance] tagByName:kTagAlertErrorOk] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction * _Nonnull action) {
+            [self dismissUI]; //IPAD-4844
         }];
         
         [alertController addAction:alertAction];
