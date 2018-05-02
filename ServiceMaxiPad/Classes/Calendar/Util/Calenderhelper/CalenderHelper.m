@@ -53,7 +53,6 @@
 #import "SFObjectFieldDAO.h"
 #import "SFObjectFieldService.h"
 #import "NSDate+SMXDaysCount.h"
-#import "DatabaseIndexManager.h"
 
 #define stringLimitInProduct 80
 
@@ -939,11 +938,6 @@
 
 +(NSArray *)getInstalledListFromSite:(NSString *)siteID
 {
-    // IPAD-4804
-    NSString *locationIndexing = [NSString stringWithFormat:@"CREATE INDEX IF NOT EXISTS IBLocationIndex ON '%@' (%@ ASC)", kInstalledProductTableName, kWorkOrderSite];
-    DatabaseIndexManager *indexManager = [DatabaseIndexManager sharedInstance];
-    [indexManager databaseOperationForIndexArray:@[locationIndexing]];
-    
     id <CalenderDAO> calService = [FactoryDAO serviceByServiceType:ServiceCalenderEventList];
     DBCriteria *criteria = [[DBCriteria alloc] initWithFieldName:kWorkOrderSite operatorType:SQLOperatorEqual andFieldValue:siteID];
     
