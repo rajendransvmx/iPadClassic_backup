@@ -12,7 +12,6 @@ Defect:
 IPAD-4804
 IPAD-4842
 IPAD-4843
-
 NOTE:
 
 1. NameSpace: SVMXC
