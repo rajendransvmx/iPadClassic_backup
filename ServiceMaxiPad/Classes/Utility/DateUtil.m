@@ -629,20 +629,7 @@ NSString * const kCachedDateFormatterKey = @"CachedDateFormatterKey";
     }
     return nil;
 }
-+ (NSString *) getUserReadableDateForAttachment:(NSString *)dateString withFormat:(NSString *)format {
-    
-    NSDate *date = nil;
-    NSString * dateInString = nil;
-    date = [DateUtil getDateFromDatabaseString:dateString];
-    NSDateComponents * dateComponents = [self getDateComponents];
-    
-    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSz"];
-    [formatter setTimeZone:[dateComponents timeZone]];
-    dateInString = [formatter stringFromDate:date];
-    dateString =[DateUtil getDateStringForDBDateTime:dateInString inFormat:format];
-    return dateString;
-}
+
 + (NSString *)getDateStringForDBDateTime:(NSString *)dateTime inFormat:(NSString*)format
 {
     NSString *dateString = nil;
