@@ -3,13 +3,15 @@ ServiceMax iPad
 
 *******************************************
 
-Version = 17.20.025
+Version = 17.20.026
 
 ===========================================
 
 Defect:
 ===========================================
-Integrated New Relic
+IPAD-4804
+IPAD-4842
+IPAD-4843
 NOTE:
 
 1. NameSpace: SVMXC
