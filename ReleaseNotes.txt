@@ -4,14 +4,14 @@ ServiceMax iPad
 *******************************************
 
 
-Version = 18.0.0.8
+Version = 18.0.1
 
 
 ===========================================
 
 Defect:
 ===========================================
-IPAD-4840
+
 
 Feature:
 ===========================================
@@ -19,8 +19,6 @@ Feature:
 
 
 NOTE:
-
-Changed EMPP url to sandbox for testing.
 
 1. NameSpace: SVMXC
 
