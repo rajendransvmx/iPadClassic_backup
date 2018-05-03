@@ -1105,7 +1105,7 @@ static NSString *const kErrorDownloadedCollectionViewCell = @"ErrorDownloadedCol
     attachmentModel.createdDate = [DateUtil getDatabaseStringForDate:[NSDate date]];
     //Anoop: This will be updated on PageEditViewController
     //attachmentModel.lastModifiedDate = [DateUtil getDatabaseStringForDate:[NSDate date]];
-    attachmentModel.displayDateString = [DateUtil getDateStringForDBDateTime:attachmentModel.createdDate inFormat:kDateImagesAndVideosAttachment];
+    attachmentModel.displayDateString = [DateUtil getUserReadableDateForAttachment:attachmentModel.createdDate withFormat:kDateImagesAndVideosAttachment];
     attachmentModel.parentId = self.parentId;
     attachmentModel.isPrivate = kFalse;
     attachmentModel.isDownloaded = YES;
