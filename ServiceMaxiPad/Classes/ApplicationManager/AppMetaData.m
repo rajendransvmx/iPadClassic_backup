@@ -114,8 +114,7 @@ NSString* deviceName()
         
         self.currentOSVersion= [currentDevice systemVersion];
         
-        self.currentApplicationVersion = [[NSBundle mainBundle]
-                                          objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+        self.currentApplicationVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
         
         NSString *devVersion = deviceName();
         

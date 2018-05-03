@@ -99,7 +99,7 @@
             [params setObject:status forKey:kSyncProfileStatusKey];
         }
         
-        NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+        NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
         if (appVersion) {
             NSString *versionStr = [NSString stringWithFormat:@"iPad Classic %@", appVersion];
             [params setObject:versionStr forKey:kSyncProfileClientVersion];

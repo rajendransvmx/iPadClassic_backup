@@ -66,8 +66,7 @@
         //Added below values for SyncErrorReporting
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
         
-        NSString *appVersion = [[NSBundle mainBundle]
-                                objectForInfoDictionaryKey:(NSString *)kCFBundleVersionKey];
+        NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
         //[loginUserInfoDictionary setObject:@"00DZ00012005JD6MAM" forKey:@"OrgId"];
         [loginUserInfoDictionary setObject:[userDefaults objectForKey:@"ps_organization_id"] forKey:@"OrgId"];
         
