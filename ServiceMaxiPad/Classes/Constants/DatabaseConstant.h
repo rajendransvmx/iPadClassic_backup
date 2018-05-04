@@ -438,3 +438,7 @@ extern NSString * const kWebserviceProcessKey;
 
 extern NSString *const kCodeSnippetID;
 extern NSString * const kChangedLocalIDForCustomCall;
+/*Action On Zero lines*/
+extern NSString * const AllowOnZeroLines;
+extern NSString * const kDisAllowOnZeroLines;
+extern NSString * const kWarnOnZeroLines;

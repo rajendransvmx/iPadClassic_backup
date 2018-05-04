@@ -1292,5 +1292,11 @@
 	<string>Open tree view</string>
 	<key>IPAD006_TAG132</key>
 	<string>Only Gregorian calendar supported. Open Settings, then Language and Region, then Calendar to select Gregorian calendar.</string>
+	<key>IPAD014_TAG144</key>
+	<string>You must add at least one line to save this record.</string>
+	<key>IPAD014_TAG145</key>
+	<string>You have not created any lines.</string>
+	<key>IPAD014_TAG146</key>
+	<string>Do you still want to save?</string>
 </dict>
 </plist>

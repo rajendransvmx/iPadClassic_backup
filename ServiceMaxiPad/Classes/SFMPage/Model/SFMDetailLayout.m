@@ -25,6 +25,7 @@
         _headerReferenceField = [dictionary objectForKey:kPageDetailHeaderRefField];
         _noOfColumns = [[dictionary objectForKey:kPageDetailNumberOfColumns] boolValue];
         
+        _allowZeroLines = [dictionary objectForKey:kPageDetailActionOnZeroLines];
         NSNumber *allowNewLines = [dictionary objectForKey:kPageDetailAllowNewLines];
         if ([Utility isItTrue:[allowNewLines stringValue] ]) {
             _allowNewLines = YES;

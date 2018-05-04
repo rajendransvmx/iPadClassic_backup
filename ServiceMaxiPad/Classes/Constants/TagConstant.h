@@ -889,4 +889,8 @@ extern NSString *const KWizardNameForProductIQ;
 extern NSString *const KStepNameForProductIQ;
 
 
+//Allow zero lines tags
+extern NSString *const kActionOnZeroLinesErrorMsg;
+extern NSString *const kActionOnZeroLinesWarningMsg;
+extern NSString *const kActionOnZeroLinesWarningSaveMsg;
 //@end

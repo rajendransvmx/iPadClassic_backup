@@ -347,6 +347,9 @@
         NSNumber * allowdeleteLinesNo = [NSNumber numberWithBool:(tempAllowDeleteLines != nil && ![tempAllowDeleteLines  isKindOfClass:[NSNull class]])?tempAllowDeleteLines.boolValue:NO];
         [detailsFinalDict setObject:allowdeleteLinesNo forKey:kPageDetailAllowDeleteLines];
         
+        NSString * actionOnZeroLines = [detailLayout objectForKey:kPageDetailActionOnZeroLines];
+        actionOnZeroLines = (actionOnZeroLines != nil)?actionOnZeroLines:@"";
+        [detailsFinalDict setObject:actionOnZeroLines forKey:kPageDetailActionOnZeroLines];
         
         NSString * noOfColumns = [detailLayout objectForKey:kPageDetailNumberOfColumns];
         noOfColumns = (noOfColumns != nil)?noOfColumns:@"";

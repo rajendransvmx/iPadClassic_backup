@@ -625,6 +625,10 @@ NSString *const KWizardNameForProductIQ = @"IPAD014_TAG140";
 NSString *const KStepNameForProductIQ = @"IPAD014_TAG141";
 
 
+//Allow zero lines tags
+NSString *const kActionOnZeroLinesErrorMsg      =@"IPAD014_TAG144";
+NSString *const kActionOnZeroLinesWarningMsg    =@"IPAD014_TAG145";
+NSString *const kActionOnZeroLinesWarningSaveMsg=@"IPAD014_TAG146";
 #define SERVICE_REPORT_EXPENSE_SECTION_TITLE    SUMMARY_REPORT_EXPENSES_TITLE //@"IPAD004_TAG009"
 
 #define SERVICE_REPORT_EXPENSES_LINE_PRICE  SUMMARY_REPORT_LINE_PRICE //@"IPAD004_TAG014"

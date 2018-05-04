@@ -42,7 +42,8 @@
 #import "CacheManager.h"
 #import "ObjectNameFieldValueService.h"
 #import "CacheConstants.h"
-
+#import "BusinessRuleConstants.h"
+#import "UIAlertController+MessageUtility.h"
 
 typedef NS_ENUM(NSInteger, SaveFlow ) {
     SaveFlowOnSaveTapped,
@@ -65,6 +66,9 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 @property(nonatomic, assign) BOOL isHeader;
 @property(nonatomic, strong)PageEventProcessManager *pageEventProManager;
 @property(nonatomic, strong) UIAlertView *alertViewBiz;
+@property(nonatomic, assign) BOOL warnOnAllowDetailLines;
+@property(nonatomic, strong) NSString *allowZeroLinesWarningAlertMsg;
+@property(nonatomic, strong) NSMutableArray *allowZeroLinesErrorArray;
 
 @property (nonatomic) SaveFlow saveflow;
 @end
@@ -570,12 +574,15 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
         if (![self isValidEvent]) {
             return;
         }else {
-            [self refreshBizRule];
-            [self disableUI];
-            [self updateRespondersIfAny];
-            [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
-            [self executeBusinessRules];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"RefreshView_IOS" object:nil];
+            if ([self checkActionOnZeroLinesWithDetailRecord:self.sfmPage.detailsRecord withDetailLayouts:self.sfmPage.process.pageLayout.detailLayouts]) {
+                [(PageEditDetailViewController *)self.detailViewController  initiateBuissRulesData:self.allowZeroLinesErrorArray];
+            }
+            else if (self.warnOnAllowDetailLines){
+                [self showAlertForWarningsOnAllowZeroLines];
+            }
+            else{
+                [self performSaveAfterAllowZeroLinesCheck];
+            }
         }
     }else {
         UIAlertView *lAlert = [[UIAlertView alloc] initWithTitle:@"" message:[[TagManager sharedInstance] tagByName:kTagNoTechnicianAssociatedError] delegate:nil cancelButtonTitle:[[TagManager sharedInstance]tagByName:kTagAlertErrorOk] otherButtonTitles: nil];
@@ -584,6 +591,29 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
     }
     
     //[self performSelectorInBackground:@selector(saveRecord) withObject:nil];
+}
+-(void)showAlertForWarningsOnAllowZeroLines{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:[[TagManager sharedInstance] tagByName:kTagAlertIpadError]  message:self.allowZeroLinesWarningAlertMsg preferredStyle:(UIAlertControllerStyleAlert)];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:[[TagManager sharedInstance] tagByName:kTagNo] style:(UIAlertActionStyleCancel) handler:^(UIAlertAction *action) {
+        //        do nothing
+    }];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:[[TagManager sharedInstance] tagByName:kTagYes] style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+        [self performSaveAfterAllowZeroLinesCheck];
+    }];
+    [alertController addAction:cancelAction];
+    [alertController addAction:okAction];
+    /* Defect no. 034128 - On Allow zero line warning message changes alignment issue.*/
+    alertController.messageLabel.textAlignment=NSTextAlignmentLeft;
+    [self presentViewController:alertController animated:YES completion:^{}];
+    
+}
+- (void)performSaveAfterAllowZeroLinesCheck{
+    [self refreshBizRule];
+    [self disableUI];
+    [self updateRespondersIfAny];
+    [self performSelectorOnMainThread:@selector(showActivityIndicator) withObject:nil waitUntilDone:YES];
+    [self executeBusinessRules];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RefreshView_IOS" object:nil];
 }
 
 - (void)barButtonTapped:(id)sender
@@ -669,7 +699,36 @@ typedef NS_ENUM(NSInteger, SaveFlow ) {
 }
 
 #pragma mark End
-
+#pragma mark - Action On Allow Zero Lines
+/*Check for validation on Allow zero lines */
+-(BOOL)checkActionOnZeroLinesWithDetailRecord:(NSDictionary *)detailRecord withDetailLayouts:(NSArray*)detailLayouts{
+    BOOL disAllowZeroLines = NO;
+    self.warnOnAllowDetailLines = NO;
+    self.allowZeroLinesErrorArray = [[NSMutableArray alloc]init];
+    self.allowZeroLinesWarningAlertMsg = @"";
+    for (SFMDetailLayout *detailLayout in detailLayouts) {
+        NSArray *detailRecords=[detailRecord objectForKey:detailLayout.processComponentId];
+        
+        if ([detailRecord objectForKey:detailLayout.processComponentId] == nil || detailRecords.count==0) {
+            if ([detailLayout.allowZeroLines isEqualToString:kDisAllowOnZeroLines]) {
+                disAllowZeroLines=YES;
+                BusinessRuleResult *result=[[BusinessRuleResult alloc]init];
+                result.objectName=detailLayout.name;
+                result.ruleId = detailLayout.dtlLayoutId;
+                result.messgaeType=kBizRuleErrorMessageType;
+                NSString *errorMsg=[NSString stringWithFormat:@"%@ : %@",result.objectName,[[TagManager sharedInstance]tagByName:kActionOnZeroLinesErrorMsg]];
+                result.message=errorMsg;
+                [self.allowZeroLinesErrorArray addObject:result];
+            }
+            
+            if ([detailLayout.allowZeroLines isEqualToString:kWarnOnZeroLines]) {
+                self.warnOnAllowDetailLines=YES;
+                self.allowZeroLinesWarningAlertMsg=[self.allowZeroLinesWarningAlertMsg stringByAppendingString:[NSString stringWithFormat:@"\n%@: %@",detailLayout.name,[[TagManager sharedInstance]tagByName:kActionOnZeroLinesWarningMsg]]];
+            }
+        }
+    }
+    return disAllowZeroLines;
+}
 #pragma mark -
 #pragma mark Activity Indicator methods
 - (void)showActivityIndicator
