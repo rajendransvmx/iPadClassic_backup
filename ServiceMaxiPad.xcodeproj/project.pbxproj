@@ -869,6 +869,7 @@
 		5BEFF7B11A24450C0096B254 /* EditableDataValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B01A24450C0096B254 /* EditableDataValidator.m */; };
 		5BEFF7B31A248B950096B254 /* cloud-download.png in Resources */ = {isa = PBXBuildFile; fileRef = 5BEFF7B21A248B950096B254 /* cloud-download.png */; };
 		5BF1CFFE1A88BEC300F94471 /* SMXMonthCellEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */; };
+		674302E4209C8931001A0989 /* UIAlertController+MessageUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 674302E2209C8931001A0989 /* UIAlertController+MessageUtility.m */; };
 		677FE3A01F7B723600BF7C5F /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 677FE39F1F7B723600BF7C5F /* Photos.framework */; };
 		67919D071D6D7A95005E0954 /* AttachmentErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 67919D061D6D7A95005E0954 /* AttachmentErrorService.m */; };
 		6A13E9CC1A9AB6DC00D12CED /* libsqlcipher.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A13E9CB1A9AB6DC00D12CED /* libsqlcipher.a */; };
@@ -4205,6 +4206,8 @@
 		5BEFF7B21A248B950096B254 /* cloud-download.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cloud-download.png"; sourceTree = "<group>"; };
 		5BF1CFFC1A88BEC300F94471 /* SMXMonthCellEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMXMonthCellEvent.h; sourceTree = "<group>"; };
 		5BF1CFFD1A88BEC300F94471 /* SMXMonthCellEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMXMonthCellEvent.m; sourceTree = "<group>"; };
+		674302E2209C8931001A0989 /* UIAlertController+MessageUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+MessageUtility.m"; sourceTree = "<group>"; };
+		674302E3209C8931001A0989 /* UIAlertController+MessageUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+MessageUtility.h"; sourceTree = "<group>"; };
 		677FE39F1F7B723600BF7C5F /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		67919D051D6D7A95005E0954 /* AttachmentErrorService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentErrorService.h; sourceTree = "<group>"; };
 		67919D061D6D7A95005E0954 /* AttachmentErrorService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentErrorService.m; sourceTree = "<group>"; };
@@ -7770,6 +7773,8 @@
 		18A2179519E585D700F22EA6 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				674302E3209C8931001A0989 /* UIAlertController+MessageUtility.h */,
+				674302E2209C8931001A0989 /* UIAlertController+MessageUtility.m */,
 				18A2179819E585D700F22EA6 /* DateUtil.h */,
 				18A2179919E585D700F22EA6 /* DateUtil.m */,
 				18A2179A19E585D700F22EA6 /* NSDate+TKCategory.h */,
@@ -10306,6 +10311,7 @@
 				9ED694131AB02911007E7EE4 /* ContactInfo.m in Sources */,
 				FD09E16B1D4A088A00972C95 /* ZXDataMatrixDecodedBitStreamParser.m in Sources */,
 				184A8EF519E7A535006DA6BE /* UICGPolyline.m in Sources */,
+				674302E4209C8931001A0989 /* UIAlertController+MessageUtility.m in Sources */,
 				FD09E1B11D4A088A00972C95 /* ZXOneDReader.m in Sources */,
 				FD09E1661D4A088A00972C95 /* ZXResult.m in Sources */,
 				FD09E1531D4A088A00972C95 /* ZXDecoderResult.m in Sources */,

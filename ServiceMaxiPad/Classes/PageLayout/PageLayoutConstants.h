@@ -92,6 +92,7 @@ extern NSString *const kPageDetailValuesArray;
 extern NSString *const kPageDetailLayoutId;
 extern NSString *const kPageDetailAllowNewLines;
 extern NSString *const kPageDetailAllowDeleteLines;
+extern NSString *const kPageDetailActionOnZeroLines;
 extern NSString *const kPageDetailNumberOfColumns;
 extern NSString *const kPageDetailObjectLabel;
 extern NSString *const kPageDetailValuesRecordId;

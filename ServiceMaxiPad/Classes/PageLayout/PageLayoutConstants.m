@@ -116,6 +116,7 @@ NSString *const kPageDetailLayoutId                = @"dtlLayoutId";
 
 NSString *const kPageDetailAllowNewLines           = ORG_NAME_SPACE@"__Allow_New_Lines__c";
 NSString *const kPageDetailAllowDeleteLines        = ORG_NAME_SPACE@"__Allow_Delete_Lines__c";
+NSString *const kPageDetailActionOnZeroLines       = ORG_NAME_SPACE@"__Action_On_Zero_Lines__c";
 NSString *const kPageDetailNumberOfColumns         = @"noOfColumns";
 NSString *const kPageDetailObjectLabel             = ORG_NAME_SPACE@"__Name__c";
 NSString *const kPageDetailValuesRecordId          = @"";

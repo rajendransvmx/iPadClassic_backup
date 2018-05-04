@@ -35,6 +35,7 @@
 @property(nonatomic,assign) BOOL allowNewLines;
 @property(nonatomic,assign) BOOL allowDeleteLines;
 @property(nonatomic,assign) BOOL allowMultiAddConfig;
+@property(nonatomic, strong) NSString *allowZeroLines;
 @property(nonatomic, strong) NSString *multiAddSearchField;
 @property(nonatomic, strong) NSString *multiAddSearhObject;
 

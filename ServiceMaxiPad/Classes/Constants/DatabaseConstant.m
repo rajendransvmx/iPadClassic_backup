@@ -447,3 +447,7 @@ NSString * const kAfterSaveInsertKey = @"After Save/Insert";
 NSString * const kWebserviceProcessKey = @"WEBSERVICE";
 NSString * const kCodeSnippetID      = ORG_NAME_SPACE@"__SnippetId__c";
 NSString * const kChangedLocalIDForCustomCall = @"Dummy";
+/*Action On Zero lines*/
+NSString * const AllowOnZeroLines    =@"Allow";
+NSString * const kDisAllowOnZeroLines=@"Disallow";
+NSString * const kWarnOnZeroLines    =@"Warn";
